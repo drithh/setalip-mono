@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  setalip-db:
+    image: postgres
+    restart: always
+    container_name: setalip-db
+    ports:
+      - 5435:5432
+    environment:
+      POSTGRES_USER: setalip
+      POSTGRES_PASSWORD: setalip
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+
+volumes:
+  postgres:
