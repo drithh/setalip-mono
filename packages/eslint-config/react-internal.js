@@ -7,6 +7,7 @@ const project = resolve(process.cwd(), "tsconfig.json");
  * internal (bundled by their consumer) libraries
  * that utilize React.
  */
+ */
 
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
