@@ -1,4 +1,5 @@
 // scripts/migrate.ts
+import 'dotenv/config';
 
 import * as path from 'path';
 import { promises as fs } from 'fs';

@@ -1,26 +1,34 @@
 import { Kysely } from 'kysely';
 
 export async function up(db: Kysely<any>): Promise<void> {
-  await db.schema
-    .createTable('users')
-    .addColumn('id', 'bigserial', (col) => col.primaryKey())
-    .addColumn('email', 'text', (col) => col.notNull().unique())
-    .addColumn('hashed_password', 'text', (col) => col.notNull())
-    .execute();
+  try {
+    await db.transaction().execute(async (trx) => {
+      await trx.schema
+        .createTable('users')
+        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('email', 'text', (col) => col.notNull().unique())
+        .addColumn('hashed_password', 'text', (col) => col.notNull())
+        .execute();
 
-  await db.schema
-    .createTable('auth_users')
-    .addColumn('id', 'int8', (col) => col.primaryKey())
-    .execute();
+      await trx.schema
+        .createTable('auth_users')
+        .addColumn('id', 'bigint', (col) => col.primaryKey())
+        .execute();
 
-  await db.schema
-    .createTable('user_sessions')
-    .addColumn('id', 'text', (col) => col.primaryKey())
-    .addColumn('expires_at', 'timestamptz', (col) => col.notNull())
-    .addColumn('user_id', 'int8', (col) =>
-      col.notNull().references('auth_users.id')
-    )
-    .execute();
+      await trx.schema
+        .createTable('user_sessions')
+        .addColumn('id', 'varchar(32)', (col) => col.notNull().primaryKey())
+        .addColumn('expires_at', 'timestamp', (col) => col.notNull())
+        .addColumn('user_id', 'bigint', (col) =>
+          col.notNull().references('auth_users.id')
+        )
+        .execute();
+    });
+
+    console.log('Tables created successfully');
+  } catch (error) {
+    console.error('Error creating tables:', error);
+  }
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
