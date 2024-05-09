@@ -1,4 +1,4 @@
-import { createEnv } from '@t3-oss/env-core';
+import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
 export const env = createEnv({
@@ -11,7 +11,6 @@ export const env = createEnv({
    * The prefix that client-side variables must have. This is enforced both at
    * a type-level and at runtime.
    */
-  clientPrefix: 'PUBLIC_',
 
   client: {},
 
@@ -19,7 +18,10 @@ export const env = createEnv({
    * What object holds the environment variables at runtime. This is usually
    * `process.env` or `import.meta.env`.
    */
-  runtimeEnv: process.env,
+  runtimeEnv: {
+    DATABASE_URL: process.env.DATABASE_URL,
+    NODE_ENV: process.env.NODE_ENV,
+  },
 
   /**
    * By default, this library will feed the environment variables directly to
@@ -34,5 +36,4 @@ export const env = createEnv({
    * In order to solve these issues, we recommend that all new projects
    * explicitly specify this option as true.
    */
-  emptyStringAsUndefined: true,
 });

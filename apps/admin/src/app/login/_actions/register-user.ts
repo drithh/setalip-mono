@@ -1,9 +1,9 @@
 'use server';
 
-import { db } from '@/db/database';
+import { db } from '@/lib/database';
 import { hash } from '@node-rs/argon2';
 import { cookies } from 'next/headers';
-import { lucia } from '@/lib/lucia';
+import { lucia } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 function isValidEmail(email: string): boolean {

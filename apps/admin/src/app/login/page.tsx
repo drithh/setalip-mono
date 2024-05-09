@@ -1,8 +1,8 @@
 'use client';
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@repo/ui/components/ui/button';
+import { Input } from '@repo/ui/components/ui/input';
 import { signup } from './_actions/register-user';
 import { useFormState } from 'react-dom';
 import { useRef } from 'react';
@@ -17,7 +17,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@repo/ui/components/ui/form';
 
 const schema = z.object({
   email: z.string().email(),
