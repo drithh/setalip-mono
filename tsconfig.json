@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "paths": {
-      "#dep*": ["./packages/ui/src/*"]
+      "#dep*": ["./packages/ui/src/*"],
+      "#deps*": ["./packages/shared/src/*"]
     }
   }
 }

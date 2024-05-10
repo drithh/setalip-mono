@@ -1,10 +1,12 @@
 import { Database } from '@repo/shared/schema';
 import { Kysely, MysqlDialect } from 'kysely';
 import { env } from '@/env';
-import { createPool } from 'mysql2';
+import { createPool } from 'mysql2/promise';
+
+export const pool = createPool(env.DATABASE_URL);
 
 const dialect = new MysqlDialect({
-  pool: createPool(env.DATABASE_URL),
+  pool: pool.pool,
 });
 
 export const db = new Kysely<Database>({

@@ -2,8 +2,15 @@
   "name": "@repo/shared",
   "version": "0.0.1",
   "exports": {
-    "./schema": "./src/schema.ts",
-    "./lucia": "./src/lucia.ts"
+    "./schema": "./src/schema/index.ts",
+    "./lucia": "./src/lucia.ts",
+    "./repository/*": "./src/repository/*"
+  },
+  "imports": {
+    "#deps/*": [
+      "./src/*.ts",
+      "./src/*.tsx"
+    ]
   },
   "type": "module",
   "dependencies": {
