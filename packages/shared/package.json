@@ -4,18 +4,29 @@
   "exports": {
     "./schema": "./src/schema/index.ts",
     "./lucia": "./src/lucia.ts",
-    "./repository/*": "./src/repository/*"
+    "./repository/*": "./src/repository/*",
+    "./db/*": "./src/db/*",
+    "./inversify/*": "./src/inversify/*"
   },
   "imports": {
-    "#deps/*": [
+    "#dep/*": [
       "./src/*.ts",
       "./src/*.tsx"
     ]
   },
   "type": "module",
   "dependencies": {
-    "lucia": "^3.2.0",
+    "@abraham/reflection": "^0.12.0",
+    "@t3-oss/env-core": "^0.10.1",
+    "inversify": "^6.0.2",
     "kysely": "^0.27.3",
-    "typescript": "^5.4.5"
+    "lucia": "^3.2.0",
+    "mysql2": "^3.9.7",
+    "reflect-metadata": "^0.2.2",
+    "typescript": "^5.4.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.11"
   }
 }

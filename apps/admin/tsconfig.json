@@ -6,9 +6,12 @@
         "name": "next"
       }
     ],
+    "types": ["reflect-metadata"],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": [
     "next-env.d.ts",
@@ -16,8 +19,7 @@
     "**/*.js",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "../../packages/kysely/src/schema.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,60 +1,65 @@
-'use server';
-import { UserRepository } from '#deps/repository/user';
+import { Database } from '#dep/db/database';
+import { UserRepository } from '#dep/repository/user';
 import {
   CreateUser,
-  Database,
   DeleteUser,
   UpdateUser,
   UserEmail,
   UserID,
-} from '#deps/schema/index';
-import { Kysely } from 'kysely';
+} from '#dep/schema/index';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '#dep/inversify/types';
 
-export async function newUserRepository(
-  db: Kysely<Database>
-): Promise<KyselyMySqlUserRepository> {
-  return new KyselyMySqlUserRepository(db);
-}
+@injectable()
+export class KyselyMySqlUserRepository implements UserRepository {
+  private _db: Database;
 
-class KyselyMySqlUserRepository implements UserRepository {
-  private readonly db: Kysely<Database>;
-  constructor(db: Kysely<Database>) {
-    this.db = db;
+  constructor(@inject(TYPES.Database) db: Database) {
+    this._db = db;
   }
 
-  FindUserById(id: UserID) {
-    return this.db
+  async FindUserById(id: UserID) {
+    return this._db
       .selectFrom('users')
       .select(['id', 'email', 'hashed_password'])
       .where('users.id', '=', id)
       .executeTakeFirstOrThrow();
   }
 
-  FindUserByEmail(email: UserEmail) {
-    return this.db
+  async FindUserByEmail(email: UserEmail) {
+    return this._db
       .selectFrom('users')
       .select(['id', 'email', 'hashed_password'])
       .where('users.email', '=', email)
-      .executeTakeFirst();
+      .executeTakeFirstOrThrow();
   }
 
-  GetUsers() {
-    return this.db
+  async GetUsers() {
+    console.log('GetUsers', this._db);
+    return await this._db
       .selectFrom('users')
       .select(['id', 'email', 'hashed_password'])
       .execute();
+
+    return [
+      {
+        id: 1,
+        email: 'test@test.com',
+        hashed_password: 'hashed_password',
+      },
+    ];
   }
 
-  CreateUser(data: CreateUser) {
-    const insertedData = this.db
+  async CreateUser(data: CreateUser) {
+    const insertedData = this._db
       .insertInto('users')
       .values(data)
       .executeTakeFirstOrThrow();
     return insertedData;
   }
 
-  UpdateUser(data: UpdateUser) {
-    const updatedData = this.db
+  async UpdateUser(data: UpdateUser) {
+    const updatedData = this._db
       .updateTable('users')
       .set(data)
       .where('users.id', '=', data.id)
@@ -65,7 +70,7 @@ class KyselyMySqlUserRepository implements UserRepository {
   }
 
   DeleteUser(data: DeleteUser) {
-    return this.db
+    return this._db
       .deleteFrom('users')
       .where('users.id', '=', data)
       .executeTakeFirstOrThrow();

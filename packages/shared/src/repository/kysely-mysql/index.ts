@@ -1,1 +1,1 @@
-export * from '#deps/repository/kysely-mysql/user';
+export * from '#dep/repository/kysely-mysql/user';

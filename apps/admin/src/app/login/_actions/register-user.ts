@@ -1,10 +1,11 @@
 'use server';
-import { db } from '@/lib/database';
 import { hash } from '@node-rs/argon2';
 import { cookies } from 'next/headers';
 import { lucia } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { newUserRepository } from '@repo/shared/repository/kysely-mysql/index.ts';
+import { container } from '@repo/shared/inversify/container.ts';
+import { TYPES } from '@repo/shared/inversify/types.ts';
+import { UserRepository } from '@repo/shared/repository/user.js';
 
 function isValidEmail(email: string): boolean {
   return /.+@.+/.test(email);
@@ -79,7 +80,7 @@ export async function signup(
     parallelism: 1,
   });
 
-  const userRepo = await newUserRepository(db);
+  const userRepo = container.get<UserRepository>(TYPES.UserRepository);
 
   const existingUser = await userRepo.FindUserByEmail(submittedForm.email);
 

@@ -14,6 +14,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:packages/typescript-config
+      '@types/node':
+        specifier: ^20.12.11
+        version: 20.12.11
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
@@ -44,6 +47,9 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
+      inversify:
+        specifier: ^6.0.2
+        version: 6.0.2
       kysely:
         specifier: ^0.27.3
         version: 0.27.3
@@ -71,6 +77,9 @@ importers:
       react-hook-form:
         specifier: ^7.51.4
         version: 7.51.4(react@18.2.0)
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       server-only:
         specifier: ^0.0.1
         version: 0.0.1
@@ -132,15 +141,37 @@ importers:
 
   packages/shared:
     dependencies:
+      '@abraham/reflection':
+        specifier: ^0.12.0
+        version: 0.12.0
+      '@t3-oss/env-core':
+        specifier: ^0.10.1
+        version: 0.10.1(typescript@5.4.5)(zod@3.23.8)
+      inversify:
+        specifier: ^6.0.2
+        version: 6.0.2
       kysely:
         specifier: ^0.27.3
         version: 0.27.3
       lucia:
         specifier: ^3.2.0
         version: 3.2.0
+      mysql2:
+        specifier: ^3.9.7
+        version: 3.9.7
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
+    devDependencies:
+      '@types/node':
+        specifier: ^20.12.11
+        version: 20.12.11
 
   packages/typescript-config: {}
 
@@ -222,6 +253,9 @@ packages:
   '@aashutoshrathi/word-wrap@1.2.6':
     resolution: {integrity: sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==}
     engines: {node: '>=0.10.0'}
+
+  '@abraham/reflection@0.12.0':
+    resolution: {integrity: sha512-OoLlgBE5u18mc61pJNamEh2OtFpHjtvDi1pV4ojnnH77juCvQw/Z3YlHF8TJiorU7/V6UuGApFzsi+bieug7fg==}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -1038,6 +1072,9 @@ packages:
 
   '@types/node@20.11.24':
     resolution: {integrity: sha512-Kza43ewS3xoLgCEpQrsT+xRo/EJej1y0kVYGiLFE1NEODXGzTfwiC6tXTLMQskn1X4/Rjlh0MQUvx9W+L9long==}
+
+  '@types/node@20.12.11':
+    resolution: {integrity: sha512-vDg9PZ/zi+Nqp6boSOT7plNuthRugEKixDv5sFTIpkE89MmNtEArAShI4mxuX2+UrLEe9pxC1vm2cjm9YlWbJw==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -2174,6 +2211,9 @@ packages:
     resolution: {integrity: sha512-Xj6dv+PsbtwyPpEflsejS+oIZxmMlV44zAhG479uYu89MsjcYOhCFnNyKrkJrihbsiasQyY0afoCl/9BLR65bg==}
     engines: {node: '>= 0.4'}
 
+  inversify@6.0.2:
+    resolution: {integrity: sha512-i9m8j/7YIv4mDuYXUAcrpKPSaju/CIly9AHK5jvCBeoiM/2KEsuCQTTP+rzSWWpLYWRukdXFSl6ZTk2/uumbiA==}
+
   ip@1.1.8:
     resolution: {integrity: sha512-PuExPYUiu6qMBQb4l06ecm6T6ujzhmh+MeJcW9wa89PoAz5pvd4zPgN5WJV104mb6S2T1AwNIAaB70JNrLQWhg==}
 
@@ -2906,6 +2946,9 @@ packages:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
 
+  reflect-metadata@0.2.2:
+    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
+
   reflect.getprototypeof@1.0.4:
     resolution: {integrity: sha512-ECkTw8TmJwW60lOTR+ZkODISW6RQ8+2CL3COqtiJKLd6MmB45hN51HprHFziKLGkAuTGQhBb91V8cy+KHlaCjw==}
     engines: {node: '>= 0.4'}
@@ -3480,6 +3523,8 @@ packages:
 snapshots:
 
   '@aashutoshrathi/word-wrap@1.2.6': {}
+
+  '@abraham/reflection@0.12.0': {}
 
   '@alloc/quick-lru@5.2.0': {}
 
@@ -4123,6 +4168,12 @@ snapshots:
     optionalDependencies:
       typescript: 5.3.3
 
+  '@t3-oss/env-core@0.10.1(typescript@5.4.5)(zod@3.23.8)':
+    dependencies:
+      zod: 3.23.8
+    optionalDependencies:
+      typescript: 5.4.5
+
   '@t3-oss/env-nextjs@0.10.1(typescript@5.3.3)(zod@3.23.8)':
     dependencies:
       '@t3-oss/env-core': 0.10.1(typescript@5.3.3)(zod@3.23.8)
@@ -4190,7 +4241,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 20.11.24
+      '@types/node': 20.12.11
 
   '@types/inquirer@6.5.0':
     dependencies:
@@ -4204,6 +4255,10 @@ snapshots:
   '@types/minimatch@5.1.2': {}
 
   '@types/node@20.11.24':
+    dependencies:
+      undici-types: 5.26.5
+
+  '@types/node@20.12.11':
     dependencies:
       undici-types: 5.26.5
 
@@ -4227,7 +4282,7 @@ snapshots:
 
   '@types/through@0.0.30':
     dependencies:
-      '@types/node': 20.11.24
+      '@types/node': 20.12.11
 
   '@types/tinycolor2@1.4.6': {}
 
@@ -5777,6 +5832,8 @@ snapshots:
       hasown: 2.0.0
       side-channel: 1.0.4
 
+  inversify@6.0.2: {}
+
   ip@1.1.8: {}
 
   ip@2.0.0: {}
@@ -6523,6 +6580,8 @@ snapshots:
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.1
+
+  reflect-metadata@0.2.2: {}
 
   reflect.getprototypeof@1.0.4:
     dependencies:
