@@ -9,4 +9,10 @@ const dialect = new MysqlDialect({
 
 export const db = new Kysely<Database>({
   dialect,
+  log(event) {
+    if (event.level === 'query') {
+      console.log(event.query.sql);
+      console.log(event.query.parameters);
+    }
+  },
 });

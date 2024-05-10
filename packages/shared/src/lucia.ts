@@ -1,7 +1,7 @@
 import { Adapter, Lucia, TimeSpan } from 'lucia';
 
-export const NewLucia = (adapter: Adapter, isSecure: boolean) =>
-  new Lucia(adapter, {
+export const NewLucia = (adapter: Adapter | null, isSecure: boolean) =>
+  new Lucia(adapter as Adapter, {
     sessionCookie: {
       // this sets cookies with super long expiration
       // since Next.js doesn't allow Lucia to extend cookie expiration when rendering pages
@@ -22,16 +22,15 @@ export const NewLucia = (adapter: Adapter, isSecure: boolean) =>
     sessionExpiresIn: new TimeSpan(2, 'w'), // 2 weeks
   });
 
-// IMPORTANT!
 declare module 'lucia' {
-  interface Register {
-    Lucia: typeof NewLucia;
+  export interface Register {
+    Lucia: ReturnType<typeof NewLucia>;
     DatabaseSessionAttributes: DatabaseSessionAttributes;
     DatabaseUserAttributes: DatabaseUserAttributes;
     UserId: number;
   }
-  interface DatabaseSessionAttributes {}
-  interface DatabaseUserAttributes {
+  export interface DatabaseSessionAttributes {}
+  export interface DatabaseUserAttributes {
     email: string;
   }
 }

@@ -90,11 +90,12 @@ export async function signup(
       email: submittedForm.email,
       hashed_password: hashed_password,
     })
-    .returning(['id'])
+    .returning(['users.email', 'users.id'])
     .executeTakeFirstOrThrow();
 
-  const session = await lucia.createSession(user.id, {
-    email: submittedForm.email,
+  console.log('user', user);
+  const session = await lucia.createSession(1, {
+    user_id: 1,
   });
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(

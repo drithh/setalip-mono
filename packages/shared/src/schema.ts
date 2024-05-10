@@ -9,7 +9,6 @@ import {
 
 export interface Database {
   users: UserTable;
-  auth_users: AuthUserTable;
   user_sessions: UserSessionTable;
 }
 
@@ -22,14 +21,6 @@ export interface UserTable {
 export type User = Selectable<UserTable>;
 export type NewUser = Insertable<UserTable>;
 export type UserUpdate = Updateable<UserTable>;
-
-export interface AuthUserTable {
-  id: number;
-}
-
-export type AuthUser = Selectable<AuthUserTable>;
-export type NewAuthUser = Insertable<AuthUserTable>;
-export type AuthUserUpdate = Updateable<AuthUserTable>;
 
 export interface UserSessionTable {
   id: string;

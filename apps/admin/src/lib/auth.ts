@@ -6,7 +6,7 @@ import { createPool } from 'mysql2/promise';
 const pool = createPool(env.DATABASE_URL);
 
 const adapter = new Mysql2Adapter(pool, {
-  user: 'auth_users',
+  user: 'users',
   session: 'user_sessions',
 });
 

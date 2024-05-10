@@ -11,16 +11,11 @@ export async function up(db: Kysely<any>): Promise<void> {
         .execute();
 
       await trx.schema
-        .createTable('auth_users')
-        .addColumn('id', 'bigint', (col) => col.primaryKey())
-        .execute();
-
-      await trx.schema
         .createTable('user_sessions')
-        .addColumn('id', 'varchar(32)', (col) => col.notNull().primaryKey())
+        .addColumn('id', 'varchar(50)', (col) => col.notNull().primaryKey())
         .addColumn('expires_at', 'timestamp', (col) => col.notNull())
         .addColumn('user_id', 'bigint', (col) =>
-          col.notNull().references('auth_users.id')
+          col.notNull().references('users.id')
         )
         .execute();
     });
@@ -33,6 +28,5 @@ export async function up(db: Kysely<any>): Promise<void> {
 
 export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropTable('users').execute();
-  await db.schema.dropTable('auth_users').execute();
   await db.schema.dropTable('user_sessions').execute();
 }
