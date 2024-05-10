@@ -3,13 +3,13 @@
   "version": "0.0.1",
   "exports": {
     "./schema": "./src/schema/index.ts",
-    "./lucia": "./src/lucia.ts",
-    "./repository/*": "./src/repository/*",
-    "./db/*": "./src/db/*",
-    "./inversify/*": "./src/inversify/*"
+    "./auth": "./src/auth/index.ts",
+    "./repository": "./src/repository/index.ts",
+    "./db": "./src/db/index.ts",
+    "./inversify": "./src/inversify/index.ts"
   },
   "imports": {
-    "#dep/*": [
+    "#dep*": [
       "./src/*.ts",
       "./src/*.tsx"
     ]
@@ -17,6 +17,7 @@
   "type": "module",
   "dependencies": {
     "@abraham/reflection": "^0.12.0",
+    "@lucia-auth/adapter-mysql": "^3.0.2",
     "@t3-oss/env-core": "^0.10.1",
     "inversify": "^6.0.2",
     "kysely": "^0.27.3",

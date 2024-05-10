@@ -1,12 +1,10 @@
 'use server';
 import { hash } from '@node-rs/argon2';
 import { cookies } from 'next/headers';
-import { lucia } from '@/lib/auth';
+import { lucia } from '@repo/shared/auth';
 import { redirect } from 'next/navigation';
-import { container } from '@repo/shared/inversify/container.ts';
-import { TYPES } from '@repo/shared/inversify/types.ts';
-import { UserRepository } from '@repo/shared/repository/user.js';
-
+import { container, TYPES } from '@repo/shared/inversify';
+import { UserRepository } from '@repo/shared/repository';
 function isValidEmail(email: string): boolean {
   return /.+@.+/.test(email);
 }

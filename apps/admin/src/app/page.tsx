@@ -1,6 +1,5 @@
-import { container } from '@repo/shared/inversify/container.ts';
-import { TYPES } from '@repo/shared/inversify/types.ts';
-import { UserRepository } from '@repo/shared/repository/user.ts';
+import { TYPES, container } from '@repo/shared/inversify';
+import { UserRepository } from '@repo/shared/repository';
 import { getUser } from './get-user';
 
 export default async function Home() {

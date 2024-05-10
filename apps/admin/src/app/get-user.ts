@@ -1,4 +1,4 @@
-import { lucia } from '@/lib/auth';
+import { lucia } from '@repo/shared/auth';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 

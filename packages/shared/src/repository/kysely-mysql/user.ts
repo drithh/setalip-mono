@@ -1,4 +1,4 @@
-import { Database } from '#dep/db/database';
+import { Database } from '#dep/db/index';
 import { UserRepository } from '#dep/repository/user';
 import {
   CreateUser,
@@ -40,14 +40,6 @@ export class KyselyMySqlUserRepository implements UserRepository {
       .selectFrom('users')
       .select(['id', 'email', 'hashed_password'])
       .execute();
-
-    return [
-      {
-        id: 1,
-        email: 'test@test.com',
-        hashed_password: 'hashed_password',
-      },
-    ];
   }
 
   async CreateUser(data: CreateUser) {
