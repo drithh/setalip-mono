@@ -1,13 +1,12 @@
-'use server';
-import { hash } from '@node-rs/argon2';
+('use server');
 import { cookies } from 'next/headers';
-import { lucia } from '@repo/shared/auth';
+import { UserService, UserValidationError } from '@repo/shared/service';
 import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
-import { UserRepository } from '@repo/shared/repository';
 import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
 import { schema } from '../form-schema';
+import { convertErrorsToZod } from '@repo/shared/util';
 
 export type FormSchema = z.infer<typeof schema>;
 
@@ -38,48 +37,39 @@ export async function signup(
     };
   }
 
-  const hashed_password = await hash(parsed.data.password, {
-    memoryCost: 19456,
-    timeCost: 2,
-    outputLen: 32,
-    parallelism: 1,
-  });
+  const userService = container.get<UserService>(TYPES.UserService);
 
-  const userRepo = container.get<UserRepository>(TYPES.UserRepository);
-
-  const existingUser = await userRepo.FindUserByEmail(parsed.data.email);
-
-  if (existingUser) {
-    console.log('existingUser', existingUser);
-    return {
-      form: parsed.data,
-      status: 'field-errors',
-      errors: { email: { type: 'required', message: 'Email already exists' } },
-    };
-  }
-
-  const inserted = await userRepo.CreateUser({
+  const { result, error } = await userService.loginUser({
     email: parsed.data.email,
-    hashed_password,
+    password: parsed.data.password,
   });
 
-  if (!inserted) {
+  if (error instanceof UserValidationError) {
+    const errors = error.getErrors();
+
+    const mappedErrors = convertErrorsToZod<FormSchema>(errors);
+
+    console.log('error', mappedErrors);
+    console.log('mappedErrors', mappedErrors);
+
     return {
-      form: parsed.data,
+      form: {
+        ...parsed.data,
+      },
+      status: 'field-errors',
+      errors: mappedErrors,
+    };
+  } else if (error) {
+    return {
+      form: {
+        ...parsed.data,
+      },
       status: 'error',
-      errors: 'Failed to create user',
+      errors: error.message,
     };
   }
 
-  const insertedId = Number(inserted.insertId);
-  const session = await lucia.createSession(insertedId, {
-    user_id: insertedId,
-  });
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes
-  );
+  cookies().set(result.name, result.value, result.attributes);
+
   return redirect('/');
 }

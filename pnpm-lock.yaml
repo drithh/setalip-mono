@@ -147,6 +147,9 @@ importers:
       '@lucia-auth/adapter-mysql':
         specifier: ^3.0.2
         version: 3.0.2(lucia@3.2.0)(mysql2@3.9.7)
+      '@node-rs/argon2':
+        specifier: ^1.8.3
+        version: 1.8.3
       '@t3-oss/env-core':
         specifier: ^0.10.1
         version: 0.10.1(typescript@5.4.5)(zod@3.23.8)

@@ -18,7 +18,7 @@ export class KyselyMySqlUserRepository implements UserRepository {
     this._db = db;
   }
 
-  async FindUserById(id: UserID) {
+  findUserById(id: UserID) {
     return this._db
       .selectFrom('users')
       .select(['id', 'email', 'hashed_password'])
@@ -26,7 +26,7 @@ export class KyselyMySqlUserRepository implements UserRepository {
       .executeTakeFirstOrThrow();
   }
 
-  async FindUserByEmail(email: UserEmail) {
+  findUserByEmail(email: UserEmail) {
     return this._db
       .selectFrom('users')
       .select(['id', 'email', 'hashed_password'])
@@ -34,15 +34,14 @@ export class KyselyMySqlUserRepository implements UserRepository {
       .executeTakeFirstOrThrow();
   }
 
-  async GetUsers() {
-    console.log('GetUsers', this._db);
-    return await this._db
+  getUsers() {
+    return this._db
       .selectFrom('users')
       .select(['id', 'email', 'hashed_password'])
       .execute();
   }
 
-  async CreateUser(data: CreateUser) {
+  createUser(data: CreateUser) {
     const insertedData = this._db
       .insertInto('users')
       .values(data)
@@ -50,7 +49,7 @@ export class KyselyMySqlUserRepository implements UserRepository {
     return insertedData;
   }
 
-  async UpdateUser(data: UpdateUser) {
+  updateUser(data: UpdateUser) {
     const updatedData = this._db
       .updateTable('users')
       .set(data)
@@ -61,7 +60,7 @@ export class KyselyMySqlUserRepository implements UserRepository {
     return updatedData;
   }
 
-  DeleteUser(data: DeleteUser) {
+  deleteUser(data: DeleteUser) {
     return this._db
       .deleteFrom('users')
       .where('users.id', '=', data)

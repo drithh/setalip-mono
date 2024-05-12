@@ -9,10 +9,10 @@ import {
 import { DeleteResult, InsertResult } from 'kysely';
 
 export interface UserRepository {
-  GetUsers(): Promise<User[]>;
-  FindUserById(id: UserID): Promise<User>;
-  FindUserByEmail(email: UserEmail): Promise<User>;
-  CreateUser(data: CreateUser): Promise<InsertResult>;
-  UpdateUser(data: UpdateUser): Promise<User>;
-  DeleteUser(data: DeleteUser): Promise<DeleteResult>;
+  getUsers(): Promise<User[]>;
+  findUserById(id: UserID): Promise<User>;
+  findUserByEmail(email: UserEmail): Promise<User>;
+  createUser(data: CreateUser): Promise<InsertResult>;
+  updateUser(data: UpdateUser): Promise<User>;
+  deleteUser(data: DeleteUser): Promise<DeleteResult>;
 }
