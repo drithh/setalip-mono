@@ -6,8 +6,7 @@ export default async function Home() {
   const userRepo = container.get<UserRepository>(TYPES.UserRepository);
 
   // const user = await getUser();
-  const users = await userRepo.GetUsers();
-  console.log(users);
+  const users = await userRepo.getUsers();
   return (
     <main className="min-h-screen">
       {users.map((user) => (

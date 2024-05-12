@@ -22,6 +22,9 @@ export async function signup(
       form: {
         email: data.get('email') as string,
         password: data.get('password') as string,
+        name: data.get('name') as string,
+        phoneNumber: data.get('phoneNumber') as string,
+        address: data.get('address') as string,
       },
       status: 'field-errors',
       errors: {
@@ -39,9 +42,8 @@ export async function signup(
 
   const userService = container.get<UserService>(TYPES.UserService);
 
-  const { result, error } = await userService.loginUser({
-    email: parsed.data.email,
-    password: parsed.data.password,
+  const { result, error } = await userService.registerUser({
+    ...parsed.data,
   });
 
   if (error instanceof UserValidationError) {

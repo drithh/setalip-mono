@@ -44,24 +44,12 @@ importers:
       '@t3-oss/env-nextjs':
         specifier: ^0.10.1
         version: 0.10.1(typescript@5.3.3)(zod@3.23.8)
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
       inversify:
         specifier: ^6.0.2
         version: 6.0.2
-      kysely:
-        specifier: ^0.27.3
-        version: 0.27.3
-      kysely-migration-cli:
-        specifier: ^0.4.0
-        version: 0.4.0
       lucia:
         specifier: ^3.2.0
         version: 3.2.0
-      mysql2:
-        specifier: ^3.9.7
-        version: 3.9.7
       next:
         specifier: 14.2.3
         version: 14.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -102,9 +90,6 @@ importers:
       '@types/react-dom':
         specifier: ^18
         version: 18.2.19
-      esbuild-register:
-        specifier: ^3.5.0
-        version: 3.5.0(esbuild@0.21.1)
       eslint:
         specifier: ^8
         version: 8.57.0
@@ -144,6 +129,9 @@ importers:
       '@abraham/reflection':
         specifier: ^0.12.0
         version: 0.12.0
+      '@commander-js/extra-typings':
+        specifier: ^12.0.1
+        version: 12.0.1(commander@11.1.0)
       '@lucia-auth/adapter-mysql':
         specifier: ^3.0.2
         version: 3.0.2(lucia@3.2.0)(mysql2@3.9.7)
@@ -153,6 +141,12 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.10.1
         version: 0.10.1(typescript@5.4.5)(zod@3.23.8)
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      esbuild-register:
+        specifier: ^3.5.0
+        version: 3.5.0(esbuild@0.21.1)
       inversify:
         specifier: ^6.0.2
         version: 6.0.2
@@ -162,6 +156,9 @@ importers:
       lucia:
         specifier: ^3.2.0
         version: 3.2.0
+      mariadb:
+        specifier: ^3.3.0
+        version: 3.3.0
       mysql2:
         specifier: ^3.9.7
         version: 3.9.7
@@ -178,9 +175,18 @@ importers:
         specifier: ^3.23.8
         version: 3.23.8
     devDependencies:
+      '@faker-js/faker':
+        specifier: ^8.4.1
+        version: 8.4.1
       '@types/node':
         specifier: ^20.12.11
         version: 20.12.11
+      kysely-codegen:
+        specifier: ^0.15.0
+        version: 0.15.0(kysely@0.27.3)(mysql2@3.9.7)
+      kysely-migration-cli:
+        specifier: ^0.4.0
+        version: 0.4.0
 
   packages/typescript-config: {}
 
@@ -218,7 +224,7 @@ importers:
         version: 2.3.0
       tailwindcss-animate:
         specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.4.3(ts-node@10.9.1(@types/node@20.11.24)(typescript@5.4.5)))
+        version: 1.0.7(tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.4.5)))
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -252,7 +258,7 @@ importers:
         version: 18.2.0
       tailwindcss:
         specifier: ^3.4.3
-        version: 3.4.3(ts-node@10.9.1(@types/node@20.11.24)(typescript@5.4.5))
+        version: 3.4.3(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.4.5))
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
@@ -383,6 +389,11 @@ packages:
     resolution: {integrity: sha512-GuvZ38d23H+7Tz2C9DhzCepivsOsky03s5NI+KCy7ke1FNUvsJ2oO47scQ9YaGGhgjgNW5OYYNSADmbjcSoIhw==}
     peerDependencies:
       commander: 11.1.x
+
+  '@commander-js/extra-typings@12.0.1':
+    resolution: {integrity: sha512-OvkMobb1eMqOCuJdbuSin/KJkkZr7n24/UNV+Lcz/0Dhepf3r2p9PaGwpRpAWej7A+gQnny4h8mGhpFl4giKkg==}
+    peerDependencies:
+      commander: ~12.0.0
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -555,6 +566,10 @@ packages:
   '@eslint/js@8.57.0':
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  '@faker-js/faker@8.4.1':
+    resolution: {integrity: sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
 
   '@hookform/resolvers@3.3.4':
     resolution: {integrity: sha512-o5cgpGOuJYrd+iMKvkttOclgwRW86EsWJZZRC23prf0uU2i48Htq4PuT73AVb9ionFyZrwYEITuOFGF+BydEtQ==}
@@ -1063,6 +1078,9 @@ packages:
 
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
+
+  '@types/geojson@7946.0.14':
+    resolution: {integrity: sha512-WCfD5Ht3ZesJUsONdhvm84dmzWOiOzOAqOncN0++w0lBw1o8OuDNJF2McvvCef/yBqb/HYRahp1BYtODFQ8bRg==}
 
   '@types/glob@7.2.0':
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
@@ -1662,6 +1680,10 @@ packages:
   didyoumean@1.2.2:
     resolution: {integrity: sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==}
 
+  diff@3.5.0:
+    resolution: {integrity: sha512-A46qtFgd+g7pDZinpnwiRJtxbC1hpgf0uzP3iG89scHk0AUC7A1TGxf5OiiOUv/JMZR8GOt8hL900hV0bOy5xA==}
+    engines: {node: '>=0.3.1'}
+
   diff@4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
     engines: {node: '>=0.3.1'}
@@ -1683,6 +1705,10 @@ packages:
 
   dot-case@2.1.1:
     resolution: {integrity: sha512-HnM6ZlFqcajLsyudHq7LeeLDr2rFAVYtDv/hV5qchQEidSck8j9OPUsXY9KwJv/lHMtYlX4DjRQqwFYa+0r8Ug==}
+
+  dotenv-expand@11.0.6:
+    resolution: {integrity: sha512-8NHi73otpWsZGBSZwwknTXS5pqMOrk9+Ssrna8xCaxkzEpU9OTf9R5ArQGVw03//Zmk9MOwLPng9WwndvpAJ5g==}
+    engines: {node: '>=12'}
 
   dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
@@ -2060,6 +2086,10 @@ packages:
     resolution: {integrity: sha512-7ZqONUVqaabogsYNWlYj0t3YZaL6dhuEueZXGF+/YVmf6dHmaFg8/6psJKqhx9QykIDKzpGcy2cn4oV4YC7V/Q==}
     engines: {node: '>= 14'}
 
+  git-diff@2.0.6:
+    resolution: {integrity: sha512-/Iu4prUrydE3Pb3lCBMbcSNIf81tgGt0W1ZwknnyF62t3tHmtiJTRj0f+1ZIhp3+Rh0ktz1pJVoa7ZXUCskivA==}
+    engines: {node: '>= 4.8.0'}
+
   git-hooks-list@3.1.0:
     resolution: {integrity: sha512-LF8VeHeR7v+wAbXqfgRlTSX/1BJR9Q1vEMR8JAz1cEg6GX07+zyj3sAdDvYjj/xnlIfVuGgj4qBei1K3hKH+PA==}
 
@@ -2219,6 +2249,10 @@ packages:
   internal-slot@1.0.6:
     resolution: {integrity: sha512-Xj6dv+PsbtwyPpEflsejS+oIZxmMlV44zAhG479uYu89MsjcYOhCFnNyKrkJrihbsiasQyY0afoCl/9BLR65bg==}
     engines: {node: '>= 0.4'}
+
+  interpret@1.4.0:
+    resolution: {integrity: sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==}
+    engines: {node: '>= 0.10'}
 
   inversify@6.0.2:
     resolution: {integrity: sha512-i9m8j/7YIv4mDuYXUAcrpKPSaju/CIly9AHK5jvCBeoiM/2KEsuCQTTP+rzSWWpLYWRukdXFSl6ZTk2/uumbiA==}
@@ -2450,6 +2484,37 @@ packages:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
     engines: {node: '>=4.0'}
 
+  kysely-codegen@0.15.0:
+    resolution: {integrity: sha512-LPta2nQOyoEPDQ3w/Gsplc+2iyZPAsGvtWoS21VzOB0NDQ0B38Xy1gS8WlbGef542Zdw2eLJHxekud9DzVdNRw==}
+    hasBin: true
+    peerDependencies:
+      '@libsql/kysely-libsql': ^0.3.0
+      '@tediousjs/connection-string': ^0.5.0
+      better-sqlite3: '>=7.6.2'
+      kysely: ^0.27.0
+      kysely-bun-worker: ^0.5.3
+      mysql2: ^2.3.3 || ^3.0.0
+      pg: ^8.8.0
+      tarn: ^3.0.0
+      tedious: ^16.6.0 || ^17.0.0
+    peerDependenciesMeta:
+      '@libsql/kysely-libsql':
+        optional: true
+      '@tediousjs/connection-string':
+        optional: true
+      better-sqlite3:
+        optional: true
+      kysely-bun-worker:
+        optional: true
+      mysql2:
+        optional: true
+      pg:
+        optional: true
+      tarn:
+        optional: true
+      tedious:
+        optional: true
+
   kysely-migration-cli@0.4.0:
     resolution: {integrity: sha512-phJ0aYIGTjLwNPVb+N3k00brEXMLTc+eL8JuVHqoCNi8ORU4uv58wI5qv8TAvlboxxgjJIAEQjCN+0yHFUpCnw==}
     hasBin: true
@@ -2505,6 +2570,10 @@ packages:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
     engines: {node: '>=10'}
 
+  loglevel@1.9.1:
+    resolution: {integrity: sha512-hP3I3kCrDIMuRwAwHltphhDM1r8i55H33GgqjXbrisuJhF4kRhW1dNuxsRklp4bXl8DSdLaNLuiL4A/LWRfxvg==}
+    engines: {node: '>= 0.6.0'}
+
   long@5.2.3:
     resolution: {integrity: sha512-lcHwpNoggQTObv5apGNCTdJrO69eHOZMi4BNC+rTLER8iHAqGrUVeLh/irVIM7zTw2bOXA8T6uNPeujwOLg/2Q==}
 
@@ -2546,6 +2615,10 @@ packages:
 
   make-error@1.3.6:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
+
+  mariadb@3.3.0:
+    resolution: {integrity: sha512-sAL4bJgbfCAtXcE8bXI+NAMzVaPNkIU8hRZUXYfgNFoWB9U57G3XQiMeCx/A6IrS6y7kGwBLylrwgsZQ8kUYlw==}
+    engines: {node: '>= 14'}
 
   memfs-browser@3.5.10302:
     resolution: {integrity: sha512-JJTc/nh3ig05O0gBBGZjTCPOyydaTxNF0uHYBrcc1gHNnO+KIHIvo0Y1FKCJsaei6FCl8C6xfQomXqu+cuzkIw==}
@@ -2955,6 +3028,10 @@ packages:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
 
+  rechoir@0.6.2:
+    resolution: {integrity: sha512-HFM8rkZ+i3zrV+4LQjwQ0W+ez98pApMGM3HUrN04j3CqzPOzl9nmP15Y8YXNm8QHGv/eacOVEjqhmWpkRV0NAw==}
+    engines: {node: '>= 0.10'}
+
   reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
@@ -3077,6 +3154,15 @@ packages:
   shebang-regex@3.0.0:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
+
+  shelljs.exec@1.1.8:
+    resolution: {integrity: sha512-vFILCw+lzUtiwBAHV8/Ex8JsFjelFMdhONIsgKNLgTzeRckp2AOYRQtHJE/9LhNvdMmE27AGtzWx0+DHpwIwSw==}
+    engines: {node: '>= 4.0.0'}
+
+  shelljs@0.8.5:
+    resolution: {integrity: sha512-TiwcRcrkhHvbrZbnRcFYMLl30Dfov3HKqzp5tO5b4pt6G/SezKcYhmDg15zXVBswHmctSAQKznqNW2LO5tTDow==}
+    engines: {node: '>=4'}
+    hasBin: true
 
   side-channel@1.0.4:
     resolution: {integrity: sha512-q5XPytqFEIKHkGdiMIrY10mvLRvnQh42/+GoBlFW3b2LXLE2xxJpZFdm94we0BaoV3RwJyGqg5wS7epxTv0Zvw==}
@@ -3310,6 +3396,20 @@ packages:
 
   ts-node@10.9.1:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+
+  ts-node@10.9.2:
+    resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
     hasBin: true
     peerDependencies:
       '@swc/core': '>=1.2.50'
@@ -3692,6 +3792,10 @@ snapshots:
     dependencies:
       commander: 11.1.0
 
+  '@commander-js/extra-typings@12.0.1(commander@11.1.0)':
+    dependencies:
+      commander: 11.1.0
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -3807,6 +3911,8 @@ snapshots:
       - supports-color
 
   '@eslint/js@8.57.0': {}
+
+  '@faker-js/faker@8.4.1': {}
 
   '@hookform/resolvers@3.3.4(react-hook-form@7.51.4(react@18.2.0))':
     dependencies:
@@ -4246,6 +4352,8 @@ snapshots:
       '@types/json-schema': 7.0.12
 
   '@types/estree@1.0.5': {}
+
+  '@types/geojson@7946.0.14': {}
 
   '@types/glob@7.2.0':
     dependencies:
@@ -4973,6 +5081,8 @@ snapshots:
 
   didyoumean@1.2.2: {}
 
+  diff@3.5.0: {}
+
   diff@4.0.2: {}
 
   dir-glob@3.0.1:
@@ -4992,6 +5102,10 @@ snapshots:
   dot-case@2.1.1:
     dependencies:
       no-case: 2.3.2
+
+  dotenv-expand@11.0.6:
+    dependencies:
+      dotenv: 16.4.5
 
   dotenv@16.0.3: {}
 
@@ -5637,6 +5751,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  git-diff@2.0.6:
+    dependencies:
+      chalk: 2.4.2
+      diff: 3.5.0
+      loglevel: 1.9.1
+      shelljs: 0.8.5
+      shelljs.exec: 1.1.8
+
   git-hooks-list@3.1.0: {}
 
   glob-parent@5.1.2:
@@ -5840,6 +5962,8 @@ snapshots:
       get-intrinsic: 1.2.2
       hasown: 2.0.0
       side-channel: 1.0.4
+
+  interpret@1.4.0: {}
 
   inversify@6.0.2: {}
 
@@ -6047,6 +6171,18 @@ snapshots:
       object.assign: 4.1.4
       object.values: 1.1.7
 
+  kysely-codegen@0.15.0(kysely@0.27.3)(mysql2@3.9.7):
+    dependencies:
+      chalk: 4.1.2
+      dotenv: 16.4.5
+      dotenv-expand: 11.0.6
+      git-diff: 2.0.6
+      kysely: 0.27.3
+      micromatch: 4.0.5
+      minimist: 1.2.8
+    optionalDependencies:
+      mysql2: 3.9.7
+
   kysely-migration-cli@0.4.0:
     dependencies:
       '@commander-js/extra-typings': 11.1.0(commander@11.1.0)
@@ -6094,6 +6230,8 @@ snapshots:
       chalk: 4.1.2
       is-unicode-supported: 0.1.0
 
+  loglevel@1.9.1: {}
+
   long@5.2.3: {}
 
   loose-envify@1.4.0:
@@ -6129,6 +6267,14 @@ snapshots:
       react: 18.2.0
 
   make-error@1.3.6: {}
+
+  mariadb@3.3.0:
+    dependencies:
+      '@types/geojson': 7946.0.14
+      '@types/node': 20.12.11
+      denque: 2.1.0
+      iconv-lite: 0.6.3
+      lru-cache: 10.2.0
 
   memfs-browser@3.5.10302:
     dependencies:
@@ -6478,13 +6624,13 @@ snapshots:
       camelcase-css: 2.0.1
       postcss: 8.4.31
 
-  postcss-load-config@4.0.2(postcss@8.4.31)(ts-node@10.9.1(@types/node@20.11.24)(typescript@5.4.5)):
+  postcss-load-config@4.0.2(postcss@8.4.31)(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.4.5)):
     dependencies:
       lilconfig: 3.1.1
       yaml: 2.4.2
     optionalDependencies:
       postcss: 8.4.31
-      ts-node: 10.9.1(@types/node@20.11.24)(typescript@5.4.5)
+      ts-node: 10.9.2(@types/node@20.11.24)(typescript@5.4.5)
 
   postcss-nested@6.0.1(postcss@8.4.31):
     dependencies:
@@ -6589,6 +6735,10 @@ snapshots:
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.1
+
+  rechoir@0.6.2:
+    dependencies:
+      resolve: 1.22.8
 
   reflect-metadata@0.2.2: {}
 
@@ -6730,6 +6880,14 @@ snapshots:
       shebang-regex: 3.0.0
 
   shebang-regex@3.0.0: {}
+
+  shelljs.exec@1.1.8: {}
+
+  shelljs@0.8.5:
+    dependencies:
+      glob: 7.2.3
+      interpret: 1.4.0
+      rechoir: 0.6.2
 
   side-channel@1.0.4:
     dependencies:
@@ -6910,11 +7068,11 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.24.5
 
-  tailwindcss-animate@1.0.7(tailwindcss@3.4.3(ts-node@10.9.1(@types/node@20.11.24)(typescript@5.4.5))):
+  tailwindcss-animate@1.0.7(tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.4.5))):
     dependencies:
-      tailwindcss: 3.4.3(ts-node@10.9.1(@types/node@20.11.24)(typescript@5.4.5))
+      tailwindcss: 3.4.3(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.4.5))
 
-  tailwindcss@3.4.3(ts-node@10.9.1(@types/node@20.11.24)(typescript@5.4.5)):
+  tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.4.5)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -6933,7 +7091,7 @@ snapshots:
       postcss: 8.4.31
       postcss-import: 15.1.0(postcss@8.4.31)
       postcss-js: 4.0.1(postcss@8.4.31)
-      postcss-load-config: 4.0.2(postcss@8.4.31)(ts-node@10.9.1(@types/node@20.11.24)(typescript@5.4.5))
+      postcss-load-config: 4.0.2(postcss@8.4.31)(ts-node@10.9.2(@types/node@20.11.24)(typescript@5.4.5))
       postcss-nested: 6.0.1(postcss@8.4.31)
       postcss-selector-parser: 6.0.16
       resolve: 1.22.8
@@ -7006,6 +7164,25 @@ snapshots:
       typescript: 5.4.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+
+  ts-node@10.9.2(@types/node@20.11.24)(typescript@5.4.5):
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.9
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 20.11.24
+      acorn: 8.10.0
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.4.5
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    optional: true
 
   tsconfig-paths@3.14.2:
     dependencies:

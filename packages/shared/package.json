@@ -12,20 +12,26 @@
     "./util": "./src/util/index.ts"
   },
   "imports": {
-    "#dep*": [
+    "#dep/*": [
       "./src/*.ts",
       "./src/*.tsx"
     ]
   },
-  "type": "module",
+  "scripts": {
+    "codegen": "kysely-codegen --out-file ./src/db/schema.ts --dialect mysql"
+  },
   "dependencies": {
     "@abraham/reflection": "^0.12.0",
+    "@commander-js/extra-typings": "^12.0.1",
     "@lucia-auth/adapter-mysql": "^3.0.2",
     "@node-rs/argon2": "^1.8.3",
     "@t3-oss/env-core": "^0.10.1",
+    "dotenv": "^16.4.5",
+    "esbuild-register": "^3.5.0",
     "inversify": "^6.0.2",
     "kysely": "^0.27.3",
     "lucia": "^3.2.0",
+    "db": "^3.3.0",
     "mysql2": "^3.9.7",
     "react-hook-form": "^7.51.4",
     "reflect-metadata": "^0.2.2",
@@ -33,6 +39,9 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^20.12.11"
+    "@faker-js/faker": "^8.4.1",
+    "@types/node": "^20.12.11",
+    "kysely-codegen": "^0.15.0",
+    "kysely-migration-cli": "^0.4.0"
   }
 }

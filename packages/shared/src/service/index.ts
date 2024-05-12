@@ -1,4 +1,3 @@
-import { CreateUser } from '#dep/schema/index';
 import { TYPES } from '#dep/inversify/index';
 import type { UserRepository } from '#deprepository/user';
 import { inject, injectable } from 'inversify';
@@ -10,6 +9,9 @@ import { hash, verify } from '@node-rs/argon2';
 interface RegisterUser {
   email: string;
   password: string;
+  name: string;
+  phoneNumber: string;
+  address: string;
 }
 
 interface LoginUser {
@@ -82,6 +84,10 @@ export class UserServiceImpl implements UserService {
 
     const inserted = await this._userRepository.createUser({
       email: data.email,
+      name: data.name,
+      phone_number: data.phoneNumber,
+      address: data.address,
+      role: 'user',
       hashed_password,
     });
 

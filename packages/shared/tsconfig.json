@@ -3,10 +3,16 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": ".",
-    "moduleResolution": "NodeNext",
     "types": ["reflect-metadata", "node"],
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
   },
 
   "exclude": ["node_modules", "dist"]

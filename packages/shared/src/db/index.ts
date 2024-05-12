@@ -1,8 +1,10 @@
 import { injectable } from 'inversify';
-import { DatabaseSchema } from '../schema/index.js';
+import { DB } from '@repo/shared/db';
 import { Kysely, MysqlDialect } from 'kysely';
 import { env } from '#dep/env';
 import { createPool } from 'mysql2/promise';
+
+export * from '#dep/db/schema';
 
 export const pool = createPool(env.DATABASE_URL);
 
@@ -11,7 +13,7 @@ const dialect = new MysqlDialect({
 });
 
 @injectable()
-export class Database extends Kysely<DatabaseSchema> {}
+export class Database extends Kysely<DB> {}
 
 export const db = new Database({
   dialect,

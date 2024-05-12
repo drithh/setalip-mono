@@ -42,8 +42,9 @@ export async function up(db: Kysely<any>): Promise<void> {
           (col) => col.notNull()
         )
         .addColumn('location_id', 'bigint', (col) =>
-          col.references('locations.id')
+          col.notNull().references('locations.id')
         )
+        .addColumn('verified_at', 'timestamp')
         .$call(addDefaultColumns)
         .execute();
 
@@ -84,7 +85,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('opening_time', 'time', (col) => col.notNull())
         .addColumn('closing_time', 'time', (col) => col.notNull())
         .addColumn('location_id', 'bigint', (col) =>
-          col.references('locations.id')
+          col.notNull().references('locations.id')
         )
         .$call(addDefaultColumns)
         .execute();
@@ -97,7 +98,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('level', 'int4', (col) => col.notNull())
         .addColumn('image_url', 'text', (col) => col.notNull())
         .addColumn('location_id', 'bigint', (col) =>
-          col.references('locations.id')
+          col.notNull().references('locations.id')
         )
         .$call(addDefaultColumns)
         .execute();
@@ -107,7 +108,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('location_facility_id', 'bigint', (col) =>
-          col.references('location_facilities.id')
+          col.notNull().references('location_facilities.id')
         )
         .$call(addDefaultColumns)
         .execute();
@@ -118,13 +119,13 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('url', 'text', (col) => col.notNull())
         .addColumn('type', 'text', (col) => col.notNull())
         .addColumn('location_id', 'bigint', (col) =>
-          col.references('locations.id')
+          col.notNull().references('locations.id')
         )
         .$call(addDefaultColumns)
         .execute();
 
       await trx.schema
-        .createTable('credits')
+        .createTable('class_types')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('type', 'text', (col) => col.notNull())
         .execute();
@@ -137,9 +138,27 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('price', 'int4', (col) => col.notNull().unsigned())
         .addColumn('valid_for', 'int4', (col) => col.notNull())
         .addColumn('one_time_only', 'boolean', (col) => col.notNull())
-        .addColumn('expired_at', 'timestamp', (col) => col.notNull())
         .addColumn('loyalty_points', 'int4', (col) => col.notNull())
-        .addColumn('type_id', 'bigint', (col) => col.references('credits.id'))
+        .addColumn('class_type_id', 'bigint', (col) =>
+          col.notNull().references('class_types.id')
+        )
+        .$call(addDefaultColumns)
+        .execute();
+
+      await trx.schema
+        .createTable('vouchers')
+        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('code', 'text', (col) => col.notNull().unique())
+        .addColumn('type', sql`ENUM('percentage', 'fixed')`, (col) =>
+          col.notNull()
+        )
+        .addColumn('discount', 'int4', (col) => col.notNull())
+        .addColumn('expired_at', 'timestamp', (col) => col.notNull())
+        .addColumn('user_id', 'bigint', (col) => col.references('users.id'))
+        .addCheckConstraint(
+          'discount_percentage_max',
+          sql`type = 'percentage' AND discount <= 100`
+        )
         .$call(addDefaultColumns)
         .execute();
 
@@ -147,14 +166,45 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('user_packages')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('credit', 'int4', (col) => col.notNull())
-        .addColumn('price', 'int4', (col) => col.notNull())
         .addColumn('expired_at', 'timestamp', (col) => col.notNull())
-        .addColumn('typed_id', 'bigint', (col) => col.references('credits.id'))
+        .addColumn('class_type_id', 'bigint', (col) =>
+          col.references('class_types.id')
+        )
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
         )
         .addColumn('package_id', 'bigint', (col) =>
           col.notNull().references('packages.id')
+        )
+        .addColumn('voucher_id', 'bigint', (col) =>
+          col.references('vouchers.id')
+        )
+        .$call(addDefaultColumns)
+        .execute();
+
+      await trx.schema
+        .createTable('deposit_accounts')
+        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('name', 'text', (col) => col.notNull())
+        .addColumn('account_number', 'text', (col) => col.notNull())
+        .addColumn('bank_name', 'text', (col) => col.notNull())
+        .$call(addDefaultColumns)
+        .execute();
+
+      await trx.schema
+        .createTable('package_transactions')
+        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('price', 'int4', (col) => col.notNull().unsigned())
+        .addColumn('unique_code', 'int4', (col) => col.notNull().unsigned())
+        .addColumn('discount', 'int4', (col) => col.notNull().unsigned())
+        .addColumn('status', sql`ENUM('pending', 'success', 'failed')`, (col) =>
+          col.notNull()
+        )
+        .addColumn('user_package_id', 'bigint', (col) =>
+          col.notNull().references('user_packages.id')
+        )
+        .addColumn('deposit_account_id', 'bigint', (col) =>
+          col.notNull().references('deposit_accounts.id')
         )
         .$call(addDefaultColumns)
         .execute();
@@ -162,10 +212,12 @@ export async function up(db: Kysely<any>): Promise<void> {
       await trx.schema
         .createTable('classes')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
-        .addColumn('number', 'text', (col) => col.notNull())
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('duration', 'int4', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.notNull())
+        .addColumn('class_type_id', 'bigint', (col) =>
+          col.notNull().references('class_types.id')
+        )
         .$call(addDefaultColumns)
         .execute();
 
@@ -232,11 +284,19 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('type', sql`ENUM('debit', 'credit')`, (col) => col.notNull())
         .addColumn('amount', 'int4', (col) => col.notNull())
         .addColumn('expired_at', 'timestamp', (col) => col.notNull())
-        .addColumn('notes', 'text', (col) => col.notNull())
+        .addColumn('note', 'text', (col) => col.notNull())
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
         )
-        .addColumn('credit_id', 'bigint', (col) => col.references('credits.id'))
+        .addColumn('class_type_id', 'bigint', (col) =>
+          col.notNull().references('class_types.id')
+        )
+        .addColumn('agenda_booking_id', 'bigint', (col) =>
+          col.references('agenda_bookings.id')
+        )
+        .addColumn('user_package_id', 'bigint', (col) =>
+          col.references('user_packages.id')
+        )
         .$call(addDefaultColumns)
         .execute();
 
@@ -248,7 +308,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('credit', 'int4', (col) => col.notNull().unsigned())
         .execute();
 
-      // buyable
       await trx.schema
         .createTable('loyalty_shops')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
@@ -261,36 +320,23 @@ export async function up(db: Kysely<any>): Promise<void> {
           'loyalty_unpurchasable_item',
           sql`purchasable = false AND price IS NULL OR purchasable = true AND price IS NOT NULL`
         )
-        .$call(addDefaultColumns);
+        .$call(addDefaultColumns)
+        .execute();
 
       await trx.schema
         .createTable('loyalty_transactions')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('type', sql`ENUM('debit', 'credit')`, (col) => col.notNull())
         .addColumn('amount', 'int4', (col) => col.notNull())
-        .addColumn('notes', 'text', (col) => col.notNull())
+        .addColumn('note', 'text', (col) => col.notNull())
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
         )
         .addColumn('loyalty_reward_id', 'bigint', (col) =>
           col.references('loyalty_rewards.id')
         )
-        .$call(addDefaultColumns);
-
-      await trx.schema
-        .createTable('vouchers')
-        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
-        .addColumn('code', 'text', (col) => col.notNull().unique())
-        .addColumn('discount', 'int4', (col) => col.notNull())
-        .addColumn('type', sql`ENUM('percentage', 'fixed')`, (col) =>
-          col.notNull()
-        )
-        .addColumn('expired_at', 'timestamp', (col) => col.notNull())
-        .addColumn('one_time_only', 'boolean', (col) => col.notNull())
-        .addColumn('user_id', 'bigint', (col) => col.references('users.id'))
-        .addCheckConstraint(
-          'discount_percentage_max',
-          sql`type = 'percentage' AND discount <= 100`
+        .addColumn('loyalty_shop_id', 'bigint', (col) =>
+          col.references('loyalty_shops.id')
         )
         .$call(addDefaultColumns)
         .execute();
@@ -320,28 +366,41 @@ export async function up(db: Kysely<any>): Promise<void> {
 export async function down(db: Kysely<any>): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
-      await trx.schema.dropTable('vouchers').execute();
-      await trx.schema.dropTable('loyalty_transactions').execute();
-      await trx.schema.dropTable('loyalty_shops').execute();
-      await trx.schema.dropTable('loyalty_rewards').execute();
-      await trx.schema.dropTable('credit_transactions').execute();
-      await trx.schema.dropTable('agenda_bookings').execute();
-      await trx.schema.dropTable('agendas').execute();
-      await trx.schema.dropTable('class_assets').execute();
-      await trx.schema.dropTable('class_locations').execute();
-      await trx.schema.dropTable('classes').execute();
-      await trx.schema.dropTable('user_packages').execute();
-      await trx.schema.dropTable('packages').execute();
-      await trx.schema.dropTable('credits').execute();
-      await trx.schema.dropTable('location_assets').execute();
-      await trx.schema.dropTable('facility_equipments').execute();
-      await trx.schema.dropTable('location_facilities').execute();
-      await trx.schema.dropTable('location_opening_hours').execute();
-      await trx.schema.dropTable('coaches').execute();
-      await trx.schema.dropTable('user_sessions').execute();
-      await trx.schema.dropTable('otp').execute();
-      await trx.schema.dropTable('users').execute();
-      await trx.schema.dropTable('locations').execute();
+      await trx.schema.dropTable('flash_sales').ifExists().execute();
+      await trx.schema.dropTable('loyalty_transactions').ifExists().execute();
+      await trx.schema.dropTable('package_transactions').ifExists().execute();
+      await trx.schema.dropTable('credit_transactions').ifExists().execute();
+
+      await trx.schema.dropTable('loyalty_shops').ifExists().execute();
+      await trx.schema.dropTable('loyalty_rewards').ifExists().execute();
+
+      await trx.schema.dropTable('agenda_bookings').ifExists().execute();
+      await trx.schema.dropTable('agendas').ifExists().execute();
+
+      await trx.schema.dropTable('user_packages').ifExists().execute();
+
+      await trx.schema.dropTable('class_assets').ifExists().execute();
+      await trx.schema.dropTable('class_locations').ifExists().execute();
+
+      await trx.schema.dropTable('classes').ifExists().execute();
+
+      await trx.schema.dropTable('location_assets').ifExists().execute();
+      await trx.schema.dropTable('facility_equipments').ifExists().execute();
+      await trx.schema.dropTable('location_facilities').ifExists().execute();
+      await trx.schema.dropTable('location_opening_hours').ifExists().execute();
+
+      await trx.schema.dropTable('vouchers').ifExists().execute();
+
+      await trx.schema.dropTable('coaches').ifExists().execute();
+      await trx.schema.dropTable('user_sessions').ifExists().execute();
+      await trx.schema.dropTable('otp').ifExists().execute();
+      await trx.schema.dropTable('users').ifExists().execute();
+
+      await trx.schema.dropTable('packages').ifExists().execute();
+      await trx.schema.dropTable('locations').ifExists().execute();
+
+      await trx.schema.dropTable('class_types').ifExists().execute();
+      await trx.schema.dropTable('deposit_accounts').ifExists().execute();
     });
 
     console.log('Tables dropped successfully');

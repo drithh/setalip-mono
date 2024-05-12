@@ -1,18 +1,17 @@
+import { Users } from '#dep/db/index';
 import {
-  User,
-  CreateUser,
-  UpdateUser,
-  DeleteUser,
-  UserID,
-  UserEmail,
-} from '#dep/schema/index';
-import { DeleteResult, InsertResult } from 'kysely';
+  DeleteResult,
+  InsertResult,
+  Insertable,
+  Selectable,
+  Updateable,
+} from 'kysely';
 
 export interface UserRepository {
-  getUsers(): Promise<User[]>;
-  findUserById(id: UserID): Promise<User>;
-  findUserByEmail(email: UserEmail): Promise<User>;
-  createUser(data: CreateUser): Promise<InsertResult>;
-  updateUser(data: UpdateUser): Promise<User>;
-  deleteUser(data: DeleteUser): Promise<DeleteResult>;
+  getUsers(): Promise<Selectable<Users>[]>;
+  findUserById(id: Users['id']): Promise<Selectable<Users>>;
+  findUserByEmail(email: Users['email']): Promise<Selectable<Users>>;
+  createUser(data: Insertable<Users>): Promise<InsertResult>;
+  updateUser(data: Updateable<Users>): Promise<Selectable<Users>>;
+  deleteUser(data: Users['id']): Promise<DeleteResult>;
 }
