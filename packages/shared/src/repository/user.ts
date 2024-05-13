@@ -6,12 +6,17 @@ import {
   Selectable,
   Updateable,
 } from 'kysely';
+import { MakeKeyRequired } from '.';
+
+export type InsertUser = Insertable<Users>;
+export type UpdateUser = MakeKeyRequired<Selectable<Users>, 'id'>;
+export type SelectUser = Omit<Selectable<Users>, 'hashed_password'>;
 
 export interface UserRepository {
-  getUsers(): Promise<Selectable<Users>[]>;
-  findUserById(id: Users['id']): Promise<Selectable<Users>>;
-  findUserByEmail(email: Users['email']): Promise<Selectable<Users>>;
-  createUser(data: Insertable<Users>): Promise<InsertResult>;
-  updateUser(data: Updateable<Users>): Promise<Selectable<Users>>;
-  deleteUser(data: Users['id']): Promise<DeleteResult>;
+  getUsers(): Promise<SelectUser[]>;
+  findUserById(id: SelectUser['id']): Promise<SelectUser>;
+  findUserByEmail(email: SelectUser['email']): Promise<SelectUser>;
+  createUser(data: InsertUser): Promise<InsertResult>;
+  updateUser(data: UpdateUser): Promise<SelectUser>;
+  deleteUser(data: SelectUser['id']): Promise<DeleteResult>;
 }

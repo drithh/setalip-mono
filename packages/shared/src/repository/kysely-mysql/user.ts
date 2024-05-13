@@ -1,14 +1,14 @@
-import { Database } from '#dep/db/index';
-import { UserRepository } from '#dep/repository/user';
+import { Database, Users } from '#dep/db/index';
 import {
-  CreateUser,
-  DeleteUser,
+  InsertUser,
+  SelectUser,
   UpdateUser,
-  UserEmail,
-  UserID,
-} from '#dep/schema/index';
+  UserRepository,
+} from '#dep/repository/user';
+
 import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
+import { Insertable, Selectable, Updateable } from 'kysely';
 
 @injectable()
 export class KyselyMySqlUserRepository implements UserRepository {
@@ -18,30 +18,27 @@ export class KyselyMySqlUserRepository implements UserRepository {
     this._db = db;
   }
 
-  findUserById(id: UserID) {
+  findUserById(id: SelectUser['id']) {
     return this._db
       .selectFrom('users')
-      .select(['id', 'email', 'hashed_password'])
+      .selectAll()
       .where('users.id', '=', id)
       .executeTakeFirstOrThrow();
   }
 
-  findUserByEmail(email: UserEmail) {
+  findUserByEmail(email: SelectUser['email']) {
     return this._db
       .selectFrom('users')
-      .select(['id', 'email', 'hashed_password'])
+      .selectAll()
       .where('users.email', '=', email)
       .executeTakeFirstOrThrow();
   }
 
   getUsers() {
-    return this._db
-      .selectFrom('users')
-      .select(['id', 'email', 'hashed_password'])
-      .execute();
+    return this._db.selectFrom('users').selectAll().execute();
   }
 
-  createUser(data: CreateUser) {
+  createUser(data: InsertUser) {
     const insertedData = this._db
       .insertInto('users')
       .values(data)
@@ -49,18 +46,17 @@ export class KyselyMySqlUserRepository implements UserRepository {
     return insertedData;
   }
 
-  updateUser(data: UpdateUser) {
-    const updatedData = this._db
+  async updateUser(data: UpdateUser) {
+    await this._db
       .updateTable('users')
       .set(data)
       .where('users.id', '=', data.id)
-      .returning(['email', 'id', 'hashed_password'])
       .executeTakeFirstOrThrow();
 
-    return updatedData;
+    return data;
   }
 
-  deleteUser(data: DeleteUser) {
+  deleteUser(data: SelectUser['id']) {
     return this._db
       .deleteFrom('users')
       .where('users.id', '=', data)
