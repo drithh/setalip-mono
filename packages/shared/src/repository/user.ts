@@ -10,7 +10,7 @@ import { MakeKeyRequired } from '.';
 
 export type InsertUser = Insertable<Users>;
 export type UpdateUser = MakeKeyRequired<Selectable<Users>, 'id'>;
-export type SelectUser = Omit<Selectable<Users>, 'hashed_password'>;
+export type SelectUser = Selectable<Users>;
 
 export interface UserRepository {
   getUsers(): Promise<SelectUser[]>;

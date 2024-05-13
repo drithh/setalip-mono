@@ -5,6 +5,8 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
     NODE_ENV: z.string().default('development'),
+    WHAPIFY_ACCOUNT: z.string(),
+    WHAPIFY_SECRET: z.string(),
   },
 
   /**
@@ -22,6 +24,8 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    WHAPIFY_ACCOUNT: process.env.WHAPIFY_ACCOUNT,
+    WHAPIFY_SECRET: process.env.WHAPIFY_SECRET,
   },
 
   /**
