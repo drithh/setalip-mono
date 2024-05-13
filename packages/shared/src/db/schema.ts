@@ -16,9 +16,9 @@ export interface AgendaBookings {
 
 export interface Agendas {
   class_id: number;
+  coach_id: number;
   created_at: Generated<Date>;
   id: Generated<number>;
-  instructor_id: number;
   location_id: number;
   slot: number;
   time: Date;
@@ -30,6 +30,7 @@ export interface ClassAssets {
   class_id: number;
   created_at: Generated<Date>;
   id: Generated<number>;
+  name: string;
   type: string;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
@@ -74,7 +75,7 @@ export interface CreditTransactions {
   amount: number;
   class_type_id: number;
   created_at: Generated<Date>;
-  expired_at: Date;
+  expired_at: Generated<Date | null>;
   id: Generated<number>;
   note: string;
   type: "credit" | "debit";
@@ -107,6 +108,7 @@ export interface LocationAssets {
   created_at: Generated<Date>;
   id: Generated<number>;
   location_id: number;
+  name: string;
   type: string;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
@@ -205,16 +207,16 @@ export interface Packages {
 }
 
 export interface PackageTransactions {
+  amount: number;
   created_at: Generated<Date>;
-  deposit_account_id: number;
-  discount: number;
+  deposit_account_id: Generated<number | null>;
+  discount: Generated<number | null>;
   id: Generated<number>;
-  price: number;
-  status: "failed" | "pending" | "success";
-  unique_code: number;
+  status: "completed" | "failed" | "pending";
+  unique_code: Generated<number | null>;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
-  user_package_id: number;
+  user_package_id: Generated<number | null>;
 }
 
 export interface UserPackages {

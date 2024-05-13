@@ -87,6 +87,18 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('location_id', 'bigint', (col) =>
           col.notNull().references('locations.id')
         )
+        .addCheckConstraint(
+          'opening_time_before_closing_time',
+          sql`opening_time < closing_time`
+        )
+        .addCheckConstraint(
+          'day_of_week_range',
+          sql`day_of_week >= 0 AND day_of_week <= 6`
+        )
+        .addUniqueConstraint('location_day_of_week', [
+          'location_id',
+          'day_of_week',
+        ])
         .$call(addDefaultColumns)
         .execute();
 
@@ -116,6 +128,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       await trx.schema
         .createTable('location_assets')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('url', 'text', (col) => col.notNull())
         .addColumn('type', 'text', (col) => col.notNull())
         .addColumn('location_id', 'bigint', (col) =>
@@ -157,7 +170,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('user_id', 'bigint', (col) => col.references('users.id'))
         .addCheckConstraint(
           'discount_percentage_max',
-          sql`type = 'percentage' AND discount <= 100`
+          sql`type = 'percentage' AND discount <= 100 OR type = 'fixed'`
         )
         .$call(addDefaultColumns)
         .execute();
@@ -194,17 +207,22 @@ export async function up(db: Kysely<any>): Promise<void> {
       await trx.schema
         .createTable('package_transactions')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
-        .addColumn('price', 'int4', (col) => col.notNull().unsigned())
-        .addColumn('unique_code', 'int4', (col) => col.notNull().unsigned())
-        .addColumn('discount', 'int4', (col) => col.notNull().unsigned())
-        .addColumn('status', sql`ENUM('pending', 'success', 'failed')`, (col) =>
-          col.notNull()
+        .addColumn('amount', 'int4', (col) => col.notNull().unsigned())
+        .addColumn('unique_code', 'int4', (col) => col.unsigned())
+        .addColumn('discount', 'int4', (col) => col.unsigned())
+        .addColumn(
+          'status',
+          sql`ENUM('pending', 'completed', 'failed')`,
+          (col) => col.notNull()
+        )
+        .addColumn('user_id', 'bigint', (col) =>
+          col.notNull().references('users.id')
         )
         .addColumn('user_package_id', 'bigint', (col) =>
-          col.notNull().references('user_packages.id')
+          col.references('user_packages.id')
         )
         .addColumn('deposit_account_id', 'bigint', (col) =>
-          col.notNull().references('deposit_accounts.id')
+          col.references('deposit_accounts.id')
         )
         .$call(addDefaultColumns)
         .execute();
@@ -230,12 +248,17 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('location_id', 'bigint', (col) =>
           col.notNull().references('locations.id')
         )
+        .addUniqueConstraint('class_location_unique', [
+          'class_id',
+          'location_id',
+        ])
         .$call(addDefaultColumns)
         .execute();
 
       await trx.schema
         .createTable('class_assets')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('url', 'text', (col) => col.notNull())
         .addColumn('type', 'text', (col) => col.notNull())
         .addColumn('class_id', 'bigint', (col) =>
@@ -252,7 +275,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('class_id', 'bigint', (col) =>
           col.notNull().references('classes.id')
         )
-        .addColumn('instructor_id', 'bigint', (col) =>
+        .addColumn('coach_id', 'bigint', (col) =>
           col.notNull().references('coaches.id')
         )
         .addColumn('location_id', 'bigint', (col) =>
@@ -283,7 +306,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('type', sql`ENUM('debit', 'credit')`, (col) => col.notNull())
         .addColumn('amount', 'int4', (col) => col.notNull())
-        .addColumn('expired_at', 'timestamp', (col) => col.notNull())
+        .addColumn('expired_at', 'timestamp')
         .addColumn('note', 'text', (col) => col.notNull())
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
@@ -296,6 +319,10 @@ export async function up(db: Kysely<any>): Promise<void> {
         )
         .addColumn('user_package_id', 'bigint', (col) =>
           col.references('user_packages.id')
+        )
+        .addCheckConstraint(
+          'credit_transaction_only_one_reference',
+          sql`agenda_booking_id IS NOT NULL AND user_package_id IS NULL OR agenda_booking_id IS NULL AND user_package_id IS NOT NULL`
         )
         .$call(addDefaultColumns)
         .execute();
