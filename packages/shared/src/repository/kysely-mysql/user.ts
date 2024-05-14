@@ -25,11 +25,11 @@ export class KyselyMySqlUserRepository implements UserRepository {
       .executeTakeFirst();
   }
 
-  findUserByEmail(email: SelectUser['email']) {
+  findUserByPhoneNumber(phoneNumber: SelectUser['phone_number']) {
     return this._db
       .selectFrom('users')
       .selectAll()
-      .where('users.email', '=', email)
+      .where('users.phone_number', '=', phoneNumber)
       .executeTakeFirst();
   }
 

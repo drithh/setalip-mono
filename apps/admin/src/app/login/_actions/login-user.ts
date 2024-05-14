@@ -12,7 +12,7 @@ import { UserRepository } from '@repo/shared/repository';
 
 export type FormSchema = z.infer<typeof schema>;
 
-export async function signup(
+export async function signin(
   state: FormState<FormSchema>,
   data: FormData
 ): Promise<FormState<FormSchema>> {
@@ -23,17 +23,14 @@ export async function signup(
     console.log('parsed', parsed.error.flatten);
     return {
       form: {
-        email: data.get('email') as string,
-        password: data.get('password') as string,
-        name: data.get('name') as string,
         phoneNumber: data.get('phoneNumber') as string,
-        address: data.get('address') as string,
+        password: data.get('password') as string,
       },
       status: 'field-errors',
       errors: {
-        email: {
+        phoneNumber: {
           type: 'required',
-          message: parsed.error.formErrors.fieldErrors.email?.at(0),
+          message: parsed.error.formErrors.fieldErrors.phoneNumber?.at(0),
         },
         password: {
           type: 'required',
@@ -44,12 +41,12 @@ export async function signup(
   }
 
   const userService = container.get<UserService>(TYPES.UserService);
-  const registerUser = await userService.registerUser({
+  const loginUser = await userService.loginUser({
     ...parsed.data,
   });
 
-  if (registerUser.error instanceof UserValidationError) {
-    const errors = registerUser.error.getErrors();
+  if (loginUser.error instanceof UserValidationError) {
+    const errors = loginUser.error.getErrors();
 
     const mappedErrors = convertErrorsToZod<FormSchema>(errors);
 
@@ -63,42 +60,20 @@ export async function signup(
       status: 'field-errors',
       errors: mappedErrors,
     };
-  } else if (registerUser.error) {
+  } else if (loginUser.error) {
     return {
       form: {
         ...parsed.data,
       },
       status: 'error',
-      errors: registerUser.error.message,
+      errors: loginUser.error.message,
     };
   }
-
-  // send notification
-  const notificationService = container.get<NotificationService>(
-    TYPES.NotificationService
-  );
-
-  const notification = await notificationService.sendNotification(
-    'User registered',
-    parsed.data.phoneNumber
-  );
-
-  if (notification.error) {
-    return {
-      form: {
-        ...parsed.data,
-      },
-      status: 'error',
-      errors: notification.error.message,
-    };
-  }
-
-  console.log('notification', notification.result);
 
   cookies().set(
-    registerUser.result.name,
-    registerUser.result.value,
-    registerUser.result.attributes
+    loginUser.result.name,
+    loginUser.result.value,
+    loginUser.result.attributes
   );
 
   return redirect('/');

@@ -9,7 +9,9 @@ export type SelectUser = Selectable<Users>;
 export interface UserRepository {
   getUsers(): Promise<SelectUser[]>;
   findUserById(id: SelectUser['id']): Promise<SelectUser | undefined>;
-  findUserByEmail(email: SelectUser['email']): Promise<SelectUser | undefined>;
+  findUserByPhoneNumber(
+    email: SelectUser['phone_number']
+  ): Promise<SelectUser | undefined>;
   createUser(data: InsertUser): Promise<InsertResult>;
   updateUser(data: UpdateUser): Promise<SelectUser>;
   deleteUser(data: SelectUser['id']): Promise<DeleteResult>;

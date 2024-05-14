@@ -26,7 +26,9 @@ export class UserServiceImpl implements UserService {
       parallelism: 1,
     });
 
-    const existingUser = await this._userRepository.findUserByEmail(data.email);
+    const existingUser = await this._userRepository.findUserByPhoneNumber(
+      data.phoneNumber
+    );
 
     if (existingUser) {
       return {
@@ -66,7 +68,9 @@ export class UserServiceImpl implements UserService {
 
   async loginUser(data: LoginUser) {
     try {
-      const user = await this._userRepository.findUserByEmail(data.email);
+      const user = await this._userRepository.findUserByPhoneNumber(
+        data.phoneNumber
+      );
 
       if (!user) {
         return {

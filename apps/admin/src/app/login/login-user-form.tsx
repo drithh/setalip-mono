@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { signup } from './_actions/register-user';
+import { signin } from './_actions/login-user';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { z } from 'zod';
@@ -20,14 +20,11 @@ import Link from 'next/link';
 import { schema } from './form-schema';
 
 export default function RegisterUserForm() {
-  const [formState, formAction] = useFormState(signup, {
+  const [formState, formAction] = useFormState(signin, {
     status: 'default',
     form: {
-      email: '',
-      password: '',
-      name: '',
       phoneNumber: '',
-      address: '',
+      password: '',
     },
   });
 
@@ -39,8 +36,8 @@ export default function RegisterUserForm() {
   useEffect(() => {
     if (formState.status === 'field-errors') {
       console.log('formState', formState);
-      if (formState.errors.email) {
-        form.setError('email', formState.errors.email);
+      if (formState.errors.phoneNumber) {
+        form.setError('phoneNumber', formState.errors.phoneNumber);
       }
       if (formState.errors.password) {
         form.setError('password', formState.errors.password);
@@ -67,12 +64,12 @@ export default function RegisterUserForm() {
       >
         <FormField
           control={form.control}
-          name="email"
+          name="phoneNumber"
           render={({ field }) => (
             <FormItem className="w-full grid gap-2">
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Nomor Whatsapp</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="" {...field} />
+                <Input placeholder="" {...field} type="tel" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -89,50 +86,11 @@ export default function RegisterUserForm() {
                   href="/forgot-password"
                   className="ml-auto inline-block text-sm underline"
                 >
-                  Forgot your password?
+                  Lupa password?
                 </Link>
               </div>
               <FormControl>
                 <Input type="password" placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phoneNumber"
-          render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
-              <FormLabel>Phone Number</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
-              <FormLabel>Address</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

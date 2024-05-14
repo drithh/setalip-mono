@@ -507,11 +507,12 @@ export async function down(db: Kysely<any>): Promise<void> {
       await trx.deleteFrom('location_facilities').execute();
       await trx.deleteFrom('location_opening_hours').execute();
       await trx.deleteFrom('vouchers').execute();
+
+      await trx.deleteFrom('coaches').execute();
       await trx.deleteFrom('users').execute();
       await trx.deleteFrom('packages').execute();
       await trx.deleteFrom('locations').execute();
       await trx.deleteFrom('deposit_accounts').execute();
-      await trx.deleteFrom('coaches').execute();
       await trx.deleteFrom('class_types').execute();
     });
 

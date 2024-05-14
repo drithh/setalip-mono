@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import LoginUserForm from './login-user-form';
+import RegisterUserForm from './register-user-form';
 
 export default function Login() {
   return (
@@ -7,16 +7,16 @@ export default function Login() {
       <div className="flex items-center justify-center h-screen">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Login</h1>
+            <h1 className="text-3xl font-bold">Register</h1>
             <p className="text-balance text-muted-foreground">
-              Masukkan informasi anda untuk login
+              Masukkan informasi anda untuk mendaftar
             </p>
           </div>
-          <LoginUserForm />
+          <RegisterUserForm />
           <div className="mt-4 text-center text-sm">
-            Belum punya akun?{' '}
-            <Link href="/register" className="underline">
-              Register
+            Sudah punya akun?{' '}
+            <Link href="/login" className="underline">
+              Login
             </Link>
           </div>
         </div>

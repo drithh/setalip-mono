@@ -5,17 +5,17 @@ import { Cookie } from 'lucia';
 import type { ErrorFields, PromiseResult } from '../types';
 import { injectable } from 'inversify';
 export interface RegisterUser {
-  email: string;
+  phoneNumber: string;
   password: string;
   name: string;
-  phoneNumber: string;
+  email: string;
   address: string;
 }
 
 type ValidatedRegisterFields = keyof Partial<RegisterUser>;
 
 export interface LoginUser {
-  email: string;
+  phoneNumber: string;
   password: string;
 }
 

@@ -34,7 +34,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('email', 'text', (col) => col.notNull().unique())
         .addColumn('hashed_password', 'text', (col) => col.notNull())
-        .addColumn('phone_number', 'text', (col) => col.notNull())
+        .addColumn('phone_number', 'text', (col) => col.notNull().unique())
         .addColumn('address', 'text', (col) => col.notNull())
         .addColumn(
           'role',
@@ -46,6 +46,13 @@ export async function up(db: Kysely<any>): Promise<void> {
         )
         .addColumn('verified_at', 'timestamp')
         .$call(addDefaultColumns)
+        .execute();
+
+      // create index
+      await trx.schema
+        .createIndex('users_phone_number_index')
+        .on('users')
+        .column('phone_number')
         .execute();
 
       await trx.schema
