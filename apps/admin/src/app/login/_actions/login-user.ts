@@ -9,6 +9,7 @@ import { schema } from '../form-schema';
 import { convertErrorsToZod } from '@repo/shared/util';
 import { NotificationService } from '@repo/shared/notification';
 import { UserRepository } from '@repo/shared/repository';
+import { isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 
 export type FormSchema = z.infer<typeof schema>;
 
@@ -20,7 +21,6 @@ export async function signin(
   const parsed = schema.safeParse(formData);
 
   if (!parsed.success) {
-    console.log('parsed', parsed.error.flatten);
     return {
       form: {
         phoneNumber: data.get('phoneNumber') as string,
@@ -40,9 +40,13 @@ export async function signin(
     };
   }
 
+  const parsedPhoneNumber = parsePhoneNumber(parsed.data.phoneNumber);
+  const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;
+
   const userService = container.get<UserService>(TYPES.UserService);
   const loginUser = await userService.loginUser({
     ...parsed.data,
+    phoneNumber: formattedPhoneNumber,
   });
 
   if (loginUser.error instanceof UserValidationError) {
@@ -50,8 +54,6 @@ export async function signin(
 
     const mappedErrors = convertErrorsToZod<FormSchema>(errors);
 
-    console.log('error', mappedErrors);
-    console.log('mappedErrors', mappedErrors);
 
     return {
       form: {

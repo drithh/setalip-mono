@@ -18,6 +18,8 @@ import {
 } from '@repo/ui/components/ui/form';
 import Link from 'next/link';
 import { schema } from './form-schema';
+import { PhoneInput } from '@repo/ui/components/phone-input';
+import { Value as PhoneNumberValue } from 'react-phone-number-input';
 
 export default function RegisterUserForm() {
   const [formState, formAction] = useFormState(signin, {
@@ -35,7 +37,6 @@ export default function RegisterUserForm() {
 
   useEffect(() => {
     if (formState.status === 'field-errors') {
-      console.log('formState', formState);
       if (formState.errors.phoneNumber) {
         form.setError('phoneNumber', formState.errors.phoneNumber);
       }
@@ -44,8 +45,10 @@ export default function RegisterUserForm() {
       }
     } else if (formState.status === 'error') {
       form.setError('root', { message: formState.errors });
+    } else {
+      form.clearErrors();
     }
-  }, [formState.status]);
+  }, [formState.form]);
 
   const formRef = useRef<HTMLFormElement>(null);
   return (
@@ -57,7 +60,6 @@ export default function RegisterUserForm() {
         onSubmit={(evt) => {
           evt.preventDefault();
           form.handleSubmit(() => {
-            console.log('form', form);
             formAction(new FormData(formRef.current!));
           })(evt);
         }}
@@ -69,7 +71,10 @@ export default function RegisterUserForm() {
             <FormItem className="w-full grid gap-2">
               <FormLabel>Nomor Whatsapp</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} type="tel" />
+                <PhoneInput
+                  {...field}
+                  value={field.value as PhoneNumberValue}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

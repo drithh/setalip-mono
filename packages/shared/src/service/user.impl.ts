@@ -26,11 +26,22 @@ export class UserServiceImpl implements UserService {
       parallelism: 1,
     });
 
-    const existingUser = await this._userRepository.findUserByPhoneNumber(
-      data.phoneNumber
+    const existingPhoneNumber =
+      await this._userRepository.findUserByPhoneNumber(data.phoneNumber);
+
+    if (existingPhoneNumber) {
+      return {
+        error: new UserValidationError({
+          phoneNumber: 'Phone number already exists',
+        }),
+      };
+    }
+
+    const existingEmail = await this._userRepository.findUserByEmail(
+      data.email
     );
 
-    if (existingUser) {
+    if (existingEmail) {
       return {
         error: new UserValidationError({
           email: 'Email already exists',
@@ -75,7 +86,7 @@ export class UserServiceImpl implements UserService {
       if (!user) {
         return {
           error: new UserValidationError({
-            email: 'User not found',
+            phoneNumber: 'User not found',
           }),
         };
       }

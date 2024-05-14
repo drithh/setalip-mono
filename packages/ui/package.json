@@ -11,6 +11,7 @@
     "dev": "tailwindcss -i ./src/global.css -o ./dist/global.css --watch",
     "type-check": "tsc --noEmit"
   },
+  "type": "module",
   "exports": {
     "./global.css": "./dist/global.css",
     "./postcss.config": "./postcss.config.mjs",
@@ -20,13 +21,18 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-popover": "^1.0.7",
+    "@radix-ui/react-scroll-area": "^1.0.5",
     "@radix-ui/react-slot": "^1.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cmdk": "^1.0.0",
     "lucide-react": "^0.378.0",
     "next-themes": "^0.3.0",
     "react-hook-form": "^7.51.4",
+    "react-phone-number-input": "^3.4.1",
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",

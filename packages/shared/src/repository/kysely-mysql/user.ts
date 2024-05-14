@@ -33,6 +33,14 @@ export class KyselyMySqlUserRepository implements UserRepository {
       .executeTakeFirst();
   }
 
+  findUserByEmail(email: SelectUser['email']) {
+    return this._db
+      .selectFrom('users')
+      .selectAll()
+      .where('users.email', '=', email)
+      .executeTakeFirst();
+  }
+
   getUsers() {
     return this._db.selectFrom('users').selectAll().execute();
   }

@@ -2,12 +2,15 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
+import { PhoneInput } from '@repo/ui/components/phone-input';
 import { signup } from './_actions/register-user';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Value as PhoneNumberValue } from 'react-phone-number-input';
+
 import {
   Form,
   FormControl,
@@ -39,7 +42,6 @@ export default function RegisterUserForm() {
 
   useEffect(() => {
     if (formState.status === 'field-errors') {
-      console.log('formState', formState);
       if (formState.errors.phoneNumber) {
         form.setError('phoneNumber', formState.errors.phoneNumber);
       }
@@ -76,17 +78,58 @@ export default function RegisterUserForm() {
         onSubmit={(evt) => {
           evt.preventDefault();
           form.handleSubmit(() => {
-            console.log('form', form);
             formAction(new FormData(formRef.current!));
           })(evt);
         }}
       >
         <FormField
           control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="w-full grid gap-2">
+              <FormLabel>Nama Lengkap</FormLabel>
+              <FormControl>
+                <Input type="text" placeholder="" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="phoneNumber"
           render={({ field }) => (
             <FormItem className="w-full grid gap-2">
               <FormLabel>Nomor Whatsapp</FormLabel>
+              <FormControl>
+                <PhoneInput
+                  {...field}
+                  value={field.value as PhoneNumberValue}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem className="w-full grid gap-2">
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem className="w-full grid gap-2">
+              <FormLabel>Alamat</FormLabel>
               <FormControl>
                 <Input type="text" placeholder="" {...field} />
               </FormControl>
@@ -115,45 +158,6 @@ export default function RegisterUserForm() {
               <FormLabel>Konfirmasi Password</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input type="email" placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
-              <FormLabel>Nama Lengkap</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
-              <FormLabel>Alamat</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
