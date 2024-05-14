@@ -6,6 +6,7 @@
         "name": "next"
       }
     ],
+    "esModuleInterop": true,
     "types": ["reflect-metadata"],
     "paths": {
       "@/*": ["./src/*"]

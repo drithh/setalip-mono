@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import { NotificationService } from '#dep/notification/index';
+import { NotificationService, SendNotification } from '#dep/notification/index';
 import { env } from '#dep/env';
 import { injectable } from 'inversify';
 
@@ -23,7 +23,7 @@ interface ErrorResponse {
 }
 @injectable()
 export class WhatsappNotificationService implements NotificationService {
-  async sendNotification(message: string, recipient: string) {
+  async sendNotification({ message, recipient }: SendNotification) {
     try {
       const result = await this.sendWhatsappMessage({
         secret: env.WHAPIFY_SECRET,

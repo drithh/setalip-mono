@@ -1,9 +1,16 @@
 import { Users } from '#dep/db/index';
-import { DeleteResult, InsertResult, Insertable, Selectable } from 'kysely';
-import { MakeKeyRequired } from '.';
+import {
+  DeleteResult,
+  InsertResult,
+  Insertable,
+  Selectable,
+  UpdateResult,
+  Updateable,
+} from 'kysely';
+import { OptionalToRequired } from '.';
 
 export type InsertUser = Insertable<Users>;
-export type UpdateUser = MakeKeyRequired<Selectable<Users>, 'id'>;
+export type UpdateUser = OptionalToRequired<Updateable<Users>, 'id'>;
 export type SelectUser = Selectable<Users>;
 
 export interface UserRepository {
@@ -14,6 +21,6 @@ export interface UserRepository {
   ): Promise<SelectUser | undefined>;
   findUserByEmail(email: SelectUser['email']): Promise<SelectUser | undefined>;
   createUser(data: InsertUser): Promise<InsertResult>;
-  updateUser(data: UpdateUser): Promise<SelectUser>;
+  updateUser(data: UpdateUser): Promise<UpdateResult>;
   deleteUser(data: SelectUser['id']): Promise<DeleteResult>;
 }

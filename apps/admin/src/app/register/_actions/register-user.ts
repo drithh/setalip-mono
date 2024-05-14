@@ -1,15 +1,12 @@
 'use server';
 import { cookies } from 'next/headers';
-import { UserService, UserValidationError } from '@repo/shared/service';
-import { redirect } from 'next/navigation';
+import { AuthService, UserValidationError } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
 import { schema } from '../form-schema';
 import { convertErrorsToZod } from '@repo/shared/util';
-import { NotificationService } from '@repo/shared/notification';
-import { UserRepository } from '@repo/shared/repository';
-import { isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
+import { parsePhoneNumber } from 'libphonenumber-js';
 export type FormSchema = z.infer<typeof schema>;
 
 export async function signup(
@@ -63,8 +60,8 @@ export async function signup(
   const parsedPhoneNumber = parsePhoneNumber(parsed.data.phoneNumber);
   const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;
 
-  const userService = container.get<UserService>(TYPES.UserService);
-  const registerUser = await userService.registerUser({
+  const AuthService = container.get<AuthService>(TYPES.AuthService);
+  const registerUser = await AuthService.registerUser({
     ...parsed.data,
     phoneNumber: formattedPhoneNumber,
   });
@@ -91,33 +88,21 @@ export async function signup(
     };
   }
 
-  // send notification
-  const notificationService = container.get<NotificationService>(
-    TYPES.NotificationService
-  );
-
-  const notification = await notificationService.sendNotification(
-    'User registered',
-    parsed.data.phoneNumber
-  );
-
-  if (notification.error) {
-    return {
-      form: {
-        ...parsed.data,
-      },
-      status: 'error',
-      errors: notification.error.message,
-    };
-  }
-
-  console.log('notification', notification.result);
-
   cookies().set(
     registerUser.result.name,
     registerUser.result.value,
     registerUser.result.attributes
   );
 
-  return redirect('/');
+  return {
+    form: {
+      phoneNumber: '',
+      password: '',
+      passwordConfirmation: '',
+      name: '',
+      email: '',
+      address: '',
+    },
+    status: 'success',
+  };
 }

@@ -1,6 +1,6 @@
 'use server';
 import { cookies } from 'next/headers';
-import { UserService, UserValidationError } from '@repo/shared/service';
+import { AuthService, UserValidationError } from '@repo/shared/service';
 import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
@@ -43,8 +43,8 @@ export async function signin(
   const parsedPhoneNumber = parsePhoneNumber(parsed.data.phoneNumber);
   const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;
 
-  const userService = container.get<UserService>(TYPES.UserService);
-  const loginUser = await userService.loginUser({
+  const AuthService = container.get<AuthService>(TYPES.AuthService);
+  const loginUser = await AuthService.loginUser({
     ...parsed.data,
     phoneNumber: formattedPhoneNumber,
   });
@@ -53,7 +53,6 @@ export async function signin(
     const errors = loginUser.error.getErrors();
 
     const mappedErrors = convertErrorsToZod<FormSchema>(errors);
-
 
     return {
       form: {
@@ -78,5 +77,11 @@ export async function signin(
     loginUser.result.attributes
   );
 
-  return redirect('/');
+  return {
+    form: {
+      phoneNumber: '',
+      password: '',
+    },
+    status: 'success',
+  };
 }

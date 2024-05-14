@@ -36,12 +36,14 @@ export const lucia = new Auth();
 
 declare module 'lucia' {
   export interface Register {
-    Lucia: typeof lucia;
+    Lucia: typeof Auth;
     DatabaseSessionAttributes: DatabaseSessionAttributes;
     DatabaseUserAttributes: DatabaseUserAttributes;
     UserId: number;
   }
-  export interface DatabaseSessionAttributes {}
+  export interface DatabaseSessionAttributes {
+    userId: number;
+  }
   export interface DatabaseUserAttributes {
     email: string;
   }

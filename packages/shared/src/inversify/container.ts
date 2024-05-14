@@ -10,8 +10,12 @@ import {
   NotificationService,
   WhatsappNotificationService,
 } from '#dep/notification/index';
-import { UserServiceImpl } from '#dep/service/user.impl';
-import { UserService } from '#dep/service/user';
+import { AuthServiceImpl } from '#dep/service/auth.impl';
+import { AuthService } from '#dep/service/auth';
+import { OtpRepository } from '#dep/repository/otp';
+import { KyselyMySqlOtpRepository } from '#dep/repository/kysely-mysql/otp';
+import { OtpServiceImpl } from '#dep/service/otp.impl';
+import { OtpService } from '#dep/service/otp';
 
 const container = new Container();
 
@@ -23,6 +27,8 @@ container
 container
   .bind<UserRepository>(TYPES.UserRepository)
   .to(KyselyMySqlUserRepository);
-container.bind<UserService>(TYPES.UserService).to(UserServiceImpl);
+container.bind<AuthService>(TYPES.AuthService).to(AuthServiceImpl);
+container.bind<OtpRepository>(TYPES.OtpRepository).to(KyselyMySqlOtpRepository);
+container.bind<OtpService>(TYPES.OtpService).to(OtpServiceImpl);
 
 export { container };

@@ -20,8 +20,11 @@ import Link from 'next/link';
 import { schema } from './form-schema';
 import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterUserForm() {
+  const router = useRouter();
   const [formState, formAction] = useFormState(signin, {
     status: 'default',
     form: {
@@ -48,6 +51,14 @@ export default function RegisterUserForm() {
     } else {
       form.clearErrors();
     }
+
+    if (formState.status === 'success') {
+      toast.dismiss();
+      toast.success('Login berhasil', {
+        id: 'login-success',
+      });
+      router.push('/');
+    }
   }, [formState.form]);
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -59,6 +70,9 @@ export default function RegisterUserForm() {
         action={formAction}
         onSubmit={(evt) => {
           evt.preventDefault();
+          toast.loading('Mengautentikasi...', {
+            id: 'authenticating',
+          });
           form.handleSubmit(() => {
             formAction(new FormData(formRef.current!));
           })(evt);

@@ -5,8 +5,10 @@ import { env } from '#dep/env';
 import { createPool } from 'mysql2/promise';
 
 export * from '#dep/db/schema';
-
-export const pool = createPool(env.DATABASE_URL);
+console.log(env.DATABASE_URL);
+export const pool = createPool(
+  'mariadb://setalip:setalip@localhost:3306/setalip'
+);
 
 const dialect = new MysqlDialect({
   pool: pool.pool,

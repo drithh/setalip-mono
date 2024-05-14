@@ -61,7 +61,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('otp', 'text', (col) => col.notNull())
         .addColumn('expired_at', 'timestamp', (col) => col.notNull())
         .addColumn('user_id', 'bigint', (col) =>
-          col.notNull().references('users.id')
+          col.notNull().references('users.id').unique()
         )
         .$call(addDefaultColumns)
         .execute();

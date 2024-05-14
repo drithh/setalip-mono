@@ -1,1 +1,1 @@
-export * from '#dep/service/user';
+export * from '#dep/service/auth';

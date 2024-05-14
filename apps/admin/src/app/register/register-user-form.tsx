@@ -3,6 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { PhoneInput } from '@repo/ui/components/phone-input';
+import { PasswordInput } from '@repo/ui/components/password-input';
 import { signup } from './_actions/register-user';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
@@ -21,8 +22,10 @@ import {
 } from '@repo/ui/components/ui/form';
 import Link from 'next/link';
 import { schema } from './form-schema';
-
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 export default function RegisterUserForm() {
+  const router = useRouter();
   const [formState, formAction] = useFormState(signup, {
     status: 'default',
     form: {
@@ -41,6 +44,7 @@ export default function RegisterUserForm() {
   });
 
   useEffect(() => {
+    toast.dismiss();
     if (formState.status === 'field-errors') {
       if (formState.errors.phoneNumber) {
         form.setError('phoneNumber', formState.errors.phoneNumber);
@@ -64,7 +68,19 @@ export default function RegisterUserForm() {
         form.setError('address', formState.errors.address);
       }
     } else if (formState.status === 'error') {
+      toast.error('Register gagal', {
+        description: formState.errors,
+        id: 'register-error',
+        duration: 5000,
+      });
       form.setError('root', { message: formState.errors });
+    }
+    if (formState.status === 'success') {
+      toast.success('Register berhasil', {
+        id: 'register-success',
+        duration: 5000,
+      });
+      router.push('/');
     }
   }, [formState.status]);
 
@@ -77,6 +93,9 @@ export default function RegisterUserForm() {
         action={formAction}
         onSubmit={(evt) => {
           evt.preventDefault();
+          toast.loading('Mendaftarkan User...', {
+            id: 'registering',
+          });
           form.handleSubmit(() => {
             formAction(new FormData(formRef.current!));
           })(evt);
@@ -144,7 +163,7 @@ export default function RegisterUserForm() {
             <FormItem className="w-full grid gap-2">
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="" {...field} />
+                <PasswordInput {...field} autoComplete="new-password" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -157,7 +176,7 @@ export default function RegisterUserForm() {
             <FormItem className="w-full grid gap-2">
               <FormLabel>Konfirmasi Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="" {...field} />
+                <PasswordInput {...field} autoComplete="new-password" />
               </FormControl>
               <FormMessage />
             </FormItem>

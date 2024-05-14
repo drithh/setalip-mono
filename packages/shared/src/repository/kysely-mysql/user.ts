@@ -46,21 +46,15 @@ export class KyselyMySqlUserRepository implements UserRepository {
   }
 
   createUser(data: InsertUser) {
-    const insertedData = this._db
-      .insertInto('users')
-      .values(data)
-      .executeTakeFirstOrThrow();
-    return insertedData;
+    return this._db.insertInto('users').values(data).executeTakeFirst();
   }
 
   async updateUser(data: UpdateUser) {
-    await this._db
+    return await this._db
       .updateTable('users')
       .set(data)
       .where('users.id', '=', data.id)
-      .executeTakeFirstOrThrow();
-
-    return data;
+      .executeTakeFirst();
   }
 
   deleteUser(data: SelectUser['id']) {

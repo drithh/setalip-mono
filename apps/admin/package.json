@@ -26,6 +26,7 @@
     "react-phone-number-input": "^3.4.1",
     "reflect-metadata": "^0.2.2",
     "server-only": "^0.0.1",
+    "sonner": "^1.4.41",
     "zod": "^3.23.7"
   },
   "devDependencies": {

@@ -2,20 +2,26 @@ import { hash, verify } from '@node-rs/argon2';
 import {
   LoginUser,
   RegisterUser,
-  UserService,
+  AuthService,
   UserValidationError,
-} from '#dep/service/user';
+} from '#dep/service/auth';
 import { lucia } from '../auth';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
 import type { UserRepository } from '../repository';
+import type { OtpService } from './otp';
 
 @injectable()
-export class UserServiceImpl implements UserService {
+export class AuthServiceImpl implements AuthService {
   private _userRepository: UserRepository;
+  private _otpService: OtpService;
 
-  constructor(@inject(TYPES.UserRepository) userRepository: UserRepository) {
+  constructor(
+    @inject(TYPES.UserRepository) userRepository: UserRepository,
+    @inject(TYPES.OtpService) otpService: OtpService
+  ) {
     this._userRepository = userRepository;
+    this._otpService = otpService;
   }
 
   async registerUser(data: RegisterUser) {
@@ -68,8 +74,17 @@ export class UserServiceImpl implements UserService {
     }
 
     const insertedId = Number(inserted.insertId);
+
+    const sendOtp = await this._otpService.sendOtp(insertedId);
+
+    if (sendOtp.error) {
+      return {
+        error: sendOtp.error,
+      };
+    }
+
     const session = await lucia.createSession(insertedId, {
-      user_id: insertedId,
+      userId: insertedId,
     });
     const sessionCookie = lucia.createSessionCookie(session.id);
     return {
@@ -102,7 +117,7 @@ export class UserServiceImpl implements UserService {
       }
 
       const session = await lucia.createSession(user.id, {
-        user_id: user.id,
+        userId: user.id,
       });
       const sessionCookie = lucia.createSessionCookie(session.id);
       return {
