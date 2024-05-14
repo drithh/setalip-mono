@@ -8,3 +8,6 @@ export type PromiseResult<Result, Error> = Promise<
       error: Error;
     }
 >;
+export type ErrorFields<T extends string | number | symbol> = {
+  [K in T]?: string;
+};

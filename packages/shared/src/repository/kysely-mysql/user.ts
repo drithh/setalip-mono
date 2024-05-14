@@ -22,7 +22,7 @@ export class KyselyMySqlUserRepository implements UserRepository {
       .selectFrom('users')
       .selectAll()
       .where('users.id', '=', id)
-      .executeTakeFirstOrThrow();
+      .executeTakeFirst();
   }
 
   findUserByEmail(email: SelectUser['email']) {
@@ -30,7 +30,7 @@ export class KyselyMySqlUserRepository implements UserRepository {
       .selectFrom('users')
       .selectAll()
       .where('users.email', '=', email)
-      .executeTakeFirstOrThrow();
+      .executeTakeFirst();
   }
 
   getUsers() {

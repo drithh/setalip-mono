@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { schema } from '../form-schema';
 import { convertErrorsToZod } from '@repo/shared/util';
 import { NotificationService } from '@repo/shared/notification';
+import { UserRepository } from '@repo/shared/repository';
 
 export type FormSchema = z.infer<typeof schema>;
 
@@ -17,6 +18,7 @@ export async function signup(
 ): Promise<FormState<FormSchema>> {
   const formData = Object.fromEntries(data);
   const parsed = schema.safeParse(formData);
+
   if (!parsed.success) {
     console.log('parsed', parsed.error.flatten);
     return {
@@ -42,7 +44,6 @@ export async function signup(
   }
 
   const userService = container.get<UserService>(TYPES.UserService);
-
   const registerUser = await userService.registerUser({
     ...parsed.data,
   });

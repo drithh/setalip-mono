@@ -156,6 +156,9 @@ importers:
       inversify:
         specifier: ^6.0.2
         version: 6.0.2
+      inversify-inject-decorators:
+        specifier: ^3.1.0
+        version: 3.1.0
       kysely:
         specifier: ^0.27.3
         version: 0.27.3
@@ -2414,6 +2417,9 @@ packages:
   interpret@1.4.0:
     resolution: {integrity: sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==}
     engines: {node: '>= 0.10'}
+
+  inversify-inject-decorators@3.1.0:
+    resolution: {integrity: sha512-/seBlVp5bXrLQS3DpKEmlgeZL6C7Tf/QITd+IMQrbBBGuCbxb7k3hRAWu9XSreNpFzLgSboz3sClLSEmGwHphw==}
 
   inversify@6.0.2:
     resolution: {integrity: sha512-i9m8j/7YIv4mDuYXUAcrpKPSaju/CIly9AHK5jvCBeoiM/2KEsuCQTTP+rzSWWpLYWRukdXFSl6ZTk2/uumbiA==}
@@ -6517,6 +6523,8 @@ snapshots:
       side-channel: 1.0.4
 
   interpret@1.4.0: {}
+
+  inversify-inject-decorators@3.1.0: {}
 
   inversify@6.0.2: {}
 

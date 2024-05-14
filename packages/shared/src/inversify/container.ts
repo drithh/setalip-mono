@@ -10,7 +10,8 @@ import {
   NotificationService,
   WhatsappNotificationService,
 } from '#dep/notification/index';
-import { UserService, UserServiceImpl } from '#dep/service/user';
+import { UserServiceImpl } from '#dep/service/user.impl';
+import { UserService } from '#dep/service/user';
 
 const container = new Container();
 

@@ -3,12 +3,23 @@ import { NotificationService } from '#dep/notification/index';
 import { env } from '#dep/env';
 import { injectable } from 'inversify';
 
-interface Chat {
+interface PostBody {
   secret: string;
   account: string;
   recipient: string;
   type: string;
   message: string;
+}
+
+interface SuccessResponse {
+  status: 200;
+  message: 'WhatsApp message has been queued for sending!';
+  data: false;
+}
+interface ErrorResponse {
+  status: 400;
+  message: 'Invalid Parameters!';
+  data: false;
 }
 @injectable()
 export class WhatsappNotificationService implements NotificationService {
@@ -21,19 +32,25 @@ export class WhatsappNotificationService implements NotificationService {
         type: 'text',
         message: message,
       });
-      console.log(result);
+      console.log('result: ', result);
       return { result: 'Notification sent' };
     } catch (error) {
       return { error: error as Error };
     }
   }
 
-  async sendWhatsappMessage(chat: Chat): Promise<any> {
+  async sendWhatsappMessage(body: PostBody): Promise<any> {
     try {
-      const response: AxiosResponse<any> = await axios.post(
-        'https://whapify.id/api/send/whatsapp',
-        chat
-      );
+      const response: AxiosResponse<SuccessResponse | ErrorResponse> =
+        await axios.post('https://whapify.id/api/send/whatsapp', null, {
+          params: body,
+        });
+
+      if (response.data.status === 400) {
+        console.error('Error:', response.data.message);
+        throw new Error(response.data.message);
+      }
+
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {

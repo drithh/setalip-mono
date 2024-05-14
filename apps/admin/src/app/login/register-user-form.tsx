@@ -99,6 +99,45 @@ export default function RegisterUserForm() {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="w-full grid gap-2">
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input type="text" placeholder="" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phoneNumber"
+          render={({ field }) => (
+            <FormItem className="w-full grid gap-2">
+              <FormLabel>Phone Number</FormLabel>
+              <FormControl>
+                <Input type="text" placeholder="" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem className="w-full grid gap-2">
+              <FormLabel>Address</FormLabel>
+              <FormControl>
+                <Input type="text" placeholder="" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <Button type="submit" className="w-full">
           Login
