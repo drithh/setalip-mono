@@ -2,12 +2,11 @@ import { TYPES } from '#dep/inversify/index';
 
 import type { UserRepository } from '#dep/repository/user';
 import { inject, injectable } from 'inversify';
-import { DeleteResult, InsertResult } from 'kysely';
 import { lucia } from '#dep/auth/index';
 import { Cookie } from 'lucia';
 import { hash, verify } from '@node-rs/argon2';
-import { ErrorFields, PromiseResult } from '.';
-
+import { ErrorFields } from '#dep/service/index';
+import { PromiseResult } from '#dep/types/index';
 interface RegisterUser {
   email: string;
   password: string;
@@ -40,7 +39,6 @@ export class UserValidationError extends Error {
     return this.errors;
   }
 }
-
 export interface UserService {
   registerUser(data: RegisterUser): PromiseResult<Cookie, ErrorResult>;
   loginUser(data: LoginUser): PromiseResult<Cookie, ErrorResult>;

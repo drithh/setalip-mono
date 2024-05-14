@@ -9,7 +9,8 @@
     "./inversify": "./src/inversify/index.ts",
     "./form": "./src/form/index.ts",
     "./service": "./src/service/index.ts",
-    "./util": "./src/util/index.ts"
+    "./util": "./src/util/index.ts",
+    "./notification": "./src/notification/index.ts"
   },
   "imports": {
     "#dep/*": [

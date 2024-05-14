@@ -1,11 +1,5 @@
 import { Users } from '#dep/db/index';
-import {
-  DeleteResult,
-  InsertResult,
-  Insertable,
-  Selectable,
-  Updateable,
-} from 'kysely';
+import { DeleteResult, InsertResult, Insertable, Selectable } from 'kysely';
 import { MakeKeyRequired } from '.';
 
 export type InsertUser = Insertable<Users>;

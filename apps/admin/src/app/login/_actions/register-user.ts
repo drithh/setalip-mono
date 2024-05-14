@@ -1,4 +1,4 @@
-('use server');
+'use server';
 import { cookies } from 'next/headers';
 import { UserService, UserValidationError } from '@repo/shared/service';
 import { redirect } from 'next/navigation';
@@ -7,6 +7,7 @@ import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
 import { schema } from '../form-schema';
 import { convertErrorsToZod } from '@repo/shared/util';
+import { NotificationService } from '@repo/shared/notification';
 
 export type FormSchema = z.infer<typeof schema>;
 
@@ -42,12 +43,12 @@ export async function signup(
 
   const userService = container.get<UserService>(TYPES.UserService);
 
-  const { result, error } = await userService.registerUser({
+  const registerUser = await userService.registerUser({
     ...parsed.data,
   });
 
-  if (error instanceof UserValidationError) {
-    const errors = error.getErrors();
+  if (registerUser.error instanceof UserValidationError) {
+    const errors = registerUser.error.getErrors();
 
     const mappedErrors = convertErrorsToZod<FormSchema>(errors);
 
@@ -61,17 +62,43 @@ export async function signup(
       status: 'field-errors',
       errors: mappedErrors,
     };
-  } else if (error) {
+  } else if (registerUser.error) {
     return {
       form: {
         ...parsed.data,
       },
       status: 'error',
-      errors: error.message,
+      errors: registerUser.error.message,
     };
   }
 
-  cookies().set(result.name, result.value, result.attributes);
+  // send notification
+  const notificationService = container.get<NotificationService>(
+    TYPES.NotificationService
+  );
+
+  const notification = await notificationService.sendNotification(
+    'User registered',
+    parsed.data.phoneNumber
+  );
+
+  if (notification.error) {
+    return {
+      form: {
+        ...parsed.data,
+      },
+      status: 'error',
+      errors: notification.error.message,
+    };
+  }
+
+  console.log('notification', notification.result);
+
+  cookies().set(
+    registerUser.result.name,
+    registerUser.result.value,
+    registerUser.result.attributes
+  );
 
   return redirect('/');
 }

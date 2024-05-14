@@ -1,16 +1,5 @@
 export * from '#dep/notification/whatsapp';
-
-export type PromiseResult<Result, Error> = Promise<
-  | {
-      result: Result;
-      error: undefined;
-    }
-  | {
-      result: undefined;
-      error: Error;
-    }
->;
-
+import { PromiseResult } from '#dep/types/index';
 export interface NotificationService {
   sendNotification(
     message: string,

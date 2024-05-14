@@ -1,4 +1,4 @@
-import { Database, Users } from '#dep/db/index';
+import { Database } from '#dep/db/index';
 import {
   InsertUser,
   SelectUser,
@@ -8,7 +8,6 @@ import {
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
-import { Insertable, Selectable, Updateable } from 'kysely';
 
 @injectable()
 export class KyselyMySqlUserRepository implements UserRepository {

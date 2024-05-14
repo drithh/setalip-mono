@@ -1,6 +1,7 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import { NotificationService } from '.';
+import { NotificationService } from '#dep/notification/index';
 import { env } from '#dep/env';
+import { injectable } from 'inversify';
 
 interface Chat {
   secret: string;
@@ -9,7 +10,7 @@ interface Chat {
   type: string;
   message: string;
 }
-
+@injectable()
 export class WhatsappNotificationService implements NotificationService {
   async sendNotification(message: string, recipient: string) {
     try {
