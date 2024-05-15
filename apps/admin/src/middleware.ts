@@ -3,8 +3,13 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-url', request.url);
+  requestHeaders.set('x-path', request.nextUrl.pathname);
   if (request.method === 'GET') {
-    return NextResponse.next();
+    return NextResponse.next({
+      headers: requestHeaders,
+    });
   }
   const originHeader = request.headers.get('Origin');
   // NOTE: You may need to use `X-Forwarded-Host` instead

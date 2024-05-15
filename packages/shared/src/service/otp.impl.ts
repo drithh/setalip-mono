@@ -49,8 +49,6 @@ export class OtpServiceImpl implements OtpService {
       };
     }
 
-    console.log('phone_number', user.phone_number);
-
     const notification = await this._notificationService.sendNotification({
       message: `Your otp is ${otp}`,
       recipient: user.phone_number,

@@ -32,7 +32,6 @@ export class WhatsappNotificationService implements NotificationService {
         type: 'text',
         message: message,
       });
-      console.log('result: ', result);
       return { result: 'Notification sent' };
     } catch (error) {
       return { error: error as Error };
