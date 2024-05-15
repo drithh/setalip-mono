@@ -1,107 +1,54 @@
 'use server';
-import { cookies } from 'next/headers';
-import { AuthService, UserValidationError } from '@repo/shared/service';
+import { OtpService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
-import { schema } from '../form-schema';
-import { convertErrorsToZod } from '@repo/shared/util';
-import { parsePhoneNumber } from 'libphonenumber-js';
-export type FormSchema = z.infer<typeof schema>;
+import { VerifyOtpSchema, verifyOtpSchema } from '../form-schema';
+import { UserRepository } from '@repo/shared/repository';
 
-export async function signup(
-  state: FormState<FormSchema>,
+export async function verifyUser(
+  state: FormState<VerifyOtpSchema>,
   data: FormData
-): Promise<FormState<FormSchema>> {
+): Promise<FormState<VerifyOtpSchema>> {
   const formData = Object.fromEntries(data);
-  const parsed = schema.safeParse(formData);
-
+  const parsed = verifyOtpSchema.safeParse(formData);
   if (!parsed.success) {
     return {
       form: {
-        phoneNumber: data.get('phoneNumber') as string,
-        password: data.get('password') as string,
-        passwordConfirmation: data.get('passwordConfirmation') as string,
-        name: data.get('name') as string,
-        email: data.get('email') as string,
-        address: data.get('address') as string,
+        userId: state.form.userId,
+        otp: data.get('otp') as string,
       },
       status: 'field-errors',
       errors: {
-        phoneNumber: {
+        otp: {
           type: 'required',
-          message: parsed.error.formErrors.fieldErrors.phoneNumber?.at(0),
-        },
-        password: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.password?.at(0),
-        },
-        passwordConfirmation: {
-          type: 'required',
-          message:
-            parsed.error.formErrors.fieldErrors.passwordConfirmation?.at(0),
-        },
-        name: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.name?.at(0),
-        },
-        email: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.email?.at(0),
-        },
-        address: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.address?.at(0),
+          message: 'OTP is required',
         },
       },
     };
   }
 
-  const parsedPhoneNumber = parsePhoneNumber(parsed.data.phoneNumber);
-  const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;
+  const otpService = container.get<OtpService>(TYPES.OtpService);
 
-  const AuthService = container.get<AuthService>(TYPES.AuthService);
-  const registerUser = await AuthService.registerUser({
-    ...parsed.data,
-    phoneNumber: formattedPhoneNumber,
+  const otpResult = await otpService.verifyOtp({
+    userId: state.form.userId,
+    otp: parsed.data.otp,
   });
-
-  if (registerUser.error instanceof UserValidationError) {
-    const errors = registerUser.error.getErrors();
-
-    const mappedErrors = convertErrorsToZod<FormSchema>(errors);
-
+  if (otpResult.error) {
     return {
       form: {
-        ...parsed.data,
-      },
-      status: 'field-errors',
-      errors: mappedErrors,
-    };
-  } else if (registerUser.error) {
-    return {
-      form: {
-        ...parsed.data,
+        userId: state.form.userId,
+        otp: parsed.data.otp,
       },
       status: 'error',
-      errors: registerUser.error.message,
+      errors: otpResult.error.message,
     };
   }
-
-  cookies().set(
-    registerUser.result.name,
-    registerUser.result.value,
-    registerUser.result.attributes
-  );
 
   return {
     form: {
-      phoneNumber: '',
-      password: '',
-      passwordConfirmation: '',
-      name: '',
-      email: '',
-      address: '',
+      userId: state.form.userId,
+      otp: parsed.data.otp,
     },
     status: 'success',
   };

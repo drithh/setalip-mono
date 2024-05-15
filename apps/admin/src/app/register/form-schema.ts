@@ -1,7 +1,7 @@
 import { isPossiblePhoneNumber } from 'libphonenumber-js';
 import { z } from 'zod';
 
-export const schema = z
+export const registerUserSchema = z
   .object({
     email: z.string().email(),
     password: z.string().min(8),
@@ -21,3 +21,5 @@ export const schema = z
       path: ['passwordConfirmation'],
     }
   );
+
+export type RegisterUserSchema = z.infer<typeof registerUserSchema>;

@@ -4,17 +4,16 @@ import { AuthService, UserValidationError } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
-import { schema } from '../form-schema';
+import { RegisterUserSchema, registerUserSchema } from '../form-schema';
 import { convertErrorsToZod } from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
-export type FormSchema = z.infer<typeof schema>;
 
 export async function signup(
-  state: FormState<FormSchema>,
+  state: FormState<RegisterUserSchema>,
   data: FormData
-): Promise<FormState<FormSchema>> {
+): Promise<FormState<RegisterUserSchema>> {
   const formData = Object.fromEntries(data);
-  const parsed = schema.safeParse(formData);
+  const parsed = registerUserSchema.safeParse(formData);
 
   if (!parsed.success) {
     return {
@@ -69,7 +68,7 @@ export async function signup(
   if (registerUser.error instanceof UserValidationError) {
     const errors = registerUser.error.getErrors();
 
-    const mappedErrors = convertErrorsToZod<FormSchema>(errors);
+    const mappedErrors = convertErrorsToZod<RegisterUserSchema>(errors);
 
     return {
       form: {

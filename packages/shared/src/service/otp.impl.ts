@@ -64,24 +64,44 @@ export class OtpServiceImpl implements OtpService {
       result: void {},
     };
   }
+
   async verifyOtp(data: VerifyOtp) {
     const otp = await this._otpRepository.findOtpByUserId(data.userId);
 
     if (!otp) {
       return {
-        error: new Error('Otp not found'),
+        error: new Error('OTP yang anda masukkan salah'),
       };
     }
 
     if (otp.otp !== data.otp) {
       return {
-        error: new Error('Invalid otp'),
+        error: new Error('OTP yang anda masukkan salah'),
       };
     }
 
     if (otp.expired_at < new Date()) {
       return {
-        error: new Error('Otp expired'),
+        error: new Error('OTP sudah kadaluarsa'),
+      };
+    }
+
+    const updateUser = await this._userRepository.updateUser({
+      id: data.userId,
+      verified_at: new Date(),
+    });
+
+    if (!updateUser) {
+      return {
+        error: new Error('Failed to update user'),
+      };
+    }
+
+    const deleteOtp = await this._otpRepository.deleteOtpByUserId(data.userId);
+
+    if (!deleteOtp) {
+      return {
+        error: new Error('Failed to delete otp'),
       };
     }
 

@@ -15,7 +15,7 @@ export default async function Home() {
     <main className="min-h-screen">
       {auth && (
         <p>
-          {auth.id} {auth.email}
+          {auth.id} {auth.email} {auth.role} {auth.phoneNumber}
         </p>
       )}
       {users.map((user) => (

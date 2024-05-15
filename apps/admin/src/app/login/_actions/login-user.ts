@@ -5,20 +5,18 @@ import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
-import { schema } from '../form-schema';
+import { loginUserSchema, LoginUserSchema } from '../form-schema';
 import { convertErrorsToZod } from '@repo/shared/util';
 import { NotificationService } from '@repo/shared/notification';
 import { UserRepository } from '@repo/shared/repository';
 import { isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 
-export type FormSchema = z.infer<typeof schema>;
-
 export async function signin(
-  state: FormState<FormSchema>,
+  state: FormState<LoginUserSchema>,
   data: FormData
-): Promise<FormState<FormSchema>> {
+): Promise<FormState<LoginUserSchema>> {
   const formData = Object.fromEntries(data);
-  const parsed = schema.safeParse(formData);
+  const parsed = loginUserSchema.safeParse(formData);
 
   if (!parsed.success) {
     return {
@@ -48,11 +46,12 @@ export async function signin(
     ...parsed.data,
     phoneNumber: formattedPhoneNumber,
   });
+  console.log(loginUser);
 
   if (loginUser.error instanceof UserValidationError) {
     const errors = loginUser.error.getErrors();
 
-    const mappedErrors = convertErrorsToZod<FormSchema>(errors);
+    const mappedErrors = convertErrorsToZod<LoginUserSchema>(errors);
 
     return {
       form: {

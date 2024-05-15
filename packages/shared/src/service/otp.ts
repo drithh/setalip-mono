@@ -1,3 +1,4 @@
+import { DeleteResult } from 'kysely';
 import { Users } from '../db';
 import { SelectUser } from '../repository';
 import { PromiseResult } from '../types';

@@ -1,15 +1,18 @@
 import Link from 'next/link';
-import VerifyUserForm from './verify-user-form';
+import VerifyUserForm from './verify-user.form';
 import { TYPES, container } from '@repo/shared/inversify';
 import { UserRepository } from '@repo/shared/repository';
 import { getAuth } from '../get-auth';
 import { redirect } from 'next/navigation';
+import { OtpService } from '@repo/shared/service';
+import { Button } from '@repo/ui/components/ui/button';
+import ResendOtpForm from './resend-otp.form';
 
 export default async function UserVerification() {
   const auth = await getAuth();
-
-  const userRepository = container.get<UserRepository>(TYPES.UserRepository);
-  const user = await userRepository.findUserById(auth?.id ?? 0);
+  if (!auth) {
+    redirect('/login');
+  }
 
   return (
     <div className="w-full lg:grid lg:grid-cols-2 ">
@@ -18,16 +21,11 @@ export default async function UserVerification() {
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Verifikasi Akun</h1>
             <p className="text-balance text-muted-foreground">
-              Kode verifikasi telah dikirim ke
+              Kode verifikasi telah dikirim ke whatsapp {auth?.phoneNumber}
             </p>
           </div>
-          <VerifyUserForm />
-          <div className="mt-4 text-center text-sm">
-            Sudah punya akun?{' '}
-            <Link href="/login" className="underline">
-              Login
-            </Link>
-          </div>
+          <VerifyUserForm userId={auth?.id ?? 0} />
+          <ResendOtpForm userId={auth?.id ?? 0} />
         </div>
       </div>
       <div className="hidden bg-muted lg:block"></div>

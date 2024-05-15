@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import Link from 'next/link';
-import { schema } from './form-schema';
+import { loginUserSchema } from './form-schema';
 import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
@@ -33,8 +33,8 @@ export default function RegisterUserForm() {
     },
   });
 
-  const form = useForm<z.output<typeof schema>>({
-    resolver: zodResolver(schema),
+  const form = useForm<z.output<typeof loginUserSchema>>({
+    resolver: zodResolver(loginUserSchema),
     defaultValues: formState.form,
   });
 

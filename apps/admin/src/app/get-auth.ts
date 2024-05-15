@@ -34,7 +34,7 @@ export const getAuth = cache(async () => {
   const pathname = headersList.get('x-path');
   if (
     user &&
-    user.verified_at === null &&
+    user.verifiedAt === null &&
     !pathname?.includes('/verification')
   ) {
     redirect('/verification');

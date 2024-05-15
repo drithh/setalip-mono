@@ -21,9 +21,10 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import Link from 'next/link';
-import { schema } from './form-schema';
+import { registerUserSchema } from './form-schema';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+
 export default function RegisterUserForm() {
   const router = useRouter();
   const [formState, formAction] = useFormState(signup, {
@@ -38,8 +39,8 @@ export default function RegisterUserForm() {
     },
   });
 
-  const form = useForm<z.output<typeof schema>>({
-    resolver: zodResolver(schema),
+  const form = useForm<z.output<typeof registerUserSchema>>({
+    resolver: zodResolver(registerUserSchema),
     defaultValues: formState.form,
   });
 
@@ -82,7 +83,7 @@ export default function RegisterUserForm() {
       });
       router.push('/');
     }
-  }, [formState.status]);
+  }, [formState.form]);
 
   const formRef = useRef<HTMLFormElement>(null);
   return (

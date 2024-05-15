@@ -1,8 +1,7 @@
-import { Adapter, Lucia, TimeSpan } from 'lucia';
+import { Lucia, TimeSpan } from 'lucia';
 import { Mysql2Adapter } from '@lucia-auth/adapter-mysql';
 import { env } from '#dep/env';
 import { pool } from '#dep/db/index';
-import { injectable } from 'inversify';
 import { SelectUser } from '../repository';
 
 const adapter = new Mysql2Adapter(pool, {
@@ -18,12 +17,15 @@ export const lucia = new Lucia(adapter, {
     },
   },
   getSessionAttributes: (attributes) => {
-    return {};
+    return {
+      userId: attributes.userId,
+    };
   },
   getUserAttributes: (attributes) => {
     return {
       email: attributes.email,
-      verified_at: attributes.verified_at,
+      verifiedAt: attributes.verified_at,
+      phoneNumber: attributes.phone_number,
       role: attributes.role,
     };
   },
@@ -36,13 +38,14 @@ declare module 'lucia' {
     Lucia: typeof lucia;
     DatabaseSessionAttributes: DatabaseSessionAttributes;
     DatabaseUserAttributes: DatabaseUserAttributes;
-    UserId: number;
+    UserId: SelectUser['id'];
   }
   export interface DatabaseSessionAttributes {
-    userId: number;
+    userId: SelectUser['id'];
   }
   export interface DatabaseUserAttributes {
     email: SelectUser['email'];
+    phone_number: SelectUser['phone_number'];
     verified_at: SelectUser['verified_at'];
     role: SelectUser['role'];
   }

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import RegisterUserForm from './register-user-form';
+import RegisterUserForm from './register-user.form';
 
 export default function Login() {
   return (
