@@ -2,7 +2,7 @@ import Link from 'next/link';
 import VerifyUserForm from './verify-user.form';
 import { TYPES, container } from '@repo/shared/inversify';
 import { UserRepository } from '@repo/shared/repository';
-import { getAuth } from '../get-auth';
+import { getAuth } from '@/lib/get-auth';
 import { redirect } from 'next/navigation';
 import { OtpService } from '@repo/shared/service';
 import { Button } from '@repo/ui/components/ui/button';

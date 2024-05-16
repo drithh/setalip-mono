@@ -25,7 +25,6 @@ import Link from 'next/link';
 import { verifyOtpSchema } from './form-schema';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { getAuth } from '../get-auth';
 import {
   InputOTP,
   InputOTPGroup,
