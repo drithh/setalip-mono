@@ -15,6 +15,10 @@ import { OtpRepository } from '#dep/repository/otp';
 import { KyselyMySqlOtpRepository } from '#dep/repository/kysely-mysql/otp';
 import { OtpServiceImpl } from '#dep/service/otp.impl';
 import { OtpService } from '#dep/service/otp';
+import { ResetPasswordRepository } from '#dep/repository/resetPassword';
+import { KyselyMySqlResetPasswordRepository } from '#dep/repository/kysely-mysql/resetPassword';
+import { ResetPasswordServiceImpl } from '#dep/service/resetPassword.impl';
+import { ResetPasswordService } from '../service';
 
 const container = new Container();
 
@@ -28,5 +32,11 @@ container
 container.bind<AuthService>(TYPES.AuthService).to(AuthServiceImpl);
 container.bind<OtpRepository>(TYPES.OtpRepository).to(KyselyMySqlOtpRepository);
 container.bind<OtpService>(TYPES.OtpService).to(OtpServiceImpl);
+container
+  .bind<ResetPasswordRepository>(TYPES.ResetPasswordRepository)
+  .to(KyselyMySqlResetPasswordRepository);
+container
+  .bind<ResetPasswordService>(TYPES.ResetPasswordService)
+  .to(ResetPasswordServiceImpl);
 
 export { container };

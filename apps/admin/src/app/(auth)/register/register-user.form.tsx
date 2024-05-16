@@ -72,14 +72,13 @@ export default function RegisterUserForm() {
       toast.error('Register gagal', {
         description: formState.errors,
         id: 'register-error',
-        duration: 5000,
       });
       form.setError('root', { message: formState.errors });
     }
     if (formState.status === 'success') {
-      toast.success('Register berhasil', {
+      toast.success('Registrasi berhasil', {
+        description: 'Kode verifikasi telah dikirim ke whatsapp',
         id: 'register-success',
-        duration: 5000,
       });
       router.push('/');
     }

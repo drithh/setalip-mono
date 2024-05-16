@@ -22,7 +22,7 @@ export class OtpServiceImpl implements OtpService {
     this._userRepository = userRepository;
   }
 
-  async sendOtp(userId: SelectUser['id']) {
+  async sendOtp({ userId }: { userId: SelectUser['id'] }) {
     const user = await this._userRepository.findUserById(userId);
 
     if (!user) {

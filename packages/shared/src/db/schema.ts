@@ -216,7 +216,18 @@ export interface PackageTransactions {
   unique_code: Generated<number | null>;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
+  user_id: number;
   user_package_id: Generated<number | null>;
+}
+
+export interface ResetPassword {
+  created_at: Generated<Date>;
+  expired_at: Date;
+  id: Generated<number>;
+  token: string;
+  updated_at: Generated<Date>;
+  updated_by: Generated<number>;
+  user_id: number;
 }
 
 export interface UserPackages {
@@ -289,6 +300,7 @@ export interface DB {
   otp: Otp;
   package_transactions: PackageTransactions;
   packages: Packages;
+  reset_password: ResetPassword;
   user_packages: UserPackages;
   user_sessions: UserSessions;
   users: Users;

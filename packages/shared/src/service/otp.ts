@@ -1,14 +1,16 @@
-import { DeleteResult } from 'kysely';
-import { Users } from '../db';
-import { SelectUser } from '../repository';
 import { PromiseResult } from '../types';
+import { SelectOtp } from '#dep/repository/otp';
 
 export interface VerifyOtp {
-  userId: SelectUser['id'];
-  otp: string;
+  userId: SelectOtp['user_id'];
+  otp: SelectOtp['otp'];
 }
 
 export interface OtpService {
-  sendOtp(userId: SelectUser['id']): PromiseResult<void, Error>;
+  sendOtp({
+    userId,
+  }: {
+    userId: SelectOtp['user_id'];
+  }): PromiseResult<void, Error>;
   verifyOtp(data: VerifyOtp): PromiseResult<boolean, Error>;
 }

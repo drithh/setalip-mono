@@ -37,19 +37,18 @@ export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
   });
 
   useEffect(() => {
-    toast.dismiss();
     if (formState.status === 'error') {
+      toast.dismiss();
       toast.error('Gagal mengirim ulang kode OTP', {
         description: formState.errors,
         id: 'register-error',
-        duration: 5000,
       });
       form.setError('root', { message: formState.errors });
     }
     if (formState.status === 'success') {
+      toast.dismiss();
       toast.success('Kode OTP berhasil dikirim ulang', {
         id: 'register-success',
-        duration: 5000,
       });
     }
   }, [formState.form]);

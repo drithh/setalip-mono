@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { signin } from './_actions/login-user';
+import { signin } from './_actions/forgot-password';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { z } from 'zod';
@@ -17,24 +17,23 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import Link from 'next/link';
-import { loginUserSchema } from './form-schema';
+import { forgotPasswordSchema } from './form-schema';
 import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
-export default function LoginUserForm() {
+export default function ForgotPasswordForm() {
   const router = useRouter();
   const [formState, formAction] = useFormState(signin, {
     status: 'default',
     form: {
       phoneNumber: '',
-      password: '',
     },
   });
 
-  const form = useForm<z.output<typeof loginUserSchema>>({
-    resolver: zodResolver(loginUserSchema),
+  const form = useForm<z.output<typeof forgotPasswordSchema>>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: formState.form,
   });
 
@@ -43,12 +42,9 @@ export default function LoginUserForm() {
       if (formState.errors.phoneNumber) {
         form.setError('phoneNumber', formState.errors.phoneNumber);
       }
-      if (formState.errors.password) {
-        form.setError('password', formState.errors.password);
-      }
     } else if (formState.status === 'error') {
       toast.dismiss();
-      toast.error('Gagal login', {
+      toast.error('Gagal mengirim link reset password', {
         description: formState.errors,
         id: 'login-error',
       });
@@ -59,10 +55,10 @@ export default function LoginUserForm() {
 
     if (formState.status === 'success') {
       toast.dismiss();
-      toast.success('Login berhasil', {
+      toast.success('Berhasil mengirim link reset password', {
+        description: 'Silahkan cek whatsapp anda',
         id: 'login-success',
       });
-      router.push('/');
     }
   }, [formState.form]);
 
@@ -99,30 +95,9 @@ export default function LoginUserForm() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
-              <div className="flex items-center">
-                <FormLabel>Password</FormLabel>
-                <Link
-                  href="/forgot-password"
-                  className="ml-auto inline-block text-sm underline"
-                >
-                  Lupa password?
-                </Link>
-              </div>
-              <FormControl>
-                <Input type="password" placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         <Button type="submit" className="w-full">
-          Login
+          Kirim
         </Button>
       </form>
     </Form>

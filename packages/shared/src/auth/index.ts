@@ -17,9 +17,7 @@ export const lucia = new Lucia(adapter, {
     },
   },
   getSessionAttributes: (attributes) => {
-    return {
-      userId: attributes.userId,
-    };
+    return {};
   },
   getUserAttributes: (attributes) => {
     return {
@@ -40,9 +38,7 @@ declare module 'lucia' {
     DatabaseUserAttributes: DatabaseUserAttributes;
     UserId: SelectUser['id'];
   }
-  export interface DatabaseSessionAttributes {
-    userId: SelectUser['id'];
-  }
+  export interface DatabaseSessionAttributes {}
   export interface DatabaseUserAttributes {
     email: SelectUser['email'];
     phone_number: SelectUser['phone_number'];

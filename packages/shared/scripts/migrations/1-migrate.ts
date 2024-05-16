@@ -77,6 +77,17 @@ export async function up(db: Kysely<any>): Promise<void> {
         .execute();
 
       await trx.schema
+        .createTable('reset_password')
+        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('token', 'text', (col) => col.notNull().unique())
+        .addColumn('expired_at', 'timestamp', (col) => col.notNull())
+        .addColumn('user_id', 'bigint', (col) =>
+          col.notNull().references('users.id')
+        )
+        .$call(addDefaultColumns)
+        .execute();
+
+      await trx.schema
         .createTable('coaches')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('user_id', 'bigint', (col) =>
@@ -427,6 +438,7 @@ export async function down(db: Kysely<any>): Promise<void> {
 
       await trx.schema.dropTable('coaches').ifExists().execute();
       await trx.schema.dropTable('user_sessions').ifExists().execute();
+      await trx.schema.dropTable('reset_password').ifExists().execute();
       await trx.schema.dropTable('otp').ifExists().execute();
       await trx.schema.dropTable('users').ifExists().execute();
 

@@ -21,7 +21,7 @@ export class KyselyMySqlOtpRepository implements OtpRepository {
   }
 
   createOtp(data: SelectOtp) {
-    return this._db.insertInto('otp').values(data).executeTakeFirstOrThrow();
+    return this._db.insertInto('otp').values(data).executeTakeFirst();
   }
 
   async updateOtp(data: UpdateOtp) {

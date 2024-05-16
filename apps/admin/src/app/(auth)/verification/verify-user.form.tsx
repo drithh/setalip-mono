@@ -52,23 +52,22 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
   });
 
   useEffect(() => {
-    toast.dismiss();
     if (formState.status === 'field-errors') {
       if (formState.errors.otp) {
         form.setError('otp', formState.errors.otp);
       }
     } else if (formState.status === 'error') {
+      toast.dismiss();
       toast.error('Verifikasi gagal', {
         description: formState.errors,
         id: 'register-error',
-        duration: 5000,
       });
       form.setError('root', { message: formState.errors });
     }
     if (formState.status === 'success') {
+      toast.dismiss();
       toast.success('Verifikasi berhasil', {
         id: 'register-success',
-        duration: 5000,
       });
       router.push('/');
     }

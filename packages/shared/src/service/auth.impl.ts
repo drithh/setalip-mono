@@ -10,18 +10,24 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
 import type { UserRepository } from '../repository';
 import type { OtpService } from './otp';
+import type { ResetPasswordRepository } from '#dep/repository/resetPassword';
+import type { ResetPasswordService } from './resetPassword';
 
 @injectable()
 export class AuthServiceImpl implements AuthService {
   private _userRepository: UserRepository;
   private _otpService: OtpService;
+  private _resetPasswordService: ResetPasswordService;
 
   constructor(
     @inject(TYPES.UserRepository) userRepository: UserRepository,
-    @inject(TYPES.OtpService) otpService: OtpService
+    @inject(TYPES.OtpService) otpService: OtpService,
+    @inject(TYPES.ResetPasswordService)
+    resetPasswordService: ResetPasswordService
   ) {
     this._userRepository = userRepository;
     this._otpService = otpService;
+    this._resetPasswordService = resetPasswordService;
   }
 
   async registerUser(data: RegisterUser) {
@@ -75,7 +81,7 @@ export class AuthServiceImpl implements AuthService {
 
     const insertedId = Number(inserted.insertId);
 
-    const sendOtp = await this._otpService.sendOtp(insertedId);
+    const sendOtp = await this._otpService.sendOtp({ userId: insertedId });
 
     if (sendOtp.error) {
       return {
@@ -83,9 +89,7 @@ export class AuthServiceImpl implements AuthService {
       };
     }
 
-    const session = await lucia.createSession(insertedId, {
-      userId: insertedId,
-    });
+    const session = await lucia.createSession(insertedId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     return {
       result: sessionCookie,
@@ -116,9 +120,7 @@ export class AuthServiceImpl implements AuthService {
         };
       }
 
-      const session = await lucia.createSession(user.id, {
-        userId: user.id,
-      });
+      const session = await lucia.createSession(user.id, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
       return {
         result: sessionCookie,
@@ -128,5 +130,23 @@ export class AuthServiceImpl implements AuthService {
         error: new Error(String(error)),
       };
     }
+  }
+
+  async forgotPassword(data: { phoneNumber: string }) {
+    const user = await this._userRepository.findUserByPhoneNumber(
+      data.phoneNumber
+    );
+
+    if (!user) {
+      return {
+        error: new UserValidationError({
+          phoneNumber: 'User not found',
+        }),
+      };
+    }
+
+    return {
+      result: 'OTP sent',
+    };
   }
 }

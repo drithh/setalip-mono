@@ -7,6 +7,8 @@ const TYPES = {
   AuthService: Symbol.for('AuthService'),
   OtpRepository: Symbol.for('OtpRepository'),
   OtpService: Symbol.for('OtpService'),
+  ResetPasswordRepository: Symbol.for('ResetPasswordRepository'),
+  ResetPasswordService: Symbol.for('ResetPasswordService'),
 };
 
 export { TYPES };
