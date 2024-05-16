@@ -11,7 +11,7 @@ export async function resendOtp(
 ): Promise<FormState<ResendOtpSchema>> {
   const otpService = container.get<OtpService>(TYPES.OtpService);
 
-  const otpResult = await otpService.sendOtp(state.form.userId);
+  const otpResult = await otpService.sendOtp({ userId: state.form.userId });
 
   if (otpResult.error) {
     return {

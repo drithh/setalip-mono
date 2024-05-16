@@ -93,10 +93,10 @@ export default function RegisterUserForm() {
         action={formAction}
         onSubmit={(evt) => {
           evt.preventDefault();
-          toast.loading('Mendaftarkan User...', {
-            id: 'registering',
-          });
           form.handleSubmit(() => {
+            toast.loading('Mendaftarkan User...', {
+              id: 'registering',
+            });
             formAction(new FormData(formRef.current!));
           })(evt);
         }}

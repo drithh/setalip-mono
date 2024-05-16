@@ -25,6 +25,15 @@ export class KyselyMySqlResetPasswordRepository
       .where('reset_password.user_id', '=', userId)
       .executeTakeFirst();
   }
+
+  findResetPasswordByToken(token: SelectResetPassword['token']) {
+    return this._db
+      .selectFrom('reset_password')
+      .selectAll()
+      .where('reset_password.token', '=', token)
+      .executeTakeFirst();
+  }
+
   createResetPassword(data: InsertResetPassword) {
     return this._db
       .insertInto('reset_password')

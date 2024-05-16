@@ -1,8 +1,7 @@
 'use client';
 
 import { Button } from '@repo/ui/components/ui/button';
-import { Input } from '@repo/ui/components/ui/input';
-import { signin } from './_actions/login-user';
+import { resetPassword } from './_actions/reset-password';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { z } from 'zod';
@@ -16,39 +15,46 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import Link from 'next/link';
-import { loginUserSchema } from './form-schema';
-import { PhoneInput } from '@repo/ui/components/phone-input';
-import { Value as PhoneNumberValue } from 'react-phone-number-input';
+import { resetPasswordSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { PasswordInput } from '@repo/ui/components/password-input';
+import { Input } from '@repo/ui/components/ui/input';
 
-export default function LoginUserForm() {
+interface ResetPasswordFormProps {
+  token: string;
+}
+
+export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const router = useRouter();
-  const [formState, formAction] = useFormState(signin, {
+  const [formState, formAction] = useFormState(resetPassword, {
     status: 'default',
     form: {
-      phoneNumber: '',
+      token: token,
       password: '',
+      passwordConfirmation: '',
     },
   });
 
-  const form = useForm<z.output<typeof loginUserSchema>>({
-    resolver: zodResolver(loginUserSchema),
+  const form = useForm<z.output<typeof resetPasswordSchema>>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: formState.form,
   });
 
   useEffect(() => {
     toast.dismiss();
     if (formState.status === 'field-errors') {
-      if (formState.errors.phoneNumber) {
-        form.setError('phoneNumber', formState.errors.phoneNumber);
-      }
       if (formState.errors.password) {
         form.setError('password', formState.errors.password);
       }
+      if (formState.errors.passwordConfirmation) {
+        form.setError(
+          'passwordConfirmation',
+          formState.errors.passwordConfirmation
+        );
+      }
     } else if (formState.status === 'error') {
-      toast.error('Gagal login', {
+      toast.error('Gagal melakukan reset password', {
         description: formState.errors,
         id: 'login-error',
       });
@@ -58,12 +64,11 @@ export default function LoginUserForm() {
     }
 
     if (formState.status === 'success') {
-      toast.dismiss();
-      toast.success('Login berhasil', {
-        description: 'Selamat datang',
+      toast.success('Berhasil melakukan reset password', {
+        description: 'Silahkan login kembali',
         id: 'login-success',
       });
-      router.push('/');
+      router.push('/login');
     }
   }, [formState.form]);
 
@@ -77,24 +82,18 @@ export default function LoginUserForm() {
         onSubmit={(evt) => {
           evt.preventDefault();
           form.handleSubmit(() => {
-            toast.loading('Mengautentikasi...', {
-              id: 'authenticating',
-            });
+            toast.loading('Memproses reset password', {});
             formAction(new FormData(formRef.current!));
           })(evt);
         }}
       >
         <FormField
           control={form.control}
-          name="phoneNumber"
+          name="token"
           render={({ field }) => (
             <FormItem className="w-full grid gap-2">
-              <FormLabel>Nomor Whatsapp</FormLabel>
               <FormControl>
-                <PhoneInput
-                  {...field}
-                  value={field.value as PhoneNumberValue}
-                />
+                <Input type="hidden" readOnly placeholder="" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -105,17 +104,22 @@ export default function LoginUserForm() {
           name="password"
           render={({ field }) => (
             <FormItem className="w-full grid gap-2">
-              <div className="flex items-center">
-                <FormLabel>Password</FormLabel>
-                <Link
-                  href="/forgot-password"
-                  className="ml-auto inline-block text-sm underline"
-                >
-                  Lupa password?
-                </Link>
-              </div>
+              <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="" {...field} />
+                <PasswordInput {...field} autoComplete="new-password" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="passwordConfirmation"
+          render={({ field }) => (
+            <FormItem className="w-full grid gap-2">
+              <FormLabel>Konfirmasi Password</FormLabel>
+              <FormControl>
+                <PasswordInput {...field} autoComplete="new-password" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -123,7 +127,7 @@ export default function LoginUserForm() {
         />
 
         <Button type="submit" className="w-full">
-          Login
+          Kirim
         </Button>
       </form>
     </Form>

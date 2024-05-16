@@ -37,8 +37,8 @@ export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
   });
 
   useEffect(() => {
+    toast.dismiss();
     if (formState.status === 'error') {
-      toast.dismiss();
       toast.error('Gagal mengirim ulang kode OTP', {
         description: formState.errors,
         id: 'register-error',
@@ -46,7 +46,6 @@ export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
       form.setError('root', { message: formState.errors });
     }
     if (formState.status === 'success') {
-      toast.dismiss();
       toast.success('Kode OTP berhasil dikirim ulang', {
         id: 'register-success',
       });
@@ -61,10 +60,10 @@ export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
         action={formAction}
         onSubmit={(evt) => {
           evt.preventDefault();
-          toast.loading('Mengirim ulang kode OTP...', {
-            id: 'registering',
-          });
           form.handleSubmit(() => {
+            toast.loading('Mengirim ulang kode OTP...', {
+              id: 'registering',
+            });
             formAction(new FormData(formRef.current!));
           })(evt);
         }}

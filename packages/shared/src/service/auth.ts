@@ -3,6 +3,7 @@ import type { ErrorFields, PromiseResult } from '../types';
 export interface RegisterUser {
   phoneNumber: string;
   password: string;
+  passwordConfirmation: string;
   name: string;
   email: string;
   address: string;
@@ -13,7 +14,16 @@ export interface LoginUser {
   password: string;
 }
 
-type ValidatedFields = keyof Partial<RegisterUser> | keyof Partial<LoginUser>;
+export interface ResetPassword {
+  token: string;
+  password: string;
+  passwordConfirmation: string;
+}
+
+type ValidatedFields =
+  | keyof Partial<RegisterUser>
+  | keyof Partial<LoginUser>
+  | keyof Partial<ResetPassword>;
 
 type ErrorResult = UserValidationError | Error;
 
@@ -35,4 +45,5 @@ export interface AuthService {
   forgotPassword(data: {
     phoneNumber: string;
   }): PromiseResult<string, ErrorResult>;
+  resetPassword(data: ResetPassword): PromiseResult<string, ErrorResult>;
 }

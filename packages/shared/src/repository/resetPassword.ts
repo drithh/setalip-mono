@@ -20,6 +20,9 @@ export interface ResetPasswordRepository {
   findResetPasswordByUserId(
     userId: SelectResetPassword['user_id']
   ): Promise<SelectResetPassword | undefined>;
+  findResetPasswordByToken(
+    token: SelectResetPassword['token']
+  ): Promise<SelectResetPassword | undefined>;
   createResetPassword(data: InsertResetPassword): Promise<InsertResult>;
   updateResetPassword(data: UpdateResetPassword): Promise<UpdateResult>;
   deleteResetPassword(data: SelectResetPassword['id']): Promise<DeleteResult>;

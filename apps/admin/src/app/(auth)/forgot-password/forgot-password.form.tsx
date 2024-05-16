@@ -38,12 +38,12 @@ export default function ForgotPasswordForm() {
   });
 
   useEffect(() => {
+    toast.dismiss();
     if (formState.status === 'field-errors') {
       if (formState.errors.phoneNumber) {
         form.setError('phoneNumber', formState.errors.phoneNumber);
       }
     } else if (formState.status === 'error') {
-      toast.dismiss();
       toast.error('Gagal mengirim link reset password', {
         description: formState.errors,
         id: 'login-error',
@@ -52,9 +52,7 @@ export default function ForgotPasswordForm() {
     } else {
       form.clearErrors();
     }
-
     if (formState.status === 'success') {
-      toast.dismiss();
       toast.success('Berhasil mengirim link reset password', {
         description: 'Silahkan cek whatsapp anda',
         id: 'login-success',
@@ -71,10 +69,10 @@ export default function ForgotPasswordForm() {
         action={formAction}
         onSubmit={(evt) => {
           evt.preventDefault();
-          toast.loading('Mengautentikasi...', {
-            id: 'authenticating',
-          });
           form.handleSubmit(() => {
+            toast.loading('Mengirim link reset password...', {
+              id: 'authenticating',
+            });
             formAction(new FormData(formRef.current!));
           })(evt);
         }}

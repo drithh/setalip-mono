@@ -73,9 +73,33 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
       result: void {},
     };
   }
-  verifyResetPassword(
-    data: VerifyResetPassword
-  ): PromiseResult<boolean, Error> {
-    throw new Error('Method not implemented.');
+  async verifyResetPassword(data: VerifyResetPassword) {
+    const resetPassword =
+      await this._resetPasswordRepository.findResetPasswordByToken(data.token);
+
+    if (!resetPassword) {
+      return {
+        error: new Error('Reset password not found'),
+      };
+    }
+
+    if (resetPassword.expired_at < new Date()) {
+      return {
+        error: new Error('Reset password expired'),
+      };
+    }
+
+    const deleteResetPassword =
+      await this._resetPasswordRepository.deleteResetPassword(resetPassword.id);
+
+    if (!deleteResetPassword) {
+      return {
+        error: new Error('Failed to delete reset password'),
+      };
+    }
+
+    return {
+      result: resetPassword['user_id'],
+    };
   }
 }

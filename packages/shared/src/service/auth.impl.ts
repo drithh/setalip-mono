@@ -4,6 +4,7 @@ import {
   RegisterUser,
   AuthService,
   UserValidationError,
+  ResetPassword,
 } from '#dep/service/auth';
 import { lucia } from '../auth';
 import { injectable, inject } from 'inversify';
@@ -147,6 +148,41 @@ export class AuthServiceImpl implements AuthService {
 
     return {
       result: 'OTP sent',
+    };
+  }
+
+  async resetPassword(data: ResetPassword) {
+    const resetPassword = await this._resetPasswordService.verifyResetPassword({
+      token: data.token,
+    });
+
+    if (resetPassword.error) {
+      return {
+        error: resetPassword.error,
+      };
+    }
+    const hashed_password = await hash(data.password, {
+      memoryCost: 19456,
+      timeCost: 2,
+      outputLen: 32,
+      parallelism: 1,
+    });
+
+    const updated = await this._userRepository.updateUser({
+      id: resetPassword.result,
+      hashed_password,
+    });
+
+    if (!updated) {
+      return {
+        error: new UserValidationError({
+          password: 'Could not update password',
+        }),
+      };
+    }
+
+    return {
+      result: 'Password updated',
     };
   }
 }
