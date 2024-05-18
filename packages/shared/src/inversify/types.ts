@@ -9,6 +9,8 @@ const TYPES = {
   OtpService: Symbol.for('OtpService'),
   ResetPasswordRepository: Symbol.for('ResetPasswordRepository'),
   ResetPasswordService: Symbol.for('ResetPasswordService'),
+  LocationRepository: Symbol.for('LocationRepository'),
+  LocationService: Symbol.for('LocationService'),
 };
 
 export { TYPES };

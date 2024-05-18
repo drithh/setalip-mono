@@ -19,6 +19,10 @@ import { ResetPasswordRepository } from '#dep/repository/resetPassword';
 import { KyselyMySqlResetPasswordRepository } from '#dep/repository/kysely-mysql/resetPassword';
 import { ResetPasswordServiceImpl } from '#dep/service/resetPassword.impl';
 import { ResetPasswordService } from '../service';
+import { LocationRepository } from '#dep/repository/location';
+import { KyselyMySqlLocationRepository } from '#dep/repository/kysely-mysql/locations';
+import { LocationService } from '#dep/service/location';
+import { LocationServiceImpl } from '#dep/service/location.impl';
 
 const container = new Container();
 
@@ -38,5 +42,9 @@ container
 container
   .bind<ResetPasswordService>(TYPES.ResetPasswordService)
   .to(ResetPasswordServiceImpl);
+container
+  .bind<LocationRepository>(TYPES.LocationRepository)
+  .to(KyselyMySqlLocationRepository);
+container.bind<LocationService>(TYPES.LocationService).to(LocationServiceImpl);
 
 export { container };
