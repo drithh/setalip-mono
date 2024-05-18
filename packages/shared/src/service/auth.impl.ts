@@ -13,22 +13,26 @@ import type { UserRepository } from '../repository';
 import type { OtpService } from './otp';
 import type { ResetPasswordRepository } from '#dep/repository/resetPassword';
 import type { ResetPasswordService } from './resetPassword';
+import { Database } from '../db';
 
 @injectable()
 export class AuthServiceImpl implements AuthService {
   private _userRepository: UserRepository;
   private _otpService: OtpService;
   private _resetPasswordService: ResetPasswordService;
+  private _db: Database;
 
   constructor(
     @inject(TYPES.UserRepository) userRepository: UserRepository,
     @inject(TYPES.OtpService) otpService: OtpService,
     @inject(TYPES.ResetPasswordService)
-    resetPasswordService: ResetPasswordService
+    resetPasswordService: ResetPasswordService,
+    @inject(TYPES.Database) db: Database
   ) {
     this._userRepository = userRepository;
     this._otpService = otpService;
     this._resetPasswordService = resetPasswordService;
+    this._db = db;
   }
 
   async registerUser(data: RegisterUser) {
@@ -146,6 +150,12 @@ export class AuthServiceImpl implements AuthService {
       };
     }
 
+    const sendOtp = await this._otpService.sendOtp({ userId: user.id });
+    if (sendOtp.error) {
+      return {
+        error: sendOtp.error,
+      };
+    }
     return {
       result: 'OTP sent',
     };
