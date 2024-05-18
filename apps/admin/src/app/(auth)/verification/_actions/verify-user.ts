@@ -8,7 +8,7 @@ import { UserRepository } from '@repo/shared/repository';
 
 export async function verifyUser(
   state: FormState<VerifyOtpSchema>,
-  data: FormData
+  data: FormData,
 ): Promise<FormState<VerifyOtpSchema>> {
   const formData = Object.fromEntries(data);
   const parsed = verifyOtpSchema.safeParse(formData);

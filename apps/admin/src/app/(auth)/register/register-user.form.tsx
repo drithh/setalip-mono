@@ -56,7 +56,7 @@ export default function RegisterUserForm() {
       if (formState.errors.passwordConfirmation) {
         form.setError(
           'passwordConfirmation',
-          formState.errors.passwordConfirmation
+          formState.errors.passwordConfirmation,
         );
       }
       if (formState.errors.name) {
@@ -105,7 +105,7 @@ export default function RegisterUserForm() {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormLabel>Nama Lengkap</FormLabel>
               <FormControl>
                 <Input type="text" placeholder="" {...field} />
@@ -118,7 +118,7 @@ export default function RegisterUserForm() {
           control={form.control}
           name="phoneNumber"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormLabel>Nomor Whatsapp</FormLabel>
               <FormControl>
                 <PhoneInput
@@ -134,7 +134,7 @@ export default function RegisterUserForm() {
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="" {...field} />
@@ -147,7 +147,7 @@ export default function RegisterUserForm() {
           control={form.control}
           name="address"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormLabel>Alamat</FormLabel>
               <FormControl>
                 <Input type="text" placeholder="" {...field} />
@@ -160,7 +160,7 @@ export default function RegisterUserForm() {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <PasswordInput {...field} autoComplete="new-password" />
@@ -173,7 +173,7 @@ export default function RegisterUserForm() {
           control={form.control}
           name="passwordConfirmation"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormLabel>Konfirmasi Password</FormLabel>
               <FormControl>
                 <PasswordInput {...field} autoComplete="new-password" />

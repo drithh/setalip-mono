@@ -3,7 +3,7 @@ import type { ErrorFields, PromiseResult } from '../types';
 
 export interface LocationService {
   getLocations(): PromiseResult<SelectLocation[], Error>;
-  getLocationById(
+  findLocationById(
     id: SelectLocation['id']
   ): PromiseResult<SelectDetailLocation, Error>;
   // createLocation(data: InsertLocation): PromiseResult<InsertResult, Error>;

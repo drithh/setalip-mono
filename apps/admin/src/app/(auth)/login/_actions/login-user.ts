@@ -11,7 +11,7 @@ import { parsePhoneNumber } from 'libphonenumber-js';
 
 export async function signin(
   state: FormState<LoginUserSchema>,
-  data: FormData
+  data: FormData,
 ): Promise<FormState<LoginUserSchema>> {
   const formData = Object.fromEntries(data);
   const parsed = loginUserSchema.safeParse(formData);
@@ -71,7 +71,7 @@ export async function signin(
   cookies().set(
     loginUser.result.name,
     loginUser.result.value,
-    loginUser.result.attributes
+    loginUser.result.attributes,
   );
 
   return {

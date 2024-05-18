@@ -7,7 +7,7 @@ import { OtpService } from '@repo/shared/service';
 
 export async function resendOtp(
   state: FormState<ResendOtpSchema>,
-  data: FormData
+  data: FormData,
 ): Promise<FormState<ResendOtpSchema>> {
   const otpService = container.get<OtpService>(TYPES.OtpService);
 

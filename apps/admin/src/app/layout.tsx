@@ -40,7 +40,7 @@ export default function RootLayout({
         <Provider>
           <div className="flex min-h-screen w-full flex-col bg-muted/40">
             <Navigation />
-            <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 min-h-screen">
+            <div className="flex min-h-screen flex-col sm:gap-4 sm:py-4 sm:pl-14">
               <Header />
               {children}
             </div>

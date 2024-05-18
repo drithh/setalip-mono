@@ -81,7 +81,7 @@ export default function ForgotPasswordForm() {
           control={form.control}
           name="phoneNumber"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormLabel>Nomor Whatsapp</FormLabel>
               <FormControl>
                 <PhoneInput

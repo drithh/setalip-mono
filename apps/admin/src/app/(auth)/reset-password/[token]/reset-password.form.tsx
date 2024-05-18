@@ -50,7 +50,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       if (formState.errors.passwordConfirmation) {
         form.setError(
           'passwordConfirmation',
-          formState.errors.passwordConfirmation
+          formState.errors.passwordConfirmation,
         );
       }
     } else if (formState.status === 'error') {
@@ -91,7 +91,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           control={form.control}
           name="token"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormControl>
                 <Input type="hidden" readOnly placeholder="" {...field} />
               </FormControl>
@@ -103,7 +103,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <PasswordInput {...field} autoComplete="new-password" />
@@ -116,7 +116,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           control={form.control}
           name="passwordConfirmation"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormLabel>Konfirmasi Password</FormLabel>
               <FormControl>
                 <PasswordInput {...field} autoComplete="new-password" />

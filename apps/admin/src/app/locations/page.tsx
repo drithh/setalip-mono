@@ -12,13 +12,14 @@ import Image from 'next/image';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
 import ImageWithFallback from '@/lib/image-with-fallback';
 import { MapPin, Phone } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function Locations() {
   const locationService = container.get<LocationService>(TYPES.LocationService);
 
   const locations = await locationService.getLocations();
   return (
-    <main className="bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 flex flex-1 flex-col gap-4 lg:gap-6 ">
+    <main className="flex flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6 ">
       <div className="flex items-center">
         <h1 className="text-lg font-semibold md:text-2xl">Location</h1>
       </div>
@@ -35,7 +36,7 @@ export default async function Locations() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4">
           {locations.result?.map((location) => (
             <Card key={location?.id} className="sm:col-span-1">
               <CardHeader>
@@ -50,18 +51,20 @@ export default async function Locations() {
 
                 <CardTitle>{location.name}</CardTitle>
                 <CardDescription className="flex flex-col gap-2">
-                  <div className="flex gap-1 items-center">
+                  <div className="flex items-center gap-2">
                     <MapPin className="h-5 w-5" />
-                    {location.address}
+                    <p>{location.address}</p>
                   </div>
-                  <div className="flex gap-1 items-center">
+                  <div className="flex items-center gap-2">
                     <Phone className="h-5 w-5" />
-                    {location.phone_number}
+                    <p>{location.phone_number}</p>
                   </div>
                 </CardDescription>
               </CardHeader>
               <CardFooter>
-                <Button>View Location</Button>
+                <Link href={`/locations/${location.id}`}>
+                  <Button>View Location</Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}

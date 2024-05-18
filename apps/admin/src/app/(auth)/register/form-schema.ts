@@ -19,7 +19,7 @@ export const registerUserSchema = z
     {
       message: 'Passwords must match',
       path: ['passwordConfirmation'],
-    }
+    },
   );
 
 export type RegisterUserSchema = z.infer<typeof registerUserSchema>;

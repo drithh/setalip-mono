@@ -11,7 +11,7 @@ import { resetPasswordSchema, ResetPasswordSchema } from '../form-schema';
 
 export async function resetPassword(
   state: FormState<ResetPasswordSchema>,
-  data: FormData
+  data: FormData,
 ): Promise<FormState<ResetPasswordSchema>> {
   const formData = Object.fromEntries(data);
   const parsed = resetPasswordSchema.safeParse(formData);
@@ -39,7 +39,7 @@ export async function resetPassword(
   }
 
   const resetPasswordService = container.get<ResetPasswordService>(
-    TYPES.ResetPasswordService
+    TYPES.ResetPasswordService,
   );
 
   const resetPassword = await resetPasswordService.verifyResetPassword({

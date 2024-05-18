@@ -13,7 +13,7 @@ export const resetPasswordSchema = z
     {
       message: 'Passwords must match',
       path: ['passwordConfirmation'],
-    }
+    },
   );
 
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;

@@ -88,7 +88,7 @@ export default function LoginUserForm() {
           control={form.control}
           name="phoneNumber"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormLabel>Nomor Whatsapp</FormLabel>
               <FormControl>
                 <PhoneInput
@@ -104,7 +104,7 @@ export default function LoginUserForm() {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <div className="flex items-center">
                 <FormLabel>Password</FormLabel>
                 <Link

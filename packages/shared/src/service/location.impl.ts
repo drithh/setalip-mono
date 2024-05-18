@@ -25,7 +25,7 @@ export class LocationServiceImpl implements LocationService {
     };
   }
 
-  async getLocationById(id: SelectLocation['id']) {
+  async findLocationById(id: SelectLocation['id']) {
     const location = await this._locationRepository.findLocationById(id);
 
     if (!location) {

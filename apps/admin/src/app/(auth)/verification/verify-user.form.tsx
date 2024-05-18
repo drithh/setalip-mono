@@ -95,7 +95,7 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
           control={form.control}
           name="userId"
           render={({ field }) => (
-            <FormItem className="w-full grid gap-2">
+            <FormItem className="grid w-full gap-2">
               <FormControl>
                 <Input type="hidden" readOnly placeholder="" {...field} />
               </FormControl>

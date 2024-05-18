@@ -13,7 +13,7 @@ import { parsePhoneNumber } from 'libphonenumber-js';
 
 export async function signin(
   state: FormState<ForgotPasswordSchema>,
-  data: FormData
+  data: FormData,
 ): Promise<FormState<ForgotPasswordSchema>> {
   const formData = Object.fromEntries(data);
   const parsed = forgotPasswordSchema.safeParse(formData);
@@ -37,7 +37,7 @@ export async function signin(
   const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;
 
   const resetPasswordService = container.get<ResetPasswordService>(
-    TYPES.ResetPasswordService
+    TYPES.ResetPasswordService,
   );
 
   const resetPassword = await resetPasswordService.sendResetPassword({

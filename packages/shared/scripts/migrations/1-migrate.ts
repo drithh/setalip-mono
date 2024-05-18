@@ -296,8 +296,8 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('coach_id', 'bigint', (col) =>
           col.notNull().references('coaches.id')
         )
-        .addColumn('location_id', 'bigint', (col) =>
-          col.notNull().references('locations.id')
+        .addColumn('location_facility_id', 'bigint', (col) =>
+          col.notNull().references('location_facilities.id')
         )
         .$call(addDefaultColumns)
         .execute();
