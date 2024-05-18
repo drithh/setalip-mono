@@ -7,7 +7,7 @@ interface ImageWithFallbackProps extends Omit<ImageProps, 'src'> {
   src?: string;
 }
 
-const fallbackImage = 'https://fakeimg.pl/600x400';
+const fallbackImage = '/placeholder.svg';
 
 const ImageWithFallback = ({
   fallback = fallbackImage,
