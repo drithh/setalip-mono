@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import Link from 'next/link';
-import { editFacilitySchema } from './form-schema';
+import { EditFacilitySchema, editFacilitySchema } from './form-schema';
 import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
@@ -49,9 +49,9 @@ export default function EditFacility({ facilityId }: EditFacilityProps) {
     form: undefined,
   });
 
-  type FormValues = z.output<typeof editFacilitySchema>;
+  type FormSchema = EditFacilitySchema;
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(editFacilitySchema),
     defaultValues: formState.form,
   });
@@ -61,7 +61,7 @@ export default function EditFacility({ facilityId }: EditFacilityProps) {
     if (formState.status === 'field-errors') {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
-          const typedFieldName = fieldName as keyof FormValues;
+          const typedFieldName = fieldName as keyof FormSchema;
           const error = formState.errors[typedFieldName];
           if (error) {
             form.setError(typedFieldName, error);

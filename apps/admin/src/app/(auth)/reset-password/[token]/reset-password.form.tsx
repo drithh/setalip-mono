@@ -15,7 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { resetPasswordSchema } from './form-schema';
+import { ResetPasswordSchema, resetPasswordSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { PasswordInput } from '@repo/ui/components/password-input';
@@ -49,9 +49,9 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     },
   });
 
-  type FormValues = z.output<typeof resetPasswordSchema>;
+  type FormSchema = ResetPasswordSchema;
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: formState.form,
   });
@@ -61,7 +61,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     if (formState.status === 'field-errors') {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
-          const typedFieldName = fieldName as keyof FormValues;
+          const typedFieldName = fieldName as keyof FormSchema;
           const error = formState.errors[typedFieldName];
           if (error) {
             form.setError(typedFieldName, error);

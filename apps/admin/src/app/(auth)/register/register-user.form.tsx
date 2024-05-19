@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import Link from 'next/link';
-import { registerUserSchema } from './form-schema';
+import { RegisterUserSchema, registerUserSchema } from './form-schema';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -47,9 +47,9 @@ export default function RegisterUserForm() {
     form: undefined,
   });
 
-  type FormValues = z.output<typeof registerUserSchema>;
+  type FormSchema = RegisterUserSchema;
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(registerUserSchema),
     defaultValues: formState.form,
   });
@@ -59,7 +59,7 @@ export default function RegisterUserForm() {
     if (formState.status === 'field-errors') {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
-          const typedFieldName = fieldName as keyof FormValues;
+          const typedFieldName = fieldName as keyof FormSchema;
           const error = formState.errors[typedFieldName];
           if (error) {
             form.setError(typedFieldName, error);

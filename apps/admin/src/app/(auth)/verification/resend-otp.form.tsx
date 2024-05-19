@@ -3,7 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { resendOtp } from './_actions/resend-otp';
-import { resendOtpSchema } from './form-schema';
+import { ResendOtpSchema, resendOtpSchema } from './form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import router from 'next/router';
 import { useEffect, useRef } from 'react';
@@ -46,9 +46,9 @@ export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
     },
   });
 
-  type FormValues = z.output<typeof resendOtpSchema>;
+  type FormSchema = ResendOtpSchema;
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(resendOtpSchema),
     defaultValues: formState.form,
   });
@@ -58,7 +58,7 @@ export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
     if (formState.status === 'field-errors') {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
-          const typedFieldName = fieldName as keyof FormValues;
+          const typedFieldName = fieldName as keyof FormSchema;
           const error = formState.errors[typedFieldName];
           if (error) {
             form.setError(typedFieldName, error);

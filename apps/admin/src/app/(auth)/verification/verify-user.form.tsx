@@ -22,7 +22,7 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import Link from 'next/link';
-import { verifyOtpSchema } from './form-schema';
+import { VerifyOtpSchema, verifyOtpSchema } from './form-schema';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
@@ -60,9 +60,9 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
     },
   });
 
-  type FormValues = z.output<typeof verifyOtpSchema>;
+  type FormSchema = VerifyOtpSchema;
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: formState.form,
   });
@@ -72,7 +72,7 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
     if (formState.status === 'field-errors') {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
-          const typedFieldName = fieldName as keyof FormValues;
+          const typedFieldName = fieldName as keyof FormSchema;
           const error = formState.errors[typedFieldName];
           if (error) {
             form.setError(typedFieldName, error);

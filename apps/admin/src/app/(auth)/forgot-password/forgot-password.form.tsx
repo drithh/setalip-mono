@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import Link from 'next/link';
-import { forgotPasswordSchema } from './form-schema';
+import { ForgotPasswordSchema, forgotPasswordSchema } from './form-schema';
 import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
@@ -44,9 +44,9 @@ export default function ForgotPasswordForm() {
     form: undefined,
   });
 
-  type FormValues = z.output<typeof forgotPasswordSchema>;
+  type FormSchema = ForgotPasswordSchema;
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: formState.form,
   });
@@ -56,7 +56,7 @@ export default function ForgotPasswordForm() {
     if (formState.status === 'field-errors') {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
-          const typedFieldName = fieldName as keyof FormValues;
+          const typedFieldName = fieldName as keyof FormSchema;
           const error = formState.errors[typedFieldName];
           if (error) {
             form.setError(typedFieldName, error);

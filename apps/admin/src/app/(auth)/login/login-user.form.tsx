@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import Link from 'next/link';
-import { loginUserSchema } from './form-schema';
+import { LoginUserSchema, loginUserSchema } from './form-schema';
 import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
@@ -45,9 +45,9 @@ export default function LoginUserForm() {
     form: undefined,
   });
 
-  type FormValues = z.output<typeof loginUserSchema>;
+  type FormSchema = LoginUserSchema;
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(loginUserSchema),
     defaultValues: formState.form,
   });
@@ -57,7 +57,7 @@ export default function LoginUserForm() {
     if (formState.status === 'field-errors') {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
-          const typedFieldName = fieldName as keyof FormValues;
+          const typedFieldName = fieldName as keyof FormSchema;
           const error = formState.errors[typedFieldName];
           if (error) {
             form.setError(typedFieldName, error);
