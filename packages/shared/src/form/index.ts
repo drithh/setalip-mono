@@ -1,6 +1,6 @@
 import { FieldError } from 'react-hook-form';
 
-export type FormState<T> = { form: T } & (
+export type FormState<T> = { form: Partial<T> | undefined } & (
   | SuccessState
   | SubmitErrorState
   | FieldErrorsState<T>

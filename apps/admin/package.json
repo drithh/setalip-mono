@@ -25,6 +25,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.51.4",
     "react-phone-number-input": "^3.4.1",
+    "react-photo-view": "^1.2.4",
     "reflect-metadata": "^0.2.2",
     "server-only": "^0.0.1",
     "sonner": "^1.4.41",

@@ -8,16 +8,25 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
+import Link from 'next/link';
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import { LocationService } from '@repo/shared/service';
-import Image from 'next/image';
-import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
-import ImageWithFallback from '@/lib/image-with-fallback';
-import { ChevronLeft, MapPin, Phone, Trash, Upload } from 'lucide-react';
+import { ChevronLeft, Phone, User2 } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { Label } from '@repo/ui/components/ui/label';
 import { Input } from '@repo/ui/components/ui/input';
-import { DeletableImage } from './deletable-image';
+import ImageCard from './image-card';
+import ImageWithFallback from '@/lib/image-with-fallback';
+import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
+import 'react-photo-view/dist/react-photo-view.css';
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from '@repo/ui/components/ui/sheet';
 
 export default async function LocationDetail({
   params,
@@ -109,24 +118,88 @@ export default async function LocationDetail({
               </div>
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Fasilitas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3 md:grid-cols-2">
+                {location.result?.facilities.map((facility, index) => (
+                  <Card key={facility?.id} className="sm:col-span-1">
+                    <CardHeader>
+                      <AspectRatio ratio={16 / 9}>
+                        <ImageWithFallback
+                          src={facility.image_url}
+                          alt={facility.name}
+                          fill
+                          className="rounded-lg object-cover"
+                        />
+                      </AspectRatio>
+
+                      <CardTitle>{facility.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-2 gap-2">
+                      <div className="flex content-between items-center gap-2">
+                        <p>Kapasitas: </p>
+                        <div className="flex items-center gap-2">
+                          <User2 className="h-5 w-5" />
+                          <p>{facility.capacity}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <p>Level:</p>
+                        <p>{facility.level}</p>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Sheet>
+                        <SheetTrigger>
+                          <Button variant={'outline'}>Edit Fasilitas</Button>
+                        </SheetTrigger>
+                        <SheetContent>
+                          <SheetHeader>
+                            <SheetTitle className="text-left">
+                              Edit Fasilitas
+                            </SheetTitle>
+                            <SheetDescription className="text-left">
+                              Buat perubahan pada fasilitas ini, pastikan klik
+                              simpan ketika selesai
+                            </SheetDescription>
+                          </SheetHeader>
+                          <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="name" className="text-right">
+                                Name
+                              </Label>
+                              <Input
+                                id="name"
+                                value="Pedro Duarte"
+                                className="col-span-3"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="username" className="text-right">
+                                Username
+                              </Label>
+                              <Input
+                                id="username"
+                                value="@peduarte"
+                                className="col-span-3"
+                              />
+                            </div>
+                          </div>
+                        </SheetContent>
+                      </Sheet>
+                      <Link className="ml-auto" href={`/locations/`}></Link>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <Card className="overflow-hidden">
-          <CardHeader>
-            <CardTitle>Foto Lokasi</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-2">
-              {location.result?.assets.map((image, index) => (
-                <DeletableImage key={index} src={image.url} alt={image.name} />
-              ))}
-              <button className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed">
-                <Upload className="h-4 w-4 text-muted-foreground" />
-                <span className="sr-only">Upload</span>
-              </button>
-            </div>
-          </CardContent>
-        </Card>
+        <ImageCard assets={location.result?.assets} />
       </div>
     </main>
   );

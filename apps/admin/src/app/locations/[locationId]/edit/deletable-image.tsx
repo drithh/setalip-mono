@@ -26,9 +26,9 @@ const DeletableImage = ({ src, alt }: DeletableImageProps) => {
       <AlertDialogTrigger className="group relative">
         <ImageWithFallback
           alt={alt}
+          src={src}
           className="aspect-square w-full rounded-md object-cover "
           height="84"
-          src={src}
           width="84"
         />
         <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black bg-opacity-80 opacity-0 group-hover:opacity-60">

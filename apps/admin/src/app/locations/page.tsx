@@ -21,18 +21,18 @@ export default async function Locations() {
   return (
     <main className="flex flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6 ">
       <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">Location</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">Lokasi</h1>
       </div>
       {locations?.result && locations.result.length === 0 ? (
         <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
           <div className="flex flex-col items-center gap-1 text-center">
             <h3 className="text-2xl font-bold tracking-tight">
-              You have no products
+              Tidak ada lokasi
             </h3>
             <p className="text-sm text-muted-foreground">
-              You can start selling as soon as you add a product.
+              Kamu belum menambahkan lokasi
             </p>
-            <Button className="mt-4">Add Product</Button>
+            <Button className="mt-4">Tambah Lokasi</Button>
           </div>
         </div>
       ) : (
