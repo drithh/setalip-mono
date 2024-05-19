@@ -1,3 +1,4 @@
+import { FormState } from '@repo/shared/form';
 import { isPossiblePhoneNumber } from 'libphonenumber-js';
 import { z } from 'zod';
 
@@ -8,3 +9,4 @@ export const forgotPasswordSchema = z.object({
 });
 
 export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+export type FormForgotPassword = FormState<ForgotPasswordSchema>;

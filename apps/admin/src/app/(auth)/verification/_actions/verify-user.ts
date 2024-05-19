@@ -3,41 +3,44 @@ import { OtpService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
-import { VerifyOtpSchema, verifyOtpSchema } from '../form-schema';
+import {
+  FormVerifyOtp,
+  VerifyOtpSchema,
+  verifyOtpSchema,
+} from '../form-schema';
 import { UserRepository } from '@repo/shared/repository';
+import {
+  convertFormData,
+  convertZodErrorsToFieldErrors,
+} from '@repo/shared/util';
 
 export async function verifyUser(
-  state: FormState<VerifyOtpSchema>,
+  state: FormVerifyOtp,
   data: FormData,
-): Promise<FormState<VerifyOtpSchema>> {
-  const formData = Object.fromEntries(data);
+): Promise<FormVerifyOtp> {
+  const formData = convertFormData(data);
   const parsed = verifyOtpSchema.safeParse(formData);
+
   if (!parsed.success) {
     return {
-      form: {
-        userId: state.form.userId,
-        otp: data.get('otp') as string,
-      },
+      form: convertFormData(data),
       status: 'field-errors',
-      errors: {
-        otp: {
-          type: 'required',
-          message: 'OTP is required',
-        },
-      },
+      errors: convertZodErrorsToFieldErrors(
+        parsed.error.formErrors.fieldErrors,
+      ),
     };
   }
 
   const otpService = container.get<OtpService>(TYPES.OtpService);
 
   const otpResult = await otpService.verifyOtp({
-    userId: state.form.userId,
+    userId: state.form?.userId || parsed.data.userId,
     otp: parsed.data.otp,
   });
   if (otpResult.error) {
     return {
       form: {
-        userId: state.form.userId,
+        userId: state.form?.userId || parsed.data.userId,
         otp: parsed.data.otp,
       },
       status: 'error',
@@ -46,10 +49,7 @@ export async function verifyUser(
   }
 
   return {
-    form: {
-      userId: state.form.userId,
-      otp: parsed.data.otp,
-    },
+    form: undefined,
     status: 'success',
   };
 }

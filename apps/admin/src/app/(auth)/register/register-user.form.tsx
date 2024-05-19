@@ -4,7 +4,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { PhoneInput } from '@repo/ui/components/phone-input';
 import { PasswordInput } from '@repo/ui/components/password-input';
-import { signup } from './_actions/register-user';
+import { registerUser } from './_actions/register-user';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { z } from 'zod';
@@ -25,21 +25,31 @@ import { registerUserSchema } from './form-schema';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+const TOAST_MESSAGES = {
+  error: {
+    title: 'Gagal registrasi',
+    description: 'Silahkan coba lagi',
+  },
+  loading: {
+    title: 'Mendaftarkan User...',
+    description: 'Mohon tunggu',
+  },
+  success: {
+    title: 'Registrasi berhasil',
+    description: 'Kode verifikasi telah dikirim ke whatsapp',
+  },
+};
+
 export default function RegisterUserForm() {
   const router = useRouter();
-  const [formState, formAction] = useFormState(signup, {
+  const [formState, formAction] = useFormState(registerUser, {
     status: 'default',
-    form: {
-      phoneNumber: '',
-      password: '',
-      passwordConfirmation: '',
-      name: '',
-      email: '',
-      address: '',
-    },
+    form: undefined,
   });
 
-  const form = useForm<z.output<typeof registerUserSchema>>({
+  type FormValues = z.output<typeof registerUserSchema>;
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(registerUserSchema),
     defaultValues: formState.form,
   });
@@ -47,42 +57,39 @@ export default function RegisterUserForm() {
   useEffect(() => {
     toast.dismiss();
     if (formState.status === 'field-errors') {
-      if (formState.errors.phoneNumber) {
-        form.setError('phoneNumber', formState.errors.phoneNumber);
-      }
-      if (formState.errors.password) {
-        form.setError('password', formState.errors.password);
-      }
-      if (formState.errors.passwordConfirmation) {
-        form.setError(
-          'passwordConfirmation',
-          formState.errors.passwordConfirmation,
-        );
-      }
-      if (formState.errors.name) {
-        form.setError('name', formState.errors.name);
-      }
-      if (formState.errors.email) {
-        form.setError('email', formState.errors.email);
-      }
-      if (formState.errors.address) {
-        form.setError('address', formState.errors.address);
+      for (const fieldName in formState.errors) {
+        if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
+          const typedFieldName = fieldName as keyof FormValues;
+          const error = formState.errors[typedFieldName];
+          if (error) {
+            form.setError(typedFieldName, error);
+          }
+        }
       }
     } else if (formState.status === 'error') {
-      toast.error('Register gagal', {
-        description: formState.errors,
-        id: 'register-error',
+      toast.error(TOAST_MESSAGES.error.title, {
+        description: TOAST_MESSAGES.error.description,
       });
       form.setError('root', { message: formState.errors });
+    } else {
+      form.clearErrors();
     }
     if (formState.status === 'success') {
-      toast.success('Registrasi berhasil', {
-        description: 'Kode verifikasi telah dikirim ke whatsapp',
-        id: 'register-success',
+      toast.success(TOAST_MESSAGES.success.title, {
+        description: TOAST_MESSAGES.success.description,
       });
-      router.push('/');
     }
   }, [formState.form]);
+
+  const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    form.handleSubmit(() => {
+      toast.loading(TOAST_MESSAGES.loading.title, {
+        description: TOAST_MESSAGES.loading.description,
+      });
+      formAction(new FormData(formRef.current!));
+    })(event);
+  };
 
   const formRef = useRef<HTMLFormElement>(null);
   return (
@@ -91,15 +98,7 @@ export default function RegisterUserForm() {
         className="grid gap-4"
         ref={formRef}
         action={formAction}
-        onSubmit={(evt) => {
-          evt.preventDefault();
-          form.handleSubmit(() => {
-            toast.loading('Mendaftarkan User...', {
-              id: 'registering',
-            });
-            formAction(new FormData(formRef.current!));
-          })(evt);
-        }}
+        onSubmit={onSubmitForm}
       >
         <FormField
           control={form.control}

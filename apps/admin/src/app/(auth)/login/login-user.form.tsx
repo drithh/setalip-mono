@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { signin } from './_actions/login-user';
+import { loginUser } from './_actions/login-user';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { z } from 'zod';
@@ -23,17 +23,31 @@ import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
+const TOAST_MESSAGES = {
+  error: {
+    title: 'Gagal login',
+    description: 'Silahkan coba lagi',
+  },
+  loading: {
+    title: 'Mengautentikasi...',
+    description: 'Mohon tunggu',
+  },
+  success: {
+    title: 'Login berhasil',
+    description: 'Selamat datang',
+  },
+};
+
 export default function LoginUserForm() {
   const router = useRouter();
-  const [formState, formAction] = useFormState(signin, {
+  const [formState, formAction] = useFormState(loginUser, {
     status: 'default',
-    form: {
-      phoneNumber: '',
-      password: '',
-    },
+    form: undefined,
   });
 
-  const form = useForm<z.output<typeof loginUserSchema>>({
+  type FormValues = z.output<typeof loginUserSchema>;
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(loginUserSchema),
     defaultValues: formState.form,
   });
@@ -41,16 +55,18 @@ export default function LoginUserForm() {
   useEffect(() => {
     toast.dismiss();
     if (formState.status === 'field-errors') {
-      if (formState.errors.phoneNumber) {
-        form.setError('phoneNumber', formState.errors.phoneNumber);
-      }
-      if (formState.errors.password) {
-        form.setError('password', formState.errors.password);
+      for (const fieldName in formState.errors) {
+        if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
+          const typedFieldName = fieldName as keyof FormValues;
+          const error = formState.errors[typedFieldName];
+          if (error) {
+            form.setError(typedFieldName, error);
+          }
+        }
       }
     } else if (formState.status === 'error') {
-      toast.error('Gagal login', {
+      toast.error(TOAST_MESSAGES.error.title, {
         description: formState.errors,
-        id: 'login-error',
       });
       form.setError('root', { message: formState.errors });
     } else {
@@ -59,13 +75,22 @@ export default function LoginUserForm() {
 
     if (formState.status === 'success') {
       toast.dismiss();
-      toast.success('Login berhasil', {
-        description: 'Selamat datang',
-        id: 'login-success',
+      toast.success(TOAST_MESSAGES.success.title, {
+        description: TOAST_MESSAGES.success.description,
       });
       router.push('/');
     }
   }, [formState.form]);
+
+  const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    form.handleSubmit(() => {
+      toast.loading(TOAST_MESSAGES.loading.title, {
+        description: TOAST_MESSAGES.loading.description,
+      });
+      formAction(new FormData(formRef.current!));
+    })(event);
+  };
 
   const formRef = useRef<HTMLFormElement>(null);
   return (
@@ -74,15 +99,7 @@ export default function LoginUserForm() {
         className="grid gap-4"
         ref={formRef}
         action={formAction}
-        onSubmit={(evt) => {
-          evt.preventDefault();
-          form.handleSubmit(() => {
-            toast.loading('Mengautentikasi...', {
-              id: 'authenticating',
-            });
-            formAction(new FormData(formRef.current!));
-          })(evt);
-        }}
+        onSubmit={onSubmitForm}
       >
         <FormField
           control={form.control}

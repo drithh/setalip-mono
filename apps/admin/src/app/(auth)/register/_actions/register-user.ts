@@ -4,55 +4,32 @@ import { AuthService, UserValidationError } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
-import { RegisterUserSchema, registerUserSchema } from '../form-schema';
-import { convertErrorsToZod } from '@repo/shared/util';
+import {
+  FormRegisterUser,
+  RegisterUserSchema,
+  registerUserSchema,
+} from '../form-schema';
+import {
+  convertErrorsToZod,
+  convertFormData,
+  convertZodErrorsToFieldErrors,
+} from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
 
-export async function signup(
-  state: FormState<RegisterUserSchema>,
+export async function registerUser(
+  state: FormRegisterUser,
   data: FormData,
-): Promise<FormState<RegisterUserSchema>> {
-  const formData = Object.fromEntries(data);
+): Promise<FormRegisterUser> {
+  const formData = convertFormData(data);
   const parsed = registerUserSchema.safeParse(formData);
 
   if (!parsed.success) {
     return {
-      form: {
-        phoneNumber: data.get('phoneNumber') as string,
-        password: data.get('password') as string,
-        passwordConfirmation: data.get('passwordConfirmation') as string,
-        name: data.get('name') as string,
-        email: data.get('email') as string,
-        address: data.get('address') as string,
-      },
+      form: convertFormData(data),
       status: 'field-errors',
-      errors: {
-        phoneNumber: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.phoneNumber?.at(0),
-        },
-        password: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.password?.at(0),
-        },
-        passwordConfirmation: {
-          type: 'required',
-          message:
-            parsed.error.formErrors.fieldErrors.passwordConfirmation?.at(0),
-        },
-        name: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.name?.at(0),
-        },
-        email: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.email?.at(0),
-        },
-        address: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.address?.at(0),
-        },
-      },
+      errors: convertZodErrorsToFieldErrors(
+        parsed.error.formErrors.fieldErrors,
+      ),
     };
   }
 
@@ -71,17 +48,13 @@ export async function signup(
     const mappedErrors = convertErrorsToZod<RegisterUserSchema>(errors);
 
     return {
-      form: {
-        ...parsed.data,
-      },
+      form: parsed.data,
       status: 'field-errors',
       errors: mappedErrors,
     };
   } else if (registerUser.error) {
     return {
-      form: {
-        ...parsed.data,
-      },
+      form: parsed.data,
       status: 'error',
       errors: registerUser.error.message,
     };
@@ -94,14 +67,7 @@ export async function signup(
   );
 
   return {
-    form: {
-      phoneNumber: '',
-      password: '',
-      passwordConfirmation: '',
-      name: '',
-      email: '',
-      address: '',
-    },
+    form: undefined,
     status: 'success',
   };
 }

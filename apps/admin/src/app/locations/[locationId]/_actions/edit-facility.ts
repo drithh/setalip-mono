@@ -6,37 +6,13 @@ import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
 import { editFacilitySchema, FormEditFacility } from '../form-schema';
-import { convertErrorsToZod } from '@repo/shared/util';
+import {
+  convertErrorsToZod,
+  convertFormData,
+  convertZodErrorsToFieldErrors,
+} from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { FieldError } from 'react-hook-form';
-
-// name: data.get('name') as string,
-// capacity: data.get('capacity') as string,
-// level: data.get('level') as string,
-// convert to functions
-function convertFormData<T>(data: FormData) {
-  const formData = Object.fromEntries(data);
-  return formData as T;
-}
-
-function convertZodErrorsToFieldErrors<
-  T extends Record<string, string[] | undefined>,
->(errors: T) {
-  return Object.keys(errors).reduce(
-    (acc, key) => {
-      const field = key as string;
-      const message = errors[field];
-      return {
-        ...acc,
-        [field]: {
-          type: 'required',
-          message: message,
-        },
-      };
-    },
-    {} as Record<keyof T, FieldError>,
-  );
-}
 
 export async function editFacility(
   state: FormEditFacility,

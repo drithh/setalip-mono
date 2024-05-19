@@ -1,3 +1,4 @@
+import { FormState } from '@repo/shared/form';
 import { isPossiblePhoneNumber } from 'libphonenumber-js';
 import { z } from 'zod';
 
@@ -9,3 +10,4 @@ export const loginUserSchema = z.object({
 });
 
 export type LoginUserSchema = z.infer<typeof loginUserSchema>;
+export type FormLoginUser = FormState<LoginUserSchema>;

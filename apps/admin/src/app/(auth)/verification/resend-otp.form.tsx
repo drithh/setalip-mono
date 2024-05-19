@@ -23,6 +23,21 @@ interface ResendOtpFormProps {
   userId: number;
 }
 
+const TOAST_MESSAGES = {
+  error: {
+    title: 'Gagal mengirim ulang kode OTP',
+    description: 'Silahkan coba lagi',
+  },
+  loading: {
+    title: 'Mengirim ulang kode OTP...',
+    description: 'Mohon tunggu',
+  },
+  success: {
+    title: 'Kode OTP berhasil dikirim ulang',
+    description: 'Silahkan cek SMS Anda',
+  },
+};
+
 export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
   const [formState, formAction] = useFormState(resendOtp, {
     status: 'default',
@@ -31,43 +46,50 @@ export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
     },
   });
 
-  const form = useForm<z.output<typeof resendOtpSchema>>({
+  type FormValues = z.output<typeof resendOtpSchema>;
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(resendOtpSchema),
     defaultValues: formState.form,
   });
 
   useEffect(() => {
     toast.dismiss();
-    if (formState.status === 'error') {
-      toast.error('Gagal mengirim ulang kode OTP', {
-        description: formState.errors,
-        id: 'register-error',
+    if (formState.status === 'field-errors') {
+      for (const fieldName in formState.errors) {
+        if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
+          const typedFieldName = fieldName as keyof FormValues;
+          const error = formState.errors[typedFieldName];
+          if (error) {
+            form.setError(typedFieldName, error);
+          }
+        }
+      }
+    } else if (formState.status === 'error') {
+      toast.error(TOAST_MESSAGES.error.title, {
+        description: TOAST_MESSAGES.error.description,
       });
-      form.setError('root', { message: formState.errors });
-    }
-    if (formState.status === 'success') {
-      toast.success('Kode OTP berhasil dikirim ulang', {
-        id: 'register-success',
+    } else if (formState.status === 'success') {
+      toast.success(TOAST_MESSAGES.success.title, {
+        description: TOAST_MESSAGES.success.description,
       });
     }
   }, [formState.form]);
 
+  const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    form.handleSubmit(() => {
+      toast.loading(TOAST_MESSAGES.loading.title, {
+        description: TOAST_MESSAGES.loading.description,
+      });
+      formAction(new FormData(formRef.current!));
+    })(event);
+  };
+
   const formRef = useRef<HTMLFormElement>(null);
   return (
     <Form {...form}>
-      <form
-        ref={formRef}
-        action={formAction}
-        onSubmit={(evt) => {
-          evt.preventDefault();
-          form.handleSubmit(() => {
-            toast.loading('Mengirim ulang kode OTP...', {
-              id: 'registering',
-            });
-            formAction(new FormData(formRef.current!));
-          })(evt);
-        }}
-      >
+      <form ref={formRef} action={formAction} onSubmit={onSubmitForm}>
         <FormField
           control={form.control}
           name="userId"

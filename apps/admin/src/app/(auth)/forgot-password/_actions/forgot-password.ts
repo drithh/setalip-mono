@@ -7,29 +7,32 @@ import {
 } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
-import { forgotPasswordSchema, ForgotPasswordSchema } from '../form-schema';
-import { convertErrorsToZod } from '@repo/shared/util';
+import {
+  forgotPasswordSchema,
+  ForgotPasswordSchema,
+  FormForgotPassword,
+} from '../form-schema';
+import {
+  convertErrorsToZod,
+  convertFormData,
+  convertZodErrorsToFieldErrors,
+} from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
 
-export async function signin(
-  state: FormState<ForgotPasswordSchema>,
+export async function forgotPassword(
+  state: FormForgotPassword,
   data: FormData,
-): Promise<FormState<ForgotPasswordSchema>> {
-  const formData = Object.fromEntries(data);
+): Promise<FormForgotPassword> {
+  const formData = convertFormData(data);
   const parsed = forgotPasswordSchema.safeParse(formData);
 
   if (!parsed.success) {
     return {
-      form: {
-        phoneNumber: data.get('phoneNumber') as string,
-      },
+      form: convertFormData(data),
       status: 'field-errors',
-      errors: {
-        phoneNumber: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.phoneNumber?.at(0),
-        },
-      },
+      errors: convertZodErrorsToFieldErrors(
+        parsed.error.formErrors.fieldErrors,
+      ),
     };
   }
 
@@ -46,18 +49,14 @@ export async function signin(
 
   if (resetPassword.error) {
     return {
-      form: {
-        phoneNumber: parsed.data.phoneNumber,
-      },
+      form: parsed.data,
       status: 'error',
       errors: resetPassword.error.message,
     };
   }
 
   return {
-    form: {
-      phoneNumber: '',
-    },
+    form: undefined,
     status: 'success',
   };
 }

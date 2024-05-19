@@ -32,6 +32,10 @@ const TOAST_MESSAGES = {
     title: 'Gagal login',
     description: 'Silahkan coba lagi',
   },
+  loading: {
+    title: 'Mengirim data...',
+    description: 'Mohon tunggu',
+  },
   success: {
     title: 'Login berhasil',
     description: 'Selamat datang',
@@ -85,8 +89,8 @@ export default function EditFacility({ facilityId }: EditFacilityProps) {
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     form.handleSubmit(() => {
-      toast.loading('Mengautentikasi...', {
-        id: 'authenticating',
+      toast.loading(TOAST_MESSAGES.loading.title, {
+        description: TOAST_MESSAGES.loading.description,
       });
       formAction(new FormData(formRef.current!));
     })(event);

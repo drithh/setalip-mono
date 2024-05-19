@@ -1,15 +1,30 @@
 'use server';
 
-import { ResendOtpSchema } from './../form-schema';
+import { FormResendOtp, ResendOtpSchema } from './../form-schema';
 import { FormState } from '@repo/shared/form';
 import { container, TYPES } from '@repo/shared/inversify';
 import { OtpService } from '@repo/shared/service';
 
 export async function resendOtp(
-  state: FormState<ResendOtpSchema>,
+  state: FormResendOtp,
   data: FormData,
-): Promise<FormState<ResendOtpSchema>> {
+): Promise<FormResendOtp> {
   const otpService = container.get<OtpService>(TYPES.OtpService);
+
+  if (!state.form?.userId) {
+    return {
+      form: {
+        userId: state.form?.userId,
+      },
+      status: 'field-errors',
+      errors: {
+        userId: {
+          type: 'required',
+          message: 'User ID is required',
+        },
+      },
+    };
+  }
 
   const otpResult = await otpService.sendOtp({ userId: state.form.userId });
 

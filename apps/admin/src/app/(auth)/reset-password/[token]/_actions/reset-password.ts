@@ -7,34 +7,31 @@ import {
 } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
-import { resetPasswordSchema, ResetPasswordSchema } from '../form-schema';
+import {
+  FormResetPassword,
+  resetPasswordSchema,
+  ResetPasswordSchema,
+} from '../form-schema';
+import { registerUserSchema } from '@/app/(auth)/register/form-schema';
+import {
+  convertFormData,
+  convertZodErrorsToFieldErrors,
+} from '@repo/shared/util';
 
 export async function resetPassword(
-  state: FormState<ResetPasswordSchema>,
+  state: FormResetPassword,
   data: FormData,
-): Promise<FormState<ResetPasswordSchema>> {
-  const formData = Object.fromEntries(data);
+): Promise<FormResetPassword> {
+  const formData = convertFormData(data);
   const parsed = resetPasswordSchema.safeParse(formData);
-  console.log('formData', parsed);
+
   if (!parsed.success) {
     return {
-      form: {
-        token: state.form.token,
-        password: data.get('password') as string,
-        passwordConfirmation: data.get('passwordConfirmation') as string,
-      },
+      form: convertFormData(data),
       status: 'field-errors',
-      errors: {
-        password: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.password?.at(0),
-        },
-        passwordConfirmation: {
-          type: 'required',
-          message:
-            parsed.error.formErrors.fieldErrors.passwordConfirmation?.at(0),
-        },
-      },
+      errors: convertZodErrorsToFieldErrors(
+        parsed.error.formErrors.fieldErrors,
+      ),
     };
   }
 
@@ -43,13 +40,13 @@ export async function resetPassword(
   );
 
   const resetPassword = await resetPasswordService.verifyResetPassword({
-    token: state.form.token,
+    token: state.form?.token || parsed.data.token,
   });
 
   if (resetPassword.error) {
     return {
       form: {
-        token: state.form.token,
+        token: state.form?.token || parsed.data.token,
         password: parsed.data.password,
         passwordConfirmation: parsed.data.passwordConfirmation,
       },
@@ -59,11 +56,7 @@ export async function resetPassword(
   }
 
   return {
-    form: {
-      token: state.form.token,
-      password: parsed.data.password,
-      passwordConfirmation: parsed.data.passwordConfirmation,
-    },
+    form: undefined,
     status: 'success',
   };
 }

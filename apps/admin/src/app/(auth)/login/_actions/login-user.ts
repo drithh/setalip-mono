@@ -5,34 +5,32 @@ import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
-import { loginUserSchema, LoginUserSchema } from '../form-schema';
-import { convertErrorsToZod } from '@repo/shared/util';
+import {
+  FormLoginUser,
+  loginUserSchema,
+  LoginUserSchema,
+} from '../form-schema';
+import {
+  convertErrorsToZod,
+  convertFormData,
+  convertZodErrorsToFieldErrors,
+} from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
 
-export async function signin(
-  state: FormState<LoginUserSchema>,
+export async function loginUser(
+  state: FormLoginUser,
   data: FormData,
-): Promise<FormState<LoginUserSchema>> {
-  const formData = Object.fromEntries(data);
+): Promise<FormLoginUser> {
+  const formData = convertFormData(data);
   const parsed = loginUserSchema.safeParse(formData);
 
   if (!parsed.success) {
     return {
-      form: {
-        phoneNumber: data.get('phoneNumber') as string,
-        password: data.get('password') as string,
-      },
+      form: convertFormData(data),
       status: 'field-errors',
-      errors: {
-        phoneNumber: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.phoneNumber?.at(0),
-        },
-        password: {
-          type: 'required',
-          message: parsed.error.formErrors.fieldErrors.password?.at(0),
-        },
-      },
+      errors: convertZodErrorsToFieldErrors(
+        parsed.error.formErrors.fieldErrors,
+      ),
     };
   }
 
@@ -52,17 +50,14 @@ export async function signin(
     const mappedErrors = convertErrorsToZod<LoginUserSchema>(errors);
 
     return {
-      form: {
-        ...parsed.data,
-      },
+      form: parsed.data,
       status: 'field-errors',
       errors: mappedErrors,
     };
   } else if (loginUser.error) {
     return {
-      form: {
-        ...parsed.data,
-      },
+      form: parsed.data,
+
       status: 'error',
       errors: loginUser.error.message,
     };
@@ -75,10 +70,7 @@ export async function signin(
   );
 
   return {
-    form: {
-      phoneNumber: '',
-      password: '',
-    },
+    form: undefined,
     status: 'success',
   };
 }

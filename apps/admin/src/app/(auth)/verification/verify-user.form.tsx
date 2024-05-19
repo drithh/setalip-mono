@@ -35,6 +35,21 @@ interface VerifyUserFormProps {
   userId: number;
 }
 
+const TOAST_MESSAGES = {
+  error: {
+    title: 'Gagal verifikasi user',
+    description: 'Silahkan coba lagi',
+  },
+  loading: {
+    title: 'Verifikasi user...',
+    description: 'Mohon tunggu',
+  },
+  success: {
+    title: 'Verifikasi user berhasil',
+    description: 'Silahkan login',
+  },
+};
+
 export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
   const router = useRouter();
 
@@ -42,36 +57,51 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
     status: 'default',
     form: {
       userId: userId,
-      otp: '',
     },
   });
 
-  const form = useForm<z.output<typeof verifyOtpSchema>>({
+  type FormValues = z.output<typeof verifyOtpSchema>;
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: formState.form,
   });
 
   useEffect(() => {
+    toast.dismiss();
     if (formState.status === 'field-errors') {
-      if (formState.errors.otp) {
-        form.setError('otp', formState.errors.otp);
+      for (const fieldName in formState.errors) {
+        if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
+          const typedFieldName = fieldName as keyof FormValues;
+          const error = formState.errors[typedFieldName];
+          if (error) {
+            form.setError(typedFieldName, error);
+          }
+        }
       }
     } else if (formState.status === 'error') {
-      toast.dismiss();
-      toast.error('Verifikasi gagal', {
-        description: formState.errors,
-        id: 'register-error',
+      toast.error(TOAST_MESSAGES.error.title, {
+        description: TOAST_MESSAGES.error.description,
       });
       form.setError('root', { message: formState.errors });
     }
     if (formState.status === 'success') {
-      toast.dismiss();
-      toast.success('Verifikasi berhasil', {
-        id: 'register-success',
+      toast.success(TOAST_MESSAGES.success.title, {
+        description: TOAST_MESSAGES.success.description,
       });
       router.push('/');
     }
   }, [formState.form]);
+
+  const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    form.handleSubmit(() => {
+      toast.loading(TOAST_MESSAGES.loading.title, {
+        description: TOAST_MESSAGES.loading.description,
+      });
+      formAction(new FormData(formRef.current!));
+    })(event);
+  };
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -81,15 +111,7 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
         className="grid gap-4"
         ref={formRef}
         action={formAction}
-        onSubmit={(evt) => {
-          evt.preventDefault();
-          toast.loading('Verifikasi User...', {
-            id: 'registering',
-          });
-          form.handleSubmit(() => {
-            formAction(new FormData(formRef.current!));
-          })(evt);
-        }}
+        onSubmit={onSubmitForm}
       >
         <FormField
           control={form.control}

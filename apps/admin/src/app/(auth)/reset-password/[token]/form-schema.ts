@@ -1,3 +1,4 @@
+import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
 
 export const resetPasswordSchema = z
@@ -17,3 +18,4 @@ export const resetPasswordSchema = z
   );
 
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
+export type FormResetPassword = FormState<ResetPasswordSchema>;

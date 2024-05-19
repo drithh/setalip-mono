@@ -18,3 +18,22 @@ export function convertErrorsToZod<T>(
     {} as Record<keyof T, FieldError>
   );
 }
+
+export function convertZodErrorsToFieldErrors<
+  T extends Record<string, string[] | undefined>,
+>(errors: T) {
+  return Object.keys(errors).reduce(
+    (acc, key) => {
+      const field = key as string;
+      const message = errors[field];
+      return {
+        ...acc,
+        [field]: {
+          type: 'required',
+          message: message,
+        },
+      };
+    },
+    {} as Record<keyof T, FieldError>
+  );
+}

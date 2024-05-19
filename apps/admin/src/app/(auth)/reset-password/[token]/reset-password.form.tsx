@@ -25,18 +25,33 @@ interface ResetPasswordFormProps {
   token: string;
 }
 
+const TOAST_MESSAGES = {
+  error: {
+    title: 'Gagal melakukan reset password',
+    description: 'Silahkan coba lagi',
+  },
+  loading: {
+    title: 'Mereset password...',
+    description: 'Mohon tunggu',
+  },
+  success: {
+    title: 'Reset password berhasil',
+    description: 'Silahkan login kembali',
+  },
+};
+
 export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const router = useRouter();
   const [formState, formAction] = useFormState(resetPassword, {
     status: 'default',
     form: {
       token: token,
-      password: '',
-      passwordConfirmation: '',
     },
   });
 
-  const form = useForm<z.output<typeof resetPasswordSchema>>({
+  type FormValues = z.output<typeof resetPasswordSchema>;
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: formState.form,
   });
@@ -44,33 +59,40 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   useEffect(() => {
     toast.dismiss();
     if (formState.status === 'field-errors') {
-      if (formState.errors.password) {
-        form.setError('password', formState.errors.password);
-      }
-      if (formState.errors.passwordConfirmation) {
-        form.setError(
-          'passwordConfirmation',
-          formState.errors.passwordConfirmation,
-        );
+      for (const fieldName in formState.errors) {
+        if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
+          const typedFieldName = fieldName as keyof FormValues;
+          const error = formState.errors[typedFieldName];
+          if (error) {
+            form.setError(typedFieldName, error);
+          }
+        }
       }
     } else if (formState.status === 'error') {
-      toast.error('Gagal melakukan reset password', {
-        description: formState.errors,
-        id: 'login-error',
+      toast.error(TOAST_MESSAGES.error.title, {
+        description: TOAST_MESSAGES.error.description,
       });
       form.setError('root', { message: formState.errors });
     } else {
       form.clearErrors();
     }
-
     if (formState.status === 'success') {
-      toast.success('Berhasil melakukan reset password', {
-        description: 'Silahkan login kembali',
-        id: 'login-success',
+      toast.success(TOAST_MESSAGES.success.title, {
+        description: TOAST_MESSAGES.success.description,
       });
       router.push('/login');
     }
   }, [formState.form]);
+
+  const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    form.handleSubmit(() => {
+      toast.loading(TOAST_MESSAGES.loading.title, {
+        description: TOAST_MESSAGES.loading.description,
+      });
+      formAction(new FormData(formRef.current!));
+    })(event);
+  };
 
   const formRef = useRef<HTMLFormElement>(null);
   return (
@@ -79,13 +101,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         className="grid gap-4"
         ref={formRef}
         action={formAction}
-        onSubmit={(evt) => {
-          evt.preventDefault();
-          form.handleSubmit(() => {
-            toast.loading('Memproses reset password', {});
-            formAction(new FormData(formRef.current!));
-          })(evt);
-        }}
+        onSubmit={onSubmitForm}
       >
         <FormField
           control={form.control}
