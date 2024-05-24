@@ -15,8 +15,8 @@ import { ChevronLeft, Phone, User2 } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { Label } from '@repo/ui/components/ui/label';
 import { Input } from '@repo/ui/components/ui/input';
-import ImageCard from './image-card';
-import ImageWithFallback from '@/lib/image-with-fallback';
+import ImageCard from './file-card';
+import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
 import 'react-photo-view/dist/react-photo-view.css';
 import {
@@ -27,6 +27,10 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
+import FileCard from './file-card';
+import { PhotoProvider, PhotoSlider } from 'react-photo-view';
+import UploadLocationAsset from './upload-location-asset.form';
+import LocationAssets from './location.assets';
 
 export default async function LocationDetail({
   params,
@@ -55,8 +59,8 @@ export default async function LocationDetail({
           {location.result?.name}
         </h1>
         <div className="ml-auto flex gap-4">
-          <Button variant={'default'}>Edit</Button>
-          <Button variant={'outline'}>Delete</Button>
+          <Button variant={'default'}>Simpan</Button>
+          <Button variant={'outline'}>Batal</Button>
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
@@ -199,7 +203,17 @@ export default async function LocationDetail({
           </Card>
         </div>
 
-        <ImageCard assets={location.result?.assets} />
+        <Card className="overflow-hidden">
+          <CardHeader>
+            <CardTitle>Foto Lokasi</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-2">
+              <LocationAssets assets={location.result?.assets} />
+              <UploadLocationAsset />
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </main>
   );

@@ -10,7 +10,7 @@ import {
 import { LocationService } from '@repo/shared/service';
 import Image from 'next/image';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
-import ImageWithFallback from '@/lib/image-with-fallback';
+import { ImageWithFallback } from '@repo/ui/components/image-with-fallback';
 import { MapPin, Phone } from 'lucide-react';
 import Link from 'next/link';
 
@@ -62,9 +62,12 @@ export default async function Locations() {
                 </CardDescription>
               </CardHeader>
               <CardFooter>
-                <Link href={`/locations/${location.id}`}>
-                  <Button>View Location</Button>
-                </Link>
+                <div className="flex w-full place-content-between">
+                  <Link href={`/locations/${location.id}`}>
+                    <Button variant={'default'}>Edit Lokasi</Button>
+                  </Link>
+                  <Button variant={'destructive'}>Hapus Lokasi</Button>
+                </div>
               </CardFooter>
             </Card>
           ))}

@@ -20,7 +20,8 @@
     "**/*.js",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../packages/ui/src/components/image-with-fallback.tsx"
   ],
   "exclude": ["node_modules"]
 }
