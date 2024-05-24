@@ -2,19 +2,7 @@ import { Lucia, TimeSpan } from 'lucia';
 import { Mysql2Adapter } from '@lucia-auth/adapter-mysql';
 import { env } from '#dep/env';
 import { SelectUser } from '../repository';
-import { createPool } from 'mysql2/promise';
-const { hostname, password, port, username, pathname } = new URL(
-  env.DATABASE_URL
-);
-
-const pool = createPool({
-  database: pathname.slice(1),
-  host: hostname,
-  user: username,
-  password,
-  port: Number(port),
-  connectionLimit: 5,
-});
+import { pool } from '@repo/shared/db';
 
 const adapter = new Mysql2Adapter(pool, {
   user: 'users',

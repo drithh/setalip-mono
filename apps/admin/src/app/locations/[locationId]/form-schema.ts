@@ -9,3 +9,36 @@ export const editFacilitySchema = z.object({
 
 export type EditFacilitySchema = z.infer<typeof editFacilitySchema>;
 export type FormEditFacility = FormState<EditFacilitySchema>;
+
+const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+  'video/mp4',
+];
+
+export const uploadLocationAssetSchema = z.object({
+  locationId: z.coerce.number(),
+  files: z
+    .custom<File[] | File>((data) => {
+      if (!Array.isArray(data)) {
+        return data instanceof File;
+      }
+      for (const file of data) {
+        if (!(file instanceof File)) {
+          return false;
+        }
+      }
+      return true;
+    }, 'Data is not an instance of a File')
+    .refine((files) => {
+      console.log(files);
+      return true;
+    }),
+});
+
+export type UploadLocationAssetSchema = z.infer<
+  typeof uploadLocationAssetSchema
+>;
+export type FormUploadLocationAsset = FormState<UploadLocationAssetSchema>;

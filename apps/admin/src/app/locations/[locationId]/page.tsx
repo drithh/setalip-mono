@@ -30,7 +30,7 @@ import {
 import FileCard from './file-card';
 import { PhotoProvider, PhotoSlider } from 'react-photo-view';
 import UploadLocationAsset from './upload-location-asset.form';
-import LocationAssets from './location.assets';
+import LocationAssets from './location-assets';
 
 export default async function LocationDetail({
   params,
@@ -157,7 +157,7 @@ export default async function LocationDetail({
                     </CardContent>
                     <CardFooter>
                       <Sheet>
-                        <SheetTrigger>
+                        <SheetTrigger asChild>
                           <Button variant={'outline'}>Edit Fasilitas</Button>
                         </SheetTrigger>
                         <SheetContent>
@@ -210,7 +210,7 @@ export default async function LocationDetail({
           <CardContent>
             <div className="grid grid-cols-2 gap-2">
               <LocationAssets assets={location.result?.assets} />
-              <UploadLocationAsset />
+              <UploadLocationAsset locationId={locationIdNumber} />
             </div>
           </CardContent>
         </Card>

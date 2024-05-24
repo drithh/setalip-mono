@@ -19,7 +19,7 @@ export interface Agendas {
   coach_id: number;
   created_at: Generated<Date>;
   id: Generated<number>;
-  location_id: number;
+  location_facility_id: number;
   slot: number;
   time: Date;
   updated_at: Generated<Date>;
@@ -109,7 +109,6 @@ export interface LocationAssets {
   id: Generated<number>;
   location_id: number;
   name: string;
-  type: string;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
   url: string;

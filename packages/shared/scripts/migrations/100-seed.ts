@@ -244,7 +244,6 @@ export async function up(db: Kysely<DB>): Promise<void> {
       }).map((_, index) => ({
         id: index + 1,
         name: faker.commerce.productName(),
-        type: 'image',
         location_id:
           locations[Math.floor(Math.random() * locations.length)]?.id ?? 1,
         url: faker.image.urlPlaceholder(),
@@ -321,7 +320,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
           const userPackage = user_packages[Math.floor(Math.random() * 30)];
           return {
             id: index + 1,
-            location_id:
+            location_facility_id:
               location_facilities[Math.floor(Math.random() * 15)]?.id ?? 1,
             coach_id: coaches[Math.floor(Math.random() * 2)]?.id ?? 1,
             slot: faker.number.int({ min: 1, max: 10 }),

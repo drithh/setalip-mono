@@ -1,6 +1,8 @@
 import type {
+  InsertLocation,
   LocationRepository,
   SelectLocation,
+  UpdateLocation,
 } from '#dep/repository/location';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
@@ -36,6 +38,46 @@ export class LocationServiceImpl implements LocationService {
 
     return {
       result: location,
+    };
+  }
+
+  async updateLocation(data: UpdateLocation) {
+    // todo timezone
+    const result = await this._locationRepository.updateLocation(data);
+
+    return {
+      result,
+      error: undefined,
+    };
+  }
+
+  async createLocationAsset(data: InsertLocation['assets']) {
+    const result = await this._locationRepository.insertLocationAsset(data);
+
+    if (!result.numInsertedOrUpdatedRows) {
+      return {
+        error: new Error('Failed to create location asset'),
+      };
+    }
+
+    return {
+      result,
+      error: undefined,
+    };
+  }
+
+  async deleteLocationAsset(id: SelectLocation['id']) {
+    const result = await this._locationRepository.deleteLocationAsset(id);
+
+    if (!result.numDeletedRows) {
+      return {
+        error: new Error('Failed to delete location asset'),
+      };
+    }
+
+    return {
+      result,
+      error: undefined,
     };
   }
 }

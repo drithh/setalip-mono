@@ -43,5 +43,9 @@ export interface LocationRepository {
   ): Promise<SelectDetailLocation | undefined>;
   createLocation(data: InsertLocation): Promise<InsertResult>;
   updateLocation(data: UpdateLocation): Promise<UpdateResult>;
+  insertLocationAsset(data: InsertLocation['assets']): Promise<InsertResult>;
+  deleteLocationAsset(
+    id: SelectDetailLocation['assets'][0]['id']
+  ): Promise<DeleteResult>;
   deleteLocation(id: SelectLocation['id']): Promise<DeleteResult>;
 }

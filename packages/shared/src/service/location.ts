@@ -1,4 +1,10 @@
-import { SelectDetailLocation, SelectLocation } from '#dep/repository/location';
+import {
+  InsertLocation,
+  SelectDetailLocation,
+  SelectLocation,
+  UpdateLocation,
+} from '#dep/repository/location';
+import { DeleteResult, InsertResult, UpdateResult } from 'kysely';
 import type { ErrorFields, PromiseResult } from '../types';
 
 export interface LocationService {
@@ -6,7 +12,13 @@ export interface LocationService {
   findLocationById(
     id: SelectLocation['id']
   ): PromiseResult<SelectDetailLocation, Error>;
+  createLocationAsset(
+    data: InsertLocation['assets']
+  ): PromiseResult<InsertResult, Error>;
+  deleteLocationAsset(
+    id: SelectDetailLocation['assets'][0]['id']
+  ): PromiseResult<DeleteResult, Error>;
   // createLocation(data: InsertLocation): PromiseResult<InsertResult, Error>;
-  // updateLocation(data: UpdateLocation): PromiseResult<UpdateResult, Error>;
+  updateLocation(data: UpdateLocation): PromiseResult<UpdateResult, Error>;
   // deleteLocation(id: SelectLocation['id']): PromiseResult<DeleteResult, Error>;
 }

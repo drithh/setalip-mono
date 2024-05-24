@@ -8,8 +8,8 @@ const nextConfig = {
         hostname: 'via.placeholder.com',
       },
       {
-        protocol: 'https',
-        hostname: 'fakeimg.pl',
+        protocol: 'http',
+        hostname: 'localhost',
       },
       {
         protocol: 'https',

@@ -10,7 +10,7 @@ import {
 import { LocationService } from '@repo/shared/service';
 import Image from 'next/image';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
-import { ImageWithFallback } from '@repo/ui/components/image-with-fallback';
+import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { MapPin, Phone } from 'lucide-react';
 import Link from 'next/link';
 

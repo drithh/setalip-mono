@@ -148,7 +148,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('url', 'text', (col) => col.notNull())
-        .addColumn('type', 'text', (col) => col.notNull())
         .addColumn('location_id', 'bigint', (col) =>
           col.notNull().references('locations.id')
         )

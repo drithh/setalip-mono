@@ -90,7 +90,27 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
   }
 
   updateLocation(data: UpdateLocation): Promise<UpdateResult> {
-    throw new Error('Method not implemented.');
+    return this._db
+      .updateTable('locations')
+      .set(data)
+      .where('locations.id', '=', data.id)
+      .executeTakeFirst();
+  }
+
+  insertLocationAsset(data: InsertLocation['assets']): Promise<InsertResult> {
+    return this._db
+      .insertInto('location_assets')
+      .values(data)
+      .executeTakeFirst();
+  }
+
+  deleteLocationAsset(
+    locationAssetId: SelectDetailLocation['assets'][0]['id']
+  ): Promise<DeleteResult> {
+    return this._db
+      .deleteFrom('location_assets')
+      .where('location_assets.location_id', '=', locationAssetId)
+      .executeTakeFirst();
   }
 
   deleteLocation(id: SelectDetailLocation['id']): Promise<DeleteResult> {

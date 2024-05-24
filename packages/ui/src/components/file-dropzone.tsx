@@ -134,8 +134,8 @@ export function FileDropzone(props: FileDropzoneProps) {
       setFiles(updatedFiles);
 
       if (rejectedFiles.length > 0) {
-        rejectedFiles.forEach(({ file }) => {
-          toast.error(`File ${file.name} was rejected`);
+        rejectedFiles.forEach(({ file, errors }) => {
+          toast.error(`Failed to upload ${file.name}: ${errors[0]?.message}`);
         });
       }
 
@@ -144,29 +144,12 @@ export function FileDropzone(props: FileDropzoneProps) {
         updatedFiles.length > 0 &&
         updatedFiles.length <= maxFiles
       ) {
-        const target =
-          updatedFiles.length > 0 ? `${updatedFiles.length} files` : `file`;
         onUpload(updatedFiles);
-        // toast.promise(onUpload(updatedFiles), {
-        //   loading: `Uploading ${target}...`,
-        //   success: () => {
-        //     setFiles([]);
-        //     return `${target} uploaded`;
-        //   },
-        //   error: `Failed to upload ${target}`,
-        // });
       }
     },
 
     [files, maxFiles, multiple, onUpload, setFiles]
   );
-
-  function onRemove(index: number) {
-    if (!files) return;
-    const newFiles = files.filter((_, i) => i !== index);
-    setFiles(newFiles);
-    onValueChange?.(newFiles);
-  }
 
   const isDisabled = disabled || (files?.length ?? 0) >= maxFiles;
 
@@ -212,9 +195,9 @@ export function FileDropzone(props: FileDropzoneProps) {
             />
           </div>
           <div className="space-y-px">
-            {/* <p className="font-medium text-muted-foreground">
-                  Drag {`'n'`} drop files here, or click to select files
-                </p> */}
+            <p className="font-medium text-muted-foreground">
+              Drag {`'n'`} drop files here, or click to select files
+            </p>
             <p className="text-sm text-muted-foreground/70">
               {maxFiles > 1
                 ? ` ${maxFiles === Infinity ? 'multiple' : maxFiles}
