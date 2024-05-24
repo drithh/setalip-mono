@@ -105,11 +105,11 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
   }
 
   deleteLocationAsset(
-    locationAssetId: SelectDetailLocation['assets'][0]['id']
+    id: SelectDetailLocation['assets'][0]['id']
   ): Promise<DeleteResult> {
     return this._db
       .deleteFrom('location_assets')
-      .where('location_assets.location_id', '=', locationAssetId)
+      .where('location_assets.id', '=', id)
       .executeTakeFirst();
   }
 

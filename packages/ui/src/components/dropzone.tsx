@@ -1,6 +1,7 @@
 import { Card, CardContent } from '#dep/components/ui/card';
 import { Input } from '#dep/components/ui/input';
 import { cn } from '#dep/lib/utils';
+import { Upload } from 'lucide-react';
 import React, { ChangeEvent, useRef } from 'react';
 
 interface DropzoneProps
@@ -32,9 +33,35 @@ const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
       e.preventDefault();
       e.stopPropagation();
       const { files } = e.dataTransfer;
+
+      // Extract the accepted file types from props.accept
+      const acceptedTypes = props.accept
+        ? props.accept.split(',').map((type) => type.trim())
+        : [];
+
+      // Filter the files based on accepted types
+      const filteredFiles =
+        acceptedTypes.length > 0
+          ? Array.from(files).filter((file) =>
+              acceptedTypes.some((type) => {
+                // Handle wildcard types (e.g., image/*)
+                if (type.endsWith('/*')) {
+                  const baseType = type.slice(0, -1); // Remove the "/*"
+                  return file.type.startsWith(baseType);
+                }
+                return file.type === type;
+              })
+            )
+          : Array.from(files);
+
+      // Convert filteredFiles array back to FileList
+      const dataTransfer = new DataTransfer();
+      filteredFiles.forEach((file) => dataTransfer.items.add(file));
+      const newFileList = dataTransfer.files;
+
       if (inputRef.current) {
-        inputRef.current.files = files;
-        handleOnDrop(files);
+        inputRef.current.files = newFileList;
+        handleOnDrop(newFileList);
       }
     };
 
@@ -58,8 +85,14 @@ const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
           onDrop={handleDrop}
           onClick={handleButtonClick}
         >
+          <div className="rounded-full border border-dashed p-2">
+            <Upload
+              className="size-7 text-muted-foreground"
+              aria-hidden="true"
+            />
+          </div>
           <div className="flex items-center justify-center text-muted-foreground">
-            <span className="font-medium">{dropMessage}</span>
+            <span className="text-center font-medium">{dropMessage}</span>
             <Input
               {...props}
               value={undefined}
@@ -77,4 +110,25 @@ const Dropzone = React.forwardRef<HTMLDivElement, DropzoneProps>(
   }
 );
 
+{
+  /* <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
+<div className="rounded-full border border-dashed p-2">
+  <Upload
+    className="size-7 text-muted-foreground"
+    aria-hidden="true"
+  />
+</div>
+<div className="space-y-px">
+  <p className="font-medium text-muted-foreground">
+    Drag {`'n'`} drop files here, or click to select files
+  </p>
+  <p className="text-sm text-muted-foreground/70">
+    {maxFiles > 1
+      ? ` ${maxFiles === Infinity ? 'multiple' : maxFiles}
+            files (up to ${formatBytes(maxSize)} each)`
+      : ` a file with ${formatBytes(maxSize)}`}
+  </p>
+</div>
+</div> */
+}
 export { Dropzone };

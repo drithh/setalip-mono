@@ -49,7 +49,7 @@ export async function uploadLocationAsset(
 
   if (!imageUpload.ok) {
     return {
-      form: undefined,
+      form: state.form,
       status: 'error',
       errors: 'Failed to upload files',
     };
@@ -80,7 +80,7 @@ export async function uploadLocationAsset(
   }
 
   return {
-    form: undefined,
+    form: state.form,
     status: 'success',
   };
 }

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.2",
     "@hookform/resolvers": "^3.3.4",
     "@lucia-auth/adapter-mysql": "^3.0.2",
     "@node-rs/argon2": "^1.8.3",

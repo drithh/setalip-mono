@@ -16,7 +16,9 @@ const ImageWithFallback = ({
   ...props
 }: ImageWithFallbackProps) => {
   const [imgSrc, setImgSrc] = useState(src);
-
+  useEffect(() => {
+    setImgSrc(src);
+  }, [src]);
   return (
     <Image
       alt={alt}

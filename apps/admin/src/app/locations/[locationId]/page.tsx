@@ -208,7 +208,7 @@ export default async function LocationDetail({
             <CardTitle>Foto Lokasi</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-col gap-2">
               <LocationAssets assets={location.result?.assets} />
               <UploadLocationAsset locationId={locationIdNumber} />
             </div>

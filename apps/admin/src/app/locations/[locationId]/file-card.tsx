@@ -21,7 +21,6 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@repo/ui/components/ui/alert-dialog';
-import { FileDropzone } from '@repo/ui/components/file-dropzone';
 import UploadLocationAsset from './upload-location-asset.form';
 
 type FileWithPreview = File & { preview: string };
@@ -41,7 +40,7 @@ export default function FileCard({ file, onDelete, progress }: AssetCardProps) {
           height="84"
           width="84"
           src={file.preview}
-          alt={file.name}
+          alt={file.name || 'Image'}
         />
       </PhotoView>
       {progress ? (
@@ -71,7 +70,11 @@ export default function FileCard({ file, onDelete, progress }: AssetCardProps) {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Batal</AlertDialogCancel>
-              <AlertDialogAction>Ya, Hapus</AlertDialogAction>
+              <AlertDialogAction asChild>
+                <Button variant={'destructive'} onClick={onDelete}>
+                  Ya, Hapus
+                </Button>
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

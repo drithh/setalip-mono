@@ -42,7 +42,6 @@ export async function loginUser(
     ...parsed.data,
     phoneNumber: formattedPhoneNumber,
   });
-  console.log(loginUser);
 
   if (loginUser.error instanceof UserValidationError) {
     const errors = loginUser.error.getErrors();

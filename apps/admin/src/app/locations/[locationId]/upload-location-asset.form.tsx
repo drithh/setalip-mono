@@ -1,9 +1,7 @@
 'use client';
-import { FileDropzone } from '@repo/ui/components/file-dropzone';
 import { useEffect, useRef, useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import FileCard from './file-card';
-import { revalidatePath } from 'next/cache';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFormState } from 'react-dom';
@@ -64,16 +62,6 @@ export default function UploadLocationAsset({
     defaultValues: formState.form,
   });
 
-  const [files, setFiles] = useState<FileWithPreview[]>([]);
-  const onUpload = async (files: File[]) => {
-    // const formData = new FormData();
-    // files.forEach((file) => {
-    // formData.append('file', file);
-    // });
-    // setFiles([]);
-    // router.refresh();
-  };
-
   useEffect(() => {
     toast.dismiss();
     if (formState.status === 'field-errors') {
@@ -97,6 +85,7 @@ export default function UploadLocationAsset({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
+      form.reset({ files: [] });
       router.refresh();
     }
   }, [formState.form]);
@@ -114,44 +103,32 @@ export default function UploadLocationAsset({
   const formRef = useRef<HTMLFormElement>(null);
 
   function handleOnDrop(acceptedFiles: FileList | null) {
-    if (acceptedFiles && acceptedFiles.length > 0) {
-      const allowedTypes = [
-        {
-          name: 'images',
-          types: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-        },
-        {
-          name: 'videos',
-          types: ['video/mp4', 'video/mpeg', 'video/quicktime'],
-        },
-      ];
-      const fileType = allowedTypes.find((allowedType) =>
-        allowedType?.types.find((type) => type === acceptedFiles[0]?.type),
-      );
-      if (!fileType && acceptedFiles === null) {
-        form.setValue('files', []);
-        form.setError('files', {
-          message: 'File type is not valid',
-          type: 'typeError',
-        });
-      } else {
-        const arrFiles = Array.from(acceptedFiles);
-        form.setValue('files', arrFiles);
-        form.clearErrors('files');
-      }
-    } else {
-      form.setValue('files', []);
-      form.setError('files', {
-        message: 'File is required',
-        type: 'typeError',
-      });
+    if (!acceptedFiles) {
+      return;
     }
+
+    const arrFiles = Array.from(acceptedFiles);
+    form.setValue('files', arrFiles);
+    form.clearErrors('files');
   }
+
+  useEffect(() => {
+    const files = form.getValues('files');
+    if (files instanceof File || (Array.isArray(files) && files.length > 0)) {
+      // submit form
+      form.handleSubmit(() => {
+        toast.loading(TOAST_MESSAGES.loading.title, {
+          description: TOAST_MESSAGES.loading.description,
+        });
+        formAction(new FormData(formRef.current!));
+      })();
+    }
+  }, [form.watch('files')]);
 
   return (
     <Form {...form}>
       <form
-        className="col-span-2 grid gap-4"
+        className="grid gap-4"
         ref={formRef}
         action={formAction}
         onSubmit={onFormSubmit}
@@ -160,76 +137,65 @@ export default function UploadLocationAsset({
           control={form.control}
           name="locationId"
           render={({ field }) => (
-            <FormItem className="grid w-full gap-2">
-              <FormControl>
-                <Input type="hidden" readOnly placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+            <Input
+              type="hidden"
+              readOnly
+              placeholder=""
+              {...field}
+              value={locationId}
+            />
           )}
         />
         <FormField
           control={form.control}
           name="files"
           render={({ field }) => (
-            <div className="space-y-6">
-              <FormItem className="w-full">
-                <FormControl>
-                  <Dropzone
-                    {...field}
-                    multiple
-                    dropMessage="Drop files or click here"
-                    handleOnDrop={handleOnDrop}
-                  />
-                  {/* <>
-                    <Input
-                      type="file"
-                      multiple
-                      readOnly
-                      placeholder=""
+            <FormItem className="w-full">
+              <FormControl>
+                <>
+                  {field.value && (
+                    <PhotoProvider>
+                      <div className="grid grid-cols-2 gap-2">
+                        {Array.isArray(field.value) ? (
+                          field.value?.map((file, index) => (
+                            <FileCard
+                              file={{
+                                ...file,
+                                preview: URL.createObjectURL(file),
+                              }}
+                              key={index}
+                              onDelete={() => {}}
+                              progress={true}
+                            />
+                          ))
+                        ) : (
+                          <FileCard
+                            file={{
+                              ...field.value,
+                              preview: URL.createObjectURL(field.value),
+                            }}
+                            onDelete={() => {}}
+                            progress={true}
+                          />
+                        )}
+                      </div>
+                    </PhotoProvider>
+                  )}
+                  <div className="space-y-6">
+                    <Dropzone
                       {...field}
-                    />
-                    <FileDropzone
-                      value={field.value}
-                      onValueChange={field.onChange}
                       multiple
-                      maxFiles={3}
-                      maxSize={8 * 1024 * 1024}
+                      accept="image/*,video/*"
+                      dropMessage="Tarik dan lepas file di sini atau klik untuk memilih file"
+                      handleOnDrop={handleOnDrop}
                     />
-                  </> */}
-                  {/* <FileUploader
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    maxFiles={4}
-                    maxSize={4 * 1024 * 1024}
-                    progresses={progresses}
-                    // pass the onUpload function here for direct upload
-                    // onUpload={uploadFiles}
-                    disabled={isUploading}
-                  /> */}
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </div>
+                  </div>
+                </>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
         />
-        {files?.length ? (
-          <PhotoProvider>
-            <div className="grid grid-cols-2 gap-2">
-              {files?.map((file, index) => (
-                <FileCard
-                  key={index}
-                  file={file}
-                  onDelete={() => {}}
-                  progress={true}
-                />
-              ))}
-            </div>
-          </PhotoProvider>
-        ) : null}
-        <Button type="submit" className="w-full">
-          Upload
-        </Button>
       </form>
     </Form>
   );

@@ -20,25 +20,29 @@ const ACCEPTED_IMAGE_TYPES = [
 
 export const uploadLocationAssetSchema = z.object({
   locationId: z.coerce.number(),
-  files: z
-    .custom<File[] | File>((data) => {
-      if (!Array.isArray(data)) {
-        return data instanceof File;
+  files: z.custom<File[] | File>((data) => {
+    if (!Array.isArray(data)) {
+      return data instanceof File;
+    }
+    for (const file of data) {
+      if (!(file instanceof File)) {
+        return false;
       }
-      for (const file of data) {
-        if (!(file instanceof File)) {
-          return false;
-        }
-      }
-      return true;
-    }, 'Data is not an instance of a File')
-    .refine((files) => {
-      console.log(files);
-      return true;
-    }),
+    }
+    return true;
+  }, 'Data is not an instance of a File'),
 });
 
 export type UploadLocationAssetSchema = z.infer<
   typeof uploadLocationAssetSchema
 >;
 export type FormUploadLocationAsset = FormState<UploadLocationAssetSchema>;
+
+export const deleteLocationAssetSchema = z.object({
+  assetId: z.coerce.number().refine((data) => data > 0),
+});
+
+export type DeleteLocationAssetSchema = z.infer<
+  typeof deleteLocationAssetSchema
+>;
+export type FormDeleteLocationAsset = FormState<DeleteLocationAssetSchema>;
