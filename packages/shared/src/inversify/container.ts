@@ -1,5 +1,3 @@
-import 'reflect-metadata';
-
 import { Container } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
 import { Database, db } from '#dep/db/index';

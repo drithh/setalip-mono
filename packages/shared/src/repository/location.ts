@@ -48,4 +48,7 @@ export interface LocationRepository {
     id: SelectDetailLocation['assets'][0]['id']
   ): Promise<DeleteResult>;
   deleteLocation(id: SelectLocation['id']): Promise<DeleteResult>;
+  deleteFacilityImage(
+    id: SelectDetailLocation['facilities'][0]['id']
+  ): Promise<UpdateResult>;
 }

@@ -2,6 +2,7 @@
   "name": "@repo/shared",
   "version": "0.0.1",
   "exports": {
+    "./api": "./src/api/index.ts",
     "./schema": "./src/schema/index.ts",
     "./auth": "./src/auth/index.ts",
     "./repository": "./src/repository/index.ts",
@@ -27,6 +28,7 @@
     "@lucia-auth/adapter-mysql": "^3.0.2",
     "@node-rs/argon2": "^1.8.3",
     "@t3-oss/env-core": "^0.10.1",
+    "@trpc/server": "next",
     "axios": "^1.6.8",
     "db": "^3.3.0",
     "dotenv": "^16.4.5",
@@ -38,6 +40,7 @@
     "mysql2": "^3.9.7",
     "react-hook-form": "^7.51.4",
     "reflect-metadata": "^0.2.2",
+    "superjson": "^2.2.1",
     "typescript": "^5.4.5",
     "zod": "^3.23.8"
   },

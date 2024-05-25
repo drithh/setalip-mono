@@ -1,5 +1,6 @@
 'use client';
 
+import { TRPCReactProvider } from '@/trpc/react';
 import { TooltipProvider } from '@repo/ui/components/ui/tooltip';
 
 export default function Provider({
@@ -7,5 +8,9 @@ export default function Provider({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <TooltipProvider>{children}</TooltipProvider>;
+  return (
+    <TRPCReactProvider>
+      <TooltipProvider>{children}</TooltipProvider>
+    </TRPCReactProvider>
+  );
 }

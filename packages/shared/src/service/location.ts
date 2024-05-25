@@ -21,4 +21,7 @@ export interface LocationService {
   // createLocation(data: InsertLocation): PromiseResult<InsertResult, Error>;
   updateLocation(data: UpdateLocation): PromiseResult<UpdateResult, Error>;
   // deleteLocation(id: SelectLocation['id']): PromiseResult<DeleteResult, Error>;
+  deleteFacilityImage(
+    id: SelectDetailLocation['facilities'][0]['id']
+  ): PromiseResult<UpdateResult, Error>;
 }

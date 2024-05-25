@@ -126,7 +126,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('capacity', 'int4', (col) => col.notNull())
         .addColumn('level', 'int4', (col) => col.notNull())
-        .addColumn('image_url', 'text', (col) => col.notNull())
+        .addColumn('image_url', 'text')
         .addColumn('location_id', 'bigint', (col) =>
           col.notNull().references('locations.id')
         )
@@ -359,7 +359,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('description', 'text', (col) => col.notNull())
         .addColumn('purchasable', 'boolean', (col) => col.notNull())
         .addColumn('price', 'int4', (col) => col.unsigned())
-        .addColumn('image_url', 'text', (col) => col.notNull())
+        .addColumn('image_url', 'text')
         .addCheckConstraint(
           'loyalty_unpurchasable_item',
           sql`purchasable = false AND price IS NULL OR purchasable = true AND price IS NOT NULL`

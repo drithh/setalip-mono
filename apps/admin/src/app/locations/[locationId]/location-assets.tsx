@@ -12,7 +12,7 @@ interface LocationAssetsProps {
 type FileWithPreview = File & { preview: string };
 
 export default function LocationAssets({ assets }: LocationAssetsProps) {
-  const [deleteAssetId, setDeleteAssetId] = useState<number | null>(null);
+  const [deleteAssetId, setDeleteAssetId] = useState<number>(-1);
 
   const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
   return (

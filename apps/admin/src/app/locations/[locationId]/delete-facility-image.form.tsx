@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { deleteLocationAsset } from './_actions/delete-location-asset';
+import { deleteFacilityImage } from './_actions/delete-facility-image';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { z } from 'zod';
@@ -16,13 +16,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import Link from 'next/link';
 import {
-  DeleteLocationAssetSchema,
-  deleteLocationAssetSchema,
+  DeleteFacilityImageSchema,
+  deleteFacilityImageSchema,
 } from './form-schema';
-import { PhoneInput } from '@repo/ui/components/phone-input';
-import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -41,26 +38,26 @@ const TOAST_MESSAGES = {
   },
 };
 
-interface DeleteLocationAssetFormProps {
-  assetId: number;
+interface DeleteFacilityImageFormProps {
+  facilityId: number;
 }
 
-export default function DeleteLocationAssetForm({
-  assetId,
-}: DeleteLocationAssetFormProps) {
+export default function DeleteFacilityImageForm({
+  facilityId,
+}: DeleteFacilityImageFormProps) {
   const router = useRouter();
-  const [formState, formAction] = useFormState(deleteLocationAsset, {
+  const [formState, formAction] = useFormState(deleteFacilityImage, {
     status: 'default',
     form: undefined,
   });
 
-  type FormSchema = DeleteLocationAssetSchema;
+  type FormSchema = DeleteFacilityImageSchema;
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(deleteLocationAssetSchema),
+    resolver: zodResolver(deleteFacilityImageSchema),
     defaultValues: formState.form,
     values: {
-      assetId: assetId ?? -1,
+      facilityId: facilityId ?? -1,
     },
   });
 
@@ -102,15 +99,6 @@ export default function DeleteLocationAssetForm({
     })(event);
   };
 
-  useEffect(() => {
-    form.handleSubmit(() => {
-      toast.loading(TOAST_MESSAGES.loading.title, {
-        description: TOAST_MESSAGES.loading.description,
-      });
-      formAction(new FormData(formRef.current!));
-    })();
-  }, [form.watch('assetId')]);
-
   const formRef = useRef<HTMLFormElement>(null);
   return (
     <Form {...form}>
@@ -122,16 +110,17 @@ export default function DeleteLocationAssetForm({
       >
         <FormField
           control={form.control}
-          name="assetId"
+          name="facilityId"
           render={({ field }) => (
             <Input
               {...field}
               type="hidden"
               className="w-full"
-              value={assetId}
+              value={facilityId}
             />
           )}
         />
+        <Button variant={'destructive'}>Ya, Hapus</Button>
       </form>
     </Form>
   );

@@ -1,7 +1,6 @@
 import { TYPES, container } from '@repo/shared/inversify';
 import { UserRepository } from '@repo/shared/repository';
 import { getAuth } from '@/lib/get-auth';
-import 'reflect-metadata';
 import { redirect } from 'next/navigation';
 
 export default async function Home() {

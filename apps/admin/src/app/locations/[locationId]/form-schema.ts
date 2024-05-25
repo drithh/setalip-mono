@@ -5,18 +5,14 @@ export const editFacilitySchema = z.object({
   name: z.string().min(3).max(255),
   capacity: z.coerce.number(),
   level: z.coerce.number(),
+  locationId: z.coerce.number(),
+  file: z.custom<File | null>((data) => {
+    return data === null || data instanceof File;
+  }, 'Data is not an instance of a File'),
 });
 
 export type EditFacilitySchema = z.infer<typeof editFacilitySchema>;
 export type FormEditFacility = FormState<EditFacilitySchema>;
-
-const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
-  'video/mp4',
-];
 
 export const uploadLocationAssetSchema = z.object({
   locationId: z.coerce.number(),
@@ -46,3 +42,13 @@ export type DeleteLocationAssetSchema = z.infer<
   typeof deleteLocationAssetSchema
 >;
 export type FormDeleteLocationAsset = FormState<DeleteLocationAssetSchema>;
+
+export const deleteFacilityImageSchema = z.object({
+  facilityId: z.coerce.number(),
+});
+
+export type DeleteFacilityImageSchema = z.infer<
+  typeof deleteFacilityImageSchema
+>;
+
+export type FormDeleteFacilityImage = FormState<DeleteFacilityImageSchema>;

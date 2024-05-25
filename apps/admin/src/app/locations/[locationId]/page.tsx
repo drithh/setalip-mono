@@ -31,6 +31,8 @@ import FileCard from './file-card';
 import { PhotoProvider, PhotoSlider } from 'react-photo-view';
 import UploadLocationAsset from './upload-location-asset.form';
 import LocationAssets from './location-assets';
+import EditFacility from './edit-facility.form';
+import EditFacilityForm from './edit-facility.form';
 
 export default async function LocationDetail({
   params,
@@ -171,26 +173,7 @@ export default async function LocationDetail({
                             </SheetDescription>
                           </SheetHeader>
                           <div className="grid gap-4 py-4">
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="name" className="text-right">
-                                Name
-                              </Label>
-                              <Input
-                                id="name"
-                                value="Pedro Duarte"
-                                className="col-span-3"
-                              />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="username" className="text-right">
-                                Username
-                              </Label>
-                              <Input
-                                id="username"
-                                value="@peduarte"
-                                className="col-span-3"
-                              />
-                            </div>
+                            <EditFacilityForm facility={facility} />
                           </div>
                         </SheetContent>
                       </Sheet>

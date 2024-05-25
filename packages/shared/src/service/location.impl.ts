@@ -1,6 +1,7 @@
 import type {
   InsertLocation,
   LocationRepository,
+  SelectDetailLocation,
   SelectLocation,
   UpdateLocation,
 } from '#dep/repository/location';
@@ -66,12 +67,27 @@ export class LocationServiceImpl implements LocationService {
     };
   }
 
-  async deleteLocationAsset(id: SelectLocation['id']) {
+  async deleteLocationAsset(id: SelectDetailLocation['assets'][0]['id']) {
     const result = await this._locationRepository.deleteLocationAsset(id);
 
     if (!result.numDeletedRows) {
       return {
         error: new Error('Failed to delete location asset'),
+      };
+    }
+
+    return {
+      result,
+      error: undefined,
+    };
+  }
+
+  async deleteFacilityImage(id: SelectDetailLocation['facilities'][0]['id']) {
+    const result = await this._locationRepository.deleteFacilityImage(id);
+
+    if (!result.numUpdatedRows) {
+      return {
+        error: new Error('Failed to delete facility image'),
       };
     }
 

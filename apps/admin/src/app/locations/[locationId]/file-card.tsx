@@ -1,13 +1,6 @@
 'use client';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '@repo/ui/components/ui/card';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
+import { PhotoView } from 'react-photo-view';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
-import { SelectDetailLocation } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import { LoaderCircle, LoaderIcon, Trash, Upload } from 'lucide-react';
 import {
@@ -29,9 +22,15 @@ interface AssetCardProps {
   file: FileWithPreview;
   onDelete: () => void;
   progress?: boolean;
+  children?: React.ReactNode;
 }
 
-export default function FileCard({ file, onDelete, progress }: AssetCardProps) {
+export default function FileCard({
+  file,
+  onDelete,
+  progress,
+  children,
+}: AssetCardProps) {
   return (
     <div className="group relative cursor-pointer overflow-hidden">
       <PhotoView src={file.preview}>
@@ -52,6 +51,7 @@ export default function FileCard({ file, onDelete, progress }: AssetCardProps) {
           <AlertDialogTrigger className="absolute inset-x-2 bottom-2">
             <Button
               variant={'destructive'}
+              type="button"
               className="w-full opacity-0 group-hover:animate-slide-in-up"
             >
               Hapus
@@ -70,11 +70,7 @@ export default function FileCard({ file, onDelete, progress }: AssetCardProps) {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Batal</AlertDialogCancel>
-              <AlertDialogAction asChild>
-                <Button variant={'destructive'} onClick={onDelete}>
-                  Ya, Hapus
-                </Button>
-              </AlertDialogAction>
+              <AlertDialogAction asChild>{children}</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

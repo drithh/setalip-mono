@@ -118,7 +118,7 @@ export interface LocationFacilities {
   capacity: number;
   created_at: Generated<Date>;
   id: Generated<number>;
-  image_url: string;
+  image_url: Generated<string | null>;
   level: number;
   location_id: number;
   name: string;
@@ -160,7 +160,7 @@ export interface LoyaltyShops {
   created_at: Generated<Date>;
   description: string;
   id: Generated<number>;
-  image_url: string;
+  image_url: Generated<string | null>;
   name: string;
   price: Generated<number | null>;
   purchasable: number;

@@ -116,4 +116,14 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
   deleteLocation(id: SelectDetailLocation['id']): Promise<DeleteResult> {
     throw new Error('Method not implemented.');
   }
+
+  deleteFacilityImage(
+    id: SelectDetailLocation['facilities'][0]['id']
+  ): Promise<UpdateResult> {
+    return this._db
+      .updateTable('location_facilities')
+      .set({ image_url: null })
+      .where('location_facilities.id', '=', id)
+      .executeTakeFirst();
+  }
 }

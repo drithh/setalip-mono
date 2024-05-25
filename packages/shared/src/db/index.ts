@@ -3,7 +3,7 @@ import { DB } from '@repo/shared/db';
 import { Kysely, MysqlDialect } from 'kysely';
 import { env } from '#dep/env';
 import { createPool } from 'mysql2/promise';
-
+import 'reflect-metadata';
 export * from '#dep/db/schema';
 
 // const { hostname, password, port, username, pathname } = new URL(

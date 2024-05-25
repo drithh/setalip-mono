@@ -18,9 +18,16 @@ import {
 import { EditFacilitySchema, editFacilitySchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { Dropzone } from '@repo/ui/components/dropzone';
+import { PhotoProvider } from 'react-photo-view';
+import FileCard from './file-card';
+import { SelectDetailLocation } from '@repo/shared/repository';
+import DeleteFacilityImageForm from './delete-facility-image.form';
+
+type FileWithPreview = File & { preview: string };
 
 interface EditFacilityProps {
-  facilityId: number;
+  facility: SelectDetailLocation['facilities'][0];
 }
 
 const TOAST_MESSAGES = {
@@ -38,11 +45,17 @@ const TOAST_MESSAGES = {
   },
 };
 
-export default function EditFacility({ facilityId }: EditFacilityProps) {
+export default function EditFacilityForm({ facility }: EditFacilityProps) {
   const router = useRouter();
   const [formState, formAction] = useFormState(editFacility, {
     status: 'default',
-    form: undefined,
+    form: {
+      locationId: facility.location_id,
+      name: facility.name,
+      level: facility.level,
+      capacity: facility.capacity,
+      file: null,
+    },
   });
 
   type FormSchema = EditFacilitySchema;
@@ -92,6 +105,22 @@ export default function EditFacility({ facilityId }: EditFacilityProps) {
     })(event);
   };
 
+  function handleOnDrop(acceptedFiles: FileList | null) {
+    if (!acceptedFiles || acceptedFiles.length === 0) {
+      form.setError('file', { message: 'File tidak valid' });
+      return;
+    }
+    const file = acceptedFiles[0];
+
+    if (!file) {
+      form.setError('file', { message: 'File tidak valid' });
+      return;
+    }
+
+    form.setValue('file', file);
+    form.clearErrors('file');
+  }
+
   const formRef = useRef<HTMLFormElement>(null);
   return (
     <Form {...form}>
@@ -101,8 +130,104 @@ export default function EditFacility({ facilityId }: EditFacilityProps) {
         action={formAction}
         onSubmit={onFormSubmit}
       >
+        <FormField
+          control={form.control}
+          name="locationId"
+          render={({ field }) => <Input type="hidden" {...field} />}
+        />
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem className="grid w-full gap-2">
+              <FormLabel>Nama</FormLabel>
+              <FormControl>
+                <Input id="name" type="text" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="capacity"
+          render={({ field }) => (
+            <FormItem className="grid w-full gap-2">
+              <FormLabel>Kapasitas</FormLabel>
+              <FormControl>
+                <Input type="number" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="level"
+          render={({ field }) => (
+            <FormItem className="grid w-full gap-2">
+              <FormLabel>Level</FormLabel>
+              <FormControl>
+                <Input type="number" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="file"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormControl>
+                <>
+                  <FormLabel>Foto</FormLabel>
+                  {field.value ? (
+                    <PhotoProvider>
+                      <div className="grid grid-cols-2 gap-2">
+                        <FileCard
+                          file={{
+                            ...field.value,
+                            preview: URL.createObjectURL(field.value),
+                          }}
+                          onDelete={() => {
+                            form.setValue('file', null);
+                          }}
+                        />
+                      </div>
+                    </PhotoProvider>
+                  ) : (
+                    <PhotoProvider>
+                      <div className="grid grid-cols-2 gap-2">
+                        <FileCard
+                          file={
+                            {
+                              preview: facility.image_url,
+                              name: facility.name,
+                            } as FileWithPreview
+                          }
+                        >
+                          <DeleteFacilityImageForm facilityId={facility.id} />
+                        </FileCard>
+                      </div>
+                    </PhotoProvider>
+                  )}
+                  <div className="space-y-6">
+                    <Dropzone
+                      {...field}
+                      accept="image/*"
+                      dropMessage="Tarik dan lepas file di sini atau klik untuk memilih file"
+                      handleOnDrop={handleOnDrop}
+                    />
+                  </div>
+                </>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button type="submit" className="w-full">
-          Login
+          Simpan
         </Button>
       </form>
     </Form>
