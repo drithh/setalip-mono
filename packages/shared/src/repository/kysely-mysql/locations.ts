@@ -48,9 +48,9 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
       .execute();
 
     const openingHours = await this._db
-      .selectFrom('location_opening_hours')
+      .selectFrom('location_operational_hours')
       .selectAll()
-      .where('location_opening_hours.location_id', '=', id)
+      .where('location_operational_hours.location_id', '=', id)
       .execute();
 
     const location = {

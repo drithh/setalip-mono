@@ -126,7 +126,7 @@ export interface LocationFacilities {
   updated_by: Generated<number>;
 }
 
-export interface LocationOpeningHours {
+export interface LocationOperationalHours {
   closing_time: string;
   created_at: Generated<Date>;
   day_of_week: number;
@@ -291,7 +291,7 @@ export interface DB {
   facility_equipments: FacilityEquipments;
   location_assets: LocationAssets;
   location_facilities: LocationFacilities;
-  location_opening_hours: LocationOpeningHours;
+  location_operational_hours: LocationOperationalHours;
   locations: Locations;
   loyalty_rewards: LoyaltyRewards;
   loyalty_shops: LoyaltyShops;

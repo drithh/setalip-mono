@@ -1,7 +1,8 @@
-import { LoyaltyTransactions } from './../../src/db/schema';
 import { CreateTableBuilder, Insertable, Kysely, sql } from 'kysely';
 import { faker } from '@faker-js/faker';
 import {
+  LoyaltyTransactions,
+  LocationOperationalHours,
   ClassTypes,
   Coaches,
   Database,
@@ -9,7 +10,6 @@ import {
   FacilityEquipments,
   LocationAssets,
   LocationFacilities,
-  LocationOpeningHours,
   Locations,
   Packages,
   Users,
@@ -165,7 +165,8 @@ export async function up(db: Kysely<DB>): Promise<void> {
         ])
         .execute();
 
-      const locations_opening_hours: Insertable<LocationOpeningHours>[] = [];
+      const locations_operational_hours: Insertable<LocationOperationalHours>[] =
+        [];
       for (let index = 0; index < 16; index++) {
         let locationId: number, day_of_week: number;
         do {
@@ -173,7 +174,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
             locations[Math.floor(Math.random() * locations.length)]?.id ?? 1;
           day_of_week = faker.number.int({ min: 0, max: 6 });
         } while (
-          locations_opening_hours.some(
+          locations_operational_hours.some(
             (lo) =>
               lo.location_id === locationId && lo.day_of_week === day_of_week
           )
@@ -194,7 +195,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
             ?.split('.')[0] ?? '18:00:00';
 
         // console.log(openingTime, closingTime);
-        locations_opening_hours.push({
+        locations_operational_hours.push({
           id: index + 1,
           location_id: locationId,
           day_of_week: day_of_week,
@@ -204,8 +205,8 @@ export async function up(db: Kysely<DB>): Promise<void> {
       }
 
       await trx
-        .insertInto('location_opening_hours')
-        .values(locations_opening_hours)
+        .insertInto('location_operational_hours')
+        .values(locations_operational_hours)
         .execute();
 
       const location_facilities: Insertable<LocationFacilities>[] = Array.from({
@@ -505,7 +506,7 @@ export async function down(db: Kysely<any>): Promise<void> {
       await trx.deleteFrom('facility_equipments').execute();
       await trx.deleteFrom('location_assets').execute();
       await trx.deleteFrom('location_facilities').execute();
-      await trx.deleteFrom('location_opening_hours').execute();
+      await trx.deleteFrom('location_operational_hours').execute();
       await trx.deleteFrom('vouchers').execute();
 
       await trx.deleteFrom('user_sessions').execute();

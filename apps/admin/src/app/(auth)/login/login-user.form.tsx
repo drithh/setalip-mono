@@ -68,7 +68,6 @@ export default function LoginUserForm() {
     defaultValues: formState.form,
   });
 
-  console.log(formState);
   useEffect(() => {
     toast.dismiss();
     if (formState.status === 'field-errors') {

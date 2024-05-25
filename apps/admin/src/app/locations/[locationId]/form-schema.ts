@@ -45,6 +45,18 @@ export const editFacilitySchema = z.object({
 export type EditFacilitySchema = z.infer<typeof editFacilitySchema>;
 export type FormEditFacility = FormState<EditFacilitySchema>;
 
+export const EditOperationalHourSchema = z.object({
+  locationId: z.coerce.number(),
+  operationalHour: z.array(
+    z.object({
+      operationalHourId: z.coerce.number(),
+      day: z.coerce.number().min(0).max(6),
+      openingTime: z.string(),
+      closingTime: z.string(),
+    }),
+  ),
+});
+
 export const uploadLocationAssetSchema = z.object({
   locationId: z.coerce.number(),
   files: z.custom<File[] | File>((data) => {

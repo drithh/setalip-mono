@@ -46,7 +46,7 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
 
         <CardTitle>{facility.name}</CardTitle>
       </CardHeader>
-      <CardContent className="grid grid-cols-2 gap-2">
+      <CardContent className="grid grid-cols-1 gap-2 xl:grid-cols-2">
         <div className="flex content-between items-center gap-2">
           <p>Kapasitas: </p>
           <div className="flex items-center gap-2">

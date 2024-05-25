@@ -97,7 +97,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .execute();
 
       await trx.schema
-        .createTable('location_opening_hours')
+        .createTable('location_operational_hours')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('day_of_week', 'int4', (col) => col.notNull())
         .addColumn('opening_time', 'time', (col) => col.notNull())
@@ -431,7 +431,10 @@ export async function down(db: Kysely<any>): Promise<void> {
       await trx.schema.dropTable('location_assets').ifExists().execute();
       await trx.schema.dropTable('facility_equipments').ifExists().execute();
       await trx.schema.dropTable('location_facilities').ifExists().execute();
-      await trx.schema.dropTable('location_opening_hours').ifExists().execute();
+      await trx.schema
+        .dropTable('location_operational_hours')
+        .ifExists()
+        .execute();
 
       await trx.schema.dropTable('vouchers').ifExists().execute();
 

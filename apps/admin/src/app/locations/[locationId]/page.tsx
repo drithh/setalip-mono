@@ -39,6 +39,7 @@ import { getAuth } from '@/lib/get-auth';
 import FacilityCard from './facility-card';
 import EditDetailLocationForm from './edit-detail-location.form';
 import CreateFacilityForm from './create-facility.form';
+import OperationalHour from './operational-hour';
 
 export default async function LocationDetail({
   params,
@@ -78,8 +79,8 @@ export default async function LocationDetail({
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
-        <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
+      <div className="grid gap-4 md:grid-cols-[1fr_390px] lg:gap-8 xl:grid-cols-3">
+        <div className="grid auto-rows-max items-start gap-4 lg:gap-8 xl:col-span-2">
           <Card>
             <CardHeader className="flex flex-row place-content-between place-items-center">
               <CardTitle>Detail Lokasi</CardTitle>
@@ -153,17 +154,28 @@ export default async function LocationDetail({
           </Card>
         </div>
 
-        <Card className="overflow-hidden">
-          <CardHeader>
-            <CardTitle>Foto Lokasi</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-2">
-              <LocationAssets assets={location.result?.assets} />
-              <UploadLocationAsset locationId={locationIdNumber} />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
+          <Card className="overflow-hidden">
+            <CardHeader>
+              <CardTitle>Waktu Operasional</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <OperationalHour openingHours={location.result?.openingHours} />
+            </CardContent>
+          </Card>
+
+          <Card className="overflow-hidden">
+            <CardHeader>
+              <CardTitle>Foto Lokasi</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-2">
+                <LocationAssets assets={location.result?.assets} />
+                <UploadLocationAsset locationId={locationIdNumber} />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </main>
   );
