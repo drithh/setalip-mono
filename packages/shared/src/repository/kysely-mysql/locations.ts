@@ -3,6 +3,7 @@ import { Database, Otp } from '#dep/db/index';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
 import {
+  InsertFacility,
   InsertLocation,
   LocationRepository,
   SelectDetailLocation,
@@ -93,6 +94,13 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
   createLocationAsset(data: InsertLocation['assets']): Promise<InsertResult> {
     return this._db
       .insertInto('location_assets')
+      .values(data)
+      .executeTakeFirst();
+  }
+
+  createFacility(data: InsertFacility): Promise<InsertResult> {
+    return this._db
+      .insertInto('location_facilities')
       .values(data)
       .executeTakeFirst();
   }

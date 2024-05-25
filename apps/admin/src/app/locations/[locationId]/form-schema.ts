@@ -17,6 +17,20 @@ export type EditDetailLocationSchema = z.infer<typeof editDetailLocationSchema>;
 
 export type FormEditDetailLocation = FormState<EditDetailLocationSchema>;
 
+export const createFacilitySchema = z.object({
+  name: z.string().min(3).max(255),
+  capacity: z.coerce.number(),
+  level: z.coerce.number(),
+  locationId: z.coerce.number(),
+  file: z.custom<File | null>(
+    (data) => data === null || data instanceof File,
+    'Data is not an instance of a File',
+  ),
+});
+
+export type CreateFacilitySchema = z.infer<typeof createFacilitySchema>;
+export type FormCreateFacility = FormState<CreateFacilitySchema>;
+
 export const editFacilitySchema = z.object({
   facilityId: z.coerce.number(),
   name: z.string().min(3).max(255),

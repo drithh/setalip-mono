@@ -1,4 +1,5 @@
 import type {
+  InsertFacility,
   InsertLocation,
   LocationRepository,
   SelectDetailLocation,
@@ -49,6 +50,21 @@ export class LocationServiceImpl implements LocationService {
     if (!result.numInsertedOrUpdatedRows) {
       return {
         error: new Error('Failed to create location asset'),
+      };
+    }
+
+    return {
+      result,
+      error: undefined,
+    };
+  }
+
+  async createFacility(data: InsertFacility) {
+    const result = await this._locationRepository.createFacility(data);
+
+    if (!result.numInsertedOrUpdatedRows) {
+      return {
+        error: new Error('Failed to create facility'),
       };
     }
 

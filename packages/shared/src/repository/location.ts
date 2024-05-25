@@ -29,6 +29,8 @@ export interface InsertLocation extends Insertable<Locations> {
   facilities: Insertable<LocationFacilities>[];
   openingHours: Insertable<LocationOpeningHours>[];
 }
+
+export type InsertFacility = Insertable<LocationFacilities>;
 export interface UpdateLocation
   extends OptionalToRequired<Updateable<Locations>, 'id'> {}
 
@@ -42,6 +44,7 @@ export interface LocationRepository {
   ): Promise<SelectDetailLocation | undefined>;
   createLocation(data: InsertLocation): Promise<InsertResult>;
   createLocationAsset(data: InsertLocation['assets']): Promise<InsertResult>;
+  createFacility(data: InsertFacility): Promise<InsertResult>;
   updateLocation(data: UpdateLocation): Promise<UpdateResult>;
   updateFacility(data: UpdateFacility): Promise<UpdateResult>;
   deleteLocationAsset(

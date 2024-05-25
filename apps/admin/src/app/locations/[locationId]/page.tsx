@@ -38,6 +38,7 @@ import EditFacilityForm from './edit-facility.form';
 import { getAuth } from '@/lib/get-auth';
 import FacilityCard from './facility-card';
 import EditDetailLocationForm from './edit-detail-location.form';
+import CreateFacilityForm from './create-facility.form';
 
 export default async function LocationDetail({
   params,
@@ -138,8 +139,9 @@ export default async function LocationDetail({
             </CardContent>
           </Card>
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row place-content-between place-items-center">
               <CardTitle>Fasilitas</CardTitle>
+              <CreateFacilityForm locationId={location.result.id} />
             </CardHeader>
             <CardContent>
               <div className="grid gap-3 lg:grid-cols-2">
