@@ -20,17 +20,11 @@ type FileWithPreview = File & { preview: string };
 
 interface AssetCardProps {
   file: FileWithPreview;
-  onDelete: () => void;
+  onDelete?: () => void;
   progress?: boolean;
-  children?: React.ReactNode;
 }
 
-export default function FileCard({
-  file,
-  onDelete,
-  progress,
-  children,
-}: AssetCardProps) {
+export default function FileCard({ file, onDelete, progress }: AssetCardProps) {
   return (
     <div className="group relative cursor-pointer overflow-hidden">
       <PhotoView src={file.preview}>
@@ -47,33 +41,39 @@ export default function FileCard({
           <LoaderCircle className="h-16 w-16 animate-spin text-gray-300" />
         </div>
       ) : (
-        <AlertDialog>
-          <AlertDialogTrigger className="absolute inset-x-2 bottom-2">
-            <Button
-              variant={'destructive'}
-              type="button"
-              className="w-full opacity-0 group-hover:animate-slide-in-up"
-            >
-              Hapus
-            </Button>
-          </AlertDialogTrigger>
+        onDelete && (
+          <AlertDialog>
+            <AlertDialogTrigger className="absolute inset-x-2 bottom-2">
+              <Button
+                variant={'destructive'}
+                type="button"
+                className="w-full opacity-0 group-hover:animate-slide-in-up"
+              >
+                Hapus
+              </Button>
+            </AlertDialogTrigger>
 
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                Apakah kamu yakin menghapus foto ini?
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                Aksi ini tidak dapat dibatalkan. Ini akan menghapus foto lokasi
-                dari server.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Batal</AlertDialogCancel>
-              <AlertDialogAction asChild>{children}</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Apakah kamu yakin menghapus foto ini?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Aksi ini tidak dapat dibatalkan. Ini akan menghapus foto
+                  lokasi dari server.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogAction asChild>
+                  <Button variant={'destructive'} onClick={onDelete}>
+                    Ya, Hapus
+                  </Button>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )
       )}
     </div>
   );

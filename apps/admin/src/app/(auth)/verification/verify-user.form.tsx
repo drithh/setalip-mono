@@ -46,7 +46,7 @@ const TOAST_MESSAGES = {
   },
   success: {
     title: 'Verifikasi user berhasil',
-    description: 'Silahkan login',
+    description: 'Selamat datang',
   },
 };
 

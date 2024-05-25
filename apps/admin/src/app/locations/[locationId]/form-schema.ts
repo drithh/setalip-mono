@@ -33,22 +33,3 @@ export type UploadLocationAssetSchema = z.infer<
   typeof uploadLocationAssetSchema
 >;
 export type FormUploadLocationAsset = FormState<UploadLocationAssetSchema>;
-
-export const deleteLocationAssetSchema = z.object({
-  assetId: z.coerce.number().refine((data) => data > 0),
-});
-
-export type DeleteLocationAssetSchema = z.infer<
-  typeof deleteLocationAssetSchema
->;
-export type FormDeleteLocationAsset = FormState<DeleteLocationAssetSchema>;
-
-export const deleteFacilityImageSchema = z.object({
-  facilityId: z.coerce.number(),
-});
-
-export type DeleteFacilityImageSchema = z.infer<
-  typeof deleteFacilityImageSchema
->;
-
-export type FormDeleteFacilityImage = FormState<DeleteFacilityImageSchema>;

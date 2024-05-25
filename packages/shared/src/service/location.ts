@@ -23,5 +23,5 @@ export interface LocationService {
   // deleteLocation(id: SelectLocation['id']): PromiseResult<DeleteResult, Error>;
   deleteFacilityImage(
     id: SelectDetailLocation['facilities'][0]['id']
-  ): PromiseResult<UpdateResult, Error>;
+  ): PromiseResult<string, Error>;
 }

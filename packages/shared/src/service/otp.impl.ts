@@ -27,7 +27,7 @@ export class OtpServiceImpl implements OtpService {
 
     if (!user) {
       return {
-        error: new Error('User not found'),
+        error: new Error('Akun belum terdaftar'),
       };
     }
 

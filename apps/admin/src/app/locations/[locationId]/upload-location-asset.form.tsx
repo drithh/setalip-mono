@@ -24,6 +24,8 @@ import { Button } from '@repo/ui/components/ui/button';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { Input } from '@repo/ui/components/ui/input';
 
+type FileWithPreview = File & { preview: string };
+
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengunggah file',

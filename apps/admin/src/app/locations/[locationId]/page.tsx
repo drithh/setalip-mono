@@ -1,3 +1,5 @@
+'use server';
+
 import { container, TYPES } from '@repo/shared/inversify';
 import { Button } from '@repo/ui/components/ui/button';
 import {
@@ -33,12 +35,18 @@ import UploadLocationAsset from './upload-location-asset.form';
 import LocationAssets from './location-assets';
 import EditFacility from './edit-facility.form';
 import EditFacilityForm from './edit-facility.form';
+import { getAuth } from '@/lib/get-auth';
 
 export default async function LocationDetail({
   params,
 }: {
   params: { locationId: string };
 }) {
+  const auth = await getAuth();
+  if (!auth) {
+    redirect('/login');
+  }
+
   const locationService = container.get<LocationService>(TYPES.LocationService);
   const locationIdNumber = parseInt(params.locationId);
   if (isNaN(locationIdNumber)) {
@@ -61,10 +69,15 @@ export default async function LocationDetail({
           {location.result?.name}
         </h1>
         <div className="ml-auto flex gap-4">
-          <Button variant={'default'}>Simpan</Button>
-          <Button variant={'outline'}>Batal</Button>
+          {/* <Button variant={'default'} type="button">
+            Simpan
+          </Button>
+          <Button variant={'outline'} type="button">
+            Batal
+          </Button> */}
         </div>
       </div>
+
       <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
         <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
           <Card>
@@ -135,7 +148,7 @@ export default async function LocationDetail({
                     <CardHeader>
                       <AspectRatio ratio={16 / 9}>
                         <ImageWithFallback
-                          src={facility.image_url}
+                          src={facility.image_url || 'placeholder.svg'}
                           alt={facility.name}
                           fill
                           className="rounded-lg object-cover"
@@ -192,7 +205,7 @@ export default async function LocationDetail({
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-2">
-              <LocationAssets assets={location.result?.assets} />
+              {/* <LocationAssets assets={location.result?.assets} /> */}
               <UploadLocationAsset locationId={locationIdNumber} />
             </div>
           </CardContent>

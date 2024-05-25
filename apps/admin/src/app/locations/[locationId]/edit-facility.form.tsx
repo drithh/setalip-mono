@@ -22,7 +22,8 @@ import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
 import FileCard from './file-card';
 import { SelectDetailLocation } from '@repo/shared/repository';
-import DeleteFacilityImageForm from './delete-facility-image.form';
+import { api } from '@/trpc/react';
+import { useDeleteFacilityImageMutation } from './function/delete-facility-image';
 
 type FileWithPreview = File & { preview: string };
 
@@ -122,6 +123,8 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
   }
 
   const formRef = useRef<HTMLFormElement>(null);
+
+  const deleteFacilityImage = useDeleteFacilityImageMutation();
   return (
     <Form {...form}>
       <form
@@ -206,9 +209,19 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
                               name: facility.name,
                             } as FileWithPreview
                           }
-                        >
-                          <DeleteFacilityImageForm facilityId={facility.id} />
-                        </FileCard>
+                          onDelete={() => {
+                            deleteFacilityImage.mutate(
+                              {
+                                facilityId: facility.id,
+                              },
+                              {
+                                onSuccess: () => {
+                                  router.refresh();
+                                },
+                              },
+                            );
+                          }}
+                        />
                       </div>
                     </PhotoProvider>
                   )}

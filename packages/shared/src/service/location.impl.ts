@@ -70,7 +70,7 @@ export class LocationServiceImpl implements LocationService {
   async deleteLocationAsset(id: SelectDetailLocation['assets'][0]['id']) {
     const result = await this._locationRepository.deleteLocationAsset(id);
 
-    if (!result.numDeletedRows) {
+    if (!Number(result.numDeletedRows)) {
       return {
         error: new Error('Failed to delete location asset'),
       };
@@ -85,14 +85,14 @@ export class LocationServiceImpl implements LocationService {
   async deleteFacilityImage(id: SelectDetailLocation['facilities'][0]['id']) {
     const result = await this._locationRepository.deleteFacilityImage(id);
 
-    if (!result.numUpdatedRows) {
+    if (!Number(result.numUpdatedRows)) {
       return {
         error: new Error('Failed to delete facility image'),
       };
     }
 
     return {
-      result,
+      result: 'Selesai',
       error: undefined,
     };
   }

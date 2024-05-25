@@ -36,7 +36,7 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
 
     if (!user) {
       return {
-        error: new Error('User not found'),
+        error: new Error('Akun belum terdaftar'),
       };
     }
 
@@ -51,7 +51,7 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
 
     if (!resetPassword) {
       return {
-        error: new Error('User not found'),
+        error: new Error('Akun belum terdaftar'),
       };
     }
 

@@ -22,6 +22,7 @@ import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { PasswordInput } from '@repo/ui/components/password-input';
 
 const TOAST_MESSAGES = {
   error: {
@@ -132,7 +133,7 @@ export default function LoginUserForm() {
                 </Link>
               </div>
               <FormControl>
-                <Input type="password" placeholder="" {...field} />
+                <PasswordInput {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

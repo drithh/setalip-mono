@@ -110,7 +110,7 @@ export class AuthServiceImpl implements AuthService {
       if (!user) {
         return {
           error: new UserValidationError({
-            phoneNumber: 'User not found',
+            phoneNumber: 'Akun belum terdaftar',
           }),
         };
       }
@@ -145,7 +145,7 @@ export class AuthServiceImpl implements AuthService {
     if (!user) {
       return {
         error: new UserValidationError({
-          phoneNumber: 'User not found',
+          phoneNumber: 'Akun belum terdaftar',
         }),
       };
     }

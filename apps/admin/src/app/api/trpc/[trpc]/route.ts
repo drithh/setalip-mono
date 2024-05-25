@@ -4,6 +4,7 @@ import { appRouter, createTRPCContext } from '@repo/shared/api';
 import { lucia } from '@repo/shared/auth';
 import { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
+import { uncachedValidateRequest } from '@/lib/validate-request';
 /**
  * Configure basic CORS headers
  * You should extend this to match your needs
@@ -24,10 +25,15 @@ export const OPTIONS = () => {
 };
 
 const handler = async (req: NextRequest) => {
-  const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
-  if (!sessionId) return null;
-  const { user, session } = await lucia.validateSession(sessionId);
-  const authSession = user ? { ...session, user } : null;
+  const session = await uncachedValidateRequest();
+
+  const authSession =
+    session.session !== null
+      ? {
+          ...session.session,
+          user: session.user,
+        }
+      : null;
   const response = await fetchRequestHandler({
     endpoint: '/api/trpc',
     req,

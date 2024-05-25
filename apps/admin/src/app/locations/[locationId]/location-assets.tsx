@@ -2,9 +2,9 @@
 import { PhotoProvider } from 'react-photo-view';
 import FileCard from './file-card';
 import { SelectDetailLocation } from '@repo/shared/repository';
-import DeleteLocationAssetForm from './delete-location-asset.form';
-import { useEffect, useState } from 'react';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useDeleteLocationAssetMutation } from './function/delete-location-asset';
+import { useRouter } from 'next/navigation';
 interface LocationAssetsProps {
   assets: SelectDetailLocation['assets'];
 }
@@ -12,9 +12,10 @@ interface LocationAssetsProps {
 type FileWithPreview = File & { preview: string };
 
 export default function LocationAssets({ assets }: LocationAssetsProps) {
-  const [deleteAssetId, setDeleteAssetId] = useState<number>(-1);
+  const router = useRouter();
+  const [parent] = useAutoAnimate(/* optional config */);
+  // const deleteLocationAsset = useDeleteLocationAssetMutation();
 
-  const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
   return (
     <>
       <PhotoProvider>
@@ -28,12 +29,22 @@ export default function LocationAssets({ assets }: LocationAssetsProps) {
                   name: image.name,
                 } as FileWithPreview
               }
-              onDelete={() => setDeleteAssetId(image.id)}
+              onDelete={() => {
+                // deleteLocationAsset.mutate(
+                //   {
+                //     assetId: image.id,
+                //   },
+                //   {
+                //     onSuccess: () => {
+                //       router.refresh();
+                //     },
+                //   },
+                // );
+              }}
             />
           ))}
         </div>
       </PhotoProvider>
-      <DeleteLocationAssetForm assetId={deleteAssetId} />
     </>
   );
 }
