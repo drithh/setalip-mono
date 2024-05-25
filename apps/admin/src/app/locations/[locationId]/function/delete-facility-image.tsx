@@ -5,16 +5,16 @@ import { toast } from 'sonner';
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal menghapus gambar',
+    title: 'Gagal menghapus foto',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Menghapus gambar...',
+    title: 'Menghapus foto...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Gambar berhasil dihapus',
-    description: 'Gambar lokasi berhasil dihapus',
+    title: 'Foto berhasil dihapus',
+    description: 'Foto fasilitas berhasil dihapus',
   },
 };
 

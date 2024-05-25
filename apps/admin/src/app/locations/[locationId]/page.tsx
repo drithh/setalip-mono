@@ -36,6 +36,7 @@ import LocationAssets from './location-assets';
 import EditFacility from './edit-facility.form';
 import EditFacilityForm from './edit-facility.form';
 import { getAuth } from '@/lib/get-auth';
+import FacilityCard from './facility-card';
 
 export default async function LocationDetail({
   params,
@@ -142,57 +143,9 @@ export default async function LocationDetail({
               <CardTitle>Fasilitas</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-3 md:grid-cols-2">
+              <div className="grid gap-3 lg:grid-cols-2">
                 {location.result?.facilities.map((facility, index) => (
-                  <Card key={facility?.id} className="sm:col-span-1">
-                    <CardHeader>
-                      <AspectRatio ratio={16 / 9}>
-                        <ImageWithFallback
-                          src={facility.image_url || 'placeholder.svg'}
-                          alt={facility.name}
-                          fill
-                          className="rounded-lg object-cover"
-                        />
-                      </AspectRatio>
-
-                      <CardTitle>{facility.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-2 gap-2">
-                      <div className="flex content-between items-center gap-2">
-                        <p>Kapasitas: </p>
-                        <div className="flex items-center gap-2">
-                          <User2 className="h-5 w-5" />
-                          <p>{facility.capacity}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <p>Level:</p>
-                        <p>{facility.level}</p>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Sheet>
-                        <SheetTrigger asChild>
-                          <Button variant={'outline'}>Edit Fasilitas</Button>
-                        </SheetTrigger>
-                        <SheetContent>
-                          <SheetHeader>
-                            <SheetTitle className="text-left">
-                              Edit Fasilitas
-                            </SheetTitle>
-                            <SheetDescription className="text-left">
-                              Buat perubahan pada fasilitas ini, pastikan klik
-                              simpan ketika selesai
-                            </SheetDescription>
-                          </SheetHeader>
-                          <div className="grid gap-4 py-4">
-                            <EditFacilityForm facility={facility} />
-                          </div>
-                        </SheetContent>
-                      </Sheet>
-                      <Link className="ml-auto" href={`/locations/`}></Link>
-                    </CardFooter>
-                  </Card>
+                  <FacilityCard key={index} facility={facility} />
                 ))}
               </div>
             </CardContent>
@@ -205,7 +158,7 @@ export default async function LocationDetail({
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-2">
-              {/* <LocationAssets assets={location.result?.assets} /> */}
+              <LocationAssets assets={location.result?.assets} />
               <UploadLocationAsset locationId={locationIdNumber} />
             </div>
           </CardContent>

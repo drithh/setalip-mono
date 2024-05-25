@@ -1,6 +1,10 @@
 'use server';
 import { cookies } from 'next/headers';
-import { AuthService, UserValidationError } from '@repo/shared/service';
+import {
+  AuthService,
+  LocationService,
+  UserValidationError,
+} from '@repo/shared/service';
 import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
@@ -13,6 +17,7 @@ import {
 } from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { FieldError } from 'react-hook-form';
+import { api } from '@/trpc/server';
 
 export async function editFacility(
   state: FormEditFacility,
@@ -30,44 +35,43 @@ export async function editFacility(
       ),
     };
   }
+  console.log('fileUpload', parsed.data.file);
 
-  // const parsedPhoneNumber = parsePhoneNumber(parsed.data.phoneNumber);
-  // const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;
+  const fileUpload =
+    parsed.data.file?.size && parsed.data.file?.size > 0
+      ? await api.file.upload({ files: parsed.data.file })
+      : [{ url: '', name: '' }];
 
-  // const AuthService = container.get<AuthService>(TYPES.AuthService);
-  // const loginUser = await AuthService.loginUser({
-  //   ...parsed.data,
-  //   phoneNumber: formattedPhoneNumber,
-  // });
-  // console.log(loginUser);
+  if (fileUpload.length === 0) {
+    return {
+      form: parsed.data,
+      status: 'field-errors',
+      errors: {
+        file: {
+          type: 'required',
+          message: 'File is required',
+        },
+      },
+    };
+  }
 
-  // if (loginUser.error instanceof UserValidationError) {
-  //   const errors = loginUser.error.getErrors();
+  const locationService = container.get<LocationService>(TYPES.LocationService);
 
-  //   const mappedErrors = convertErrorsToZod<EditFacilitySchema>(errors);
+  const facility = await locationService.updateFacility({
+    id: state.form?.facilityId ?? 0,
+    name: parsed.data.name,
+    level: parsed.data.level,
+    capacity: parsed.data.capacity,
+    image_url: fileUpload[0]?.url ?? null,
+  });
 
-  //   return {
-  //     form: {
-  //       ...parsed.data,
-  //     },
-  //     status: 'field-errors',
-  //     errors: mappedErrors,
-  //   };
-  // } else if (loginUser.error) {
-  //   return {
-  //     form: {
-  //       ...parsed.data,
-  //     },
-  //     status: 'error',
-  //     errors: loginUser.error.message,
-  //   };
-  // }
-
-  // cookies().set(
-  //   loginUser.result.name,
-  //   loginUser.result.value,
-  //   loginUser.result.attributes,
-  // );
+  if (facility.error) {
+    return {
+      form: parsed.data,
+      status: 'error',
+      errors: facility.error.message,
+    };
+  }
 
   return {
     form: undefined,

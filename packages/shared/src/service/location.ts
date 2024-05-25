@@ -2,6 +2,7 @@ import {
   InsertLocation,
   SelectDetailLocation,
   SelectLocation,
+  UpdateFacility,
   UpdateLocation,
 } from '#dep/repository/location';
 import { DeleteResult, InsertResult, UpdateResult } from 'kysely';
@@ -18,9 +19,8 @@ export interface LocationService {
   deleteLocationAsset(
     id: SelectDetailLocation['assets'][0]['id']
   ): PromiseResult<DeleteResult, Error>;
-  // createLocation(data: InsertLocation): PromiseResult<InsertResult, Error>;
   updateLocation(data: UpdateLocation): PromiseResult<UpdateResult, Error>;
-  // deleteLocation(id: SelectLocation['id']): PromiseResult<DeleteResult, Error>;
+  updateFacility(data: UpdateFacility): PromiseResult<UpdateResult, Error>;
   deleteFacilityImage(
     id: SelectDetailLocation['facilities'][0]['id']
   ): PromiseResult<string, Error>;

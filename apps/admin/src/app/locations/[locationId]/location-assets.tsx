@@ -14,7 +14,7 @@ type FileWithPreview = File & { preview: string };
 export default function LocationAssets({ assets }: LocationAssetsProps) {
   const router = useRouter();
   const [parent] = useAutoAnimate(/* optional config */);
-  // const deleteLocationAsset = useDeleteLocationAssetMutation();
+  const deleteLocationAsset = useDeleteLocationAssetMutation();
 
   return (
     <>
@@ -30,16 +30,16 @@ export default function LocationAssets({ assets }: LocationAssetsProps) {
                 } as FileWithPreview
               }
               onDelete={() => {
-                // deleteLocationAsset.mutate(
-                //   {
-                //     assetId: image.id,
-                //   },
-                //   {
-                //     onSuccess: () => {
-                //       router.refresh();
-                //     },
-                //   },
-                // );
+                deleteLocationAsset.mutate(
+                  {
+                    assetId: image.id,
+                  },
+                  {
+                    onSuccess: () => {
+                      router.refresh();
+                    },
+                  },
+                );
               }}
             />
           ))}

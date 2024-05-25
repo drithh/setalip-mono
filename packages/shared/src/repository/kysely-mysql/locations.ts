@@ -7,6 +7,7 @@ import {
   LocationRepository,
   SelectDetailLocation,
   SelectLocation,
+  UpdateFacility,
   UpdateLocation,
 } from '../location';
 import { DeleteResult, InsertResult } from 'kysely';
@@ -89,6 +90,13 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
     throw new Error('Method not implemented.');
   }
 
+  createLocationAsset(data: InsertLocation['assets']): Promise<InsertResult> {
+    return this._db
+      .insertInto('location_assets')
+      .values(data)
+      .executeTakeFirst();
+  }
+
   updateLocation(data: UpdateLocation): Promise<UpdateResult> {
     return this._db
       .updateTable('locations')
@@ -97,10 +105,11 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
       .executeTakeFirst();
   }
 
-  insertLocationAsset(data: InsertLocation['assets']): Promise<InsertResult> {
+  updateFacility(data: UpdateFacility): Promise<UpdateResult> {
     return this._db
-      .insertInto('location_assets')
-      .values(data)
+      .updateTable('location_facilities')
+      .set(data)
+      .where('location_facilities.id', '=', data.id)
       .executeTakeFirst();
   }
 

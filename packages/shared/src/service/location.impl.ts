@@ -3,6 +3,7 @@ import type {
   LocationRepository,
   SelectDetailLocation,
   SelectLocation,
+  UpdateFacility,
   UpdateLocation,
 } from '#dep/repository/location';
 import { injectable, inject } from 'inversify';
@@ -42,6 +43,21 @@ export class LocationServiceImpl implements LocationService {
     };
   }
 
+  async createLocationAsset(data: InsertLocation['assets']) {
+    const result = await this._locationRepository.createLocationAsset(data);
+
+    if (!result.numInsertedOrUpdatedRows) {
+      return {
+        error: new Error('Failed to create location asset'),
+      };
+    }
+
+    return {
+      result,
+      error: undefined,
+    };
+  }
+
   async updateLocation(data: UpdateLocation) {
     // todo timezone
     const result = await this._locationRepository.updateLocation(data);
@@ -52,14 +68,8 @@ export class LocationServiceImpl implements LocationService {
     };
   }
 
-  async createLocationAsset(data: InsertLocation['assets']) {
-    const result = await this._locationRepository.insertLocationAsset(data);
-
-    if (!result.numInsertedOrUpdatedRows) {
-      return {
-        error: new Error('Failed to create location asset'),
-      };
-    }
+  async updateFacility(data: UpdateFacility) {
+    const result = await this._locationRepository.updateFacility(data);
 
     return {
       result,

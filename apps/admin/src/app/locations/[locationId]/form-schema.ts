@@ -2,6 +2,7 @@ import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
 
 export const editFacilitySchema = z.object({
+  facilityId: z.coerce.number(),
   name: z.string().min(3).max(255),
   capacity: z.coerce.number(),
   level: z.coerce.number(),

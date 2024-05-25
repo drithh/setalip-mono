@@ -17,47 +17,42 @@ export async function uploadLocationAsset(
   state: FormUploadLocationAsset,
   data: FormData,
 ): Promise<FormUploadLocationAsset> {
-  console.log('data', data.get('files'));
-  // const formData = convertFormData<UploadLocationAssetSchema>(data);
-  // const parsed = uploadLocationAssetSchema.safeParse(formData);
+  const formData = convertFormData<UploadLocationAssetSchema>(data);
+  const parsed = uploadLocationAssetSchema.safeParse(formData);
 
-  // if (!parsed.success) {
-  //   return {
-  //     form: {
-  //       ...state.form,
-  //     },
-  //     status: 'field-errors',
-  //     errors: convertZodErrorsToFieldErrors(
-  //       parsed.error.formErrors.fieldErrors,
-  //     ),
-  //   };
-  // }
+  if (!parsed.success) {
+    return {
+      form: {
+        ...state.form,
+      },
+      status: 'field-errors',
+      errors: convertZodErrorsToFieldErrors(
+        parsed.error.formErrors.fieldErrors,
+      ),
+    };
+  }
 
-  // console.log('parsed', parsed.data.files, formData.files);
+  const fileUpload = await api.file.upload({
+    files: parsed.data.files,
+  });
 
-  // const fileUpload = await api.file.upload({
-  //   files: parsed.data.files,
-  // });
+  const locationService = container.get<LocationService>(TYPES.LocationService);
 
-  // console.log('fileUpload', fileUpload);
+  const locationAsset = await locationService.createLocationAsset(
+    fileUpload.map((asset) => ({
+      location_id: state.form?.locationId ?? 0,
+      url: asset.url,
+      name: asset.name,
+    })),
+  );
 
-  // const locationService = container.get<LocationService>(TYPES.LocationService);
-
-  // const locationAsset = await locationService.createLocationAsset(
-  //   fileUpload.map((asset) => ({
-  //     location_id: state.form?.locationId ?? 0,
-  //     url: asset.url,
-  //     name: asset.name,
-  //   })),
-  // );
-
-  // if (locationAsset.error) {
-  //   return {
-  //     form: undefined,
-  //     status: 'error',
-  //     errors: locationAsset.error.message,
-  //   };
-  // }
+  if (locationAsset.error) {
+    return {
+      form: undefined,
+      status: 'error',
+      errors: locationAsset.error.message,
+    };
+  }
 
   return {
     form: state.form,

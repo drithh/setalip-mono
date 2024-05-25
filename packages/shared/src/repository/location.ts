@@ -30,11 +30,10 @@ export interface InsertLocation extends Insertable<Locations> {
   openingHours: Insertable<LocationOpeningHours>[];
 }
 export interface UpdateLocation
-  extends OptionalToRequired<Updateable<Locations>, 'id'> {
-  assets?: Insertable<LocationAssets>[];
-  facilities?: Insertable<LocationFacilities>[];
-  openingHours?: Insertable<LocationOpeningHours>[];
-}
+  extends OptionalToRequired<Updateable<Locations>, 'id'> {}
+
+export interface UpdateFacility
+  extends OptionalToRequired<Updateable<LocationFacilities>, 'id'> {}
 
 export interface LocationRepository {
   getLocations(): Promise<SelectLocation[]>;
@@ -42,8 +41,9 @@ export interface LocationRepository {
     id: SelectLocation['id']
   ): Promise<SelectDetailLocation | undefined>;
   createLocation(data: InsertLocation): Promise<InsertResult>;
+  createLocationAsset(data: InsertLocation['assets']): Promise<InsertResult>;
   updateLocation(data: UpdateLocation): Promise<UpdateResult>;
-  insertLocationAsset(data: InsertLocation['assets']): Promise<InsertResult>;
+  updateFacility(data: UpdateFacility): Promise<UpdateResult>;
   deleteLocationAsset(
     id: SelectDetailLocation['assets'][0]['id']
   ): Promise<DeleteResult>;

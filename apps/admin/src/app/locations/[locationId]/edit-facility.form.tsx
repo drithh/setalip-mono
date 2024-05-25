@@ -4,7 +4,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editFacility } from './_actions/edit-facility';
 import { useFormState } from 'react-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -29,28 +29,33 @@ type FileWithPreview = File & { preview: string };
 
 interface EditFacilityProps {
   facility: SelectDetailLocation['facilities'][0];
+  closeSheet: () => void;
 }
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal login',
+    title: 'Gagal mengubah fasilitas',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Mengirim data...',
+    title: 'Mengubah fasilitas...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Login berhasil',
-    description: 'Selamat datang',
+    title: 'Fasilitas berhasil diubah',
   },
 };
 
-export default function EditFacilityForm({ facility }: EditFacilityProps) {
+export default function EditFacilityForm({
+  facility,
+  closeSheet,
+}: EditFacilityProps) {
   const router = useRouter();
+  const [imageRemoved, setImageRemoved] = useState(false);
   const [formState, formAction] = useFormState(editFacility, {
     status: 'default',
     form: {
+      facilityId: facility.id,
       locationId: facility.location_id,
       name: facility.name,
       level: facility.level,
@@ -58,7 +63,6 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
       file: null,
     },
   });
-
   type FormSchema = EditFacilitySchema;
 
   const form = useForm<FormSchema>({
@@ -88,14 +92,13 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
     }
 
     if (formState.status === 'success') {
-      toast.dismiss();
-      toast.success(TOAST_MESSAGES.success.title, {
-        description: TOAST_MESSAGES.success.description,
-      });
-      router.push('/');
+      toast.success(TOAST_MESSAGES.success.title);
+      closeSheet();
+      router.refresh();
     }
   }, [formState.form]);
 
+  // print error
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     form.handleSubmit(() => {
@@ -124,7 +127,6 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  const deleteFacilityImage = useDeleteFacilityImageMutation();
   return (
     <Form {...form}>
       <form
@@ -135,8 +137,17 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
       >
         <FormField
           control={form.control}
+          name="facilityId"
+          render={({ field }) => (
+            <Input type="hidden" {...field} value={facility.id} />
+          )}
+        />
+        <FormField
+          control={form.control}
           name="locationId"
-          render={({ field }) => <Input type="hidden" {...field} />}
+          render={({ field }) => (
+            <Input type="hidden" {...field} value={facility.location_id} />
+          )}
         />
         <FormField
           control={form.control}
@@ -185,7 +196,7 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
               <FormControl>
                 <>
                   <FormLabel>Foto</FormLabel>
-                  {field.value ? (
+                  {field.value && field.value.size !== 0 ? (
                     <PhotoProvider>
                       <div className="grid grid-cols-2 gap-2">
                         <FileCard
@@ -200,30 +211,24 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
                       </div>
                     </PhotoProvider>
                   ) : (
-                    <PhotoProvider>
-                      <div className="grid grid-cols-2 gap-2">
-                        <FileCard
-                          file={
-                            {
-                              preview: facility.image_url,
-                              name: facility.name,
-                            } as FileWithPreview
-                          }
-                          onDelete={() => {
-                            deleteFacilityImage.mutate(
+                    facility.image_url &&
+                    !imageRemoved && (
+                      <PhotoProvider>
+                        <div className="grid grid-cols-2 gap-2">
+                          <FileCard
+                            file={
                               {
-                                facilityId: facility.id,
-                              },
-                              {
-                                onSuccess: () => {
-                                  router.refresh();
-                                },
-                              },
-                            );
-                          }}
-                        />
-                      </div>
-                    </PhotoProvider>
+                                preview: facility.image_url,
+                                name: facility.name,
+                              } as FileWithPreview
+                            }
+                            onDelete={() => {
+                              setImageRemoved(true);
+                            }}
+                          />
+                        </div>
+                      </PhotoProvider>
+                    )
                   )}
                   <div className="space-y-6">
                     <Dropzone
