@@ -44,7 +44,14 @@ export default function RegisterUserForm() {
   const router = useRouter();
   const [formState, formAction] = useFormState(registerUser, {
     status: 'default',
-    form: undefined,
+    form: {
+      address: '',
+      email: '',
+      name: '',
+      password: '',
+      passwordConfirmation: '',
+      phoneNumber: '',
+    },
   });
 
   type FormSchema = RegisterUserSchema;

@@ -56,6 +56,7 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
   const [formState, formAction] = useFormState(verifyUser, {
     status: 'default',
     form: {
+      otp: '',
       userId: userId,
     },
   });

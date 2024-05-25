@@ -41,7 +41,9 @@ const TOAST_MESSAGES = {
 export default function ForgotPasswordForm() {
   const [formState, formAction] = useFormState(forgotPassword, {
     status: 'default',
-    form: undefined,
+    form: {
+      phoneNumber: '',
+    },
   });
 
   type FormSchema = ForgotPasswordSchema;

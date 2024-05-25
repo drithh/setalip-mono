@@ -45,6 +45,8 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [formState, formAction] = useFormState(resetPassword, {
     status: 'default',
     form: {
+      password: '',
+      passwordConfirmation: '',
       token: token,
     },
   });

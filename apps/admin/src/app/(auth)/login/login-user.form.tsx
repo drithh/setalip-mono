@@ -23,6 +23,7 @@ import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { PasswordInput } from '@repo/ui/components/password-input';
+import { api } from '@/trpc/react';
 
 const TOAST_MESSAGES = {
   error: {
@@ -41,9 +42,23 @@ const TOAST_MESSAGES = {
 
 export default function LoginUserForm() {
   const router = useRouter();
+  const auth = api.auth.getSession.useQuery(void {}, {
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+  if (auth.data) {
+    router.push('/');
+  }
+
   const [formState, formAction] = useFormState(loginUser, {
     status: 'default',
-    form: undefined,
+    form: {
+      password: '',
+      phoneNumber: '',
+    },
   });
 
   type FormSchema = LoginUserSchema;
@@ -53,6 +68,7 @@ export default function LoginUserForm() {
     defaultValues: formState.form,
   });
 
+  console.log(formState);
   useEffect(() => {
     toast.dismiss();
     if (formState.status === 'field-errors') {
