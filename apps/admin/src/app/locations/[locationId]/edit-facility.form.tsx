@@ -22,8 +22,6 @@ import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
 import FileCard from './file-card';
 import { SelectDetailLocation } from '@repo/shared/repository';
-import { api } from '@/trpc/react';
-import { useDeleteFacilityImageMutation } from './function/delete-facility-image';
 
 type FileWithPreview = File & { preview: string };
 
@@ -52,6 +50,7 @@ export default function EditFacilityForm({
 }: EditFacilityProps) {
   const router = useRouter();
   const [imageRemoved, setImageRemoved] = useState(false);
+
   const [formState, formAction] = useFormState(editFacility, {
     status: 'default',
     form: {
@@ -63,6 +62,7 @@ export default function EditFacilityForm({
       file: null,
     },
   });
+
   type FormSchema = EditFacilitySchema;
 
   const form = useForm<FormSchema>({
@@ -98,7 +98,6 @@ export default function EditFacilityForm({
     }
   }, [formState.form]);
 
-  // print error
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     form.handleSubmit(() => {

@@ -37,6 +37,7 @@ import EditFacility from './edit-facility.form';
 import EditFacilityForm from './edit-facility.form';
 import { getAuth } from '@/lib/get-auth';
 import FacilityCard from './facility-card';
+import EditDetailLocationForm from './edit-detail-location.form';
 
 export default async function LocationDetail({
   params,
@@ -70,20 +71,18 @@ export default async function LocationDetail({
           {location.result?.name}
         </h1>
         <div className="ml-auto flex gap-4">
-          {/* <Button variant={'default'} type="button">
-            Simpan
+          <Button variant={'destructive'} type="button">
+            Hapus Lokasi
           </Button>
-          <Button variant={'outline'} type="button">
-            Batal
-          </Button> */}
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
         <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row place-content-between place-items-center">
               <CardTitle>Detail Lokasi</CardTitle>
+              <EditDetailLocationForm location={location.result} />
             </CardHeader>
             <CardContent>
               <div className="grid gap-6">

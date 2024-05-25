@@ -43,7 +43,7 @@ export default function FileCard({ file, onDelete, progress }: AssetCardProps) {
       ) : (
         onDelete && (
           <AlertDialog>
-            <AlertDialogTrigger className="absolute inset-x-2 bottom-2">
+            <AlertDialogTrigger asChild className="absolute inset-x-2 bottom-2">
               <Button
                 variant={'destructive'}
                 type="button"
