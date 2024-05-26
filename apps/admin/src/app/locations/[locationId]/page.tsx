@@ -160,7 +160,9 @@ export default async function LocationDetail({
               <CardTitle>Waktu Operasional</CardTitle>
             </CardHeader>
             <CardContent>
-              <OperationalHour openingHours={location.result?.openingHours} />
+              <OperationalHour
+                operationalHours={location.result?.operational_hours}
+              />
             </CardContent>
           </Card>
 

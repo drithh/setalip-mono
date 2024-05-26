@@ -10,8 +10,8 @@ import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
 import {
-  editDetailLocationSchema,
-  FormEditDetailLocation,
+  editOperationalHourSchema,
+  FormEditOperationalHour,
 } from '../form-schema';
 import {
   convertErrorsToZod,
@@ -22,12 +22,12 @@ import { parsePhoneNumber } from 'libphonenumber-js';
 import { FieldError } from 'react-hook-form';
 import { api } from '@/trpc/server';
 
-export async function editDetailLocation(
-  state: FormEditDetailLocation,
+export async function editOperationalHour(
+  state: FormEditOperationalHour,
   data: FormData,
-): Promise<FormEditDetailLocation> {
+): Promise<FormEditOperationalHour> {
   const formData = convertFormData(data);
-  const parsed = editDetailLocationSchema.safeParse(formData);
+  const parsed = editOperationalHourSchema.safeParse(formData);
 
   if (!parsed.success) {
     return {
@@ -39,27 +39,27 @@ export async function editDetailLocation(
     };
   }
 
-  const parsedPhoneNumber = parsePhoneNumber(parsed.data.phoneNumber);
-  const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;
+  // const parsedPhoneNumber = parsePhoneNumber(parsed.data.phoneNumber);
+  // const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;
 
   const locationService = container.get<LocationService>(TYPES.LocationService);
 
-  const updateLocation = await locationService.updateLocation({
-    id: parsed.data.locationId,
-    name: parsed.data.name,
-    phone_number: formattedPhoneNumber,
-    email: parsed.data.email,
-    address: parsed.data.address,
-    link_maps: parsed.data.linkMaps,
-  });
+  // const updateLocation = await locationService.updateLocation({
+  //   id: parsed.data.locationId,
+  //   name: parsed.data.name,
+  //   phone_number: formattedPhoneNumber,
+  //   email: parsed.data.email,
+  //   address: parsed.data.address,
+  //   link_maps: parsed.data.linkMaps,
+  // });
 
-  if (updateLocation.error) {
-    return {
-      form: parsed.data,
-      status: 'error',
-      errors: updateLocation.error.message,
-    };
-  }
+  // if (updateLocation.error) {
+  //   return {
+  //     form: parsed.data,
+  //     status: 'error',
+  //     errors: updateLocation.error.message,
+  //   };
+  // }
 
   return {
     form: undefined,

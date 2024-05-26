@@ -1,4 +1,4 @@
-import { Database, Otp } from '#dep/db/index';
+import { Database, LocationOperationalHours, Otp } from '#dep/db/index';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
@@ -10,9 +10,11 @@ import {
   SelectLocation,
   UpdateFacility,
   UpdateLocation,
+  UpdateOperationalHours,
 } from '../location';
-import { DeleteResult, InsertResult } from 'kysely';
+import { DeleteResult, InsertResult, Insertable, Updateable } from 'kysely';
 import { UpdateResult } from 'kysely';
+import { OptionalToRequired } from '..';
 
 @injectable()
 export class KyselyMySqlLocationRepository implements LocationRepository {
@@ -47,7 +49,7 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
       .where('location_facilities.location_id', '=', id)
       .execute();
 
-    const openingHours = await this._db
+    const operationalHours = await this._db
       .selectFrom('location_operational_hours')
       .selectAll()
       .where('location_operational_hours.location_id', '=', id)
@@ -56,8 +58,8 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
     const location = {
       ...locations,
       assets,
-      facilities: facilities,
-      openingHours,
+      facilities,
+      operational_hours: operationalHours,
     };
 
     return location;
@@ -119,6 +121,62 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
       .set(data)
       .where('location_facilities.id', '=', data.id)
       .executeTakeFirst();
+  }
+
+  async updateOperationalHours({
+    location_id,
+    data,
+  }: UpdateOperationalHours): Promise<boolean> {
+    const currentOperationalHours = await this._db
+      .selectFrom('location_operational_hours')
+      .selectAll()
+      .where('location_operational_hours.location_id', '=', location_id)
+      .execute();
+
+    // if in data there is no in currentOperationalHours, delete it
+    const toDelete = currentOperationalHours.filter(
+      (current) => !data.find((d) => d.id === current.id)
+    );
+
+    // if data not have id, insert it
+    const toInsert = data.filter(
+      (d) => !d.id
+    ) as Insertable<LocationOperationalHours>[];
+
+    // if data have id, update it
+    const toUpdate = data.filter((d) => d.id) as OptionalToRequired<
+      Updateable<LocationOperationalHours>,
+      'id'
+    >[];
+
+    await this._db.transaction().execute(async (trx) => {
+      await Promise.all(
+        toDelete.map((d) =>
+          trx
+            .deleteFrom('location_operational_hours')
+            .where('location_operational_hours.id', '=', d.id)
+            .execute()
+        )
+      );
+
+      await Promise.all(
+        toInsert.map((d) =>
+          trx.insertInto('location_operational_hours').values(d).execute()
+        )
+      );
+
+      await Promise.all(
+        toUpdate.map((d) =>
+          trx
+            .updateTable('location_operational_hours')
+            .set(d)
+            .where('location_operational_hours.id', '=', d.id)
+            .execute()
+        )
+      );
+    });
+
+    return true;
   }
 
   deleteLocationAsset(

@@ -7,11 +7,11 @@ import { Separator } from '@repo/ui/components/ui/separator';
 import { useRef } from 'react';
 import { TimePickerInput } from '@repo/ui/components/time-picker-input';
 interface OperationalHourProps {
-  openingHours: SelectDetailLocation['openingHours'];
+  operationalHours: SelectDetailLocation['operational_hours'];
 }
 
 export default function OperationalHour({
-  openingHours,
+  operationalHours,
 }: OperationalHourProps) {
   const minuteRef = useRef<HTMLInputElement>(null);
   const hourRef = useRef<HTMLInputElement>(null);
@@ -39,7 +39,7 @@ export default function OperationalHour({
 
   return (
     <div className="flex flex-col gap-4">
-      {openingHours.map((openingHour, index) => {
+      {operationalHours.map((openingHour, index) => {
         // 02:07:19
 
         // strip second
@@ -78,7 +78,7 @@ export default function OperationalHour({
               </div>
             </div>
 
-            {index !== openingHours.length - 1 && (
+            {index !== operationalHours.length - 1 && (
               <Separator className="mt-4" />
             )}
           </div>

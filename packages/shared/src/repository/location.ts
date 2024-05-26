@@ -10,7 +10,7 @@ import {
   Locations,
   LocationAssets,
   LocationFacilities,
-  LocationOpeningHours,
+  LocationOperationalHours,
   FacilityEquipments,
 } from '../db';
 import { OptionalToRequired } from '.';
@@ -21,13 +21,13 @@ export interface SelectLocation extends Selectable<Locations> {
 
 export interface SelectDetailLocation extends SelectLocation {
   facilities: Selectable<LocationFacilities>[];
-  openingHours: Selectable<LocationOpeningHours>[];
+  operational_hours: Selectable<LocationOperationalHours>[];
 }
 
 export interface InsertLocation extends Insertable<Locations> {
   assets: Insertable<LocationAssets>[];
   facilities: Insertable<LocationFacilities>[];
-  openingHours: Insertable<LocationOpeningHours>[];
+  operational_hours: Insertable<LocationOperationalHours>[];
 }
 
 export type InsertFacility = Insertable<LocationFacilities>;
@@ -36,6 +36,11 @@ export interface UpdateLocation
 
 export interface UpdateFacility
   extends OptionalToRequired<Updateable<LocationFacilities>, 'id'> {}
+
+export interface UpdateOperationalHours {
+  location_id: Selectable<LocationOperationalHours>['location_id'];
+  data: Updateable<LocationOperationalHours>[];
+}
 
 export interface LocationRepository {
   getLocations(): Promise<SelectLocation[]>;
@@ -47,6 +52,7 @@ export interface LocationRepository {
   createFacility(data: InsertFacility): Promise<InsertResult>;
   updateLocation(data: UpdateLocation): Promise<UpdateResult>;
   updateFacility(data: UpdateFacility): Promise<UpdateResult>;
+  updateOperationalHours(data: UpdateOperationalHours): Promise<boolean>;
   deleteLocationAsset(
     id: SelectDetailLocation['assets'][0]['id']
   ): Promise<DeleteResult>;

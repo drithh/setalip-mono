@@ -6,6 +6,7 @@ import type {
   SelectLocation,
   UpdateFacility,
   UpdateLocation,
+  UpdateOperationalHours,
 } from '#dep/repository/location';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
@@ -86,6 +87,15 @@ export class LocationServiceImpl implements LocationService {
 
   async updateFacility(data: UpdateFacility) {
     const result = await this._locationRepository.updateFacility(data);
+
+    return {
+      result,
+      error: undefined,
+    };
+  }
+
+  async updateOperationalHour(data: UpdateOperationalHours) {
+    const result = await this._locationRepository.updateOperationalHours(data);
 
     return {
       result,

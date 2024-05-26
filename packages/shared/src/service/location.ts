@@ -5,6 +5,7 @@ import {
   SelectLocation,
   UpdateFacility,
   UpdateLocation,
+  UpdateOperationalHours,
 } from '#dep/repository/location';
 import { DeleteResult, InsertResult, UpdateResult } from 'kysely';
 import type { ErrorFields, PromiseResult } from '../types';
@@ -18,11 +19,15 @@ export interface LocationService {
   createLocationAsset(
     data: InsertLocation['assets']
   ): PromiseResult<InsertResult, Error>;
+
+  updateLocation(data: UpdateLocation): PromiseResult<UpdateResult, Error>;
+  updateFacility(data: UpdateFacility): PromiseResult<UpdateResult, Error>;
+  updateOperationalHour(
+    data: UpdateOperationalHours
+  ): PromiseResult<boolean, Error>;
   deleteLocationAsset(
     id: SelectDetailLocation['assets'][0]['id']
   ): PromiseResult<DeleteResult, Error>;
-  updateLocation(data: UpdateLocation): PromiseResult<UpdateResult, Error>;
-  updateFacility(data: UpdateFacility): PromiseResult<UpdateResult, Error>;
   deleteFacilityImage(
     id: SelectDetailLocation['facilities'][0]['id']
   ): PromiseResult<string, Error>;
