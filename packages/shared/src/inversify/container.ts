@@ -1,24 +1,28 @@
 import { Container } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
 import { Database, db } from '#dep/db/index';
-import { UserRepository } from '#dep/repository/user';
-import { KyselyMySqlUserRepository } from '#dep/repository/kysely-mysql/index';
+import {
+  UserRepository,
+  OtpRepository,
+  LocationRepository,
+  ResetPasswordRepository,
+} from '#dep/repository/index';
+import {
+  KyselyMySqlUserRepository,
+  KyselyMySqlOtpRepository,
+  KyselyMySqlLocationRepository,
+  KyselyMySqlResetPasswordRepository,
+} from '#dep/repository/kysely-mysql/index';
 import {
   NotificationService,
   WhatsappNotificationService,
 } from '#dep/notification/index';
 import { AuthServiceImpl } from '#dep/service/auth.impl';
 import { AuthService } from '#dep/service/auth';
-import { OtpRepository } from '#dep/repository/otp';
-import { KyselyMySqlOtpRepository } from '#dep/repository/kysely-mysql/otp';
 import { OtpServiceImpl } from '#dep/service/otp.impl';
 import { OtpService } from '#dep/service/otp';
-import { ResetPasswordRepository } from '#dep/repository/resetPassword';
-import { KyselyMySqlResetPasswordRepository } from '#dep/repository/kysely-mysql/resetPassword';
 import { ResetPasswordServiceImpl } from '#dep/service/resetPassword.impl';
 import { ResetPasswordService } from '../service';
-import { LocationRepository } from '#dep/repository/location';
-import { KyselyMySqlLocationRepository } from '#dep/repository/kysely-mysql/locations';
 import { LocationService } from '#dep/service/location';
 import { LocationServiceImpl } from '#dep/service/location.impl';
 

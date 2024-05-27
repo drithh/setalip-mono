@@ -15,49 +15,52 @@ import {
 } from '../db';
 import { OptionalToRequired } from '.';
 
-export interface SelectLocation extends Selectable<Locations> {
-  assets: Selectable<LocationAssets>[];
-}
+export type SelectLocation = Selectable<Locations>;
+export type SelectLocationAsset = Selectable<LocationAssets>;
+export type SelectFacility = Selectable<LocationFacilities>;
+export type SelectOperationalHour = Selectable<LocationOperationalHours>;
 
 export interface SelectDetailLocation extends SelectLocation {
-  facilities: Selectable<LocationFacilities>[];
-  operational_hours: Selectable<LocationOperationalHours>[];
+  facilities: SelectFacility[];
+  operational_hours: SelectOperationalHour[];
 }
 
-export interface InsertLocation extends Insertable<Locations> {
-  assets: Insertable<LocationAssets>[];
-  facilities: Insertable<LocationFacilities>[];
-  operational_hours: Insertable<LocationOperationalHours>[];
-}
-
+export type InsertLocation = Insertable<Locations>;
+export type InsertLocationAsset = Insertable<LocationAssets>;
 export type InsertFacility = Insertable<LocationFacilities>;
-export interface UpdateLocation
-  extends OptionalToRequired<Updateable<Locations>, 'id'> {}
+export type InsertOperationalHours = Insertable<LocationOperationalHours>;
 
-export interface UpdateFacility
-  extends OptionalToRequired<Updateable<LocationFacilities>, 'id'> {}
+export type UpdateLocation = OptionalToRequired<Updateable<Locations>, 'id'>;
+export type UpdateFacility = OptionalToRequired<
+  Updateable<LocationFacilities>,
+  'id'
+>;
 
 export interface UpdateOperationalHours {
   location_id: Selectable<LocationOperationalHours>['location_id'];
   data: Updateable<LocationOperationalHours>[];
 }
 
+export type SelectLocationWithAsset = SelectLocation & {
+  asset_id: SelectLocationAsset['id'] | null;
+  url: SelectLocationAsset['url'] | null;
+};
+
 export interface LocationRepository {
-  getLocations(): Promise<SelectLocation[]>;
-  findLocationById(
-    id: SelectLocation['id']
-  ): Promise<SelectDetailLocation | undefined>;
-  createLocation(data: InsertLocation): Promise<InsertResult>;
-  createLocationAsset(data: InsertLocation['assets']): Promise<InsertResult>;
-  createFacility(data: InsertFacility): Promise<InsertResult>;
-  updateLocation(data: UpdateLocation): Promise<UpdateResult>;
-  updateFacility(data: UpdateFacility): Promise<UpdateResult>;
-  updateOperationalHours(data: UpdateOperationalHours): Promise<boolean>;
-  deleteLocationAsset(
-    id: SelectDetailLocation['assets'][0]['id']
-  ): Promise<DeleteResult>;
-  deleteLocation(id: SelectLocation['id']): Promise<DeleteResult>;
-  deleteFacilityImage(
-    id: SelectDetailLocation['facilities'][0]['id']
-  ): Promise<UpdateResult>;
+  findAll(): Promise<SelectLocationWithAsset[]>;
+  findById(id: SelectLocation['id']): Promise<SelectDetailLocation | undefined>;
+
+  create(data: InsertLocation): Promise<SelectLocation | Error>;
+  createAsset(data: InsertLocationAsset): Promise<SelectLocationAsset | Error>;
+  createFacility(data: InsertFacility): Promise<SelectFacility | Error>;
+
+  update(data: UpdateLocation): Promise<undefined | Error>;
+  updateFacility(data: UpdateFacility): Promise<undefined | Error>;
+  updateOperationalHours(
+    data: UpdateOperationalHours
+  ): Promise<undefined | Error>;
+
+  delete(id: SelectLocation['id']): Promise<undefined | Error>;
+  deleteAsset(id: SelectLocationAsset['id']): Promise<undefined | Error>;
+  deleteFacilityImage(id: SelectFacility['id']): Promise<undefined | Error>;
 }

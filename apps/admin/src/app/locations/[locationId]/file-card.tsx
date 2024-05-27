@@ -47,7 +47,7 @@ export default function FileCard({ file, onDelete, progress }: AssetCardProps) {
               <Button
                 variant={'destructive'}
                 type="button"
-                className="w-full opacity-0 group-hover:animate-slide-in-up"
+                className=" opacity-0 group-hover:animate-slide-in-up"
               >
                 Hapus
               </Button>

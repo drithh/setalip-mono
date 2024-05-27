@@ -17,16 +17,16 @@ export type UpdateResetPassword = OptionalToRequired<
 >;
 
 export interface ResetPasswordRepository {
-  findResetPasswordByUserId(
+  findByUserId(
     userId: SelectResetPassword['user_id']
   ): Promise<SelectResetPassword | undefined>;
-  findResetPasswordByToken(
+  findByToken(
     token: SelectResetPassword['token']
   ): Promise<SelectResetPassword | undefined>;
-  createResetPassword(data: InsertResetPassword): Promise<InsertResult>;
-  updateResetPassword(data: UpdateResetPassword): Promise<UpdateResult>;
-  deleteResetPassword(data: SelectResetPassword['id']): Promise<DeleteResult>;
-  deleteResetPasswordByUserId(
+  create(data: InsertResetPassword): Promise<SelectResetPassword | Error>;
+  update(data: UpdateResetPassword): Promise<undefined | Error>;
+  delete(data: SelectResetPassword['id']): Promise<undefined | Error>;
+  deleteByUserId(
     data: SelectResetPassword['user_id']
-  ): Promise<DeleteResult>;
+  ): Promise<undefined | Error>;
 }

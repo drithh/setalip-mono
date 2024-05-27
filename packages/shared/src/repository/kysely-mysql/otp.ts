@@ -12,7 +12,7 @@ export class KyselyMySqlOtpRepository implements OtpRepository {
     this._db = db;
   }
 
-  findOtpByUserId(userId: SelectOtp['user_id']) {
+  findByUserId(userId: SelectOtp['user_id']) {
     return this._db
       .selectFrom('otp')
       .selectAll()
@@ -20,29 +20,64 @@ export class KyselyMySqlOtpRepository implements OtpRepository {
       .executeTakeFirst();
   }
 
-  createOtp(data: SelectOtp) {
-    return this._db.insertInto('otp').values(data).executeTakeFirst();
+  async create(data: SelectOtp) {
+    try {
+      const query = this._db
+        .insertInto('otp')
+        .values(data)
+        .returningAll()
+        .compile();
+
+      const result = await this._db.executeQuery(query);
+
+      if (result.rows[0] === undefined) {
+        console.error('Failed to create otp', result);
+        return new Error('Failed to create otp');
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating otp:', error);
+      return new Error('Failed to create otp');
+    }
   }
 
-  async updateOtp(data: UpdateOtp) {
-    return await this._db
-      .updateTable('otp')
-      .set(data)
-      .where('otp.id', '=', data.id)
-      .executeTakeFirst();
+  async update(data: UpdateOtp) {
+    try {
+      const query = await this._db
+        .updateTable('otp')
+        .set(data)
+        .where('otp.id', '=', data.id)
+        .executeTakeFirst();
+
+      if (query.numUpdatedRows === undefined) {
+        console.error('Error updating otp:', query);
+        return new Error('Failed to update otp');
+      }
+
+      return;
+    } catch (error) {
+      console.error('Error updating otp:', error);
+      return new Error('Failed to update otp');
+    }
   }
 
-  async deleteOtp(id: SelectOtp['id']) {
-    return this._db
-      .deleteFrom('otp')
-      .where('otp.id', '=', id)
-      .executeTakeFirst();
-  }
+  async deleteByUserId(userId: SelectOtp['user_id']) {
+    try {
+      const query = await this._db
+        .deleteFrom('otp')
+        .where('otp.user_id', '=', userId)
+        .executeTakeFirst();
 
-  async deleteOtpByUserId(userId: SelectOtp['user_id']) {
-    return this._db
-      .deleteFrom('otp')
-      .where('otp.user_id', '=', userId)
-      .executeTakeFirst();
+      if (query.numDeletedRows === undefined) {
+        console.error('Error deleting otp:', query);
+        return new Error('Failed to delete otp');
+      }
+
+      return;
+    } catch (error) {
+      console.error('Error deleting otp:', error);
+      return new Error('Failed to delete otp');
+    }
   }
 }

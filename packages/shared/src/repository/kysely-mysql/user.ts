@@ -17,7 +17,11 @@ export class KyselyMySqlUserRepository implements UserRepository {
     this._db = db;
   }
 
-  findUserById(id: SelectUser['id']) {
+  async findAll(): Promise<SelectUser[]> {
+    return this._db.selectFrom('users').selectAll().execute();
+  }
+
+  async findById(id: SelectUser['id']): Promise<SelectUser | undefined> {
     return this._db
       .selectFrom('users')
       .selectAll()
@@ -25,7 +29,9 @@ export class KyselyMySqlUserRepository implements UserRepository {
       .executeTakeFirst();
   }
 
-  findUserByPhoneNumber(phoneNumber: SelectUser['phone_number']) {
+  async findByPhoneNumber(
+    phoneNumber: SelectUser['phone_number']
+  ): Promise<SelectUser | undefined> {
     return this._db
       .selectFrom('users')
       .selectAll()
@@ -33,7 +39,9 @@ export class KyselyMySqlUserRepository implements UserRepository {
       .executeTakeFirst();
   }
 
-  findUserByEmail(email: SelectUser['email']) {
+  async findByEmail(
+    email: SelectUser['email']
+  ): Promise<SelectUser | undefined> {
     return this._db
       .selectFrom('users')
       .selectAll()
@@ -41,26 +49,64 @@ export class KyselyMySqlUserRepository implements UserRepository {
       .executeTakeFirst();
   }
 
-  getUsers() {
-    return this._db.selectFrom('users').selectAll().execute();
+  async create(data: InsertUser) {
+    try {
+      const query = this._db
+        .insertInto('users')
+        .values(data)
+        .returningAll()
+        .compile();
+
+      const result = await this._db.executeQuery(query);
+
+      if (result.rows[0] === undefined) {
+        console.error('Failed to create user', result);
+        return new Error('Failed to create user');
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating user:', error);
+      return new Error('Failed to create user');
+    }
   }
 
-  createUser(data: InsertUser) {
-    return this._db.insertInto('users').values(data).executeTakeFirst();
+  async update(data: UpdateUser) {
+    try {
+      const query = await this._db
+        .updateTable('users')
+        .set(data)
+        .where('users.id', '=', data.id)
+        .executeTakeFirst();
+
+      if (query.numUpdatedRows === undefined) {
+        console.error('Error updating user:', query);
+        return new Error('Failed to update user');
+      }
+
+      return;
+    } catch (error) {
+      console.error('Error updating user:', error);
+      return new Error('Failed to update user');
+    }
   }
 
-  async updateUser(data: UpdateUser) {
-    return await this._db
-      .updateTable('users')
-      .set(data)
-      .where('users.id', '=', data.id)
-      .executeTakeFirst();
-  }
+  async delete(id: SelectUser['id']) {
+    try {
+      const query = await this._db
+        .deleteFrom('users')
+        .where('users.id', '=', id)
+        .executeTakeFirst();
 
-  deleteUser(data: SelectUser['id']) {
-    return this._db
-      .deleteFrom('users')
-      .where('users.id', '=', data)
-      .executeTakeFirstOrThrow();
+      if (query.numDeletedRows === undefined) {
+        console.error('Error deleting user:', query);
+        return new Error('Failed to delete user');
+      }
+
+      return;
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      return new Error('Failed to delete user');
+    }
   }
 }
