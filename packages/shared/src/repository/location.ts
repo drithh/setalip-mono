@@ -21,6 +21,7 @@ export type SelectFacility = Selectable<LocationFacilities>;
 export type SelectOperationalHour = Selectable<LocationOperationalHours>;
 
 export interface SelectDetailLocation extends SelectLocation {
+  assets: SelectLocationAsset[];
   facilities: SelectFacility[];
   operational_hours: SelectOperationalHour[];
 }
@@ -43,7 +44,8 @@ export interface UpdateOperationalHours {
 
 export type SelectLocationWithAsset = SelectLocation & {
   asset_id: SelectLocationAsset['id'] | null;
-  url: SelectLocationAsset['url'] | null;
+  asset_name: SelectLocationAsset['name'] | null;
+  asset_url: SelectLocationAsset['url'] | null;
 };
 
 export interface LocationRepository {
@@ -51,7 +53,9 @@ export interface LocationRepository {
   findById(id: SelectLocation['id']): Promise<SelectDetailLocation | undefined>;
 
   create(data: InsertLocation): Promise<SelectLocation | Error>;
-  createAsset(data: InsertLocationAsset): Promise<SelectLocationAsset | Error>;
+  createAsset(
+    data: InsertLocationAsset[]
+  ): Promise<SelectLocationAsset | Error>;
   createFacility(data: InsertFacility): Promise<SelectFacility | Error>;
 
   update(data: UpdateLocation): Promise<undefined | Error>;

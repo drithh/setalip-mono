@@ -11,9 +11,8 @@ export default async function Home() {
     redirect('/login');
   }
 
- 
   const userRepo = container.get<UserRepository>(TYPES.UserRepository);
-  const users = await userRepo.getUsers();
+  const users = await userRepo.findAll();
   return (
     <main className="min-h-screen">
       {auth && (

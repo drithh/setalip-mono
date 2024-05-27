@@ -25,7 +25,7 @@ export const locationRouter = {
         TYPES.LocationService
       );
 
-      const deleteLocationAsset = await locationService.deleteLocationAsset(
+      const deleteLocationAsset = await locationService.deleteAsset(
         input.assetId
       );
 

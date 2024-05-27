@@ -26,7 +26,7 @@ export async function resendOtp(
     };
   }
 
-  const otpResult = await otpService.sendOtp({ userId: state.form.userId });
+  const otpResult = await otpService.send({ userId: state.form.userId });
 
   if (otpResult.error) {
     return {

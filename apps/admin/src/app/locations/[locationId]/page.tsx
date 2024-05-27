@@ -56,7 +56,7 @@ export default async function LocationDetail({
   if (isNaN(locationIdNumber)) {
     redirect('/locations');
   }
-  const location = await locationService.findLocationById(locationIdNumber);
+  const location = await locationService.findById(locationIdNumber);
 
   if (!location.result) {
     redirect('/locations');

@@ -17,7 +17,7 @@ import Link from 'next/link';
 export default async function Locations() {
   const locationService = container.get<LocationService>(TYPES.LocationService);
 
-  const locations = await locationService.getLocations();
+  const locations = await locationService.findAll();
   return (
     <main className="flex flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6 ">
       <div className="flex items-center">
@@ -42,8 +42,8 @@ export default async function Locations() {
               <CardHeader>
                 <AspectRatio ratio={16 / 9}>
                   <ImageWithFallback
-                    src={location.assets[0]?.url}
-                    alt={location.name}
+                    src={location.asset_url || '/placeholder.svg'}
+                    alt={location.asset_name || 'placeholder'}
                     fill
                     className="rounded-lg object-cover"
                   />

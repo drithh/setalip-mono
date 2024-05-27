@@ -45,7 +45,8 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
         'locations.updated_by',
         'locations.link_maps',
         sql<number>`MIN(location_assets.id)`.as('asset_id'),
-        'location_assets.url',
+        'location_assets.url as asset_url',
+        'location_assets.name as asset_name',
       ])
       .groupBy('locations.id')
       .execute();
@@ -98,12 +99,11 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
     throw new Error('Method not implemented.');
   }
 
-  async createAsset(data: InsertLocationAsset) {
+  async createAsset(data: InsertLocationAsset[]) {
     try {
       const query = this._db
         .insertInto('location_assets')
         .values(data)
-        .returning(['id', 'location_id', 'url'])
         .returningAll()
         .compile();
 

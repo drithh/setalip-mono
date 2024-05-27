@@ -33,7 +33,7 @@ export async function verifyUser(
 
   const otpService = container.get<OtpService>(TYPES.OtpService);
 
-  const otpResult = await otpService.verifyOtp({
+  const otpResult = await otpService.verify({
     userId: state.form?.userId || parsed.data.userId,
     otp: parsed.data.otp,
   });

@@ -43,7 +43,7 @@ export async function forgotPassword(
     TYPES.ResetPasswordService,
   );
 
-  const resetPassword = await resetPasswordService.sendResetPassword({
+  const resetPassword = await resetPasswordService.send({
     phoneNumber: formattedPhoneNumber,
   });
 

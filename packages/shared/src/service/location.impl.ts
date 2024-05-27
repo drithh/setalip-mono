@@ -62,7 +62,7 @@ export class LocationServiceImpl implements LocationService {
     };
   }
 
-  async createAsset(data: InsertLocationAsset) {
+  async createAsset(data: InsertLocationAsset[]) {
     const result = await this._locationRepository.createAsset(data);
 
     if (result instanceof Error) {

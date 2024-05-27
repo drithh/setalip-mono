@@ -38,7 +38,7 @@ export async function uploadLocationAsset(
 
   const locationService = container.get<LocationService>(TYPES.LocationService);
 
-  const locationAsset = await locationService.createLocationAsset(
+  const locationAsset = await locationService.createAsset(
     fileUpload.map((asset) => ({
       location_id: state.form?.locationId ?? 0,
       url: asset.url,

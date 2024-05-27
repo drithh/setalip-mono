@@ -39,7 +39,7 @@ export async function resetPassword(
     TYPES.ResetPasswordService,
   );
 
-  const resetPassword = await resetPasswordService.verifyResetPassword({
+  const resetPassword = await resetPasswordService.verify({
     token: state.form?.token || parsed.data.token,
   });
 

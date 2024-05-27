@@ -44,7 +44,7 @@ export async function editDetailLocation(
 
   const locationService = container.get<LocationService>(TYPES.LocationService);
 
-  const updateLocation = await locationService.updateLocation({
+  const updateLocation = await locationService.update({
     id: parsed.data.locationId,
     name: parsed.data.name,
     phone_number: formattedPhoneNumber,

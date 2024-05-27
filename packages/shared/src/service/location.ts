@@ -21,7 +21,7 @@ export interface LocationService {
 
   createFacility(data: InsertFacility): PromiseResult<SelectFacility, Error>;
   createAsset(
-    data: InsertLocationAsset
+    data: InsertLocationAsset[]
   ): PromiseResult<SelectLocationAsset, Error>;
 
   update(data: UpdateLocation): PromiseResult<void, Error>;

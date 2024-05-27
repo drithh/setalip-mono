@@ -38,7 +38,7 @@ export async function loginUser(
   const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;
 
   const AuthService = container.get<AuthService>(TYPES.AuthService);
-  const loginUser = await AuthService.loginUser({
+  const loginUser = await AuthService.login({
     ...parsed.data,
     phoneNumber: formattedPhoneNumber,
   });
