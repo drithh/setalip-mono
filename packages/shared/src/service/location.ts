@@ -1,34 +1,35 @@
 import {
   InsertFacility,
   InsertLocation,
+  InsertLocationAsset,
   SelectDetailLocation,
+  SelectFacility,
   SelectLocation,
+  SelectLocationAsset,
+  SelectLocationWithAsset,
   UpdateFacility,
   UpdateLocation,
   UpdateOperationalHours,
 } from '#dep/repository/location';
-import { DeleteResult, InsertResult, UpdateResult } from 'kysely';
-import type { ErrorFields, PromiseResult } from '../types';
+import type { PromiseResult } from '../types';
 
 export interface LocationService {
-  getLocations(): PromiseResult<SelectLocation[], Error>;
-  findLocationById(
+  findAll(): PromiseResult<SelectLocationWithAsset[], Error>;
+  findById(
     id: SelectLocation['id']
   ): PromiseResult<SelectDetailLocation, Error>;
-  createFacility(data: InsertFacility): PromiseResult<InsertResult, Error>;
-  createLocationAsset(
-    data: InsertLocation['assets']
-  ): PromiseResult<InsertResult, Error>;
 
-  updateLocation(data: UpdateLocation): PromiseResult<UpdateResult, Error>;
-  updateFacility(data: UpdateFacility): PromiseResult<UpdateResult, Error>;
+  createFacility(data: InsertFacility): PromiseResult<SelectFacility, Error>;
+  createAsset(
+    data: InsertLocationAsset
+  ): PromiseResult<SelectLocationAsset, Error>;
+
+  update(data: UpdateLocation): PromiseResult<void, Error>;
+  updateFacility(data: UpdateFacility): PromiseResult<void, Error>;
   updateOperationalHour(
     data: UpdateOperationalHours
-  ): PromiseResult<boolean, Error>;
-  deleteLocationAsset(
-    id: SelectDetailLocation['assets'][0]['id']
-  ): PromiseResult<DeleteResult, Error>;
-  deleteFacilityImage(
-    id: SelectDetailLocation['facilities'][0]['id']
-  ): PromiseResult<string, Error>;
+  ): PromiseResult<void, Error>;
+
+  deleteAsset(id: SelectLocationAsset['id']): PromiseResult<void, Error>;
+  deleteFacilityImage(id: SelectFacility['id']): PromiseResult<void, Error>;
 }

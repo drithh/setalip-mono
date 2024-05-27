@@ -3,7 +3,7 @@ import { Users } from '../db';
 import { TYPES } from '../inversify';
 import type { NotificationService } from '../notification';
 import type { SelectUser, UserRepository } from '../repository';
-import { OtpService, VerifyOtp } from './otp';
+import { OtpService, SendOtp, VerifyOtp } from './otp';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -22,8 +22,8 @@ export class OtpServiceImpl implements OtpService {
     this._userRepository = userRepository;
   }
 
-  async sendOtp({ userId }: { userId: SelectUser['id'] }) {
-    const user = await this._userRepository.findUserById(userId);
+  async send(data: SendOtp) {
+    const user = await this._userRepository.findById(data.userId);
 
     if (!user) {
       return {
@@ -31,14 +31,14 @@ export class OtpServiceImpl implements OtpService {
       };
     }
 
-    await this._otpRepository.deleteOtpByUserId(userId);
+    await this._otpRepository.deleteByUserId(data.userId);
 
     // generate 6 digit otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     // insert otp into otp table
-    const inserted = await this._otpRepository.createOtp({
-      user_id: userId,
+    const inserted = await this._otpRepository.create({
+      user_id: data.userId,
       otp,
       expired_at: new Date(Date.now() + 1 * 60 * 1000),
     });
@@ -65,8 +65,8 @@ export class OtpServiceImpl implements OtpService {
     };
   }
 
-  async verifyOtp(data: VerifyOtp) {
-    const otp = await this._otpRepository.findOtpByUserId(data.userId);
+  async verify(data: VerifyOtp) {
+    const otp = await this._otpRepository.findByUserId(data.userId);
 
     if (!otp) {
       return {
@@ -86,7 +86,7 @@ export class OtpServiceImpl implements OtpService {
       };
     }
 
-    const updateUser = await this._userRepository.updateUser({
+    const updateUser = await this._userRepository.update({
       id: data.userId,
       verified_at: new Date(),
     });
@@ -97,7 +97,7 @@ export class OtpServiceImpl implements OtpService {
       };
     }
 
-    const deleteOtp = await this._otpRepository.deleteOtpByUserId(data.userId);
+    const deleteOtp = await this._otpRepository.deleteByUserId(data.userId);
 
     if (!deleteOtp) {
       return {

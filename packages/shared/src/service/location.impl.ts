@@ -1,9 +1,12 @@
 import type {
   InsertFacility,
   InsertLocation,
+  InsertLocationAsset,
   LocationRepository,
   SelectDetailLocation,
+  SelectFacility,
   SelectLocation,
+  SelectLocationAsset,
   UpdateFacility,
   UpdateLocation,
   UpdateOperationalHours,
@@ -22,8 +25,8 @@ export class LocationServiceImpl implements LocationService {
     this._locationRepository = locationRepository;
   }
 
-  async getLocations() {
-    const locations = await this._locationRepository.getLocations();
+  async findAll() {
+    const locations = await this._locationRepository.findAll();
 
     return {
       result: locations,
@@ -31,8 +34,8 @@ export class LocationServiceImpl implements LocationService {
     };
   }
 
-  async findLocationById(id: SelectLocation['id']) {
-    const location = await this._locationRepository.findLocationById(id);
+  async findById(id: SelectLocation['id']) {
+    const location = await this._locationRepository.findById(id);
 
     if (!location) {
       return {
@@ -45,25 +48,10 @@ export class LocationServiceImpl implements LocationService {
     };
   }
 
-  async createLocationAsset(data: InsertLocation['assets']) {
-    const result = await this._locationRepository.createLocationAsset(data);
-
-    if (!result.numInsertedOrUpdatedRows) {
-      return {
-        error: new Error('Failed to create location asset'),
-      };
-    }
-
-    return {
-      result,
-      error: undefined,
-    };
-  }
-
   async createFacility(data: InsertFacility) {
     const result = await this._locationRepository.createFacility(data);
 
-    if (!result.numInsertedOrUpdatedRows) {
+    if (result instanceof Error) {
       return {
         error: new Error('Failed to create facility'),
       };
@@ -71,42 +59,70 @@ export class LocationServiceImpl implements LocationService {
 
     return {
       result,
-      error: undefined,
     };
   }
 
-  async updateLocation(data: UpdateLocation) {
-    // todo timezone
-    const result = await this._locationRepository.updateLocation(data);
+  async createAsset(data: InsertLocationAsset) {
+    const result = await this._locationRepository.createAsset(data);
+
+    if (result instanceof Error) {
+      return {
+        error: new Error('Failed to create location asset', result),
+      };
+    }
 
     return {
       result,
-      error: undefined,
+    };
+  }
+
+  async update(data: UpdateLocation) {
+    // todo timezone
+    const result = await this._locationRepository.update(data);
+
+    if (result instanceof Error) {
+      return {
+        error: new Error('Failed to update location', result),
+      };
+    }
+
+    return {
+      result,
     };
   }
 
   async updateFacility(data: UpdateFacility) {
     const result = await this._locationRepository.updateFacility(data);
 
+    if (result instanceof Error) {
+      return {
+        error: new Error('Failed to update facility', result),
+      };
+    }
+
     return {
       result,
-      error: undefined,
     };
   }
 
   async updateOperationalHour(data: UpdateOperationalHours) {
     const result = await this._locationRepository.updateOperationalHours(data);
 
+    if (result instanceof Error) {
+      return {
+        error: new Error('Failed to update operational hours', result),
+      };
+    }
+
     return {
       result,
-      error: undefined,
     };
   }
 
-  async deleteLocationAsset(id: SelectDetailLocation['assets'][0]['id']) {
-    const result = await this._locationRepository.deleteLocationAsset(id);
+  async deleteAsset(id: SelectLocationAsset['id']) {
+    const result = await this._locationRepository.deleteAsset(id);
 
-    if (!Number(result.numDeletedRows)) {
+    if (result instanceof Error) {
       return {
         error: new Error('Failed to delete location asset'),
       };
@@ -114,22 +130,20 @@ export class LocationServiceImpl implements LocationService {
 
     return {
       result,
-      error: undefined,
     };
   }
 
-  async deleteFacilityImage(id: SelectDetailLocation['facilities'][0]['id']) {
+  async deleteFacilityImage(id: SelectFacility['id']) {
     const result = await this._locationRepository.deleteFacilityImage(id);
 
-    if (!Number(result.numUpdatedRows)) {
+    if (result instanceof Error) {
       return {
-        error: new Error('Failed to delete facility image'),
+        error: new Error('Failed to delete facility image', result),
       };
     }
 
     return {
-      result: 'Selesai',
-      error: undefined,
+      result,
     };
   }
 }

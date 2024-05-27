@@ -6,11 +6,11 @@ export interface VerifyOtp {
   otp: SelectOtp['otp'];
 }
 
+export interface SendOtp {
+  userId: SelectOtp['user_id'];
+}
+
 export interface OtpService {
-  sendOtp({
-    userId,
-  }: {
-    userId: SelectOtp['user_id'];
-  }): PromiseResult<void, Error>;
-  verifyOtp(data: VerifyOtp): PromiseResult<boolean, Error>;
+  send(data: SendOtp): PromiseResult<void, Error>;
+  verify(data: VerifyOtp): PromiseResult<boolean, Error>;
 }

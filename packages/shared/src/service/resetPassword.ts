@@ -6,13 +6,11 @@ export interface VerifyResetPassword {
   token: ResetPassword['token'];
 }
 
+export interface SendResetPassword {
+  phoneNumber: SelectUser['phone_number'];
+}
+
 export interface ResetPasswordService {
-  sendResetPassword({
-    phoneNumber,
-  }: {
-    phoneNumber: SelectUser['phone_number'];
-  }): PromiseResult<void, Error>;
-  verifyResetPassword(
-    data: VerifyResetPassword
-  ): PromiseResult<SelectUser['id'], Error>;
+  send(data: SendResetPassword): PromiseResult<void, Error>;
+  verify(data: VerifyResetPassword): PromiseResult<SelectUser['id'], Error>;
 }

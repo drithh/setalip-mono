@@ -17,14 +17,18 @@ import {
   NotificationService,
   WhatsappNotificationService,
 } from '#dep/notification/index';
-import { AuthServiceImpl } from '#dep/service/auth.impl';
-import { AuthService } from '#dep/service/auth';
-import { OtpServiceImpl } from '#dep/service/otp.impl';
-import { OtpService } from '#dep/service/otp';
-import { ResetPasswordServiceImpl } from '#dep/service/resetPassword.impl';
-import { ResetPasswordService } from '../service';
-import { LocationService } from '#dep/service/location';
-import { LocationServiceImpl } from '#dep/service/location.impl';
+import {
+  AuthServiceImpl,
+  OtpServiceImpl,
+  ResetPasswordServiceImpl,
+  LocationServiceImpl,
+} from '#dep/service/index.impl';
+import {
+  AuthService,
+  OtpService,
+  ResetPasswordService,
+  LocationService,
+} from '#dep/service/index';
 
 const container = new Container();
 

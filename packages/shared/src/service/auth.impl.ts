@@ -35,7 +35,7 @@ export class AuthServiceImpl implements AuthService {
     this._db = db;
   }
 
-  async registerUser(data: RegisterUser) {
+  async register(data: RegisterUser) {
     const hashed_password = await hash(data.password, {
       memoryCost: 19456,
       timeCost: 2,
@@ -43,8 +43,9 @@ export class AuthServiceImpl implements AuthService {
       parallelism: 1,
     });
 
-    const existingPhoneNumber =
-      await this._userRepository.findUserByPhoneNumber(data.phoneNumber);
+    const existingPhoneNumber = await this._userRepository.findByPhoneNumber(
+      data.phoneNumber
+    );
 
     if (existingPhoneNumber) {
       return {
@@ -54,9 +55,7 @@ export class AuthServiceImpl implements AuthService {
       };
     }
 
-    const existingEmail = await this._userRepository.findUserByEmail(
-      data.email
-    );
+    const existingEmail = await this._userRepository.findByEmail(data.email);
 
     if (existingEmail) {
       return {
@@ -66,7 +65,7 @@ export class AuthServiceImpl implements AuthService {
       };
     }
 
-    const inserted = await this._userRepository.createUser({
+    const user = await this._userRepository.create({
       email: data.email,
       name: data.name,
       phone_number: data.phoneNumber,
@@ -76,17 +75,13 @@ export class AuthServiceImpl implements AuthService {
       location_id: 1,
     });
 
-    if (!inserted) {
+    if (user instanceof Error) {
       return {
-        error: new UserValidationError({
-          email: 'Could not create user',
-        }),
+        error: new Error('Failed to create user', user),
       };
     }
 
-    const insertedId = Number(inserted.insertId);
-
-    const sendOtp = await this._otpService.sendOtp({ userId: insertedId });
+    const sendOtp = await this._otpService.send({ userId: user.id });
 
     if (sendOtp.error) {
       return {
@@ -94,16 +89,16 @@ export class AuthServiceImpl implements AuthService {
       };
     }
 
-    const session = await lucia.createSession(insertedId, {});
+    const session = await lucia.createSession(user.id, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     return {
       result: sessionCookie,
     };
   }
 
-  async loginUser(data: LoginUser) {
+  async login(data: LoginUser) {
     try {
-      const user = await this._userRepository.findUserByPhoneNumber(
+      const user = await this._userRepository.findByPhoneNumber(
         data.phoneNumber
       );
 
@@ -138,9 +133,7 @@ export class AuthServiceImpl implements AuthService {
   }
 
   async forgotPassword(data: { phoneNumber: string }) {
-    const user = await this._userRepository.findUserByPhoneNumber(
-      data.phoneNumber
-    );
+    const user = await this._userRepository.findByPhoneNumber(data.phoneNumber);
 
     if (!user) {
       return {
@@ -150,7 +143,7 @@ export class AuthServiceImpl implements AuthService {
       };
     }
 
-    const sendOtp = await this._otpService.sendOtp({ userId: user.id });
+    const sendOtp = await this._otpService.send({ userId: user.id });
     if (sendOtp.error) {
       return {
         error: sendOtp.error,
@@ -162,7 +155,7 @@ export class AuthServiceImpl implements AuthService {
   }
 
   async resetPassword(data: ResetPassword) {
-    const resetPassword = await this._resetPasswordService.verifyResetPassword({
+    const resetPassword = await this._resetPasswordService.verify({
       token: data.token,
     });
 
@@ -178,7 +171,7 @@ export class AuthServiceImpl implements AuthService {
       parallelism: 1,
     });
 
-    const updated = await this._userRepository.updateUser({
+    const updated = await this._userRepository.update({
       id: resetPassword.result,
       hashed_password,
     });

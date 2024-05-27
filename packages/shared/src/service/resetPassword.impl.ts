@@ -27,12 +27,8 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
     this._userRepository = userRepository;
   }
 
-  async sendResetPassword({
-    phoneNumber,
-  }: {
-    phoneNumber: SelectUser['phone_number'];
-  }) {
-    const user = await this._userRepository.findUserByPhoneNumber(phoneNumber);
+  async send({ phoneNumber }: { phoneNumber: SelectUser['phone_number'] }) {
+    const user = await this._userRepository.findByPhoneNumber(phoneNumber);
 
     if (!user) {
       return {
@@ -42,12 +38,11 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
 
     const token = generateIdFromEntropySize(32);
 
-    const resetPassword =
-      await this._resetPasswordRepository.createResetPassword({
-        user_id: user.id,
-        token: token,
-        expired_at: new Date(Date.now() + 60000),
-      });
+    const resetPassword = await this._resetPasswordRepository.create({
+      user_id: user.id,
+      token: token,
+      expired_at: new Date(Date.now() + 60000),
+    });
 
     if (!resetPassword) {
       return {
@@ -73,9 +68,10 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
       result: void {},
     };
   }
-  async verifyResetPassword(data: VerifyResetPassword) {
-    const resetPassword =
-      await this._resetPasswordRepository.findResetPasswordByToken(data.token);
+  async verify(data: VerifyResetPassword) {
+    const resetPassword = await this._resetPasswordRepository.findByToken(
+      data.token
+    );
 
     if (!resetPassword) {
       return {
@@ -89,8 +85,9 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
       };
     }
 
-    const deleteResetPassword =
-      await this._resetPasswordRepository.deleteResetPassword(resetPassword.id);
+    const deleteResetPassword = await this._resetPasswordRepository.delete(
+      resetPassword.id
+    );
 
     if (!deleteResetPassword) {
       return {

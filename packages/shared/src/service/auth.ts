@@ -40,8 +40,8 @@ export class UserValidationError extends Error {
   }
 }
 export interface AuthService {
-  registerUser(data: RegisterUser): PromiseResult<Cookie, ErrorResult>;
-  loginUser(data: LoginUser): PromiseResult<Cookie, ErrorResult>;
+  register(data: RegisterUser): PromiseResult<Cookie, ErrorResult>;
+  login(data: LoginUser): PromiseResult<Cookie, ErrorResult>;
   forgotPassword(data: {
     phoneNumber: string;
   }): PromiseResult<string, ErrorResult>;
