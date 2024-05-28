@@ -10,28 +10,43 @@ import {
   CardContent,
   CardFooter,
 } from '@repo/ui/components/ui/card';
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from '@repo/ui/components/ui/sheet';
+
 import Link from 'next/link';
 import { User2 } from 'lucide-react';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 import EditFacilityForm from './edit-facility.form';
+import { useDeleteFacilityMutation } from './function/delete-facility';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@repo/ui/components/ui/alert-dialog';
 
 interface FacilityCardProps {
   facility: SelectDetailLocation['facilities'][0];
 }
 
 export default function FacilityCard({ facility }: FacilityCardProps) {
-  const [openSheet, setOpenSheet] = useState(false);
-
+  const router = useRouter();
+  const deleteFacility = useDeleteFacilityMutation();
+  const onDelete = () => {
+    deleteFacility.mutate(
+      {
+        facilityId: facility.id,
+      },
+      {
+        onSuccess: () => {
+          router.refresh();
+        },
+      },
+    );
+  };
   return (
     <Card key={facility?.id} className="sm:col-span-1">
       <CardHeader>
@@ -59,28 +74,35 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
           <p>{facility.level}</p>
         </div>
       </CardContent>
-      <CardFooter>
-        <Sheet open={openSheet} onOpenChange={setOpenSheet}>
-          <SheetTrigger asChild>
-            <Button variant={'outline'}>Edit Fasilitas</Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle className="text-left">Edit Fasilitas</SheetTitle>
-              <SheetDescription className="text-left">
-                Buat perubahan pada fasilitas ini, pastikan klik simpan ketika
-                selesai
-              </SheetDescription>
-            </SheetHeader>
-            <div className="grid gap-4 py-4">
-              <EditFacilityForm
-                facility={facility}
-                closeSheet={() => setOpenSheet(false)}
-              />
-            </div>
-          </SheetContent>
-        </Sheet>
-        <Link className="ml-auto" href={`/locations/`}></Link>
+      <CardFooter className="flex place-content-between">
+        <EditFacilityForm facility={facility} />
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant={'destructive'} type="button">
+              Hapus Fasilitas
+            </Button>
+          </AlertDialogTrigger>
+
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Apakah kamu yakin menghapus fasilitas ini?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Aksi ini tidak dapat dibatalkan. Ini akan menghapus fasilitas
+                beserta foto dari server.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Batal</AlertDialogCancel>
+              <AlertDialogAction asChild>
+                <Button variant={'destructive'} onClick={onDelete}>
+                  Ya, Hapus
+                </Button>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardFooter>
     </Card>
   );

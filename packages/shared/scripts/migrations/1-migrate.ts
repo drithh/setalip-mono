@@ -25,6 +25,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('address', 'text', (col) => col.notNull())
         .addColumn('link_maps', 'text', (col) => col.notNull())
+        .addColumn('deleted_at', 'timestamp')
         .$call(addDefaultColumns)
         .execute();
 
@@ -130,6 +131,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('location_id', 'bigint', (col) =>
           col.notNull().references('locations.id')
         )
+        .addColumn('deleted_at', 'timestamp')
         .$call(addDefaultColumns)
         .execute();
 
@@ -138,7 +140,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('location_facility_id', 'bigint', (col) =>
-          col.notNull().references('location_facilities.id')
+          col.notNull().references('location_facilities.id').onDelete('cascade')
         )
         .$call(addDefaultColumns)
         .execute();

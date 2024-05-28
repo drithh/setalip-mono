@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import { LocationService } from '@repo/shared/service';
 import { ChevronLeft, Phone, User2 } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { Label } from '@repo/ui/components/ui/label';
 import { Input } from '@repo/ui/components/ui/input';
 import ImageCard from './file-card';
@@ -33,20 +33,31 @@ import FileCard from './file-card';
 import { PhotoProvider, PhotoSlider } from 'react-photo-view';
 import UploadLocationAsset from './upload-location-asset.form';
 import LocationAssets from './location-assets';
-import EditFacility from './edit-facility.form';
-import EditFacilityForm from './edit-facility.form';
 import { getAuth } from '@/lib/get-auth';
 import FacilityCard from './facility-card';
 import EditDetailLocationForm from './edit-detail-location.form';
 import CreateFacilityForm from './create-facility.form';
 import OperationalHour from './operational-hour';
 import EditOperationalHourForm from './edit-operational-hour.form';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@repo/ui/components/ui/alert-dialog';
+import { useDeleteLocationMutation } from './function/delete-location';
 
 export default async function LocationDetail({
   params,
 }: {
   params: { locationId: string };
 }) {
+  const router = useRouter();
   const auth = await getAuth();
   if (!auth) {
     redirect('/login');
@@ -63,6 +74,20 @@ export default async function LocationDetail({
     redirect('/locations');
   }
 
+  const deleteLocation = useDeleteLocationMutation();
+  const onDelete = () => {
+    deleteLocation.mutate(
+      {
+        locationId: location.result.id,
+      },
+      {
+        onSuccess: () => {
+          router.push('/locations');
+        },
+      },
+    );
+  };
+
   return (
     <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
       <div className="flex place-items-center gap-4">
@@ -74,9 +99,33 @@ export default async function LocationDetail({
           {location.result?.name}
         </h1>
         <div className="ml-auto flex gap-4">
-          <Button variant={'destructive'} type="button">
-            Hapus Lokasi
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant={'destructive'} type="button">
+                Hapus Lokasi
+              </Button>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Apakah kamu yakin menghapus lokasi ini?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Aksi ini tidak dapat dibatalkan. Ini akan menghapus lokasi
+                  beserta foto dari server.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogAction asChild>
+                  <Button variant={'destructive'} onClick={onDelete}>
+                    Ya, Hapus
+                  </Button>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 

@@ -82,7 +82,7 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
       }
     } else if (formState.status === 'error') {
       toast.error(TOAST_MESSAGES.error.title, {
-        description: TOAST_MESSAGES.error.description,
+        description: formState.errors,
       });
       form.setError('root', { message: formState.errors });
     }

@@ -119,12 +119,12 @@ export class LocationServiceImpl implements LocationService {
     };
   }
 
-  async deleteAsset(id: SelectLocationAsset['id']) {
-    const result = await this._locationRepository.deleteAsset(id);
+  async delete(id: SelectLocation['id']) {
+    const result = await this._locationRepository.delete(id);
 
     if (result instanceof Error) {
       return {
-        error: new Error('Failed to delete location asset'),
+        error: new Error('Failed to delete location'),
       };
     }
 
@@ -133,12 +133,26 @@ export class LocationServiceImpl implements LocationService {
     };
   }
 
-  async deleteFacilityImage(id: SelectFacility['id']) {
-    const result = await this._locationRepository.deleteFacilityImage(id);
+  async deleteAsset(id: SelectLocationAsset['id']) {
+    const result = await this._locationRepository.deleteAsset(id);
 
     if (result instanceof Error) {
       return {
-        error: new Error('Failed to delete facility image', result),
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
+  async deleteFacility(id: SelectFacility['id']) {
+    const result = await this._locationRepository.deleteFacility(id);
+
+    if (result instanceof Error) {
+      return {
+        error: result,
       };
     }
 

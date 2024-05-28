@@ -117,6 +117,7 @@ export interface LocationAssets {
 export interface LocationFacilities {
   capacity: number;
   created_at: Generated<Date>;
+  deleted_at: Generated<Date | null>;
   id: Generated<number>;
   image_url: Generated<string | null>;
   level: number;
@@ -140,6 +141,7 @@ export interface LocationOperationalHours {
 export interface Locations {
   address: string;
   created_at: Generated<Date>;
+  deleted_at: Generated<Date | null>;
   email: string;
   id: Generated<number>;
   link_maps: string;

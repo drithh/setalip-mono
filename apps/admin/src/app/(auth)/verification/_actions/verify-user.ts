@@ -19,7 +19,12 @@ export async function verifyUser(
   data: FormData,
 ): Promise<FormVerifyOtp> {
   const formData = convertFormData(data);
-  const parsed = verifyOtpSchema.safeParse(formData);
+  const newFormData = {
+    ...formData,
+    otp: formData.otp?.toString(),
+  };
+
+  const parsed = verifyOtpSchema.safeParse(newFormData);
 
   if (!parsed.success) {
     return {
@@ -37,6 +42,7 @@ export async function verifyUser(
     userId: state.form?.userId || parsed.data.userId,
     otp: parsed.data.otp,
   });
+
   if (otpResult.error) {
     return {
       form: {

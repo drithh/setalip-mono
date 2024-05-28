@@ -29,6 +29,7 @@ export interface LocationService {
     data: UpdateOperationalHours
   ): PromiseResult<void, Error>;
 
+  delete(id: SelectLocation['id']): PromiseResult<void, Error>;
   deleteAsset(id: SelectLocationAsset['id']): PromiseResult<void, Error>;
-  deleteFacilityImage(id: SelectFacility['id']): PromiseResult<void, Error>;
+  deleteFacility(id: SelectFacility['id']): PromiseResult<void, Error>;
 }

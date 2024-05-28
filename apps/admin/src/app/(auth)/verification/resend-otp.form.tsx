@@ -34,7 +34,7 @@ const TOAST_MESSAGES = {
   },
   success: {
     title: 'Kode OTP berhasil dikirim ulang',
-    description: 'Silahkan cek SMS Anda',
+    description: 'Silahkan cek whatsapp Anda',
   },
 };
 

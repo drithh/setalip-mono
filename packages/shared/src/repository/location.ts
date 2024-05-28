@@ -66,5 +66,5 @@ export interface LocationRepository {
 
   delete(id: SelectLocation['id']): Promise<undefined | Error>;
   deleteAsset(id: SelectLocationAsset['id']): Promise<undefined | Error>;
-  deleteFacilityImage(id: SelectFacility['id']): Promise<undefined | Error>;
+  deleteFacility(id: SelectFacility['id']): Promise<undefined | Error>;
 }

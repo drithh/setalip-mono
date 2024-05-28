@@ -44,12 +44,16 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
         'locations.updated_at',
         'locations.updated_by',
         'locations.link_maps',
+        'locations.deleted_at',
         sql<number>`MIN(location_assets.id)`.as('asset_id'),
         'location_assets.url as asset_url',
         'location_assets.name as asset_name',
       ])
+      .where('locations.deleted_at', 'is', null)
       .groupBy('locations.id')
       .execute();
+
+    console.log('locationWithAssets', locationWithAssets);
 
     return locationWithAssets;
   }
@@ -61,6 +65,7 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
       .selectFrom('locations')
       .selectAll()
       .where('locations.id', '=', id)
+      .where('locations.deleted_at', 'is', null)
       .executeTakeFirst();
 
     if (!locations) {
@@ -77,6 +82,7 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
       .selectFrom('location_facilities')
       .selectAll()
       .where('location_facilities.location_id', '=', id)
+      .where('location_facilities.deleted_at', 'is', null)
       .execute();
 
     const operationalHours = await this._db
@@ -238,8 +244,24 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
     }
   }
 
-  delete(id: SelectDetailLocation['id']): Promise<undefined | Error> {
-    throw new Error('Method not implemented.');
+  async delete(id: SelectDetailLocation['id']): Promise<undefined | Error> {
+    try {
+      const query = await this._db
+        .updateTable('locations')
+        .set({ deleted_at: new Date() })
+        .where('locations.id', '=', id)
+        .executeTakeFirst();
+
+      if (query.numUpdatedRows === undefined) {
+        console.error('Error deleting location:', query);
+        return new Error('Failed to delete location');
+      }
+
+      return;
+    } catch (error) {
+      console.error('Error deleting location:', error);
+      return new Error('Failed to delete location');
+    }
   }
 
   async deleteAsset(id: SelectLocationAsset['id']) {
@@ -261,23 +283,23 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
     }
   }
 
-  async deleteFacilityImage(id: SelectFacility['id']) {
+  async deleteFacility(id: SelectFacility['id']) {
     try {
       const query = await this._db
         .updateTable('location_facilities')
-        .set({ image_url: null })
+        .set({ deleted_at: new Date() })
         .where('location_facilities.id', '=', id)
         .executeTakeFirst();
 
       if (query.numUpdatedRows === undefined) {
         console.error('Error deleting facility image:', query);
-        return new Error('Failed to delete facility image');
+        return new Error('Failed to delete facility');
       }
 
       return;
     } catch (error) {
       console.error('Error deleting facility image:', error);
-      return new Error('Failed to delete facility image');
+      return new Error('Failed to delete facility');
     }
   }
 }

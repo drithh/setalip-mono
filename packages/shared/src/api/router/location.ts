@@ -5,11 +5,15 @@ import { TYPES } from '#dep/inversify/types';
 import { LocationService } from '#dep/service/location';
 import { z } from 'zod';
 
+const deleteLocationSchema = z.object({
+  locationId: z.coerce.number().refine((data) => data > 0),
+});
+
 const deleteLocationAssetSchema = z.object({
   assetId: z.coerce.number().refine((data) => data > 0),
 });
 
-const deleteFacilityImageSchema = z.object({
+const deleteFacilitySchema = z.object({
   facilityId: z.coerce.number(),
 });
 
@@ -31,8 +35,8 @@ export const locationRouter = {
 
       return deleteLocationAsset;
     }),
-  deleteFacilityImage: protectedProcedure
-    .input(deleteFacilityImageSchema)
+  deleteLocation: protectedProcedure
+    .input(deleteLocationSchema)
     .mutation(async ({ ctx, input }) => {
       if (!ctx.session) {
         throw new Error('Unauthorized');
@@ -42,10 +46,25 @@ export const locationRouter = {
         TYPES.LocationService
       );
 
-      const deleteFacilityImage = await locationService.deleteFacilityImage(
+      const deleteLocation = await locationService.delete(input.locationId);
+
+      return deleteLocation;
+    }),
+  deleteFacility: protectedProcedure
+    .input(deleteFacilitySchema)
+    .mutation(async ({ ctx, input }) => {
+      const locationService = container.get<LocationService>(
+        TYPES.LocationService
+      );
+
+      const deleteFacility = await locationService.deleteFacility(
         input.facilityId
       );
 
-      return deleteFacilityImage;
+      if (deleteFacility instanceof Error) {
+        throw deleteFacility;
+      }
+
+      return deleteFacility;
     }),
 } satisfies TRPCRouterRecord;

@@ -36,7 +36,7 @@ export default async function Locations() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {locations.result?.map((location) => (
             <Card key={location?.id} className="sm:col-span-1">
               <CardHeader>
@@ -64,9 +64,8 @@ export default async function Locations() {
               <CardFooter>
                 <div className="flex w-full place-content-between">
                   <Link href={`/locations/${location.id}`}>
-                    <Button variant={'default'}>Edit Lokasi</Button>
+                    <Button variant={'outline'}>Edit Lokasi</Button>
                   </Link>
-                  <Button variant={'destructive'}>Hapus Lokasi</Button>
                 </div>
               </CardFooter>
             </Card>

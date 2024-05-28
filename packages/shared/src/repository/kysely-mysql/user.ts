@@ -84,6 +84,7 @@ export class KyselyMySqlUserRepository implements UserRepository {
         return new Error('Failed to update user');
       }
 
+      console.log('query', query);
       return;
     } catch (error) {
       console.error('Error updating user:', error);

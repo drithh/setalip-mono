@@ -91,17 +91,17 @@ export class OtpServiceImpl implements OtpService {
       verified_at: new Date(),
     });
 
-    if (!updateUser) {
+    if (updateUser) {
       return {
-        error: new Error('Failed to update user'),
+        error: updateUser,
       };
     }
 
     const deleteOtp = await this._otpRepository.deleteByUserId(data.userId);
 
-    if (!deleteOtp) {
+    if (deleteOtp) {
       return {
-        error: new Error('Failed to delete otp'),
+        error: deleteOtp,
       };
     }
 
