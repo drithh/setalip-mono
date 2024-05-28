@@ -45,15 +45,55 @@ export const editFacilitySchema = z.object({
 export type EditFacilitySchema = z.infer<typeof editFacilitySchema>;
 export type FormEditFacility = FormState<EditFacilitySchema>;
 
+const compareTime = (openingTime: string, closingTime: string) => {
+  const [openingHour, openingMinute, openingSecond] = openingTime
+    .split(':')
+    .map(Number);
+  const [closingHour, closingMinute, closingSecond] = closingTime
+    .split(':')
+    .map(Number);
+  if (
+    openingHour === undefined ||
+    openingMinute === undefined ||
+    openingSecond === undefined ||
+    closingHour === undefined ||
+    closingMinute === undefined ||
+    closingSecond === undefined
+  ) {
+    return false;
+  }
+  if (openingHour > closingHour) {
+    return false;
+  } else if (openingHour === closingHour) {
+    if (openingMinute > closingMinute) {
+      return false;
+    }
+  }
+  return true;
+};
+
 export const editOperationalHourSchema = z.object({
   locationId: z.coerce.number(),
   operationalHour: z.array(
-    z.object({
-      operationalHourId: z.coerce.number().optional(),
-      day: z.coerce.number().min(0).max(6),
-      openingTime: z.string(),
-      closingTime: z.string(),
-    }),
+    z
+      .object({
+        operationalHourId: z.coerce.number().optional(),
+        day: z.coerce.number().min(0).max(6),
+        check: z.coerce.boolean(),
+        openingTime: z
+          .string()
+          .regex(/^\d{2}:\d{2}:\d{2}$/)
+          .refine((data) => data.length === 8),
+        closingTime: z
+          .string()
+          .regex(/^\d{2}:\d{2}:\d{2}$/)
+          .refine((data) => data.length === 8),
+      })
+      .refine((data) => {
+        return (
+          data.check !== true || compareTime(data.openingTime, data.closingTime)
+        );
+      }, 'Opening time must be less than closing time'),
   ),
 });
 

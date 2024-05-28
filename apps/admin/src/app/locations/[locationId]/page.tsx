@@ -40,6 +40,7 @@ import FacilityCard from './facility-card';
 import EditDetailLocationForm from './edit-detail-location.form';
 import CreateFacilityForm from './create-facility.form';
 import OperationalHour from './operational-hour';
+import EditOperationalHourForm from './edit-operational-hour.form';
 
 export default async function LocationDetail({
   params,
@@ -156,8 +157,9 @@ export default async function LocationDetail({
 
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
           <Card className="overflow-hidden">
-            <CardHeader>
+            <CardHeader className="flex flex-row place-content-between place-items-center">
               <CardTitle>Waktu Operasional</CardTitle>
+              <EditOperationalHourForm location={location.result} />
             </CardHeader>
             <CardContent>
               <OperationalHour

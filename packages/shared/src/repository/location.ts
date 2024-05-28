@@ -39,7 +39,7 @@ export type UpdateFacility = OptionalToRequired<
 
 export interface UpdateOperationalHours {
   location_id: Selectable<LocationOperationalHours>['location_id'];
-  data: Updateable<LocationOperationalHours>[];
+  operationalHours: Updateable<LocationOperationalHours>[];
 }
 
 export type SelectLocationWithAsset = SelectLocation & {

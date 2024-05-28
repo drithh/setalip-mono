@@ -179,7 +179,10 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
     }
   }
 
-  async updateOperationalHours({ location_id, data }: UpdateOperationalHours) {
+  async updateOperationalHours({
+    location_id,
+    operationalHours,
+  }: UpdateOperationalHours) {
     try {
       const currentOperationalHours = await this._db
         .selectFrom('location_operational_hours')
@@ -189,19 +192,18 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
 
       // if in data there is no in currentOperationalHours, delete it
       const toDelete = currentOperationalHours.filter(
-        (current) => !data.find((d) => d.id === current.id)
+        (current) => !operationalHours.find((d) => d.id === current.id)
       );
 
       // if data not have id, insert it
-      const toInsert = data.filter(
+      const toInsert = operationalHours.filter(
         (d) => !d.id
       ) as Insertable<LocationOperationalHours>[];
 
       // if data have id, update it
-      const toUpdate = data.filter((d) => d.id) as OptionalToRequired<
-        Updateable<LocationOperationalHours>,
-        'id'
-      >[];
+      const toUpdate = operationalHours.filter(
+        (d) => d.id
+      ) as OptionalToRequired<Updateable<LocationOperationalHours>, 'id'>[];
 
       await this._db.transaction().execute(async (trx) => {
         await Promise.all(

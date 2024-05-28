@@ -107,7 +107,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         )
         .addCheckConstraint(
           'opening_time_before_closing_time',
-          sql`opening_time < closing_time`
+          sql`opening_time <= closing_time`
         )
         .addCheckConstraint(
           'day_of_week_range',

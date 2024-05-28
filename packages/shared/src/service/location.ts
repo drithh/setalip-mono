@@ -1,6 +1,5 @@
 import {
   InsertFacility,
-  InsertLocation,
   InsertLocationAsset,
   SelectDetailLocation,
   SelectFacility,
