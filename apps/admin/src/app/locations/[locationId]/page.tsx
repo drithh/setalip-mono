@@ -39,25 +39,13 @@ import EditDetailLocationForm from './edit-detail-location.form';
 import CreateFacilityForm from './create-facility.form';
 import OperationalHour from './operational-hour';
 import EditOperationalHourForm from './edit-operational-hour.form';
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from '@repo/ui/components/ui/alert-dialog';
-import { useDeleteLocationMutation } from './function/delete-location';
+import DeleteLocation from './delete-location';
 
 export default async function LocationDetail({
   params,
 }: {
   params: { locationId: string };
 }) {
-  const router = useRouter();
   const auth = await getAuth();
   if (!auth) {
     redirect('/login');
@@ -74,20 +62,6 @@ export default async function LocationDetail({
     redirect('/locations');
   }
 
-  const deleteLocation = useDeleteLocationMutation();
-  const onDelete = () => {
-    deleteLocation.mutate(
-      {
-        locationId: location.result.id,
-      },
-      {
-        onSuccess: () => {
-          router.push('/locations');
-        },
-      },
-    );
-  };
-
   return (
     <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
       <div className="flex place-items-center gap-4">
@@ -99,33 +73,7 @@ export default async function LocationDetail({
           {location.result?.name}
         </h1>
         <div className="ml-auto flex gap-4">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant={'destructive'} type="button">
-                Hapus Lokasi
-              </Button>
-            </AlertDialogTrigger>
-
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Apakah kamu yakin menghapus lokasi ini?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  Aksi ini tidak dapat dibatalkan. Ini akan menghapus lokasi
-                  beserta foto dari server.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Batal</AlertDialogCancel>
-                <AlertDialogAction asChild>
-                  <Button variant={'destructive'} onClick={onDelete}>
-                    Ya, Hapus
-                  </Button>
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DeleteLocation locationId={location.result.id} />
         </div>
       </div>
 

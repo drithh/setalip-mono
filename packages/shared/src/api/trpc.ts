@@ -11,6 +11,7 @@ import superjson from 'superjson';
 import { ZodError } from 'zod';
 
 import { db } from '../db';
+import { container } from '#dep/inversify/index';
 import { Session, User } from 'lucia';
 
 /**
@@ -37,6 +38,7 @@ export const createTRPCContext = (opts: {
   return {
     session,
     db,
+    container,
   };
 };
 

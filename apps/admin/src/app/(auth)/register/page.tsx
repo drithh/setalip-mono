@@ -4,10 +4,6 @@ import { getAuth } from '@/lib/get-auth';
 import { redirect } from 'next/navigation';
 
 export default async function Register() {
-  const auth = await getAuth();
-  if (auth) {
-    redirect('/');
-  }
   return (
     <div className="mx-auto grid w-[350px] gap-6">
       <div className="grid gap-2 text-center">

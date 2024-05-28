@@ -49,9 +49,11 @@ export default function LoginUserForm() {
     retry: false,
   });
 
-  if (auth.data) {
-    router.push('/');
-  }
+  useEffect(() => {
+    if (auth.data) {
+      router.push('/');
+    }
+  }, [auth]);
 
   const [formState, formAction] = useFormState(loginUser, {
     status: 'default',

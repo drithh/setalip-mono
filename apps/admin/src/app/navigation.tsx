@@ -55,13 +55,13 @@ export default function Navigation() {
         <NavLink label="Dashboard" href="#">
           <Home className="h-5 w-5" />
         </NavLink>
-        <NavLink label="Locations" href="#">
+        <NavLink label="Locations" href="locations">
           <MapPin className="h-5 w-5" />
         </NavLink>
-        <NavLink label="Services" href="#">
+        <NavLink label="Services" href="services">
           <PilatesSvg className="h-5 w-5 fill-current" />
         </NavLink>
-        <NavLink label="Users" href="#">
+        <NavLink label="Users" href="users">
           <Users2 className="h-5 w-5" />
         </NavLink>
         <NavLink label="Agendas" href="#">

@@ -6,12 +6,14 @@ import {
   OtpRepository,
   LocationRepository,
   ResetPasswordRepository,
+  PackageRepository,
 } from '#dep/repository/index';
 import {
   KyselyMySqlUserRepository,
   KyselyMySqlOtpRepository,
   KyselyMySqlLocationRepository,
   KyselyMySqlResetPasswordRepository,
+  KyselyMySqlPackageRepository,
 } from '#dep/repository/kysely-mysql/index';
 import {
   NotificationService,
@@ -22,12 +24,14 @@ import {
   OtpServiceImpl,
   ResetPasswordServiceImpl,
   LocationServiceImpl,
+  PackageServiceImpl,
 } from '#dep/service/index.impl';
 import {
   AuthService,
   OtpService,
   ResetPasswordService,
   LocationService,
+  PackageService,
 } from '#dep/service/index';
 
 const container = new Container();
@@ -52,5 +56,9 @@ container
   .bind<LocationRepository>(TYPES.LocationRepository)
   .to(KyselyMySqlLocationRepository);
 container.bind<LocationService>(TYPES.LocationService).to(LocationServiceImpl);
+container
+  .bind<PackageRepository>(TYPES.PackageRepository)
+  .to(KyselyMySqlPackageRepository);
+container.bind<PackageService>(TYPES.PackageService).to(PackageServiceImpl);
 
 export { container };

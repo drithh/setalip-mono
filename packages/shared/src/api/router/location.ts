@@ -1,6 +1,5 @@
 import type { TRPCRouterRecord } from '@trpc/server';
 import { protectedProcedure, publicProcedure } from '../trpc';
-import { container } from '#dep/inversify/index';
 import { TYPES } from '#dep/inversify/types';
 import { LocationService } from '#dep/service/location';
 import { z } from 'zod';
@@ -25,7 +24,7 @@ export const locationRouter = {
         throw new Error('Unauthorized');
       }
 
-      const locationService = container.get<LocationService>(
+      const locationService = ctx.container.get<LocationService>(
         TYPES.LocationService
       );
 
@@ -42,7 +41,7 @@ export const locationRouter = {
         throw new Error('Unauthorized');
       }
 
-      const locationService = container.get<LocationService>(
+      const locationService = ctx.container.get<LocationService>(
         TYPES.LocationService
       );
 
@@ -53,7 +52,7 @@ export const locationRouter = {
   deleteFacility: protectedProcedure
     .input(deleteFacilitySchema)
     .mutation(async ({ ctx, input }) => {
-      const locationService = container.get<LocationService>(
+      const locationService = ctx.container.get<LocationService>(
         TYPES.LocationService
       );
 

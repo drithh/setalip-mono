@@ -11,6 +11,8 @@ const TYPES = {
   ResetPasswordService: Symbol.for('ResetPasswordService'),
   LocationRepository: Symbol.for('LocationRepository'),
   LocationService: Symbol.for('LocationService'),
+  PackageRepository: Symbol.for('PackageRepository'),
+  PackageService: Symbol.for('PackageService'),
 };
 
 export { TYPES };

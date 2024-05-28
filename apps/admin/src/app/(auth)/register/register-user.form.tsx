@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { RegisterUserSchema, registerUserSchema } from './form-schema';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { api } from '@/trpc/react';
 
 const TOAST_MESSAGES = {
   error: {
@@ -42,6 +43,20 @@ const TOAST_MESSAGES = {
 
 export default function RegisterUserForm() {
   const router = useRouter();
+
+  const auth = api.auth.getSession.useQuery(void {}, {
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (auth.data) {
+      router.push('/');
+    }
+  }, [auth]);
+
   const [formState, formAction] = useFormState(registerUser, {
     status: 'default',
     form: {
