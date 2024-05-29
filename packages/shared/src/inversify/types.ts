@@ -13,6 +13,8 @@ const TYPES = {
   LocationService: Symbol.for('LocationService'),
   PackageRepository: Symbol.for('PackageRepository'),
   PackageService: Symbol.for('PackageService'),
+  ClassTypeRepository: Symbol.for('ClassTypeRepository'),
+  ClassTypeService: Symbol.for('ClassTypeService'),
 };
 
 export { TYPES };
