@@ -135,15 +135,15 @@ export async function up(db: Kysely<any>): Promise<void> {
         .$call(addDefaultColumns)
         .execute();
 
-      await trx.schema
-        .createTable('facility_equipments')
-        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
-        .addColumn('name', 'text', (col) => col.notNull())
-        .addColumn('location_facility_id', 'bigint', (col) =>
-          col.notNull().references('location_facilities.id').onDelete('cascade')
-        )
-        .$call(addDefaultColumns)
-        .execute();
+      // await trx.schema
+      //   .createTable('facility_equipments')
+      //   .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+      //   .addColumn('name', 'text', (col) => col.notNull())
+      //   .addColumn('location_facility_id', 'bigint', (col) =>
+      //     col.notNull().references('location_facilities.id').onDelete('cascade')
+      //   )
+      //   .$call(addDefaultColumns)
+      //   .execute();
 
       await trx.schema
         .createTable('location_assets')
@@ -431,7 +431,7 @@ export async function down(db: Kysely<any>): Promise<void> {
       await trx.schema.dropTable('classes').ifExists().execute();
 
       await trx.schema.dropTable('location_assets').ifExists().execute();
-      await trx.schema.dropTable('facility_equipments').ifExists().execute();
+      // await trx.schema.dropTable('facility_equipments').ifExists().execute();
       await trx.schema.dropTable('location_facilities').ifExists().execute();
       await trx.schema
         .dropTable('location_operational_hours')

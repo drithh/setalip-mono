@@ -226,19 +226,19 @@ export async function up(db: Kysely<DB>): Promise<void> {
         .values(location_facilities)
         .execute();
 
-      const facility_equipments: Insertable<FacilityEquipments>[] = Array.from({
-        length: 30,
-      }).map((_, index) => ({
-        id: index + 1,
-        name: faker.commerce.productName(),
-        location_facility_id:
-          location_facilities[Math.floor(Math.random() * 15)]?.id ?? 1,
-      }));
+      // const facility_equipments: Insertable<FacilityEquipments>[] = Array.from({
+      //   length: 30,
+      // }).map((_, index) => ({
+      //   id: index + 1,
+      //   name: faker.commerce.productName(),
+      //   location_facility_id:
+      //     location_facilities[Math.floor(Math.random() * 15)]?.id ?? 1,
+      // }));
 
-      await trx
-        .insertInto('facility_equipments')
-        .values(facility_equipments)
-        .execute();
+      // await trx
+      //   .insertInto('facility_equipments')
+      //   .values(facility_equipments)
+      //   .execute();
 
       const location_assets: Insertable<LocationAssets>[] = Array.from({
         length: 15,

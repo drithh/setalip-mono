@@ -12,11 +12,7 @@ import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 import { getColumns } from './columns';
 // import { TasksTableFloatingBar } from './tasks-table-floating-bar';
 import { TasksTableToolbarActions } from './toolbar-actions';
-import { SelectPackage } from '@repo/shared/repository';
-
-// interface PackageTableProps {
-//   packagePromise: ReturnType<typeof getPackage>;
-// }
+import { SelectClassType, SelectPackage } from '@repo/shared/repository';
 
 const mockPackages: SelectPackage[] = [
   {
@@ -67,13 +63,20 @@ const fakePromise = () => {
   };
 };
 
-export default function PackageTable() {
+interface PackageTableProps {
+  classTypes: SelectClassType[];
+}
+
+export default function PackageTable({ classTypes }: PackageTableProps) {
   // Feature flags for showcasing some additional features. Feel free to remove them.
 
   const { data, pageCount } = fakePromise();
 
   // Memoize the columns so they don't re-render on every render
-  const columns = React.useMemo(() => getColumns(), []);
+  const columns = React.useMemo(
+    () => getColumns({ classTypes: classTypes }),
+    [],
+  );
 
   /**
    * This component can render either a faceted filter or a search filter based on the `options` prop.
@@ -88,61 +91,35 @@ export default function PackageTable() {
    */
   const filterFields: DataTableFilterField<SelectPackage>[] = [
     {
-      label: 'Title',
+      label: 'Nama',
       value: 'name',
-      placeholder: 'Filter titles...',
+      placeholder: 'Filter nama...',
     },
-    // {
-    //   label: 'Status',
-    //   value: 'status',
-    //   options: tasks.status.enumValues.map((status) => ({
-    //     label: status[0]?.toUpperCase() + status.slice(1),
-    //     value: status,
-    //     icon: getStatusIcon(status),
-    //     withCount: true,
-    //   })),
-    // },
-    // {
-    //   label: 'Priority',
-    //   value: 'priority',
-    //   options: tasks.priority.enumValues.map((priority) => ({
-    //     label: priority[0]?.toUpperCase() + priority.slice(1),
-    //     value: priority,
-    //     icon: getPriorityIcon(priority),
-    //     withCount: true,
-    //   })),
-    // },
+    {
+      label: 'Tipe Kelas',
+      value: 'class_type_id',
+      options: classTypes.map(({ id, type }) => ({
+        label: type,
+        value: id.toString(),
+        withCount: true,
+      })),
+    },
   ];
 
   const { table } = useDataTable({
     data,
     columns,
     pageCount,
-    // optional props
     filterFields,
-    // enableAdvancedFilter: featureFlags.includes('advancedFilter'),
     defaultPerPage: 10,
     defaultSort: 'created_at.desc',
   });
 
   return (
-    <DataTable
-      table={table}
-      // floatingBar={
-      //   featureFlags.includes('floatingBar') ? (
-      //     <TasksTableFloatingBar table={table} />
-      //   ) : null
-      // }
-    >
-      {/* {featureFlags.includes('advancedFilter') ? (
-        <DataTableAdvancedToolbar table={table} filterFields={filterFields}>
-          <TasksTableToolbarActions table={table} />
-        </DataTableAdvancedToolbar>
-      ) : ( */}
+    <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
         <TasksTableToolbarActions table={table} />
       </DataTableToolbar>
-      {/* )} */}
     </DataTable>
   );
 }

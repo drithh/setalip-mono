@@ -22,14 +22,27 @@ import {
   DropdownMenuTrigger,
 } from '@repo/ui/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
-import { SelectPackage } from '@repo/shared/repository';
+import { SelectClassType, SelectPackage } from '@repo/shared/repository';
 
 // import { updateTask } from '../_lib/actions';
 // import { getPriorityIcon, getStatusIcon } from '../_lib/utils';
 // import { DeleteTasksDialog } from './delete-tasks-dialog';
 // import { UpdateTaskSheet } from './update-task-sheet';
 
-export function getColumns(): ColumnDef<SelectPackage>[] {
+const convertToRupiah = (price: number) => {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+  }).format(price);
+};
+
+interface getColumnsProps {
+  classTypes: SelectClassType[];
+}
+
+export function getColumns({
+  classTypes,
+}: getColumnsProps): ColumnDef<SelectPackage>[] {
   return [
     {
       id: 'select',
@@ -56,40 +69,60 @@ export function getColumns(): ColumnDef<SelectPackage>[] {
       enableHiding: false,
     },
     {
-      accessorKey: 'code',
+      accessorKey: 'name',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Task" />
+        <DataTableColumnHeader column={column} title="Name" />
       ),
-      cell: ({ row }) => <div className="w-20">{row.getValue('code')}</div>,
+      cell: ({ row }) => <div className="w-20">{row.getValue('name')}</div>,
       enableSorting: false,
       enableHiding: false,
     },
     {
-      accessorKey: 'title',
+      accessorKey: 'price',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Title" />
+        <DataTableColumnHeader column={column} title="Price" />
       ),
       cell: ({ row }) => {
-        <span>{row.getValue('title')}</span>;
-        // const label = tasks.label.enumValues.find(
-        //   (label) => label === row.original.label,
-        // );
-        // return (
-        //   <div className="flex space-x-2">
-        //     {label && <Badge variant="outline">{label}</Badge>}
-        //     <span className="max-w-[31.25rem] truncate font-medium">
-        //       {row.getValue('title')}
-        //     </span>
-        //   </div>
-        // );
+        return <span>{convertToRupiah(row.original.price)}</span>;
       },
     },
     {
-      accessorKey: 'createdAt',
+      accessorKey: 'credit',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created At" />
+        <DataTableColumnHeader column={column} title="Duration" />
       ),
-      cell: ({ cell }) => cell.getValue() as Date,
+    },
+    {
+      accessorKey: 'loyalty_points',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Loyalty Points" />
+      ),
+    },
+    {
+      accessorKey: 'valid_for',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Validity" />
+      ),
+      cell: ({ row }) => {
+        return <span>{row.original.valid_for} days</span>;
+      },
+    },
+    {
+      accessorKey: 'class_type_id',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Class Type" />
+      ),
+      cell: ({ row }) => {
+        return (
+          <span>
+            {
+              classTypes.find(
+                (classType) => classType.id === row.original.class_type_id,
+              )?.type
+            }
+          </span>
+        );
+      },
     },
     {
       id: 'actions',

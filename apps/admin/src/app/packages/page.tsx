@@ -12,13 +12,8 @@ import PackageTable from './package-table';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useDataTable } from '@/hooks/use-data-table';
 import { getColumns } from './columns';
-
-const convertToRupiah = (price: number) => {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-  }).format(price);
-};
+import { TYPES, container } from '@repo/shared/inversify';
+import { ClassTypeService } from '@repo/shared/service';
 
 // export const columns: ColumnDef<SelectPackage>[] = [
 //   {
@@ -75,12 +70,15 @@ const convertToRupiah = (price: number) => {
 //   },
 // ];
 
-export default function Packages() {
-  const packages = api.package.findAll.useQuery();
+export default async function Packages() {
+  const classTypeService = container.get<ClassTypeService>(
+    TYPES.ClassTypeService,
+  );
+  const classTypes = await classTypeService.findAll();
 
   return (
     <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
-      <PackageTable />
+      <PackageTable classTypes={classTypes.result ?? []} />
     </main>
   );
 }
