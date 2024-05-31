@@ -1,11 +1,10 @@
-'use client';
-
 import {
   ColumnDef,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { SelectPackage } from '@repo/shared/repository';
+import { FindAllOptions, SelectPackage } from '@repo/shared/repository';
+import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import Link from 'next/link';
 import { api } from '@/trpc/react';
 import PackageTable from './package-table';
@@ -14,63 +13,24 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { getColumns } from './columns';
 import { TYPES, container } from '@repo/shared/inversify';
 import { ClassTypeService } from '@repo/shared/service';
+import { findAllPackageSchema } from '@repo/shared/api/schema';
+import QueryResetBoundary from './query-reset-boundary';
+import React from 'react';
+import { getAuth } from '@/lib/get-auth';
+import { redirect } from 'next/navigation';
 
-// export const columns: ColumnDef<SelectPackage>[] = [
-//   {
-//     accessorKey: 'name',
-//     header: ({ column }) => (
-//       <DataTableColumnHeader column={column} title="Name" />
-//     ),
-//   },
-//   {
-//     accessorKey: 'price',
-//     header: ({ column }) => (
-//       <DataTableColumnHeader column={column} title="Price" />
-//     ),
-//     cell: ({ row }) => {
-//       return <span>{convertToRupiah(row.original.price)}</span>;
-//     },
-//   },
-//   {
-//     accessorKey: 'credit',
-//     header: ({ column }) => (
-//       <DataTableColumnHeader column={column} title="Duration" />
-//     ),
-//   },
-//   {
-//     accessorKey: 'loyalty_points',
-//     header: ({ column }) => (
-//       <DataTableColumnHeader column={column} title="Loyalty Points" />
-//     ),
-//   },
-//   {
-//     accessorKey: 'valid_for',
-//     header: ({ column }) => (
-//       <DataTableColumnHeader column={column} title="Validity" />
-//     ),
-//     cell: ({ row }) => {
-//       return <span>{row.original.valid_for} days</span>;
-//     },
-//   },
-//   {
-//     accessorKey: 'actions',
-//     header: 'Actions',
-//     cell: ({ row }) => {
-//       return (
-//         <div className="flex space-x-2">
-//           <button className="rounded-full p-2 hover:bg-gray-200">
-//             <Pencil className="h-4 w-4" />
-//           </button>
-//           <button className="rounded-full p-2 hover:bg-gray-200">
-//             <Trash2 className="h-4 w-4" />
-//           </button>
-//         </div>
-//       );
-//     },
-//   },
-// ];
+export interface IndexPageProps {
+  searchParams: FindAllOptions;
+}
 
-export default async function Packages() {
+export default async function Packages({ searchParams }: IndexPageProps) {
+  // const session = await getAuth();
+  // if (!session) {
+  //   redirect('/login');
+  // }
+
+  const search = findAllPackageSchema.parse(searchParams);
+  console.log('search', search);
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,
   );
@@ -78,7 +38,21 @@ export default async function Packages() {
 
   return (
     <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
-      <PackageTable classTypes={classTypes.result ?? []} />
+      <QueryResetBoundary>
+        <React.Suspense
+          fallback={
+            <DataTableSkeleton
+              columnCount={5}
+              searchableColumnCount={1}
+              filterableColumnCount={2}
+              cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem']}
+              shrinkZero
+            />
+          }
+        >
+          <PackageTable classTypes={classTypes.result ?? []} search={search} />
+        </React.Suspense>
+      </QueryResetBoundary>
     </main>
   );
 }

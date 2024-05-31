@@ -3,27 +3,16 @@ import { protectedProcedure, publicProcedure } from '../trpc';
 import { TYPES } from '#dep/inversify/types';
 import { LocationService } from '#dep/service/location';
 import { z } from 'zod';
-
-const deleteLocationSchema = z.object({
-  locationId: z.coerce.number().refine((data) => data > 0),
-});
-
-const deleteLocationAssetSchema = z.object({
-  assetId: z.coerce.number().refine((data) => data > 0),
-});
-
-const deleteFacilitySchema = z.object({
-  facilityId: z.coerce.number(),
-});
+import {
+  deleteLocationAssetSchema,
+  deleteLocationSchema,
+  deleteFacilitySchema,
+} from '../schema';
 
 export const locationRouter = {
   deleteLocationAsset: protectedProcedure
     .input(deleteLocationAssetSchema)
     .mutation(async ({ ctx, input }) => {
-      if (!ctx.session) {
-        throw new Error('Unauthorized');
-      }
-
       const locationService = ctx.container.get<LocationService>(
         TYPES.LocationService
       );
@@ -37,10 +26,6 @@ export const locationRouter = {
   deleteLocation: protectedProcedure
     .input(deleteLocationSchema)
     .mutation(async ({ ctx, input }) => {
-      if (!ctx.session) {
-        throw new Error('Unauthorized');
-      }
-
       const locationService = ctx.container.get<LocationService>(
         TYPES.LocationService
       );

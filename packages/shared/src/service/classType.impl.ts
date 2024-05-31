@@ -1,15 +1,20 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
-import * as repository from '../repository';
 import { ClassTypeService } from './classType';
+import type {
+  ClassTypeRepository,
+  InsertClassType,
+  SelectClassType,
+  UpdateClassType,
+} from '../repository';
 
 @injectable()
 export class ClassTypeServiceImpl implements ClassTypeService {
-  private _classTypeRepository: repository.ClassTypeRepository;
+  private _classTypeRepository: ClassTypeRepository;
 
   constructor(
     @inject(TYPES.ClassTypeRepository)
-    classTypeRepository: repository.ClassTypeRepository
+    classTypeRepository: ClassTypeRepository
   ) {
     this._classTypeRepository = classTypeRepository;
   }
@@ -23,7 +28,7 @@ export class ClassTypeServiceImpl implements ClassTypeService {
     };
   }
 
-  async findById(id: repository.SelectClassType['id']) {
+  async findById(id: SelectClassType['id']) {
     const classType = await this._classTypeRepository.findById(id);
 
     if (!classType) {
@@ -37,7 +42,7 @@ export class ClassTypeServiceImpl implements ClassTypeService {
     };
   }
 
-  async create(data: repository.InsertClassType) {
+  async create(data: InsertClassType) {
     const result = await this._classTypeRepository.create(data);
 
     if (result instanceof Error) {
@@ -51,7 +56,7 @@ export class ClassTypeServiceImpl implements ClassTypeService {
     };
   }
 
-  async update(data: repository.UpdateClassType) {
+  async update(data: UpdateClassType) {
     const result = await this._classTypeRepository.update(data);
 
     if (result instanceof Error) {
@@ -66,7 +71,7 @@ export class ClassTypeServiceImpl implements ClassTypeService {
     };
   }
 
-  async delete(id: repository.SelectClassType['id']) {
+  async delete(id: SelectClassType['id']) {
     const result = await this._classTypeRepository.delete(id);
 
     if (result instanceof Error) {

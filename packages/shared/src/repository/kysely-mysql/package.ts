@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import {
+  FindAllOptions,
   InsertPackage,
   PackageRepository,
   SelectPackage,
@@ -16,8 +17,36 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     this._db = db;
   }
 
-  findAll() {
-    return this._db.selectFrom('packages').selectAll().execute();
+  async findAll(data: FindAllOptions) {
+    const { page, perPage, sort, name, types } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['createdAt', 'desc']
+    ).join(' ') as `${keyof SelectPackage} ${'asc' | 'desc'}`;
+
+    let query = this._db.selectFrom('packages');
+
+    if (name) {
+      query = query.where('name', 'like', `%${name}%`);
+    }
+    if (types) {
+      query = query.where('class_type_id', 'in', types);
+    }
+    const queryData = await query
+      .selectAll()
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
+      .execute();
+
+    const queryCount = await query
+      .select(({ fn }) => [fn.count<number>('id').as('count')])
+      .executeTakeFirst();
+    return {
+      data: queryData,
+      pageCount: queryCount?.count ?? -1,
+    };
   }
 
   findById(id: SelectPackage['id']) {

@@ -1,8 +1,14 @@
-import { SelectPackage, InsertPackage, UpdatePackage } from '../repository';
+import {
+  SelectPackage,
+  InsertPackage,
+  UpdatePackage,
+  FindAllOptions,
+  SelectAllPackages,
+} from '../repository';
 import { PromiseResult } from '../types';
 
 export interface PackageService {
-  findAll(): PromiseResult<SelectPackage[], Error>;
+  findAll(data: FindAllOptions): PromiseResult<SelectAllPackages, Error>;
   findById(
     id: SelectPackage['id']
   ): PromiseResult<SelectPackage | undefined, Error>;

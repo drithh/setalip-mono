@@ -3,20 +3,7 @@ import { protectedProcedure, publicProcedure } from '../trpc';
 import { z } from 'zod';
 import path from 'path';
 import { writeFile } from 'fs/promises';
-
-const fileUploadSchema = z.object({
-  files: z.custom<File[] | File>((data) => {
-    if (!Array.isArray(data)) {
-      return data instanceof File;
-    }
-    for (const file of data) {
-      if (!(file instanceof File)) {
-        return false;
-      }
-    }
-    return true;
-  }, 'Data is not an instance of a File'),
-});
+import { fileUploadSchema } from '../schema';
 
 export const fileRouter = {
   upload: protectedProcedure

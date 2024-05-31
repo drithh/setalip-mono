@@ -1,6 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
 import type {
+  FindAllOptions,
   InsertPackage,
   PackageRepository,
   SelectPackage,
@@ -18,8 +19,8 @@ export class PackageServiceImpl implements PackageService {
     this._packageRepository = packageRepository;
   }
 
-  async findAll() {
-    const packages = await this._packageRepository.findAll();
+  async findAll(data: FindAllOptions) {
+    const packages = await this._packageRepository.findAll(data);
 
     return {
       result: packages,

@@ -5,6 +5,12 @@ export * from '#dep/repository/resetPassword';
 export * from '#dep/repository/package';
 export * from '#dep/repository/classType';
 
+export type DefaultPagination = {
+  page: number;
+  perPage: number;
+  sort: string;
+};
+
 export type OptionalToRequired<T, K extends keyof T> = {
   [P in keyof T as P extends K ? P : never]-?: T[P];
 } & {
