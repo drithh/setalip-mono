@@ -1,6 +1,7 @@
 import { Database } from '#dep/db/index';
 import {
   FindAllUserOptions,
+  InsertCredit,
   InsertUser,
   SelectUser,
   UpdateUser,
@@ -19,11 +20,12 @@ export class KyselyMySqlUserRepository implements UserRepository {
   }
 
   async findAll(data: FindAllUserOptions) {
-    const { page = 1, perPage = 10, sort, name, roles } = data;
+    console.log('findAll', data);
+    const { page = 1, perPage = 10, sort, name, roles } = data || {};
 
     const offset = (page - 1) * perPage;
     const orderBy = (
-      sort?.split('.').filter(Boolean) ?? ['createdAt', 'desc']
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
     ).join(' ') as `${keyof SelectUser} ${'asc' | 'desc'}`;
 
     let query = this._db.selectFrom('users');
@@ -101,6 +103,28 @@ export class KyselyMySqlUserRepository implements UserRepository {
     } catch (error) {
       console.error('Error creating user:', error);
       return new Error('Failed to create user');
+    }
+  }
+
+  async createCredit(data: InsertCredit) {
+    try {
+      const query = this._db
+        .insertInto('credit_transactions')
+        .values(data)
+        .returningAll()
+        .compile();
+
+      const result = await this._db.executeQuery(query);
+
+      if (result.rows[0] === undefined) {
+        console.error('Failed to create credit', result);
+        return new Error('Failed to create credit');
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating credit:', error);
+      return new Error('Failed to create credit');
     }
   }
 

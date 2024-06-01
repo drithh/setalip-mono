@@ -21,3 +21,14 @@ export const roles = [
   'coach',
   'owner',
 ] satisfies SelectUser['role'][];
+
+export const createCreditSchema = z.object({
+  amount: z.coerce.number(),
+  note: z.string().min(3).max(255),
+  user_id: z.coerce.number(),
+  class_type_id: z.coerce.number(),
+  expired_at: z.coerce.date(),
+});
+
+export type CreateCreditSchema = z.infer<typeof createCreditSchema>;
+export type FormCreateCredit = FormState<CreateCreditSchema>;

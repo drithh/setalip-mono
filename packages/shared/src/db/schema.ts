@@ -75,6 +75,7 @@ export interface CreditTransactions {
   amount: number;
   class_type_id: number;
   created_at: Generated<Date>;
+  credit_transaction_id: Generated<number | null>;
   expired_at: Generated<Date | null>;
   id: Generated<number>;
   note: string;

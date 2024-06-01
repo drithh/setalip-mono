@@ -24,13 +24,16 @@ import { Button } from '@repo/ui/components/ui/button';
 // import DeletePackageDialog from './delete-package.dialog';
 import EditUserForm from './edit-user.form';
 import { dateFormatter } from '@repo/shared/util';
+import CreateCreditForm from './create-credit.from';
 
 interface getColumnsProps {
   locations: SelectLocation[];
+  classTypes: SelectClassType[];
 }
 
 export function getColumns({
   locations,
+  classTypes,
 }: getColumnsProps): ColumnDef<SelectUser>[] {
   return [
     {
@@ -144,24 +147,24 @@ export function getColumns({
     {
       id: 'actions',
       cell: function Cell({ row }) {
-        const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
-          React.useState(false);
-        const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
+        const [showEditUserSheet, setShowEditUserSheet] = React.useState(false);
+        const [showCreateCreditSheet, setShowCreateCreditSheet] =
           React.useState(false);
 
         return (
           <>
             <EditUserForm
               locations={locations}
-              open={showUpdateTaskSheet}
-              onOpenChange={setShowUpdateTaskSheet}
+              open={showEditUserSheet}
+              onOpenChange={setShowEditUserSheet}
               user={row.original}
             />
-            {/* <DeletePackageDialog
-              open={showDeleteTaskDialog}
-              onOpenChange={setShowDeleteTaskDialog}
-              singlePackage={row.original}
-            /> */}
+            <CreateCreditForm
+              open={showCreateCreditSheet}
+              onOpenChange={setShowCreateCreditSheet}
+              user={row.original}
+              classTypes={classTypes}
+            />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -173,14 +176,14 @@ export function getColumns({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
+                <DropdownMenuItem onSelect={() => setShowEditUserSheet(true)}>
                   Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onSelect={() => setShowDeleteTaskDialog(true)}
+                  onSelect={() => setShowCreateCreditSheet(true)}
                 >
-                  Delete
+                  Add Credit
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

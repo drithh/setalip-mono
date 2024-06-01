@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { editUser } from './_actions/edit-user';
+import { createCredit } from './_actions/create-credit';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,12 +16,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { EditUserSchema, editUserSchema, roles } from './form-schema';
+import { CreateCreditSchema, createCreditSchema, roles } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { Switch } from '@repo/ui/components/ui/switch';
-import { MoneyInput } from '@repo/ui/components/money-input';
-import { AddonInput } from '@repo/ui/components/addon-input';
+import { DatePicker } from '@repo/ui/components/date-picker';
 import {
   SelectClassType,
   SelectDetailLocation,
@@ -49,46 +47,50 @@ import { Textarea } from '@repo/ui/components/ui/textarea';
 import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 
-interface EditUserProps {
+interface CreateCreditProps {
   user: SelectUser;
-  locations: SelectLocation[];
+  classTypes: SelectClassType[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal memperbarui user',
+    title: 'Gagal menambah credit',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Memperbarui user...',
+    title: 'Menambah credit...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'User berhasil diperbarui',
+    title: 'Credit berhasil diperbarui',
   },
 };
 
-export default function EditUserForm({
+export default function CreateCreditForm({
   user,
-  locations,
+  classTypes,
   open,
   onOpenChange,
-}: EditUserProps) {
+}: CreateCreditProps) {
   const trpcUtils = api.useUtils();
   const router = useRouter();
-  type FormSchema = EditUserSchema;
+  type FormSchema = CreateCreditSchema;
 
-  const [formState, formAction] = useFormState(editUser, {
+  const [formState, formAction] = useFormState(createCredit, {
     status: 'default',
     form: {
-      ...user,
+      amount: 0,
+      note: '',
+      class_type_id: 1,
+      expired_at: new Date(),
+      user_id: user.id,
     } as FormSchema,
   });
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(editUserSchema),
+    resolver: zodResolver(createCreditSchema),
     defaultValues: formState.form,
   });
 
@@ -144,9 +146,9 @@ export default function EditUserForm({
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">Edit User</SheetTitle>
+            <SheetTitle className="text-left">Tambah kredit</SheetTitle>
             <SheetDescription className="text-left">
-              Edit user. Pastikan klik simpan ketika selesai.
+              Tambah kredit. Pastikan klik simpan ketika selesai.
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -159,11 +161,11 @@ export default function EditUserForm({
               >
                 <FormField
                   control={form.control}
-                  name="id"
+                  name="user_id"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
                       <FormControl>
-                        <Input type="hidden" {...field} />
+                        <Input type="hidden" {...field} value={user.id} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -172,12 +174,12 @@ export default function EditUserForm({
 
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="amount"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Nama</FormLabel>
+                      <FormLabel>Jumlah kredit</FormLabel>
                       <FormControl>
-                        <Input id="name" type="text" {...field} />
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -185,111 +187,69 @@ export default function EditUserForm({
                 />
                 <FormField
                   control={form.control}
-                  name="location_id"
+                  name="class_type_id"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Lokasi</FormLabel>
+                      <FormLabel>Tipe kelas</FormLabel>
                       <FormControl>
                         <>
                           <Input type="hidden" {...field} />
 
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={
-                              locations.find(
-                                (location) => location.id === field.value,
-                              )?.name ?? ''
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Pilih tipe kelas" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {locations.map((location) => (
-                                <SelectItem
-                                  key={location.id}
-                                  value={location.name}
-                                >
-                                  {location.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="grid w-full gap-2">
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone_number"
-                  render={({ field }) => (
-                    <FormItem className="grid w-full gap-2">
-                      <FormLabel>Nomor Whatsapp</FormLabel>
-                      <FormControl>
-                        <PhoneInput
-                          {...field}
-                          value={field.value as PhoneNumberValue}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem className="grid w-full gap-2">
-                      <FormLabel>Alamat</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="role"
-                  render={({ field }) => (
-                    <FormItem className="grid w-full gap-2">
-                      <FormLabel>Role</FormLabel>
-                      <FormControl>
-                        <>
-                          <Input type="hidden" {...field} />
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value.toString()}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Pilih role" />
+                              <SelectValue placeholder="Pilih tipe kelas" />
                             </SelectTrigger>
                             <SelectContent>
-                              {roles.map((role) => (
-                                <SelectItem key={role} value={role}>
-                                  {role}
+                              {classTypes.map((classType) => (
+                                <SelectItem
+                                  key={classType.id}
+                                  value={classType.id.toString()}
+                                >
+                                  {classType.type}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="expired_at"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Tanggal kedaluwarsa</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input
+                            type="hidden"
+                            {...field}
+                            value={field.value.toDateString()}
+                          />
+                          <DatePicker
+                            value={field.value}
+                            onChange={(date) => field.onChange(date)}
+                          />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="note"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Catatan</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

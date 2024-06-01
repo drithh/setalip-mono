@@ -22,7 +22,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
     const offset = (page - 1) * perPage;
     const orderBy = (
-      sort?.split('.').filter(Boolean) ?? ['createdAt', 'desc']
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
     ).join(' ') as `${keyof SelectPackage} ${'asc' | 'desc'}`;
 
     let query = this._db.selectFrom('packages');

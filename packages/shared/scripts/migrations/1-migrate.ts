@@ -339,9 +339,8 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('user_package_id', 'bigint', (col) =>
           col.references('user_packages.id')
         )
-        .addCheckConstraint(
-          'credit_transaction_only_one_reference',
-          sql`agenda_booking_id IS NOT NULL AND user_package_id IS NULL OR agenda_booking_id IS NULL AND user_package_id IS NOT NULL`
+        .addColumn('credit_transaction_id', 'bigint', (col) =>
+          col.references('credit_transactions.id')
         )
         .$call(addDefaultColumns)
         .execute();

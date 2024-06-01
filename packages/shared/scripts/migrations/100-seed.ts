@@ -7,7 +7,6 @@ import {
   Coaches,
   Database,
   DepositAccounts,
-  FacilityEquipments,
   LocationAssets,
   LocationFacilities,
   Locations,
@@ -384,41 +383,64 @@ export async function up(db: Kysely<DB>): Promise<void> {
       });
 
       await trx.insertInto('loyalty_shops').values(loyaltyShops).execute();
-      console.log('creditTransactions');
-      const creditTransactions: Insertable<CreditTransactions>[] = Array.from({
-        length: 100,
-      }).map((_, index) => {
-        const isDebit = faker.number.int({ min: 0, max: 1 });
 
-        return {
-          id: index + 1,
-          user_id: users[Math.floor(Math.random() * 10)]?.id ?? 1,
-          type: isDebit ? ('debit' as const) : ('credit' as const),
-          amount: faker.number.int({ min: 1, max: 8 }),
-          note: faker.lorem.sentence(),
-          expired_at: isDebit
-            ? null
-            : faker.date.between({
-                from: faker.date.past(),
-                to: faker.date.future(),
-              }),
-          class_type_id: class_types[Math.floor(Math.random() * 3)]?.id ?? 1,
-          agenda_booking_id: !isDebit
-            ? agendaBookings[Math.floor(Math.random() * 30)]?.id ?? 1
-            : null,
-          user_package_id: isDebit
-            ? user_packages[Math.floor(Math.random() * 30)]?.id ?? 1
-            : null,
-          created_at: faker.date.between({
-            from: faker.date.past({ years: 4 }),
-            to: faker.date.recent(),
-          }),
-        };
-      });
+      const creditDebitTransactions: Insertable<CreditTransactions>[] = [];
+      const creditCreditTransactions: Insertable<CreditTransactions>[] = [];
+
+      for (let userId = 1; userId <= 10; userId++) {
+        for (let i = 0; i < 20; i++) {
+          creditDebitTransactions.push({
+            id: (userId - 1) * 50 + i + 1,
+            user_id: userId,
+            type: 'debit',
+            amount: faker.number.int({ min: 3, max: 8 }),
+            note: faker.lorem.sentence(),
+            expired_at: faker.date.between({
+              from: faker.date.past(2),
+              to: faker.date.future(),
+            }),
+            class_type_id: class_types[Math.floor(Math.random() * 3)]?.id ?? 1,
+            user_package_id:
+              user_packages[Math.floor(Math.random() * 30)]?.id ?? 1,
+            created_at: faker.date.between({
+              from: faker.date.past({ years: 4 }),
+              to: faker.date.recent(),
+            }),
+          });
+        }
+      }
 
       await trx
         .insertInto('credit_transactions')
-        .values(creditTransactions)
+        .values(creditDebitTransactions)
+        .execute();
+
+      for (let userId = 1; userId <= 10; userId++) {
+        for (let i = 0; i < 100; i++) {
+          const randomIndex = Math.floor(Math.random() * 50);
+          creditCreditTransactions.push({
+            user_id: userId,
+            type: 'credit',
+            amount: 1,
+            note: faker.lorem.sentence(),
+            class_type_id: class_types[Math.floor(Math.random() * 3)]?.id ?? 1,
+            agenda_booking_id:
+              agendaBookings[Math.floor(Math.random() * 30)]?.id ?? 1,
+            credit_transaction_id:
+              // random
+              creditDebitTransactions.reduce((acc: number[], t) => {
+                if (t.user_id === userId) {
+                  acc.push(t.id ?? 1);
+                }
+                return acc;
+              }, [])[randomIndex] ?? 1,
+          });
+        }
+      }
+
+      await trx
+        .insertInto('credit_transactions')
+        .values(creditCreditTransactions)
         .execute();
 
       const packageTransactions: Insertable<PackageTransactions>[] = Array.from(
@@ -494,7 +516,14 @@ export async function down(db: Kysely<any>): Promise<void> {
     await db.transaction().execute(async (trx) => {
       await trx.deleteFrom('loyalty_transactions').execute();
       await trx.deleteFrom('package_transactions').execute();
-      await trx.deleteFrom('credit_transactions').execute();
+      await trx
+        .deleteFrom('credit_transactions')
+        .where('type', '=', 'credit')
+        .execute();
+      await trx
+        .deleteFrom('credit_transactions')
+        .where('type', '=', 'debit')
+        .execute();
       await trx.deleteFrom('user_packages').execute();
       await trx.deleteFrom('agenda_bookings').execute();
       await trx.deleteFrom('agendas').execute();
@@ -503,7 +532,7 @@ export async function down(db: Kysely<any>): Promise<void> {
       await trx.deleteFrom('class_assets').execute();
       await trx.deleteFrom('class_locations').execute();
       await trx.deleteFrom('classes').execute();
-      await trx.deleteFrom('facility_equipments').execute();
+      // await trx.deleteFrom('facility_equipments').execute();
       await trx.deleteFrom('location_assets').execute();
       await trx.deleteFrom('location_facilities').execute();
       await trx.deleteFrom('location_operational_hours').execute();

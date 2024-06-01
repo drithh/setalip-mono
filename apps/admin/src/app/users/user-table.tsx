@@ -21,16 +21,24 @@ import { roles } from './form-schema';
 
 interface UserTableProps {
   locations: SelectLocation[];
+  classTypes: SelectClassType[];
   search: z.infer<typeof findAllUserSchema>;
 }
 
-export default function UserTable({ locations, search }: UserTableProps) {
+export default function UserTable({
+  locations,
+  classTypes,
+  search,
+}: UserTableProps) {
   const [{ result, error }] = api.user.findAll.useSuspenseQuery(search, {});
   if (error) {
     throw new Error('Error fetching data', error);
   }
 
-  const columns = React.useMemo(() => getColumns({ locations: locations }), []);
+  const columns = React.useMemo(
+    () => getColumns({ locations: locations, classTypes: classTypes }),
+    [],
+  );
 
   const filterFields: DataTableFilterField<SelectUser>[] = [
     {

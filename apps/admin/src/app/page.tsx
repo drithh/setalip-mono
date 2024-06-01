@@ -11,8 +11,6 @@ export default async function Home() {
     redirect('/login');
   }
 
-  const userRepo = container.get<UserRepository>(TYPES.UserRepository);
-  const users = await userRepo.findAll();
   return (
     <main className="min-h-screen">
       {auth && (
@@ -20,11 +18,6 @@ export default async function Home() {
           {auth.id} {auth.email} {auth.role} {auth.phoneNumber}
         </p>
       )}
-      {users.map((user) => (
-        <div key={user.id}>
-          <p>{user.email}</p>
-        </div>
-      ))}
     </main>
   );
 }
