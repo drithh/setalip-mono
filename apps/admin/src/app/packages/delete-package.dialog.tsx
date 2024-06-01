@@ -12,43 +12,46 @@ import {
 } from '@repo/ui/components/ui/alert-dialog';
 import { Button } from '@repo/ui/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { useDeleteLocationMutation } from './_functions/delete-location';
+import { useDeleteMutation } from './_functions/delete-package';
+import { api } from '@/trpc/react';
+import { SelectPackage } from '@repo/shared/repository';
 
-interface DeleteLocationProps {
-  locationId: number;
+interface DeletePackageProps {
+  singlePackage: SelectPackage;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export default function DeleteLocation({ locationId }: DeleteLocationProps) {
-  const router = useRouter();
-  const deleteLocation = useDeleteLocationMutation();
+export default function DeletePackageDialog({
+  singlePackage,
+  open,
+  onOpenChange,
+}: DeletePackageProps) {
+  const trpcUtils = api.useUtils();
+  const deletePackage = useDeleteMutation();
   const onDelete = () => {
-    deleteLocation.mutate(
+    deletePackage.mutate(
       {
-        locationId: locationId,
+        packageId: singlePackage.id,
       },
       {
         onSuccess: () => {
-          router.push('/locations');
+          trpcUtils.invalidate();
         },
       },
     );
   };
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant={'destructive'} type="button">
-          Hapus Lokasi
-        </Button>
-      </AlertDialogTrigger>
-
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Apakah kamu yakin menghapus lokasi ini?
+            Apakah kamu yakin menghapus paket{' '}
+            <span className="font-semibold">{singlePackage.name}</span>?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Aksi ini tidak dapat dibatalkan. Ini akan menghapus lokasi beserta
-            foto dari server.
+            Aksi ini tidak dapat dibatalkan. Ini akan menghapus paket dari
+            server.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

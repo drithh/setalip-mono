@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
+  VisibilityState,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
@@ -14,11 +15,14 @@ import {
   type ColumnFiltersState,
   type PaginationState,
   type SortingState,
-  type VisibilityState,
 } from '@tanstack/react-table';
 import { z } from 'zod';
 import type { DataTableFilterField } from '@repo/ui/types';
 import { useDebounce } from '@/hooks/use-debounce';
+
+type ColumnVisibilityState<TData> = Partial<{
+  [K in keyof TData]: boolean;
+}>;
 
 interface UseDataTableProps<TData, TValue> {
   /**
@@ -89,13 +93,7 @@ interface UseDataTableProps<TData, TValue> {
    */
   filterFields?: DataTableFilterField<TData>[];
 
-  /**
-   * Enable notion like column filters.
-   * Advanced filters and column filters cannot be used at the same time.
-   * @default false
-   * @type boolean
-   */
-  enableAdvancedFilter?: boolean;
+  visibleColumns?: ColumnVisibilityState<TData>;
 }
 
 const schema = z.object({
@@ -111,7 +109,7 @@ export function useDataTable<TData, TValue>({
   defaultPerPage = 10,
   defaultSort,
   filterFields = [],
-  enableAdvancedFilter = false,
+  visibleColumns = {},
 }: UseDataTableProps<TData, TValue>) {
   const router = useRouter();
   const pathname = usePathname();
@@ -182,7 +180,7 @@ export function useDataTable<TData, TValue>({
   // Table states
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>(visibleColumns as VisibilityState);
   const [columnFilters, setColumnFilters] =
     React.useState<ColumnFiltersState>(initialColumnFilters);
 
@@ -255,9 +253,6 @@ export function useDataTable<TData, TValue>({
 
   React.useEffect(() => {
     // Opt out when advanced filter is enabled, because it contains additional params
-    if (enableAdvancedFilter) return;
-
-    // Prevent resetting the page on initial render
     if (!mounted) {
       setMounted(true);
       return;

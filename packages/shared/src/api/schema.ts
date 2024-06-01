@@ -39,3 +39,7 @@ export const findAllPackageSchema = z.object({
   name: z.string().optional(),
   class_type_id: z.string().optional(),
 });
+
+export const deletePackageSchema = z.object({
+  packageId: z.coerce.number().refine((data) => data > 0),
+});

@@ -2,7 +2,7 @@ import { TYPES } from '#dep/inversify/types';
 import { PackageService } from '#dep/service/package';
 import { TRPCRouterRecord } from '@trpc/server';
 import { protectedProcedure, publicProcedure } from '../trpc';
-import { findAllPackageSchema } from '../schema';
+import { deletePackageSchema, findAllPackageSchema } from '../schema';
 
 export const packageRouter = {
   findAll: publicProcedure
@@ -25,5 +25,14 @@ export const packageRouter = {
       });
 
       return packages;
+    }),
+  delete: protectedProcedure
+    .input(deletePackageSchema)
+    .mutation(async ({ ctx, input }) => {
+      const packageService = ctx.container.get<PackageService>(
+        TYPES.PackageService
+      );
+
+      await packageService.delete(input.packageId);
     }),
 } satisfies TRPCRouterRecord;

@@ -3,7 +3,7 @@ import { PhotoProvider } from 'react-photo-view';
 import FileCard from './file-card';
 import { SelectDetailLocation } from '@repo/shared/repository';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { useDeleteLocationAssetMutation } from './_functions/delete-location-asset';
+import { useDeleteAssetMutation } from './_functions/delete-location-asset';
 import { useRouter } from 'next/navigation';
 interface LocationAssetsProps {
   assets: SelectDetailLocation['assets'];
@@ -14,7 +14,7 @@ type FileWithPreview = File & { preview: string };
 export default function LocationAssets({ assets }: LocationAssetsProps) {
   const router = useRouter();
   const [parent] = useAutoAnimate(/* optional config */);
-  const deleteLocationAsset = useDeleteLocationAssetMutation();
+  const deleteLocationAsset = useDeleteAssetMutation();
 
   return (
     <>

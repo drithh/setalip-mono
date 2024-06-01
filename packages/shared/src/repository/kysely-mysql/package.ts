@@ -43,9 +43,12 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     const queryCount = await query
       .select(({ fn }) => [fn.count<number>('id').as('count')])
       .executeTakeFirst();
+
+    const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
+
     return {
       data: queryData,
-      pageCount: queryCount?.count ?? -1,
+      pageCount: pageCount,
     };
   }
 
@@ -81,17 +84,14 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
   async update(data: UpdatePackage) {
     try {
-      const query = this._db
+      const query = await this._db
         .updateTable('packages')
         .set(data)
         .where('packages.id', '=', data.id)
-        .returningAll()
-        .compile();
+        .executeTakeFirst();
 
-      const result = await this._db.executeQuery(query);
-
-      if (result.rows[0] === undefined) {
-        console.error('Failed to update package', result);
+      if (query.numUpdatedRows === undefined) {
+        console.error('Failed to update package', query);
         return new Error('Failed to update package');
       }
 

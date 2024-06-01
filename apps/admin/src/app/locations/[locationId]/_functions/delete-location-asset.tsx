@@ -18,8 +18,8 @@ const TOAST_MESSAGES = {
   },
 };
 
-export const useDeleteLocationAssetMutation = () =>
-  api.location.deleteLocationAsset.useMutation({
+export const useDeleteAssetMutation = () =>
+  api.location.deleteAsset.useMutation({
     onMutate: () => {
       toast.loading(TOAST_MESSAGES.loading.title, {
         description: TOAST_MESSAGES.loading.description,

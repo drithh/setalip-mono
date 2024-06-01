@@ -86,7 +86,8 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>
-                Apakah kamu yakin menghapus fasilitas ini?
+                Apakah kamu yakin menghapus fasilitas{' '}
+                <span className="font-semibold">{facility.name}</span>?
               </AlertDialogTitle>
               <AlertDialogDescription>
                 Aksi ini tidak dapat dibatalkan. Ini akan menghapus fasilitas

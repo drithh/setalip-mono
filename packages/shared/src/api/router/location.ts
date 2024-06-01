@@ -10,7 +10,7 @@ import {
 } from '../schema';
 
 export const locationRouter = {
-  deleteLocationAsset: protectedProcedure
+  deleteAsset: protectedProcedure
     .input(deleteLocationAssetSchema)
     .mutation(async ({ ctx, input }) => {
       const locationService = ctx.container.get<LocationService>(
@@ -23,7 +23,7 @@ export const locationRouter = {
 
       return deleteLocationAsset;
     }),
-  deleteLocation: protectedProcedure
+  delete: protectedProcedure
     .input(deleteLocationSchema)
     .mutation(async ({ ctx, input }) => {
       const locationService = ctx.container.get<LocationService>(

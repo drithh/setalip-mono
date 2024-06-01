@@ -13,3 +13,10 @@ export const createPackageSchema = z.object({
 
 export type CreatePackageSchema = z.infer<typeof createPackageSchema>;
 export type FormCreatePackage = FormState<CreatePackageSchema>;
+
+export const editPackageSchema = createPackageSchema.extend({
+  id: z.coerce.number(),
+});
+
+export type EditPackageSchema = z.infer<typeof editPackageSchema>;
+export type FormEditPackage = FormState<EditPackageSchema>;

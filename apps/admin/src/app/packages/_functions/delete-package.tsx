@@ -5,21 +5,21 @@ import { toast } from 'sonner';
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal menghapus lokasi',
+    title: 'Gagal menghapus paket',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Menghapus lokasi...',
+    title: 'Menghapus paket...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Lokasi berhasil dihapus',
-    description: 'Lokasi berhasil dihapus',
+    title: 'Paket berhasil dihapus',
+    description: 'Paket berhasil dihapus',
   },
 };
 
 export const useDeleteMutation = () =>
-  api.location.delete.useMutation({
+  api.package.delete.useMutation({
     onMutate: () => {
       toast.loading(TOAST_MESSAGES.loading.title, {
         description: TOAST_MESSAGES.loading.description,

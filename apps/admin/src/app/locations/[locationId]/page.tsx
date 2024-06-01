@@ -39,7 +39,7 @@ import EditDetailLocationForm from './edit-detail-location.form';
 import CreateFacilityForm from './create-facility.form';
 import OperationalHour from './operational-hour';
 import EditOperationalHourForm from './edit-operational-hour.form';
-import DeleteLocation from './delete-location';
+import DeleteLocation from './delete-location.dialog';
 
 export default async function LocationDetail({
   params,
@@ -73,7 +73,7 @@ export default async function LocationDetail({
           {location.result?.name}
         </h1>
         <div className="ml-auto flex gap-4">
-          <DeleteLocation locationId={location.result.id} />
+          <DeleteLocation location={location.result} />
         </div>
       </div>
 

@@ -23,9 +23,7 @@ export default function PackageTable({
   classTypes,
   search,
 }: PackageTableProps) {
-  const [{ result, error }] = api.package.findAll.useSuspenseQuery(search, {
-    queryHash: 'findAllPackages',
-  });
+  const [{ result, error }] = api.package.findAll.useSuspenseQuery(search, {});
   if (error) {
     throw new Error('Error fetching data', error);
   }
@@ -59,6 +57,11 @@ export default function PackageTable({
     filterFields,
     defaultPerPage: 10,
     defaultSort: 'created_at.asc',
+    visibleColumns: {
+      updated_at: false,
+      updated_by: false,
+      one_time_only: false,
+    },
   });
 
   return (
