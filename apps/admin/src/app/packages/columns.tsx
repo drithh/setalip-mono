@@ -71,9 +71,9 @@ export function getColumns({
     {
       accessorKey: 'name',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Name" />
+        <DataTableColumnHeader className="w-40" column={column} title="Name" />
       ),
-      cell: ({ row }) => <div className="w-20">{row.getValue('name')}</div>,
+      cell: ({ row }) => <div>{row.original.name}</div>,
       enableSorting: false,
       enableHiding: false,
     },
@@ -89,14 +89,31 @@ export function getColumns({
     {
       accessorKey: 'credit',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Duration" />
+        <DataTableColumnHeader
+          className="justify-center"
+          column={column}
+          title="Credit"
+        />
       ),
+
+      cell: ({ row }) => {
+        return <p className="-ml-5 text-center">{row.original.credit}</p>;
+      },
     },
     {
       accessorKey: 'loyalty_points',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Loyalty Points" />
+        <DataTableColumnHeader
+          className="justify-center"
+          column={column}
+          title="Loyalty Points"
+        />
       ),
+      cell: ({ row }) => {
+        return (
+          <p className="-ml-5 text-center">{row.original.loyalty_points}</p>
+        );
+      },
     },
     {
       accessorKey: 'valid_for',
@@ -114,7 +131,7 @@ export function getColumns({
       ),
       cell: ({ row }) => {
         return (
-          <span>
+          <span className="capitalize">
             {
               classTypes.find(
                 (classType) => classType.id === row.original.class_type_id,

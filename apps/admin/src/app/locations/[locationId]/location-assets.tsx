@@ -3,7 +3,7 @@ import { PhotoProvider } from 'react-photo-view';
 import FileCard from './file-card';
 import { SelectDetailLocation } from '@repo/shared/repository';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { useDeleteLocationAssetMutation } from './function/delete-location-asset';
+import { useDeleteLocationAssetMutation } from './_functions/delete-location-asset';
 import { useRouter } from 'next/navigation';
 interface LocationAssetsProps {
   assets: SelectDetailLocation['assets'];

@@ -14,7 +14,6 @@ export const editDetailLocationSchema = z.object({
 });
 
 export type EditDetailLocationSchema = z.infer<typeof editDetailLocationSchema>;
-
 export type FormEditDetailLocation = FormState<EditDetailLocationSchema>;
 
 export const createFacilitySchema = z.object({

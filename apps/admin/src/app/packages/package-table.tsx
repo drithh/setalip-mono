@@ -23,8 +23,9 @@ export default function PackageTable({
   classTypes,
   search,
 }: PackageTableProps) {
-  const [{ result, error }] = api.package.findAll.useSuspenseQuery(search, {});
-
+  const [{ result, error }] = api.package.findAll.useSuspenseQuery(search, {
+    queryHash: 'findAllPackages',
+  });
   if (error) {
     throw new Error('Error fetching data', error);
   }
@@ -63,7 +64,7 @@ export default function PackageTable({
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <TasksTableToolbarActions table={table} />
+        <TasksTableToolbarActions table={table} classTypes={classTypes} />
       </DataTableToolbar>
     </DataTable>
   );

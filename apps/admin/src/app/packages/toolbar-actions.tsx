@@ -8,14 +8,17 @@ import { Button } from '@repo/ui/components/ui/button';
 
 // import { CreateTaskDialog } from './create-task-dialog';
 // import { DeleteTasksDialog } from './delete-tasks-dialog';
-import { SelectPackage } from '@repo/shared/repository';
+import { SelectClassType, SelectPackage } from '@repo/shared/repository';
+import CreatePackageForm from './create-package.form';
 
 interface TasksTableToolbarActionsProps {
   table: Table<SelectPackage>;
+  classTypes: SelectClassType[];
 }
 
 export function TasksTableToolbarActions({
   table,
+  classTypes,
 }: TasksTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
@@ -38,15 +41,9 @@ export function TasksTableToolbarActions({
           Delete
         </Button>
       ) : null}
-      <Button
-        variant="default"
-        size="sm"
-        // onClick={() => table.toggleAllRowsSelected(false)}
-      >
-        Create Task
-      </Button>
-      {/* <CreateTaskDialog prevTasks={table.getFilteredRowModel().rows} /> */}
-      <Button
+
+      <CreatePackageForm classTypes={classTypes} />
+      {/* <Button
         variant="outline"
         size="sm"
         // onClick={() =>
@@ -58,7 +55,7 @@ export function TasksTableToolbarActions({
       >
         <DownloadIcon className="mr-2 size-4" aria-hidden="true" />
         Export
-      </Button>
+      </Button> */}
       {/**
        * Other actions can be added here.
        * For example, import, view, etc.

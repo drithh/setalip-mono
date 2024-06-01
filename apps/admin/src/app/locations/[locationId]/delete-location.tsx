@@ -12,7 +12,7 @@ import {
 } from '@repo/ui/components/ui/alert-dialog';
 import { Button } from '@repo/ui/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { useDeleteLocationMutation } from './function/delete-location';
+import { useDeleteLocationMutation } from './_functions/delete-location';
 
 interface DeleteLocationProps {
   locationId: number;
