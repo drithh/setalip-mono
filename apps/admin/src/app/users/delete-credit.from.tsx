@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { createCredit } from './_actions/create-credit';
+import { deleteCredit } from './_actions/delete-credit';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,15 +16,17 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { CreateCreditSchema, createCreditSchema, roles } from './form-schema';
+import { DeleteCreditSchema, deleteCreditSchema, roles } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { DatePicker } from '@repo/ui/components/date-picker';
 import {
+  SelectAmountCredit,
   SelectClassType,
   SelectDetailLocation,
   SelectLocation,
   SelectUser,
+  SelectUserWithCredits,
 } from '@repo/shared/repository';
 import {
   Sheet,
@@ -47,8 +49,8 @@ import { Textarea } from '@repo/ui/components/ui/textarea';
 import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 
-interface CreateCreditProps {
-  user: SelectUser;
+interface DeleteCreditProps {
+  user: SelectUserWithCredits;
   classTypes: SelectClassType[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -56,43 +58,53 @@ interface CreateCreditProps {
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal menambah credit',
+    title: 'Gagal mengurangi credit',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Menambah credit...',
+    title: 'Mengurangi credit...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Credit berhasil diperbarui',
+    title: 'Credit berhasil dikurangi',
   },
 };
 
-export default function CreateCreditForm({
+export default function DeleteCreditForm({
   user,
   classTypes,
   open,
   onOpenChange,
-}: CreateCreditProps) {
+}: DeleteCreditProps) {
   const trpcUtils = api.useUtils();
   const router = useRouter();
-  type FormSchema = CreateCreditSchema;
+  type FormSchema = DeleteCreditSchema;
 
-  const [formState, formAction] = useFormState(createCredit, {
+  const [formState, formAction] = useFormState(deleteCredit, {
     status: 'default',
     form: {
       amount: 0,
       note: '',
       class_type_id: 1,
-      expired_at: new Date(),
       user_id: user.id,
     } as FormSchema,
   });
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(createCreditSchema),
+    resolver: zodResolver(deleteCreditSchema),
     defaultValues: formState.form,
   });
+
+  const [remainingAmount, setRemainingAmount] = useState(0);
+
+  useEffect(() => {
+    const remainingAmount =
+      user.credits.find(
+        (credit) =>
+          credit.class_type_id === Number(form.getValues('class_type_id')),
+      )?.remaining_amount ?? 0;
+    setRemainingAmount(Number(remainingAmount));
+  }, [form.watch('class_type_id')]);
 
   useEffect(() => {
     toast.dismiss();
@@ -146,9 +158,9 @@ export default function CreateCreditForm({
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">Tambah kredit</SheetTitle>
+            <SheetTitle className="text-left">Kurangi kredit</SheetTitle>
             <SheetDescription className="text-left">
-              Tambah kredit. Pastikan klik simpan ketika selesai.
+              Kurangi kredit. Pastikan klik simpan ketika selesai.
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -171,6 +183,7 @@ export default function CreateCreditForm({
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="class_type_id"
@@ -205,43 +218,31 @@ export default function CreateCreditForm({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="amount"
-                  render={({ field }) => (
-                    <FormItem className="grid w-full gap-2">
-                      <FormLabel>Jumlah kredit</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
 
                 <FormField
                   control={form.control}
-                  name="expired_at"
-                  render={({ field }) => (
-                    <FormItem className="grid w-full gap-2">
-                      <FormLabel>Tanggal kedaluwarsa</FormLabel>
-                      <FormControl>
-                        <>
+                  name="amount"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="grid w-full gap-2">
+                        <FormLabel>Jumlah kredit yang dikurangi</FormLabel>
+                        <FormDescription>
+                          Tersisa {remainingAmount} kredit
+                        </FormDescription>
+                        <FormControl>
                           <Input
-                            type="hidden"
+                            min={0}
+                            max={remainingAmount}
+                            type="number"
                             {...field}
-                            value={field.value.toDateString()}
                           />
-                          <DatePicker
-                            value={field.value}
-                            onChange={(date) => field.onChange(date)}
-                          />
-                        </>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
+
                 <FormField
                   control={form.control}
                   name="note"

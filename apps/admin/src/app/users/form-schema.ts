@@ -32,3 +32,13 @@ export const createCreditSchema = z.object({
 
 export type CreateCreditSchema = z.infer<typeof createCreditSchema>;
 export type FormCreateCredit = FormState<CreateCreditSchema>;
+
+export const deleteCreditSchema = z.object({
+  amount: z.coerce.number(),
+  note: z.string().min(3).max(255),
+  user_id: z.coerce.number(),
+  class_type_id: z.coerce.number(),
+});
+
+export type DeleteCreditSchema = z.infer<typeof deleteCreditSchema>;
+export type FormDeleteCredit = FormState<DeleteCreditSchema>;

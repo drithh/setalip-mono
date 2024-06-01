@@ -1,15 +1,19 @@
 import { Database } from '#dep/db/index';
 import {
+  DeleteCredit,
   FindAllUserOptions,
   InsertCredit,
   InsertUser,
+  SelectAmountCredit,
   SelectUser,
+  SelectUserWithCredits,
   UpdateUser,
   UserRepository,
 } from '#dep/repository/user';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
+import { sql } from 'kysely';
 
 @injectable()
 export class KyselyMySqlUserRepository implements UserRepository {
@@ -50,8 +54,15 @@ export class KyselyMySqlUserRepository implements UserRepository {
 
     const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
 
+    // iterate over queryData and fetch credits for each user
+    const userWithCredits: SelectUserWithCredits[] = [];
+    for (const user of queryData) {
+      const credits = await this.findCreditsByUserId(user.id);
+      userWithCredits.push({ ...user, credits });
+    }
+
     return {
-      data: queryData,
+      data: userWithCredits,
       pageCount: pageCount,
     };
   }
@@ -82,6 +93,57 @@ export class KyselyMySqlUserRepository implements UserRepository {
       .selectAll()
       .where('users.email', '=', email)
       .executeTakeFirst();
+  }
+
+  async findCreditsByUserId(
+    userId: SelectUser['id']
+  ): Promise<SelectAmountCredit[]> {
+    try {
+      const query = await this._db
+        .with('ct_debit', (q) =>
+          q
+            .selectFrom('credit_transactions')
+            .selectAll()
+            .where('credit_transactions.user_id', '=', userId)
+            .where('credit_transactions.expired_at', '>', new Date())
+        )
+        .with('debit_summary', (q) =>
+          q
+            .selectFrom('ct_debit')
+            .select([
+              'ct_debit.class_type_id',
+              'ct_debit.amount',
+              sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`.as(
+                'amount_used'
+              ),
+            ])
+            .leftJoin(
+              'credit_transactions',
+              'ct_debit.id',
+              'credit_transactions.credit_transaction_id'
+            )
+            .groupBy('ct_debit.id')
+            .having(
+              'ct_debit.amount',
+              '>',
+              sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`
+            )
+        )
+        .selectFrom('debit_summary')
+        .select([
+          'debit_summary.class_type_id',
+          sql<number>`SUM((debit_summary.amount - debit_summary.amount_used))`.as(
+            'remaining_amount'
+          ),
+        ])
+        .groupBy('debit_summary.class_type_id')
+        .execute();
+
+      return query;
+    } catch (error) {
+      console.error('Error finding credits by user id:', error);
+      return [];
+    }
   }
 
   async create(data: InsertUser) {
@@ -165,6 +227,97 @@ export class KyselyMySqlUserRepository implements UserRepository {
     } catch (error) {
       console.error('Error deleting user:', error);
       return new Error('Failed to delete user');
+    }
+  }
+
+  async deleteCredit(data: DeleteCredit) {
+    try {
+      const credits = await this._db
+        .with('ct_debit', (q) =>
+          q
+            .selectFrom('credit_transactions')
+            .selectAll()
+            .where('credit_transactions.user_id', '=', data.user_id)
+            .where('credit_transactions.expired_at', '>', new Date())
+            .where('credit_transactions.class_type_id', '=', data.class_type_id)
+        )
+        .with('debit_summary', (q) =>
+          q
+            .selectFrom('ct_debit')
+            .select([
+              'ct_debit.id',
+              'ct_debit.class_type_id',
+              'ct_debit.amount',
+              sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`.as(
+                'amount_used'
+              ),
+            ])
+            .leftJoin(
+              'credit_transactions',
+              'ct_debit.id',
+              'credit_transactions.credit_transaction_id'
+            )
+            .groupBy('ct_debit.id')
+            .having(
+              'ct_debit.amount',
+              '>',
+              sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`
+            )
+        )
+        .selectFrom('debit_summary')
+        .selectAll()
+        .execute();
+
+      const creditSum = credits.reduce(
+        (acc, curr) => acc + (curr.amount - curr.amount_used),
+        0
+      );
+
+      if (data.amount > creditSum) {
+        console.log('Insufficient credit:', data.amount, creditSum);
+        return new Error('Insufficient credit');
+      }
+
+      let currentAmount = data.amount;
+      await this._db.transaction().execute(async (trx) => {
+        for (const credit of credits) {
+          if (currentAmount <= 0) {
+            continue;
+          }
+
+          const reducedAmount = Math.min(
+            currentAmount,
+            credit.amount - credit.amount_used
+          );
+
+          const query = trx
+            .insertInto('credit_transactions')
+            .values({
+              user_id: data.user_id,
+              credit_transaction_id: credit.id,
+              class_type_id: data.class_type_id,
+              amount: reducedAmount,
+              type: 'credit' as const,
+              note: data.note,
+            })
+            .returningAll()
+            .compile();
+
+          const result = await trx.executeQuery(query);
+
+          if (result.rows[0] === undefined) {
+            console.error('Error deleting credit:', query);
+            return new Error('Failed to delete credit');
+          }
+
+          currentAmount -= reducedAmount;
+        }
+      });
+
+      return;
+    } catch (error) {
+      console.error('Error deleting credit:', error);
+      return new Error('Failed to delete credit');
     }
   }
 }

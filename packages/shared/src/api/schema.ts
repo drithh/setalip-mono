@@ -51,3 +51,7 @@ export const findAllUserSchema = defaultPaginationSchema.extend({
   name: z.string().optional(),
   role: z.string().optional(),
 });
+
+export const findCreditsByUserIdSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});

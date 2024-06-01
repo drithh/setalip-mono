@@ -50,6 +50,15 @@ export class UserServiceImpl implements UserService {
     };
   }
 
+  async findCreditsByUserId(userId: SelectUser['id']) {
+    const credits = await this._userRepository.findCreditsByUserId(userId);
+
+    return {
+      result: credits,
+      error: undefined,
+    };
+  }
+
   async createCredit(data: InsertCredit) {
     const classType = await this._classTypeRepository.findById(
       data.class_type_id
@@ -91,6 +100,21 @@ export class UserServiceImpl implements UserService {
 
   async update(data: UpdateUser) {
     const result = await this._userRepository.update(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
+  async deleteCredit(data: InsertCredit) {
+    const result = await this._userRepository.deleteCredit(data);
 
     if (result instanceof Error) {
       return {

@@ -2,7 +2,7 @@ import { TYPES } from '#dep/inversify/types';
 import { UserService } from '#dep/service/user';
 import { TRPCRouterRecord } from '@trpc/server';
 import { protectedProcedure } from '../trpc';
-import { findAllUserSchema } from '../schema';
+import { findAllUserSchema, findCreditsByUserIdSchema } from '../schema';
 import { SelectUser } from '#dep/repository/index';
 
 export const userRouter = {

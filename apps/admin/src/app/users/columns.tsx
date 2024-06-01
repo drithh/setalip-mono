@@ -19,12 +19,14 @@ import {
   SelectLocation,
   SelectPackage,
   SelectUser,
+  SelectUserWithCredits,
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 // import DeletePackageDialog from './delete-package.dialog';
 import EditUserForm from './edit-user.form';
 import { dateFormatter } from '@repo/shared/util';
 import CreateCreditForm from './create-credit.from';
+import DeleteCreditForm from './delete-credit.from';
 
 interface getColumnsProps {
   locations: SelectLocation[];
@@ -34,7 +36,7 @@ interface getColumnsProps {
 export function getColumns({
   locations,
   classTypes,
-}: getColumnsProps): ColumnDef<SelectUser>[] {
+}: getColumnsProps): ColumnDef<SelectUserWithCredits>[] {
   return [
     {
       id: 'select',
@@ -150,6 +152,8 @@ export function getColumns({
         const [showEditUserSheet, setShowEditUserSheet] = React.useState(false);
         const [showCreateCreditSheet, setShowCreateCreditSheet] =
           React.useState(false);
+        const [showDeleteCreditSheet, setShowDeleteCreditSheet] =
+          React.useState(false);
 
         return (
           <>
@@ -162,6 +166,12 @@ export function getColumns({
             <CreateCreditForm
               open={showCreateCreditSheet}
               onOpenChange={setShowCreateCreditSheet}
+              user={row.original}
+              classTypes={classTypes}
+            />
+            <DeleteCreditForm
+              open={showDeleteCreditSheet}
+              onOpenChange={setShowDeleteCreditSheet}
               user={row.original}
               classTypes={classTypes}
             />
@@ -184,6 +194,11 @@ export function getColumns({
                   onSelect={() => setShowCreateCreditSheet(true)}
                 >
                   Add Credit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={() => setShowDeleteCreditSheet(true)}
+                >
+                  Reduce Credit
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
