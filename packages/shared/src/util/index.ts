@@ -1,4 +1,5 @@
 export * from '#dep/util/zod';
+export * from '#dep/util/local';
 
 function isNumber(value: FormDataEntryValue): value is string {
   return !isNaN(Number(value));

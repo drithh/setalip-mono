@@ -1,5 +1,6 @@
 import { Database } from '#dep/db/index';
 import {
+  FindAllUserOptions,
   InsertUser,
   SelectUser,
   UpdateUser,
@@ -17,8 +18,40 @@ export class KyselyMySqlUserRepository implements UserRepository {
     this._db = db;
   }
 
-  async findAll(): Promise<SelectUser[]> {
-    return this._db.selectFrom('users').selectAll().execute();
+  async findAll(data: FindAllUserOptions) {
+    const { page = 1, perPage = 10, sort, name, roles } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['createdAt', 'desc']
+    ).join(' ') as `${keyof SelectUser} ${'asc' | 'desc'}`;
+
+    let query = this._db.selectFrom('users');
+
+    if (name) {
+      query = query.where('name', 'like', `%${name}%`);
+    }
+    if (roles) {
+      query = query.where('role', 'in', roles);
+    }
+
+    const queryData = await query
+      .selectAll()
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
+      .execute();
+
+    const queryCount = await query
+      .select(({ fn }) => [fn.count<number>('id').as('count')])
+      .executeTakeFirst();
+
+    const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
+
+    return {
+      data: queryData,
+      pageCount: pageCount,
+    };
   }
 
   async findById(id: SelectUser['id']): Promise<SelectUser | undefined> {

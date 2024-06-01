@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { type ColumnDef } from '@tanstack/react-table';
+import { toast } from 'sonner';
 
 import { Checkbox } from '@repo/ui/components/ui/checkbox';
 import {
@@ -12,20 +13,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@repo/ui/components/ui/dropdown-menu';
-import { moneyFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
-import { SelectClassType, SelectPackage } from '@repo/shared/repository';
+import {
+  SelectClassType,
+  SelectLocation,
+  SelectPackage,
+  SelectUser,
+} from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
-import EditPackageForm from './edit-package.form';
-import DeletePackageDialog from './delete-package.dialog';
+// import DeletePackageDialog from './delete-package.dialog';
+import EditUserForm from './edit-user.form';
+import { dateFormatter } from '@repo/shared/util';
 
 interface getColumnsProps {
-  classTypes: SelectClassType[];
+  locations: SelectLocation[];
 }
 
 export function getColumns({
-  classTypes,
-}: getColumnsProps): ColumnDef<SelectPackage>[] {
+  locations,
+}: getColumnsProps): ColumnDef<SelectUser>[] {
   return [
     {
       id: 'select',
@@ -57,80 +63,58 @@ export function getColumns({
         <DataTableColumnHeader className="w-40" column={column} title="Name" />
       ),
       cell: ({ row }) => <div>{row.original.name}</div>,
-      enableSorting: false,
-      enableHiding: false,
     },
     {
-      accessorKey: 'price',
+      accessorKey: 'email',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Price" />
+        <DataTableColumnHeader column={column} title="Email" />
+      ),
+    },
+    {
+      accessorKey: 'phone_number',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Phone Number" />
+      ),
+    },
+    {
+      accessorKey: 'role',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Role" />
       ),
       cell: ({ row }) => {
-        return <span>{moneyFormatter.format(row.original.price)}</span>;
+        return <span className="capitalize">{row.original.role}</span>;
       },
     },
     {
-      accessorKey: 'credit',
+      accessorKey: 'location_id',
       header: ({ column }) => (
-        <DataTableColumnHeader
-          className="justify-center"
-          column={column}
-          title="Credit"
-        />
-      ),
-
-      cell: ({ row }) => {
-        return <p className="-ml-5 text-center">{row.original.credit}</p>;
-      },
-    },
-    {
-      accessorKey: 'loyalty_points',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          className="justify-center"
-          column={column}
-          title="Loyalty Points"
-        />
+        <DataTableColumnHeader column={column} title="Location" />
       ),
       cell: ({ row }) => {
         return (
-          <p className="-ml-5 text-center">{row.original.loyalty_points}</p>
-        );
-      },
-    },
-    {
-      accessorKey: 'valid_for',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Validity" />
-      ),
-      cell: ({ row }) => {
-        return <span>{row.original.valid_for} days</span>;
-      },
-    },
-    {
-      accessorKey: 'class_type_id',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Class Type" />
-      ),
-      cell: ({ row }) => {
-        return (
-          <span className="capitalize">
+          <span>
             {
-              classTypes.find(
-                (classType) => classType.id === row.original.class_type_id,
-              )?.type
+              locations.find(
+                (location) => location.id === row.original.location_id,
+              )?.name
             }
           </span>
         );
       },
     },
     {
-      accessorKey: 'one_time_only',
+      accessorKey: 'verified_at',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="One Time Only" />
+        <DataTableColumnHeader column={column} title="Class Type" />
       ),
       cell: ({ row }) => {
-        return <span>{row.original.one_time_only ? 'Yes' : 'No'}</span>;
+        return (
+          <span className="capitalize">
+            {row.original.verified_at
+              ? dateFormatter.format(row.original.verified_at)
+              : '-'}
+          </span>
+        );
       },
     },
     {
@@ -139,7 +123,13 @@ export function getColumns({
         <DataTableColumnHeader column={column} title="Updated At" />
       ),
       cell: ({ row }) => {
-        return <span>{row.original.updated_at.toDateString()}</span>;
+        return (
+          <span>
+            {row.original.updated_at
+              ? dateFormatter.format(row.original.updated_at)
+              : '-'}
+          </span>
+        );
       },
     },
     {
@@ -161,17 +151,17 @@ export function getColumns({
 
         return (
           <>
-            <EditPackageForm
-              classTypes={classTypes}
+            <EditUserForm
+              locations={locations}
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}
-              singlePackage={row.original}
+              user={row.original}
             />
-            <DeletePackageDialog
+            {/* <DeletePackageDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
               singlePackage={row.original}
-            />
+            /> */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button

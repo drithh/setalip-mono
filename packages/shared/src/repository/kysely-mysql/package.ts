@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import {
-  FindAllOptions,
+  FindAllPackageOptions,
   InsertPackage,
   PackageRepository,
   SelectPackage,
@@ -17,8 +17,8 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     this._db = db;
   }
 
-  async findAll(data: FindAllOptions) {
-    const { page, perPage, sort, name, types } = data;
+  async findAll(data: FindAllPackageOptions) {
+    const { page = 1, perPage = 10, sort, name, types } = data;
 
     const offset = (page - 1) * perPage;
     const orderBy = (

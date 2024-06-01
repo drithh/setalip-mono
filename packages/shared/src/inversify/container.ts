@@ -28,6 +28,7 @@ import {
   LocationServiceImpl,
   PackageServiceImpl,
   ClassTypeServiceImpl,
+  UserServiceImpl,
 } from '#dep/service/index.impl';
 import {
   AuthService,
@@ -36,6 +37,7 @@ import {
   LocationService,
   PackageService,
   ClassTypeService,
+  UserService,
 } from '#dep/service/index';
 
 const container = new Container();
@@ -70,5 +72,6 @@ container
 container
   .bind<ClassTypeService>(TYPES.ClassTypeService)
   .to(ClassTypeServiceImpl);
+container.bind<UserService>(TYPES.UserService).to(UserServiceImpl);
 
 export { container };

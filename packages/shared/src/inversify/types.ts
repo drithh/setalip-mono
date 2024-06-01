@@ -15,6 +15,7 @@ const TYPES = {
   PackageService: Symbol.for('PackageService'),
   ClassTypeRepository: Symbol.for('ClassTypeRepository'),
   ClassTypeService: Symbol.for('ClassTypeService'),
+  UserService: Symbol.for('UserService'),
 };
 
 export { TYPES };

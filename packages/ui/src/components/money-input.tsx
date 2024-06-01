@@ -3,15 +3,7 @@
 import React, { useReducer, useState } from 'react';
 import { Input, InputProps } from '#dep/components/ui/input';
 import { cn } from '#dep/lib/utils';
-
-const moneyFormatter = Intl.NumberFormat('id-ID', {
-  currency: 'IDR',
-  currencyDisplay: 'symbol',
-  currencySign: 'standard',
-  style: 'currency',
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
+import { moneyFormatter } from '@repo/shared/util';
 
 const MoneyInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => {

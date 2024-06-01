@@ -7,14 +7,22 @@ import {
   UpdateResult,
   Updateable,
 } from 'kysely';
-import { OptionalToRequired } from '.';
+import { DefaultPagination, OptionalToRequired } from '.';
 
 export type InsertUser = Insertable<Users>;
 export type UpdateUser = OptionalToRequired<Updateable<Users>, 'id'>;
 export type SelectUser = Selectable<Users>;
+export interface FindAllUserOptions extends DefaultPagination {
+  name?: string;
+  roles?: SelectUser['role'][];
+}
 
+export interface SelectAllUser {
+  data: SelectUser[];
+  pageCount: number;
+}
 export interface UserRepository {
-  findAll(): Promise<SelectUser[]>;
+  findAll(data: FindAllUserOptions): Promise<SelectAllUser>;
   findById(id: SelectUser['id']): Promise<SelectUser | undefined>;
   findByPhoneNumber(
     phoneNumber: SelectUser['phone_number']

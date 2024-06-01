@@ -11,7 +11,6 @@ import {
   LocationAssets,
   LocationFacilities,
   LocationOperationalHours,
-  FacilityEquipments,
 } from '../db';
 import { OptionalToRequired } from '.';
 

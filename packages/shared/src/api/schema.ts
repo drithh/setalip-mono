@@ -26,7 +26,7 @@ export const deleteFacilitySchema = z.object({
   facilityId: z.coerce.number(),
 });
 
-export const findAllPackageSchema = z.object({
+export const defaultPaginationSchema = z.object({
   page: z.coerce
     .number()
     .refine((data) => data > 0)
@@ -36,10 +36,18 @@ export const findAllPackageSchema = z.object({
     .refine((data) => data > 0)
     .default(10),
   sort: z.string().default('created_at.asc'),
+});
+
+export const findAllPackageSchema = defaultPaginationSchema.extend({
   name: z.string().optional(),
   class_type_id: z.string().optional(),
 });
 
 export const deletePackageSchema = z.object({
   packageId: z.coerce.number().refine((data) => data > 0),
+});
+
+export const findAllUserSchema = defaultPaginationSchema.extend({
+  name: z.string().optional(),
+  role: z.string().optional(),
 });

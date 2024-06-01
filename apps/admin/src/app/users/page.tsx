@@ -1,23 +1,11 @@
-import {
-  ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
 import { FindAllPackageOptions, SelectPackage } from '@repo/shared/repository';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
-import Link from 'next/link';
-import { api } from '@/trpc/react';
-import PackageTable from './package-table';
-import { Pencil, Trash2 } from 'lucide-react';
-import { useDataTable } from '@/hooks/use-data-table';
-import { getColumns } from './columns';
-import { TYPES, container } from '@repo/shared/inversify';
-import { ClassTypeService } from '@repo/shared/service';
-import { findAllPackageSchema } from '@repo/shared/api/schema';
+import { findAllUserSchema } from '@repo/shared/api/schema';
 import QueryResetBoundary from '../../lib/query-reset-boundary';
 import React from 'react';
-import { getAuth } from '@/lib/get-auth';
-import { redirect } from 'next/navigation';
+import UserTable from './user-table';
+import { TYPES, container } from '@repo/shared/inversify';
+import { LocationService } from '@repo/shared/service';
 
 export interface IndexPageProps {
   searchParams: FindAllPackageOptions;
@@ -29,12 +17,10 @@ export default async function Packages({ searchParams }: IndexPageProps) {
   //   redirect('/login');
   // }
 
-  const search = findAllPackageSchema.parse(searchParams);
-  console.log('search', search);
-  const classTypeService = container.get<ClassTypeService>(
-    TYPES.ClassTypeService,
-  );
-  const classTypes = await classTypeService.findAll();
+  const search = findAllUserSchema.parse(searchParams);
+
+  const locationService = container.get<LocationService>(TYPES.LocationService);
+  const locations = await locationService.findAll();
 
   return (
     <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
@@ -50,7 +36,7 @@ export default async function Packages({ searchParams }: IndexPageProps) {
             />
           }
         >
-          <PackageTable classTypes={classTypes.result ?? []} search={search} />
+          <UserTable search={search} locations={locations.result ?? []} />
         </React.Suspense>
       </QueryResetBoundary>
     </main>

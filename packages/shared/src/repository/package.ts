@@ -2,12 +2,12 @@ import { Insertable, Selectable, Updateable } from 'kysely';
 import { Packages } from '../db';
 import { DefaultPagination, OptionalToRequired } from '.';
 
-export interface FindAllOptions extends DefaultPagination {
+export interface FindAllPackageOptions extends DefaultPagination {
   name?: string;
   types?: number[];
 }
 
-export interface SelectAllPackages {
+export interface SelectAllPackage {
   data: SelectPackage[];
   pageCount: number;
 }
@@ -19,7 +19,7 @@ export type InsertPackage = Insertable<Packages>;
 export type UpdatePackage = OptionalToRequired<Updateable<Packages>, 'id'>;
 
 export interface PackageRepository {
-  findAll(data: FindAllOptions): Promise<SelectAllPackages>;
+  findAll(data: FindAllPackageOptions): Promise<SelectAllPackage>;
   findById(id: SelectPackage['id']): Promise<SelectPackage | undefined>;
 
   create(data: InsertPackage): Promise<SelectPackage | Error>;

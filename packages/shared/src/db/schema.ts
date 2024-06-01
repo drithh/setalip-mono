@@ -95,15 +95,6 @@ export interface DepositAccounts {
   updated_by: Generated<number>;
 }
 
-export interface FacilityEquipments {
-  created_at: Generated<Date>;
-  id: Generated<number>;
-  location_facility_id: number;
-  name: string;
-  updated_at: Generated<Date>;
-  updated_by: Generated<number>;
-}
-
 export interface LocationAssets {
   created_at: Generated<Date>;
   id: Generated<number>;
@@ -290,7 +281,6 @@ export interface DB {
   coaches: Coaches;
   credit_transactions: CreditTransactions;
   deposit_accounts: DepositAccounts;
-  facility_equipments: FacilityEquipments;
   location_assets: LocationAssets;
   location_facilities: LocationFacilities;
   location_operational_hours: LocationOperationalHours;

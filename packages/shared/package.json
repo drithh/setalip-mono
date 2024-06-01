@@ -21,7 +21,7 @@
     ]
   },
   "scripts": {
-    "codegen": "kysely-codegen --out-file ./src/db/schema.ts --dialect mysql"
+    "codegen": "kysely-codegen --runtime-enums --out-file ./src/db/schema.ts --dialect mysql"
   },
   "dependencies": {
     "@abraham/reflection": "^0.12.0",

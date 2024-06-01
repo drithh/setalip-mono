@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { editPackage } from './_actions/edit-package';
+import { editUser } from './_actions/edit-user';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { EditPackageSchema, editPackageSchema } from './form-schema';
+import { EditUserSchema, editUserSchema, roles } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Switch } from '@repo/ui/components/ui/switch';
@@ -25,7 +25,8 @@ import { AddonInput } from '@repo/ui/components/addon-input';
 import {
   SelectClassType,
   SelectDetailLocation,
-  SelectPackage,
+  SelectLocation,
+  SelectUser,
 } from '@repo/shared/repository';
 import {
   Sheet,
@@ -44,54 +45,50 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
+import { Textarea } from '@repo/ui/components/ui/textarea';
+import { PhoneInput } from '@repo/ui/components/phone-input';
+import { Value as PhoneNumberValue } from 'react-phone-number-input';
 
-interface EditPackageProps {
-  singlePackage: SelectPackage;
-  classTypes: SelectClassType[];
+interface EditUserProps {
+  user: SelectUser;
+  locations: SelectLocation[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal memperbarui paket',
+    title: 'Gagal memperbarui user',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Memperbarui paket...',
+    title: 'Memperbarui user...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Paket berhasil diperbarui',
+    title: 'User berhasil diperbarui',
   },
 };
 
-export default function EditPackageForm({
-  classTypes,
-  singlePackage,
+export default function EditUserForm({
+  user,
+  locations,
   open,
   onOpenChange,
-}: EditPackageProps) {
+}: EditUserProps) {
   const trpcUtils = api.useUtils();
   const router = useRouter();
-  type FormSchema = EditPackageSchema;
+  type FormSchema = EditUserSchema;
 
-  const [formState, formAction] = useFormState(editPackage, {
+  const [formState, formAction] = useFormState(editUser, {
     status: 'default',
     form: {
-      id: singlePackage.id,
-      name: singlePackage.name,
-      class_type_id: singlePackage.class_type_id,
-      price: singlePackage.price,
-      credit: singlePackage.credit,
-      loyalty_points: singlePackage.loyalty_points,
-      one_time_only: singlePackage.one_time_only,
-      valid_for: singlePackage.valid_for,
+      ...user,
     } as FormSchema,
   });
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(editPackageSchema),
+    resolver: zodResolver(editUserSchema),
     defaultValues: formState.form,
   });
 
@@ -188,28 +185,32 @@ export default function EditPackageForm({
                 />
                 <FormField
                   control={form.control}
-                  name="class_type_id"
+                  name="location_id"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Tipe Kelas</FormLabel>
+                      <FormLabel>Lokasi</FormLabel>
                       <FormControl>
                         <>
                           <Input type="hidden" {...field} />
 
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value.toString()}
+                            defaultValue={
+                              locations.find(
+                                (location) => location.id === field.value,
+                              )?.name ?? ''
+                            }
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Pilih tipe kelas" />
                             </SelectTrigger>
                             <SelectContent>
-                              {classTypes.map((classType) => (
+                              {locations.map((location) => (
                                 <SelectItem
-                                  key={classType.id}
-                                  value={classType.id.toString()}
+                                  key={location.id}
+                                  value={location.name}
                                 >
-                                  {classType.type}
+                                  {location.name}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -222,12 +223,12 @@ export default function EditPackageForm({
                 />
                 <FormField
                   control={form.control}
-                  name="price"
+                  name="email"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Harga</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <MoneyInput {...field} className="w-full" />
+                        <Input type="email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -235,74 +236,60 @@ export default function EditPackageForm({
                 />
                 <FormField
                   control={form.control}
-                  name="credit"
+                  name="phone_number"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Kredit</FormLabel>
-                      <FormDescription>
-                        Jumlah kredit yang diberikan kepada pengguna ketika
-                        membeli paket ini
-                      </FormDescription>
+                      <FormLabel>Nomor Whatsapp</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <PhoneInput
+                          {...field}
+                          value={field.value as PhoneNumberValue}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
-                  name="loyalty_points"
+                  name="address"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Loyalty Points</FormLabel>
-                      <FormDescription>
-                        Jumlah loyalty points yang diberikan kepada pengguna
-                        ketika membeli paket ini
-                      </FormDescription>
+                      <FormLabel>Alamat</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <Textarea {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
-                  name="one_time_only"
+                  name="role"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>One Time Only</FormLabel>
+                      <FormLabel>Role</FormLabel>
                       <FormControl>
                         <>
                           <Input type="hidden" {...field} />
-                          <Switch
-                            checked={field.value === 1}
-                            onCheckedChange={(e) => {
-                              field.onChange(e ? 1 : 0);
-                            }}
-                          />
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value.toString()}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {roles.map((role) => (
+                                <SelectItem key={role} value={role}>
+                                  {role}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="valid_for"
-                  render={({ field }) => (
-                    <FormItem className="grid w-full gap-2">
-                      <FormLabel>Valid For</FormLabel>
-                      <FormDescription>
-                        Jumlah hari sebelum paket kadaluarsa
-                      </FormDescription>
-                      <FormControl>
-                        <AddonInput
-                          type="number"
-                          {...field}
-                          endAdornment="Hari"
-                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
