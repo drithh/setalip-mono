@@ -8,11 +8,11 @@ import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './columns';
-import { TasksTableToolbarActions } from './toolbar-actions';
 import { SelectClassType, SelectPackage } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllPackageSchema } from '@repo/shared/api/schema';
+import CreatePackageForm from './create-package.form';
 
 interface PackageTableProps {
   classTypes: SelectClassType[];
@@ -67,7 +67,7 @@ export default function PackageTable({
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <TasksTableToolbarActions table={table} classTypes={classTypes} />
+        <CreatePackageForm classTypes={classTypes} />
       </DataTableToolbar>
     </DataTable>
   );

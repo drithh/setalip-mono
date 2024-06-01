@@ -58,7 +58,7 @@ export default function Navigation() {
         <NavLink label="Locations" href="locations">
           <MapPin className="h-5 w-5" />
         </NavLink>
-        <NavLink label="Services" href="services">
+        <NavLink label="Packages" href="packages">
           <PilatesSvg className="h-5 w-5 fill-current" />
         </NavLink>
         <NavLink label="Users" href="users">

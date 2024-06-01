@@ -14,7 +14,7 @@ import { getColumns } from './columns';
 import { TYPES, container } from '@repo/shared/inversify';
 import { ClassTypeService } from '@repo/shared/service';
 import { findAllPackageSchema } from '@repo/shared/api/schema';
-import QueryResetBoundary from './query-reset-boundary';
+import QueryResetBoundary from '../../lib/query-reset-boundary';
 import React from 'react';
 import { getAuth } from '@/lib/get-auth';
 import { redirect } from 'next/navigation';

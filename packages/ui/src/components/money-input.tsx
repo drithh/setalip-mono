@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useReducer, useState } from 'react';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { Button } from '#dep/components/ui/button';
 import { Input, InputProps } from '#dep/components/ui/input';
 import { cn } from '#dep/lib/utils';
 
