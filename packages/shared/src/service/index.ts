@@ -5,3 +5,4 @@ export * from '#dep/service/location';
 export * from '#dep/service/package';
 export * from '#dep/service/classType';
 export * from '#dep/service/user';
+export * from '#dep/service/agenda';

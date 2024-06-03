@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { DB } from '@repo/shared/db';
-import { Kysely, MysqlDialect } from 'kysely';
+import { Kysely, MysqlDialect, ParseJSONResultsPlugin } from 'kysely';
 import { env } from '#dep/env';
 import { createPool } from 'mysql2/promise';
 import 'reflect-metadata';
@@ -16,6 +16,7 @@ export class Database extends Kysely<DB> {}
 
 export const db = new Database({
   dialect,
+  plugins: [new ParseJSONResultsPlugin()],
   log(event) {
     if (event.level === 'query') {
       console.log(event.query.sql);

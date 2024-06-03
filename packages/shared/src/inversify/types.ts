@@ -16,6 +16,8 @@ const TYPES = {
   ClassTypeRepository: Symbol.for('ClassTypeRepository'),
   ClassTypeService: Symbol.for('ClassTypeService'),
   UserService: Symbol.for('UserService'),
+  AgendaRepository: Symbol.for('AgendaRepository'),
+  AgendaService: Symbol.for('AgendaService'),
 };
 
 export { TYPES };

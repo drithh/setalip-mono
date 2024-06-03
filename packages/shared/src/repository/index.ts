@@ -4,6 +4,7 @@ export * from '#dep/repository/otp';
 export * from '#dep/repository/resetPassword';
 export * from '#dep/repository/package';
 export * from '#dep/repository/classType';
+export * from '#dep/repository/agenda';
 
 export type DefaultPagination = {
   page?: number;
