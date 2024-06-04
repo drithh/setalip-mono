@@ -25,4 +25,11 @@ export const userRouter = {
 
       return users;
     }),
+  findAllMember: protectedProcedure.query(async ({ ctx }) => {
+    const userService = ctx.container.get<UserService>(TYPES.UserService);
+
+    const users = await userService.findAllMember();
+
+    return users;
+  }),
 } satisfies TRPCRouterRecord;

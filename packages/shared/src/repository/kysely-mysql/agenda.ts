@@ -7,10 +7,12 @@ import {
   UpdateAgenda,
   InsertAgendaBooking,
   SelectAgendaBooking,
+  UpdateAgendaBooking,
 } from '../agenda';
 import { Database } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/mysql';
+import { sql } from 'kysely';
 
 @injectable()
 export class KyselyMySqlAgendaRepository implements AgendaRepository {
@@ -25,11 +27,11 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       page = 1,
       perPage = 10,
       sort,
-      coach,
       className,
+      coaches,
+      locations,
       dateStart,
       dateEnd,
-      locations,
     } = data;
 
     const offset = (page - 1) * perPage;
@@ -53,7 +55,11 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
           eb
             .selectFrom('agenda_bookings')
             .innerJoin('users', 'agenda_bookings.user_id', 'users.id')
-            .select(['agenda_bookings.id', 'users.name'])
+            .select([
+              'agenda_bookings.id as agenda_booking_id',
+              'users.name',
+              'users.id as user_id',
+            ])
             .where('agenda_bookings.status', '!=', 'cancelled')
             .whereRef('classes.id', '=', 'agendas.class_id')
         ).as('participants'),
@@ -63,27 +69,28 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       query = query.where('classes.name', 'like', `%${className}%`);
     }
 
-    if (dateStart && dateEnd) {
-      query = query
-        .where('agendas.time', '>=', dateStart)
-        .where('agendas.time', '<=', dateEnd);
-    }
-
-    if (coach) {
-      query = query.where('users.name', 'like', `%${coach}%`);
+    if (coaches) {
+      query = query.where('coaches.id', 'in', coaches);
     }
 
     if (locations) {
       query = query.where('locations.id', 'in', locations);
     }
 
+    if (dateStart && dateEnd) {
+      query = query
+        .where('agendas.time', '>=', dateStart)
+        .where('agendas.time', '<=', dateEnd);
+    }
+
     const queryData = await query
       .selectAll('agendas')
       .select([
         'users.name as coach_name',
+        'coaches.id as coach_id',
+        'classes.id as class_id',
         'classes.name as class_name',
         'classes.duration as class_duration',
-        'location_facilities.capacity as location_capacity',
         'locations.name as location_name',
         'locations.id as location_id',
       ])
@@ -114,6 +121,49 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
   async create(data: InsertAgenda) {
     try {
+      // Check if the coach is available
+      const duration = await this._db
+        .selectFrom('classes')
+        .select(['duration'])
+        .where('id', '=', data.class_id)
+        .executeTakeFirst();
+
+      if (duration === undefined) {
+        console.error('Failed to get class duration', duration);
+        return new Error('Failed to get class duration');
+      }
+      const startTime = new Date(data.time);
+      const endTime = new Date(data.time);
+      endTime.setMinutes(endTime.getMinutes() + duration.duration);
+
+      const coachAvailability = await this._db
+        .selectFrom('agendas')
+        .select(['agendas.id'])
+        .innerJoin('classes', 'agendas.class_id', 'classes.id')
+        .where('coach_id', '=', data.coach_id)
+        .where((eb) =>
+          // if there are start agenda time between the new agenda time
+          eb('agendas.time', '>=', startTime).and('agendas.time', '<=', endTime)
+        )
+        .where((eb) =>
+          // if there are end agenda time between the new agenda time
+          eb(
+            sql`ADDTIME(agendas.time, SEC_TO_TIME(classses.duration * 60))`,
+            '>=',
+            startTime
+          ).and(
+            sql`ADDTIME(agendas.time, SEC_TO_TIME(classses.duration * 60))`,
+            '<=',
+            endTime
+          )
+        )
+        .executeTakeFirst();
+
+      if (coachAvailability !== undefined) {
+        console.error('Coach is not available', coachAvailability);
+        return new Error('Coach is not available');
+      }
+
       const query = this._db
         .insertInto('agendas')
         .values(data)
@@ -134,27 +184,27 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     }
   }
 
-  async createParticipant(data: InsertAgendaBooking) {
-    try {
-      const query = this._db
-        .insertInto('agenda_bookings')
-        .values(data)
-        .returningAll()
-        .compile();
+  // async createParticipant(data: InsertAgendaBooking) {
+  //   try {
+  //     const query = this._db
+  //       .insertInto('agenda_bookings')
+  //       .values(data)
+  //       .returningAll()
+  //       .compile();
 
-      const result = await this._db.executeQuery(query);
+  //     const result = await this._db.executeQuery(query);
 
-      if (result.rows[0] === undefined) {
-        console.error('Failed to create participant', result);
-        return new Error('Failed to create participant');
-      }
+  //     if (result.rows[0] === undefined) {
+  //       console.error('Failed to create participant', result);
+  //       return new Error('Failed to create participant');
+  //     }
 
-      return result.rows[0];
-    } catch (error) {
-      console.error('Error creating participant:', error);
-      return new Error('Error creating participant');
-    }
-  }
+  //     return result.rows[0];
+  //   } catch (error) {
+  //     console.error('Error creating participant:', error);
+  //     return new Error('Error creating participant');
+  //   }
+  // }
 
   async update(data: UpdateAgenda) {
     try {
@@ -173,6 +223,58 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     } catch (error) {
       console.error('Error updating agenda:', error);
       return new Error('Error updating agenda');
+    }
+  }
+
+  async updateAgendaBooking(data: UpdateAgendaBooking) {
+    try {
+      const curentAgendaBookings = await this._db
+        .selectFrom('agenda_bookings')
+        .selectAll()
+        .where('agenda_bookings.agenda_id', '=', data.agenda_id)
+        .execute();
+
+      const toDelete = curentAgendaBookings.filter(
+        (booking) =>
+          !data.agendaBookings.some(
+            (newBooking) => newBooking.id === booking.id
+          )
+      );
+
+      const toInsert = data.agendaBookings.filter(
+        (newBooking) =>
+          !curentAgendaBookings.some((booking) => newBooking.id === booking.id)
+      ) as InsertAgendaBooking[];
+
+      await this._db.transaction().execute(async (trx) => {
+        await Promise.all(
+          toDelete.map((booking) =>
+            trx
+              .updateTable('agenda_bookings')
+              .set({ status: 'cancelled' })
+              .where('id', '=', booking.id)
+              .execute()
+          )
+        );
+
+        await Promise.all(
+          toInsert.map((booking) =>
+            trx
+              .insertInto('agenda_bookings')
+              .values({
+                agenda_id: data.agenda_id,
+                user_id: booking.user_id,
+                status: 'booked',
+              })
+              .execute()
+          )
+        );
+      });
+
+      return;
+    } catch (error) {
+      console.error('Error updating participant:', error);
+      return new Error('Error updating participant');
     }
   }
 
@@ -195,23 +297,23 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     }
   }
 
-  async deleteParticipant(id: SelectAgendaBooking['id']) {
-    try {
-      const query = await this._db
-        .updateTable('agenda_bookings')
-        .set({ status: 'cancelled' })
-        .where('id', '=', id)
-        .executeTakeFirst();
+  // async deleteParticipant(id: SelectAgendaBooking['id']) {
+  //   try {
+  //     const query = await this._db
+  //       .updateTable('agenda_bookings')
+  //       .set({ status: 'cancelled' })
+  //       .where('id', '=', id)
+  //       .executeTakeFirst();
 
-      if (query.numUpdatedRows === undefined) {
-        console.error('Failed to delete participant', query);
-        return new Error('Failed to delete participant');
-      }
+  //     if (query.numUpdatedRows === undefined) {
+  //       console.error('Failed to delete participant', query);
+  //       return new Error('Failed to delete participant');
+  //     }
 
-      return;
-    } catch (error) {
-      console.error('Error deleting participant:', error);
-      return new Error('Error deleting participant');
-    }
-  }
+  //     return;
+  //   } catch (error) {
+  //     console.error('Error deleting participant:', error);
+  //     return new Error('Error deleting participant');
+  //   }
+  // }
 }

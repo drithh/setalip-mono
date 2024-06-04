@@ -36,6 +36,15 @@ export class UserServiceImpl implements UserService {
     };
   }
 
+  async findAllMember() {
+    const users = await this._userRepository.findAllMember();
+
+    return {
+      result: users,
+      error: undefined,
+    };
+  }
+
   async findById(id: SelectUser['id']) {
     const user = await this._userRepository.findById(id);
 

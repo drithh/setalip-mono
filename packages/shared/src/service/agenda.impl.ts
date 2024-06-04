@@ -7,6 +7,7 @@ import type {
   SelectAgenda,
   UpdateAgenda,
   InsertAgendaBooking,
+  UpdateAgendaBooking,
 } from '../repository';
 import { AgendaService } from './agenda';
 
@@ -57,20 +58,6 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
-  async createParticipant(data: InsertAgendaBooking) {
-    const result = await this._agendaRepository.createParticipant(data);
-
-    if (result instanceof Error) {
-      return {
-        error: result,
-      };
-    }
-
-    return {
-      result,
-    };
-  }
-
   async update(data: UpdateAgenda) {
     const result = await this._agendaRepository.update(data);
 
@@ -86,8 +73,8 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
-  async delete(id: SelectAgenda['id']) {
-    const result = await this._agendaRepository.delete(id);
+  async updateAgendaBooking(data: UpdateAgendaBooking) {
+    const result = await this._agendaRepository.updateAgendaBooking(data);
 
     if (result instanceof Error) {
       return {
@@ -101,8 +88,8 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
-  async deleteParticipant(id: SelectAgenda['id']) {
-    const result = await this._agendaRepository.deleteParticipant(id);
+  async delete(id: SelectAgenda['id']) {
+    const result = await this._agendaRepository.delete(id);
 
     if (result instanceof Error) {
       return {

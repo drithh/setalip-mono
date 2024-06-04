@@ -55,3 +55,15 @@ export const findAllUserSchema = defaultPaginationSchema.extend({
 export const findCreditsByUserIdSchema = z.object({
   id: z.coerce.number().refine((data) => data > 0),
 });
+
+export const findAllAgendaSchema = defaultPaginationSchema.extend({
+  className: z.string().optional(),
+  coach: z.string().optional(),
+  location: z.string().optional(),
+  dateStart: z.date().optional(),
+  dateEnd: z.date().optional(),
+});
+
+export const deleteParticipantSchema = z.object({
+  participantId: z.coerce.number().refine((data) => data > 0),
+});

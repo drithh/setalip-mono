@@ -45,6 +45,7 @@ export interface SelectAllUser {
 }
 export interface UserRepository {
   findAll(data: FindAllUserOptions): Promise<SelectAllUser>;
+  findAllMember(): Promise<SelectUser[]>;
   findById(id: SelectUser['id']): Promise<SelectUser | undefined>;
   findByPhoneNumber(
     phoneNumber: SelectUser['phone_number']
