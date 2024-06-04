@@ -7,9 +7,24 @@ import {
   deleteLocationAssetSchema,
   deleteLocationSchema,
   deleteFacilitySchema,
+  findAllFacilityByIdSchema,
 } from '../schema';
 
 export const locationRouter = {
+  findAllFacilityById: protectedProcedure
+    .input(findAllFacilityByIdSchema)
+    .query(async ({ ctx, input }) => {
+      const locationService = ctx.container.get<LocationService>(
+        TYPES.LocationService
+      );
+
+      const findAllFacilityById = await locationService.findAllFacilityById(
+        input.id
+      );
+
+      return findAllFacilityById;
+    }),
+
   deleteAsset: protectedProcedure
     .input(deleteLocationAssetSchema)
     .mutation(async ({ ctx, input }) => {
@@ -23,6 +38,7 @@ export const locationRouter = {
 
       return deleteLocationAsset;
     }),
+
   delete: protectedProcedure
     .input(deleteLocationSchema)
     .mutation(async ({ ctx, input }) => {

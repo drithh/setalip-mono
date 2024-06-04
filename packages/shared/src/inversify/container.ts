@@ -1,3 +1,5 @@
+import { ClassServiceImpl } from './../service/class.impl';
+import { KyselyMySqlClassRepository } from './../repository/kysely-mysql/class';
 import { Container } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
 import { Database, db } from '#dep/db/index';
@@ -8,6 +10,9 @@ import {
   ResetPasswordRepository,
   PackageRepository,
   ClassTypeRepository,
+  AgendaRepository,
+  CoachRepository,
+  ClassRepository,
 } from '#dep/repository/index';
 import {
   KyselyMySqlUserRepository,
@@ -16,6 +21,8 @@ import {
   KyselyMySqlResetPasswordRepository,
   KyselyMySqlPackageRepository,
   KyselyMySqlClassTypeRepository,
+  KyselyMySqlAgendaRepository,
+  KyselyMySqlCoachRepository,
 } from '#dep/repository/kysely-mysql/index';
 import {
   NotificationService,
@@ -29,6 +36,8 @@ import {
   PackageServiceImpl,
   ClassTypeServiceImpl,
   UserServiceImpl,
+  AgendaServiceImpl,
+  CoachServiceImpl,
 } from '#dep/service/index.impl';
 import {
   AuthService,
@@ -38,6 +47,9 @@ import {
   PackageService,
   ClassTypeService,
   UserService,
+  AgendaService,
+  CoachService,
+  ClassService,
 } from '#dep/service/index';
 
 const container = new Container();
@@ -73,5 +85,19 @@ container
   .bind<ClassTypeService>(TYPES.ClassTypeService)
   .to(ClassTypeServiceImpl);
 container.bind<UserService>(TYPES.UserService).to(UserServiceImpl);
+container
+  .bind<AgendaRepository>(TYPES.AgendaRepository)
+  .to(KyselyMySqlAgendaRepository);
+container.bind<AgendaService>(TYPES.AgendaService).to(AgendaServiceImpl);
+container.bind<ClassService>(TYPES.ClassService).to(ClassServiceImpl);
+container
+  .bind<ClassRepository>(TYPES.ClassRepository)
+  .to(KyselyMySqlClassRepository);
+container
+  .bind<CoachRepository>(TYPES.CoachRepository)
+  .to(KyselyMySqlCoachRepository);
+container.bind<CoachService>(TYPES.CoachService).to(CoachServiceImpl);
 
 export { container };
+
+// pretty query

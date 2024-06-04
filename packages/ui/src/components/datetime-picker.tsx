@@ -3,11 +3,11 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from '@radix-ui/react-popover';
+} from '@repo/ui/components/ui/popover';
 import { format } from 'date-fns';
 import { Calendar } from '#dep/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
-import { FormControl } from './ui/form.js';
+import { FormControl } from '#dep/components/ui/form';
 import React from 'react';
 import { TimePickerInput } from '#dep/components/time-picker-input';
 import { Button } from '#dep/components/ui/button';
@@ -25,7 +25,7 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
           <Button
             variant="outline"
             className={cn(
-              'w-[280px] justify-start text-left font-normal',
+              'w-full justify-start text-left font-normal',
               !value && 'text-muted-foreground'
             )}
           >
@@ -34,7 +34,7 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
           </Button>
         </PopoverTrigger>
       </FormControl>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className="w-auto p-0 bg-white">
         <Calendar
           mode="single"
           selected={value}
@@ -58,7 +58,7 @@ function TimePicker({ date, setDate }: TimePickerProps) {
   const minuteRef = React.useRef<HTMLInputElement>(null);
   const hourRef = React.useRef<HTMLInputElement>(null);
   return (
-    <>
+    <div className="flex gap-2">
       <div className="grid gap-1 text-center">
         <TimePickerInput
           picker="hours"
@@ -77,6 +77,6 @@ function TimePicker({ date, setDate }: TimePickerProps) {
           onLeftFocus={() => hourRef.current?.focus()}
         />
       </div>
-    </>
+    </div>
   );
 }

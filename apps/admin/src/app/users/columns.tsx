@@ -116,7 +116,7 @@ export function getColumns({
         return (
           <span className="capitalize">
             {row.original.verified_at
-              ? dateFormatter.format(row.original.verified_at)
+              ? dateFormatter().format(row.original.verified_at)
               : '-'}
           </span>
         );
@@ -131,7 +131,7 @@ export function getColumns({
         return (
           <span>
             {row.original.updated_at
-              ? dateFormatter.format(row.original.updated_at)
+              ? dateFormatter().format(row.original.updated_at)
               : '-'}
           </span>
         );

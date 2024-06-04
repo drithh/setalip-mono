@@ -5,6 +5,8 @@ export * from '#dep/repository/resetPassword';
 export * from '#dep/repository/package';
 export * from '#dep/repository/classType';
 export * from '#dep/repository/agenda';
+export * from '#dep/repository/class';
+export * from '#dep/repository/coach';
 
 export type DefaultPagination = {
   page?: number;

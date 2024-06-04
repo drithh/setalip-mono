@@ -12,7 +12,12 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useDataTable } from '@/hooks/use-data-table';
 import { getColumns } from './columns';
 import { TYPES, container } from '@repo/shared/inversify';
-import { ClassTypeService } from '@repo/shared/service';
+import {
+  ClassService,
+  ClassTypeService,
+  CoachService,
+  LocationService,
+} from '@repo/shared/service';
 import { findAllPackageSchema } from '@repo/shared/api/schema';
 import QueryResetBoundary from '../../lib/query-reset-boundary';
 import React from 'react';
@@ -31,10 +36,14 @@ export default async function Packages({ searchParams }: IndexPageProps) {
 
   const search = findAllPackageSchema.parse(searchParams);
   console.log('search', search);
-  const classTypeService = container.get<ClassTypeService>(
-    TYPES.ClassTypeService,
-  );
-  const classTypes = await classTypeService.findAll();
+  const classService = container.get<ClassService>(TYPES.ClassService);
+  const classes = await classService.findAll({});
+
+  const locationService = container.get<LocationService>(TYPES.LocationService);
+  const locations = await locationService.findAll();
+
+  const coachService = container.get<CoachService>(TYPES.CoachService);
+  const coaches = await coachService.findAll();
 
   return (
     <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
@@ -50,7 +59,12 @@ export default async function Packages({ searchParams }: IndexPageProps) {
             />
           }
         >
-          <PackageTable classTypes={classTypes.result ?? []} search={search} />
+          <PackageTable
+            locations={locations?.result ?? []}
+            coaches={coaches?.result ?? []}
+            classes={classes?.result?.data ?? []}
+            search={search}
+          />
         </React.Suspense>
       </QueryResetBoundary>
     </main>

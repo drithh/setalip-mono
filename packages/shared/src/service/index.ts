@@ -6,3 +6,5 @@ export * from '#dep/service/package';
 export * from '#dep/service/classType';
 export * from '#dep/service/user';
 export * from '#dep/service/agenda';
+export * from '#dep/service/class';
+export * from '#dep/service/coach';

@@ -101,6 +101,19 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
     return location;
   }
 
+  async findAllFacilityById(
+    id: SelectLocation['id']
+  ): Promise<SelectFacility[]> {
+    const facilities = await this._db
+      .selectFrom('location_facilities')
+      .selectAll()
+      .where('location_facilities.location_id', '=', id)
+      .where('location_facilities.deleted_at', 'is', null)
+      .execute();
+
+    return facilities;
+  }
+
   create(data: InsertLocation): Promise<SelectLocation> {
     throw new Error('Method not implemented.');
   }

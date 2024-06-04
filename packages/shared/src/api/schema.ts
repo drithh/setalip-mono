@@ -14,6 +14,10 @@ export const fileUploadSchema = z.object({
   }, 'Data is not an instance of a File'),
 });
 
+export const findAllFacilityByIdSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});
+
 export const deleteLocationSchema = z.object({
   locationId: z.coerce.number().refine((data) => data > 0),
 });

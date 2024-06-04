@@ -13,6 +13,13 @@ export const createAgendaSchema = z.object({
 export type CreateAgendaSchema = z.infer<typeof createAgendaSchema>;
 export type FormCreateAgenda = FormState<CreateAgendaSchema>;
 
+export const editAgendaSchema = createAgendaSchema.extend({
+  id: z.coerce.number(),
+});
+
+export type EditAgendaSchema = z.infer<typeof editAgendaSchema>;
+export type FormEditAgenda = FormState<EditAgendaSchema>;
+
 export const editParticipantSchema = z.object({
   agenda_id: z.coerce.number(),
   participants: z.array(

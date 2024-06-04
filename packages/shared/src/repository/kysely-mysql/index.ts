@@ -5,3 +5,5 @@ export * from '#dep/repository/kysely-mysql/resetPassword';
 export * from '#dep/repository/kysely-mysql/package';
 export * from '#dep/repository/kysely-mysql/classType';
 export * from '#dep/repository/kysely-mysql/agenda';
+export * from '#dep/repository/kysely-mysql/class';
+export * from '#dep/repository/kysely-mysql/coach';

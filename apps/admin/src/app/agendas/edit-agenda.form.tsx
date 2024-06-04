@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { createAgenda } from './_actions/create-agenda';
+import { editAgenda } from './_actions/edit-agenda';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,13 +16,14 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { CreateAgendaSchema, createAgendaSchema } from './form-schema';
+import { EditAgendaSchema, editAgendaSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Switch } from '@repo/ui/components/ui/switch';
 import { DatetimePicker } from '@repo/ui/components/datetime-picker';
 import { AddonInput } from '@repo/ui/components/addon-input';
 import {
+  SelectAgenda,
   SelectClass,
   SelectClassAgenda,
   SelectClassType,
@@ -50,50 +51,55 @@ import {
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 
-interface CreateAgendaProps {
+interface EditAgendaProps {
   locations: SelectLocation[];
   coaches: SelectCoachWithUser[];
   classes: SelectClass[];
+  agenda: SelectAgenda;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal membuat agenda',
+    title: 'Gagal memperbaru agenda',
   },
   loading: {
-    title: 'Membuat agenda...',
+    title: 'Memperbaru agenda...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Agenda berhasil dibuat',
+    title: 'Agenda berhasil diperbarui',
   },
 };
 
-export default function CreateAgendaForm({
+export default function EditAgendaForm({
   locations,
   coaches,
   classes,
-}: CreateAgendaProps) {
-  const [openSheet, setOpenSheet] = useState(false);
-
+  agenda,
+  open,
+  onOpenChange,
+}: EditAgendaProps) {
   const [selectedLocation, setSelectedLocation] = useState<SelectLocation>();
 
   const trpcUtils = api.useUtils();
-  type FormSchema = CreateAgendaSchema;
+  type FormSchema = EditAgendaSchema;
 
-  const [formState, formAction] = useFormState(createAgenda, {
+  const [formState, formAction] = useFormState(editAgenda, {
     status: 'default',
     form: {
-      slot: 0,
-      time: new Date(),
-      class_id: 0,
-      coach_id: 0,
-      location_facility_id: 0,
+      id: agenda.id,
+      slot: agenda.slot,
+      time: agenda.time,
+      class_id: agenda.class_id,
+      coach_id: agenda.coach_id,
+      location_facility_id: agenda.location_facility_id,
     } as FormSchema,
   });
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(createAgendaSchema),
+    resolver: zodResolver(editAgendaSchema),
     defaultValues: formState.form,
   });
 
@@ -131,7 +137,7 @@ export default function CreateAgendaForm({
       toast.success(TOAST_MESSAGES.success.title);
       form.reset();
       trpcUtils.invalidate();
-      setOpenSheet(false);
+      onOpenChange(false);
     }
   }, [formState.form]);
 
@@ -148,10 +154,7 @@ export default function CreateAgendaForm({
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <Sheet open={openSheet} onOpenChange={setOpenSheet}>
-      <SheetTrigger asChild>
-        <Button variant={'outline'}>Tambah</Button>
-      </SheetTrigger>
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
@@ -168,6 +171,14 @@ export default function CreateAgendaForm({
                 action={formAction}
                 onSubmit={onFormSubmit}
               >
+                <FormField
+                  control={form.control}
+                  name="id"
+                  render={({ field }) => (
+                    <Input type="hidden" {...field} value={agenda.id} />
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="class_id"
@@ -210,15 +221,13 @@ export default function CreateAgendaForm({
                     <FormItem className="grid w-full gap-2">
                       <FormLabel>Waktu Agenda</FormLabel>
                       <FormControl>
-                        <>
-                          {/* <Input type="hidden" {...field} /> */}
-                          <DatetimePicker
-                            value={field.value}
-                            onChange={(value) => {
-                              field.onChange(value);
-                            }}
-                          />
-                        </>
+                        {/* <Input type="hidden" {...field} /> */}
+                        <DatetimePicker
+                          value={field.value}
+                          onChange={(value) => {
+                            field.onChange(value);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -231,10 +240,12 @@ export default function CreateAgendaForm({
                     <Input
                       readOnly
                       value={
-                        `${classes.find(
-                          (singleClass) =>
-                            singleClass.id === form.getValues('class_id'),
-                        )?.duration} menit` ?? ''
+                        `${
+                          classes.find(
+                            (singleClass) =>
+                              singleClass.id === form.getValues('class_id'),
+                          )?.duration
+                        } menit` ?? ''
                       }
                     />
                   </FormControl>

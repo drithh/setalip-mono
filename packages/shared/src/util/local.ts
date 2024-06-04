@@ -5,8 +5,10 @@ export const moneyFormatter = Intl.NumberFormat('id-ID', {
   style: 'currency',
 });
 
-export const dateFormatter = new Intl.DateTimeFormat('id-ID', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+export const dateFormatter = (props?: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat('id-ID', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    ...props,
+  });

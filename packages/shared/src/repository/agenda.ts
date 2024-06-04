@@ -26,7 +26,9 @@ export type SelectCoachAgenda = {
   coach_name: Selectable<Users>['name'];
   coach_id: Selectable<Coaches>['id'];
 };
+
 export type SelectClassAgenda = {
+  class_id: Selectable<Classes>['id'];
   class_name: Selectable<Classes>['name'];
   class_duration: Selectable<Classes>['duration'];
 };
@@ -42,12 +44,19 @@ export type SelectLocationAgenda = {
   location_id: Selectable<Locations>['id'];
 };
 
+// export type SelectLocationFacilityAgenda = {
+//   location_id: Selectable<Locations>['id'];
+//   location_facility_name: Selectable<Locations>['name'];
+//   location_facility_id: Selectable<Locations>['id'];
+// };
+
 export interface SelectAgendaWithCoachAndClass
   extends SelectAgenda,
     SelectCoachAgenda,
     SelectClassAgenda,
     SelectLocationAgenda {
-  participants: SelectParticipant[];
+  participants: SelectParticipant[] | null;
+  // location_facility: SelectLocationFacilityAgenda;
 }
 
 export type SelectAgenda = Selectable<Agendas>;

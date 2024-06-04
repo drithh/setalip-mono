@@ -8,40 +8,67 @@ import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './columns';
-import { SelectClassType, SelectAgenda } from '@repo/shared/repository';
+import {
+  SelectClassType,
+  SelectAgenda,
+  SelectAgendaWithCoachAndClass,
+  SelectLocationAgenda,
+  SelectCoachAgenda,
+  SelectLocation,
+  SelectCoach,
+  SelectCoachWithUser,
+  SelectClass,
+  SelectAllClass,
+} from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllAgendaSchema } from '@repo/shared/api/schema';
 import CreateAgendaForm from './create-agenda.form';
 
 interface AgendaTableProps {
-  classTypes: SelectClassType[];
+  locations: SelectLocation[];
+  coaches: SelectCoachWithUser[];
+  classes: SelectClass[];
   search: z.infer<typeof findAllAgendaSchema>;
 }
 
-export default function AgendaTable({ classTypes, search }: AgendaTableProps) {
+export default function AgendaTable({
+  locations,
+  coaches,
+  classes,
+  search,
+}: AgendaTableProps) {
   const [{ result, error }] = api.agenda.findAll.useSuspenseQuery(search, {});
   if (error) {
     throw new Error('Error fetching data', error);
   }
 
   const columns = React.useMemo(
-    () => getColumns({ classTypes: classTypes }),
+    () => getColumns({ locations, coaches, classes }),
     [],
   );
 
-  const filterFields: DataTableFilterField<SelectAgenda>[] = [
+  const filterFields: DataTableFilterField<SelectAgendaWithCoachAndClass>[] = [
     {
-      label: 'Nama',
-      value: 'name',
-      placeholder: 'Filter nama...',
+      label: 'Nama Kelas',
+      value: 'class_name',
+      placeholder: 'Filter nama kelas...',
     },
     {
-      label: 'Tipe Kelas',
-      value: 'class_type_id',
-      options: classTypes.map(({ id, type }) => ({
-        label: type,
-        value: id.toString(),
+      label: 'Lokasi',
+      value: 'location_id',
+      options: locations.map((location) => ({
+        label: location.name,
+        value: location.id.toString(),
+        withCount: true,
+      })),
+    },
+    {
+      label: 'Instruktur',
+      value: 'coach_id',
+      options: coaches.map((coach) => ({
+        label: coach.name,
+        value: coach.id.toString(),
         withCount: true,
       })),
     },
@@ -55,16 +82,20 @@ export default function AgendaTable({ classTypes, search }: AgendaTableProps) {
     defaultPerPage: 10,
     defaultSort: 'created_at.asc',
     visibleColumns: {
+      created_at: false,
       updated_at: false,
       updated_by: false,
-      one_time_only: false,
     },
   });
 
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <CreateAgendaForm classTypes={classTypes} />
+        <CreateAgendaForm
+          coaches={coaches}
+          locations={locations}
+          classes={classes}
+        />
       </DataTableToolbar>
     </DataTable>
   );

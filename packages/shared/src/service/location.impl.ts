@@ -48,6 +48,15 @@ export class LocationServiceImpl implements LocationService {
     };
   }
 
+  async findAllFacilityById(id: SelectLocation['id']) {
+    const facilities = await this._locationRepository.findAllFacilityById(id);
+
+    return {
+      result: facilities,
+      error: undefined,
+    };
+  }
+
   async createFacility(data: InsertFacility) {
     const result = await this._locationRepository.createFacility(data);
 

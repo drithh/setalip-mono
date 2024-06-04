@@ -8,6 +8,7 @@ import {
   InsertAgendaBooking,
   SelectAgendaBooking,
   UpdateAgendaBooking,
+  SelectParticipant,
 } from '../agenda';
 import { Database } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
@@ -49,31 +50,21 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'agendas.location_facility_id',
         'location_facilities.id'
       )
-      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
-      .select((eb) => [
-        jsonArrayFrom(
-          eb
-            .selectFrom('agenda_bookings')
-            .innerJoin('users', 'agenda_bookings.user_id', 'users.id')
-            .select([
-              'agenda_bookings.id as agenda_booking_id',
-              'users.name',
-              'users.id as user_id',
-            ])
-            .where('agenda_bookings.status', '!=', 'cancelled')
-            .whereRef('classes.id', '=', 'agendas.class_id')
-        ).as('participants'),
-      ]);
+      .innerJoin(
+        'locations',
+        'location_facilities.location_id',
+        'locations.id'
+      );
 
     if (className) {
       query = query.where('classes.name', 'like', `%${className}%`);
     }
 
-    if (coaches) {
+    if (coaches?.length && coaches.length > 0) {
       query = query.where('coaches.id', 'in', coaches);
     }
 
-    if (locations) {
+    if (locations?.length && locations.length > 0) {
       query = query.where('locations.id', 'in', locations);
     }
 
@@ -85,7 +76,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
     const queryData = await query
       .selectAll('agendas')
-      .select([
+      .select((eb) => [
         'users.name as coach_name',
         'coaches.id as coach_id',
         'classes.id as class_id',
@@ -93,14 +84,28 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'classes.duration as class_duration',
         'locations.name as location_name',
         'locations.id as location_id',
+        eb
+          .selectFrom('users')
+          .innerJoin('agenda_bookings', 'agenda_bookings.user_id', 'users.id')
+          .select(
+            sql<
+              SelectParticipant[]
+            >`coalesce(json_arrayagg(json_object('agenda_booking_id', agenda_bookings.id, 'name', users.name,'user_id', users.id)), '[]')`.as(
+              'participants'
+            )
+          )
+          .where('agenda_bookings.status', '!=', 'cancelled')
+          .whereRef('agenda_bookings.agenda_id', '=', 'agendas.id')
+          .as('participants'),
       ])
+
       .limit(perPage)
       .offset(offset)
       .orderBy(orderBy)
       .execute();
 
     const queryCount = await query
-      .select(({ fn }) => [fn.count<number>('id').as('count')])
+      .select(({ fn }) => [fn.count<number>('agendas.id').as('count')])
       .executeTakeFirst();
 
     const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);

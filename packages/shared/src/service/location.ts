@@ -17,6 +17,9 @@ export interface LocationService {
   findById(
     id: SelectLocation['id']
   ): PromiseResult<SelectDetailLocation, Error>;
+  findAllFacilityById(
+    id: SelectLocation['id']
+  ): PromiseResult<SelectFacility[], Error>;
 
   createFacility(data: InsertFacility): PromiseResult<SelectFacility, Error>;
   createAsset(

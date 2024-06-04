@@ -17,20 +17,29 @@ import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-hea
 import {
   SelectAgenda,
   SelectAgendaWithCoachAndClass,
+  SelectClass,
   SelectClassType,
+  SelectCoach,
+  SelectCoachWithUser,
+  SelectLocation,
   SelectPackage,
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import EditParticipantForm from './edit-participant.form';
 import DeletePackageDialog from './delete-participant.dialog';
 import DeleteParticipantDialog from './delete-participant.dialog';
+import EditAgendaForm from './edit-agenda.form';
 
 interface getColumnsProps {
-  classTypes: SelectClassType[];
+  locations: SelectLocation[];
+  coaches: SelectCoachWithUser[];
+  classes: SelectClass[];
 }
 
 export function getColumns({
-  classTypes,
+  locations,
+  coaches,
+  classes,
 }: getColumnsProps): ColumnDef<SelectAgendaWithCoachAndClass>[] {
   return [
     {
@@ -87,6 +96,26 @@ export function getColumns({
       },
     },
     {
+      accessorKey: 'time',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Waktu" />
+      ),
+      cell: ({ row }) => {
+        return (
+          <p className="">
+            {dateFormatter({
+              year: undefined,
+              month: 'short',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+            }).format(row.original.time)}{' '}
+            ({row.original.class_duration} menit)
+          </p>
+        );
+      },
+    },
+    {
       accessorKey: 'slot',
       header: ({ column }) => (
         <DataTableColumnHeader
@@ -99,29 +128,12 @@ export function getColumns({
       cell: ({ row }) => {
         return (
           <p className="-ml-5 text-center">
-            {row.original.participants.length} / {row.original.slot}
+            {row.original.participants?.length ?? 0} / {row.original.slot}
           </p>
         );
       },
     },
-    {
-      accessorKey: 'time',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          className="justify-center"
-          column={column}
-          title="Waktu"
-        />
-      ),
-      cell: ({ row }) => {
-        return (
-          <p className="-ml-5 text-center">
-            {dateFormatter.format(row.original.time)} (
-            {row.original.class_duration} menit)
-          </p>
-        );
-      },
-    },
+
     {
       accessorKey: 'updated_at',
       header: ({ column }) => (
@@ -143,24 +155,26 @@ export function getColumns({
     {
       id: 'actions',
       cell: function Cell({ row }) {
-        const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
+        const [showEditAgendaSheet, setShowEditAgendaSheet] =
           React.useState(false);
         const [showEditParticipantSheet, setShowEditParticipantSheet] =
           React.useState(false);
 
         return (
           <>
-            {/* <EditParticipantForm
-              classTypes={classTypes}
-              open={showUpdateTaskSheet}
-              onOpenChange={setShowUpdateTaskSheet}
-              singlePackage={row.original}
-            /> */}
+            <EditAgendaForm
+              open={showEditAgendaSheet}
+              onOpenChange={setShowEditAgendaSheet}
+              agenda={row.original}
+              classes={classes}
+              locations={locations}
+              coaches={coaches}
+            />
             {/* participant use sheet */}
             <EditParticipantForm
               open={showEditParticipantSheet}
               onOpenChange={setShowEditParticipantSheet}
-              participants={row.original.participants}
+              participants={row.original.participants ?? []}
               agendaId={row.original.id}
             />
             <DropdownMenu>
@@ -174,14 +188,14 @@ export function getColumns({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
-                  Edit
+                <DropdownMenuItem onSelect={() => setShowEditAgendaSheet(true)}>
+                  Edit Agenda
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onSelect={() => setShowEditParticipantSheet(true)}
                 >
-                  Delete
+                  Manage Participants
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
