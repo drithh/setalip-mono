@@ -151,6 +151,133 @@ importers:
         specifier: ^5
         version: 5.3.3
 
+  apps/web:
+    dependencies:
+      '@formkit/auto-animate':
+        specifier: ^0.8.2
+        version: 0.8.2
+      '@hookform/resolvers':
+        specifier: ^3.3.4
+        version: 3.3.4(react-hook-form@7.51.4(react@18.2.0))
+      '@lucia-auth/adapter-mysql':
+        specifier: ^3.0.2
+        version: 3.0.2(lucia@3.2.0)(mysql2@3.9.7)
+      '@node-rs/argon2':
+        specifier: ^1.8.3
+        version: 1.8.3
+      '@radix-ui/react-icons':
+        specifier: ^1.3.0
+        version: 1.3.0(react@18.2.0)
+      '@repo/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@repo/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@t3-oss/env-nextjs':
+        specifier: ^0.10.1
+        version: 0.10.1(typescript@5.4.5)(zod@3.23.8)
+      '@tanstack/react-query':
+        specifier: ^5.25.0
+        version: 5.37.1(react@18.2.0)
+      '@tanstack/react-table':
+        specifier: ^8.17.3
+        version: 8.17.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@trpc/client':
+        specifier: next
+        version: 11.0.0-rc.394(@trpc/server@11.0.0-rc.394)
+      '@trpc/react-query':
+        specifier: next
+        version: 11.0.0-rc.394(@tanstack/react-query@5.37.1(react@18.2.0))(@trpc/client@11.0.0-rc.394(@trpc/server@11.0.0-rc.394))(@trpc/server@11.0.0-rc.394)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@trpc/server':
+        specifier: next
+        version: 11.0.0-rc.394
+      inversify:
+        specifier: ^6.0.2
+        version: 6.0.2
+      libphonenumber-js:
+        specifier: ^1.11.1
+        version: 1.11.1
+      lucia:
+        specifier: ^3.2.0
+        version: 3.2.0
+      lucide-react:
+        specifier: ^0.378.0
+        version: 0.378.0(react@18.2.0)
+      next:
+        specifier: 14.2.3
+        version: 14.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      oslo:
+        specifier: ^1.2.0
+        version: 1.2.0
+      react:
+        specifier: ^18
+        version: 18.2.0
+      react-dom:
+        specifier: ^18
+        version: 18.2.0(react@18.2.0)
+      react-error-boundary:
+        specifier: ^4.0.13
+        version: 4.0.13(react@18.2.0)
+      react-hook-form:
+        specifier: ^7.51.4
+        version: 7.51.4(react@18.2.0)
+      react-phone-number-input:
+        specifier: ^3.4.1
+        version: 3.4.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react-photo-view:
+        specifier: ^1.2.4
+        version: 1.2.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      sonner:
+        specifier: ^1.4.41
+        version: 1.4.41(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      superjson:
+        specifier: ^2.2.1
+        version: 2.2.1
+      zod:
+        specifier: ^3.23.7
+        version: 3.23.8
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/node':
+        specifier: ^20
+        version: 20.12.11
+      '@types/react':
+        specifier: ^18
+        version: 18.2.61
+      '@types/react-dom':
+        specifier: ^18
+        version: 18.2.19
+      eslint:
+        specifier: ^8
+        version: 8.57.0
+      eslint-config-next:
+        specifier: 14.2.3
+        version: 14.2.3(eslint@8.57.0)(typescript@5.4.5)
+      prettier:
+        specifier: ^3.2.5
+        version: 3.2.5
+      prettier-plugin-tailwindcss:
+        specifier: ^0.5.14
+        version: 0.5.14(prettier@3.2.5)
+      tailwindcss:
+        specifier: ^3.4.3
+        version: 3.4.3(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))
+      typescript:
+        specifier: ^5
+        version: 5.4.5
+
   packages/eslint-config:
     devDependencies:
       '@typescript-eslint/eslint-plugin':
@@ -1655,6 +1782,11 @@ packages:
     peerDependencies:
       '@trpc/server': 11.0.0-rc.374+5027209bc
 
+  '@trpc/client@11.0.0-rc.394':
+    resolution: {integrity: sha512-efXKQAyNtx0aSbT+tqJgcE8TG1VEqBY0DJ/qCDi7HXNEgIiS0fzkHBC7ph4hsz5w4cOBZy+AlOvXcvINTRz/IQ==}
+    peerDependencies:
+      '@trpc/server': 11.0.0-rc.394+eab054f77
+
   '@trpc/react-query@11.0.0-rc.374':
     resolution: {integrity: sha512-zv/KjlxfeuOS5f0G2wl4L3AKzI/shYLj1sKxbtfGKkLRPMbCBqLlw4b37wRf5BLX4gi8f87FXm11Wwa8okD6aQ==}
     peerDependencies:
@@ -1664,8 +1796,20 @@ packages:
       react: '>=18.2.0'
       react-dom: '>=18.2.0'
 
+  '@trpc/react-query@11.0.0-rc.394':
+    resolution: {integrity: sha512-/zuO70L5nExrPM6KNsW/I38CosQdE5ef0uTisAzz+6epZoyqXqyZUM8JG2Z9Tz84sNT0xq7Izg+3BBIH2YYlcg==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.25.0
+      '@trpc/client': 11.0.0-rc.394+eab054f77
+      '@trpc/server': 11.0.0-rc.394+eab054f77
+      react: '>=18.2.0'
+      react-dom: '>=18.2.0'
+
   '@trpc/server@11.0.0-rc.374':
     resolution: {integrity: sha512-7r76KJwbSV5mffEYQMGBIAVrrJdPot0JzYQD9ZvcInO8q9sn+uVVZQ8XCAq93zXDSodvzGBJhRu3Kn1qXPw5Xg==}
+
+  '@trpc/server@11.0.0-rc.394':
+    resolution: {integrity: sha512-j6iDUSea5pFL0/vrwF551TucQiz8+EiJuBkmfDVA1/BCN1zk+dwnWtL8ploTKWVL0xAyHH6NcfwRtRbt9Wj/lA==}
 
   '@tsconfig/node10@1.0.9':
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
@@ -5936,6 +6080,13 @@ snapshots:
     optionalDependencies:
       typescript: 5.3.3
 
+  '@t3-oss/env-nextjs@0.10.1(typescript@5.4.5)(zod@3.23.8)':
+    dependencies:
+      '@t3-oss/env-core': 0.10.1(typescript@5.4.5)(zod@3.23.8)
+      zod: 3.23.8
+    optionalDependencies:
+      typescript: 5.4.5
+
   '@tanstack/query-core@5.36.1': {}
 
   '@tanstack/react-query@5.37.1(react@18.2.0)':
@@ -5960,6 +6111,10 @@ snapshots:
     dependencies:
       '@trpc/server': 11.0.0-rc.374
 
+  '@trpc/client@11.0.0-rc.394(@trpc/server@11.0.0-rc.394)':
+    dependencies:
+      '@trpc/server': 11.0.0-rc.394
+
   '@trpc/react-query@11.0.0-rc.374(@tanstack/react-query@5.37.1(react@18.2.0))(@trpc/client@11.0.0-rc.374(@trpc/server@11.0.0-rc.374))(@trpc/server@11.0.0-rc.374)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@tanstack/react-query': 5.37.1(react@18.2.0)
@@ -5968,7 +6123,17 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
+  '@trpc/react-query@11.0.0-rc.394(@tanstack/react-query@5.37.1(react@18.2.0))(@trpc/client@11.0.0-rc.394(@trpc/server@11.0.0-rc.394))(@trpc/server@11.0.0-rc.394)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      '@tanstack/react-query': 5.37.1(react@18.2.0)
+      '@trpc/client': 11.0.0-rc.394(@trpc/server@11.0.0-rc.394)
+      '@trpc/server': 11.0.0-rc.394
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
   '@trpc/server@11.0.0-rc.374': {}
+
+  '@trpc/server@11.0.0-rc.394': {}
 
   '@tsconfig/node10@1.0.9': {}
 
@@ -7091,6 +7256,24 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
+  eslint-config-next@14.2.3(eslint@8.57.0)(typescript@5.4.5):
+    dependencies:
+      '@next/eslint-plugin-next': 14.2.3
+      '@rushstack/eslint-patch': 1.5.1
+      '@typescript-eslint/parser': 7.1.0(eslint@8.57.0)(typescript@5.4.5)
+      eslint: 8.57.0
+      eslint-import-resolver-node: 0.3.9
+      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.1.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.0)(eslint@8.57.0)
+      eslint-plugin-import: 2.29.0(eslint@8.57.0)
+      eslint-plugin-jsx-a11y: 6.8.0(eslint@8.57.0)
+      eslint-plugin-react: 7.33.2(eslint@8.57.0)
+      eslint-plugin-react-hooks: 4.6.0(eslint@8.57.0)
+    optionalDependencies:
+      typescript: 5.4.5
+    transitivePeerDependencies:
+      - eslint-import-resolver-webpack
+      - supports-color
+
   eslint-config-prettier@9.1.0(eslint@8.57.0):
     dependencies:
       eslint: 8.57.0
@@ -7146,6 +7329,23 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
+  eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.1.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.0)(eslint@8.57.0):
+    dependencies:
+      debug: 4.3.4
+      enhanced-resolve: 5.15.0
+      eslint: 8.57.0
+      eslint-module-utils: 2.8.0(@typescript-eslint/parser@7.1.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.1.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.0)(eslint@8.57.0))(eslint@8.57.0)
+      eslint-plugin-import: 2.29.0(eslint@8.57.0)
+      fast-glob: 3.3.1
+      get-tsconfig: 4.7.2
+      is-core-module: 2.13.1
+      is-glob: 4.0.3
+    transitivePeerDependencies:
+      - '@typescript-eslint/parser'
+      - eslint-import-resolver-node
+      - eslint-import-resolver-webpack
+      - supports-color
+
   eslint-module-utils@2.8.0(@typescript-eslint/parser@6.17.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.17.0(eslint@8.57.0)(typescript@5.4.5))(eslint-plugin-import@2.29.0)(eslint@8.57.0))(eslint@8.57.0):
     dependencies:
       debug: 3.2.7
@@ -7164,6 +7364,17 @@ snapshots:
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.1.0(eslint@8.57.0)(typescript@5.3.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.0)(eslint@8.57.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  eslint-module-utils@2.8.0(@typescript-eslint/parser@7.1.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.1.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.0)(eslint@8.57.0))(eslint@8.57.0):
+    dependencies:
+      debug: 3.2.7
+    optionalDependencies:
+      '@typescript-eslint/parser': 7.1.0(eslint@8.57.0)(typescript@5.4.5)
+      eslint: 8.57.0
+      eslint-import-resolver-node: 0.3.9
+      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.1.0(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.0)(eslint@8.57.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -8679,6 +8890,14 @@ snapshots:
       postcss: 8.4.31
       ts-node: 10.9.2(@types/node@20.11.24)(typescript@5.4.5)
 
+  postcss-load-config@4.0.2(postcss@8.4.31)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5)):
+    dependencies:
+      lilconfig: 3.1.1
+      yaml: 2.4.2
+    optionalDependencies:
+      postcss: 8.4.31
+      ts-node: 10.9.2(@types/node@20.12.11)(typescript@5.4.5)
+
   postcss-nested@6.0.1(postcss@8.4.31):
     dependencies:
       postcss: 8.4.31
@@ -9337,6 +9556,33 @@ snapshots:
     transitivePeerDependencies:
       - ts-node
 
+  tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5)):
+    dependencies:
+      '@alloc/quick-lru': 5.2.0
+      arg: 5.0.2
+      chokidar: 3.6.0
+      didyoumean: 1.2.2
+      dlv: 1.1.3
+      fast-glob: 3.3.1
+      glob-parent: 6.0.2
+      is-glob: 4.0.3
+      jiti: 1.21.0
+      lilconfig: 2.1.0
+      micromatch: 4.0.5
+      normalize-path: 3.0.0
+      object-hash: 3.0.0
+      picocolors: 1.0.0
+      postcss: 8.4.31
+      postcss-import: 15.1.0(postcss@8.4.31)
+      postcss-js: 4.0.1(postcss@8.4.31)
+      postcss-load-config: 4.0.2(postcss@8.4.31)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))
+      postcss-nested: 6.0.1(postcss@8.4.31)
+      postcss-selector-parser: 6.0.16
+      resolve: 1.22.8
+      sucrase: 3.35.0
+    transitivePeerDependencies:
+      - ts-node
+
   tapable@2.2.1: {}
 
   tar-fs@2.1.1:
@@ -9454,6 +9700,25 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 20.11.24
+      acorn: 8.10.0
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.4.5
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    optional: true
+
+  ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5):
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.9
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 20.12.11
       acorn: 8.10.0
       acorn-walk: 8.2.0
       arg: 4.1.3
