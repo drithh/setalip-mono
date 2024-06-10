@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Roboto_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import '@repo/ui/global.css';
 import './global.css';
-const inter = Inter({ subsets: ['latin'] });
+
 import { Toaster } from '@repo/ui/components/ui/sonner';
 import Navigation from './navigation';
 import { TooltipProvider } from '@repo/ui/components/ui/tooltip';
@@ -23,6 +24,32 @@ import { Dialog } from '@repo/ui/components/ui/dialog';
 import Provider from './provider';
 import MobileNav from './header';
 import Header from './header';
+import Footer from './footer';
+
+const rozhaOne = localFont({
+  src: '../../public/rozhaone-regular.otf',
+  variable: '--font-rozhaone',
+});
+
+const basicCommercial = localFont({
+  src: '../../public/basic-commercial.woff2',
+  variable: '--font-basic-commercial',
+});
+
+const gtAmerica = localFont({
+  src: '../../public/gt-america.woff2',
+  variable: '--font-gt-america',
+});
+
+const neueWorld = localFont({
+  src: '../../public/neue-world.woff2',
+  variable: '--font-neue-world',
+});
+const inter = Inter({
+  display: 'swap',
+  variable: '--font-inter',
+  subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
   title: 'Pilates Reformers',
@@ -35,12 +62,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html
+      lang="en"
+      className={`${rozhaOne.variable} ${inter.variable} ${basicCommercial.variable} ${gtAmerica.variable} ${neueWorld.variable}`}
+    >
+      <body className="font-basic">
         <Provider>
-          <div className="flex min-h-screen w-full flex-col bg-muted/40 sm:gap-4">
+          <div className="flex w-full flex-col bg-secondary">
             <Header />
             {children}
+            <Footer />
           </div>
         </Provider>
         <Toaster position="top-right" duration={5000} />

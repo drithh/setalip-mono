@@ -18,6 +18,17 @@ const config = {
       },
     },
     extend: {
+      fontSize: {
+        tiny: '.625rem',
+      },
+
+      fontFamily: {
+        sans: ['var(--font-inter)'],
+        rozhaone: ['var(--font-rozhaone)'],
+        basic: ['var(--font-basic-commercial)'],
+        gt: ['var(--font-gt-america)'],
+        neue: ['var(--font-neue-world)'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

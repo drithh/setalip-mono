@@ -41,17 +41,23 @@ import {
 import Link from 'next/link';
 import Navigation from './navigation';
 import { getAuth } from '@/lib/get-auth';
+import Image from 'next/image';
 
 export default async function Header() {
   const auth = await getAuth();
   return (
-    <header className="sticky top-0 z-30 h-auto gap-4 border-0  border-b bg-primary px-4 py-4 sm:static  sm:h-auto sm:px-6">
+    <header className="sticky top-0 z-30 h-auto gap-4 border-0 bg-secondary px-4 py-4  sm:h-auto sm:px-6">
       <div className="mx-auto flex max-w-screen-xl items-center justify-center">
         <Link
-          href="#"
-          className="flex items-center gap-2 text-2xl font-bold text-background"
+          href="/"
+          className="flex items-center gap-2 font-rozhaone text-3xl font-semibold"
         >
-          Pilates Reform
+          <Image
+            src="/logo.webp"
+            alt="Pilates Reform"
+            width={160}
+            height={40}
+          />
         </Link>
         <SheetWrapper>
           <div className="ml-auto  justify-start md:hidden">
@@ -114,7 +120,7 @@ export default async function Header() {
           </SheetContent>
         </SheetWrapper>
         <Navigation isAuth={auth !== null} />
-        <div className=" hidden flex-shrink-0 flex-grow md:block">
+        <div className=" hidden flex-shrink-0 md:block">
           {auth ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -142,21 +148,13 @@ export default async function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex place-content-end gap-2 text-base">
+            <div className="flex place-content-end gap-2 ">
               <Link href="/login">
                 <Button
-                  className="w-24 border-background bg-primary text-primary-foreground"
-                  variant="outline"
+                  className="w-24 border-background bg-primary font-gt uppercase text-primary-foreground"
+                  variant="default"
                 >
-                  Masuk
-                </Button>
-              </Link>
-              <Link href="/register">
-                <Button
-                  className="w-24 border-background bg-primary text-primary-foreground"
-                  variant="outline"
-                >
-                  Daftar
+                  Login
                 </Button>
               </Link>
             </div>
