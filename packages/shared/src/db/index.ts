@@ -1,9 +1,10 @@
+import 'reflect-metadata';
+
 import { injectable } from 'inversify';
 import { DB } from '@repo/shared/db';
 import { Kysely, MysqlDialect, ParseJSONResultsPlugin } from 'kysely';
 import { env } from '#dep/env';
 import { createPool } from 'mysql2/promise';
-import 'reflect-metadata';
 export * from '#dep/db/schema';
 
 export const pool = createPool(env.DATABASE_URL);

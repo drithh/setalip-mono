@@ -1,4 +1,6 @@
-'use client';
+'use server';
+import { TYPES, container } from '@repo/shared/inversify';
+import { LocationService } from '@repo/shared/service';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   Carousel,
@@ -20,7 +22,9 @@ const images = [
   'http://localhost:3000/uploads/3.webp',
 ];
 
-export default function Home() {
+export default async function Home() {
+  const locationService = container.get<LocationService>(TYPES.LocationService);
+  const locations = await locationService.findAll();
   return (
     <main className="relative z-0 mx-auto w-full">
       <div className="sticky top-[72px] z-0">
@@ -81,33 +85,30 @@ export default function Home() {
                 </h2>
               </div>
               <div className="flex flex-row flex-wrap place-content-center gap-6 sm:px-6 md:place-content-between">
-                {images.map((src, index) => (
-                  <div className="w-40 md:w-80">
-                    <div
-                      key={index}
-                      className=" relative h-36 bg-transparent p-0 md:h-72"
-                    >
+                {locations?.result?.map((location) => (
+                  <div key={location.id} className="w-40 md:w-80">
+                    <div className=" relative h-36 bg-transparent p-0 md:h-72">
                       <Image
                         fill
                         className="absolute rounded-t-full border border-primary-foreground object-cover"
-                        alt={'image ' + index}
-                        src={src}
+                        alt={location.asset_name ?? ''}
+                        src={location.asset_url ?? ''}
                       />
                     </div>
                     <div className="flex flex-col place-content-center place-items-center  bg-secondary py-4">
                       <h4 className="mb-4 font-neue text-2xl md:text-4xl">
-                        Nama lokasi
+                        {location.name}
                       </h4>
                       <h4 className="flex items-center gap-2 text-sm text-secondary-foreground  sm:text-base">
                         <Phone className="h-3 w-3 sm:h-5 sm:w-5" />
-                        0812456789
+                        {location.phone_number}
                       </h4>
                       <h4 className="flex items-center gap-2 text-sm text-secondary-foreground  sm:text-base">
                         <MapPin className="h-3 w-3 sm:h-5 sm:w-5" />
-                        Alamat lokasi
+                        {location.address}
                       </h4>
 
-                      <Button className="text-tiny mt-6 font-gt sm:text-sm">
+                      <Button className="mt-6 font-gt text-tiny sm:text-sm">
                         See More
                       </Button>
                     </div>

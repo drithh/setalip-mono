@@ -18,30 +18,7 @@ export default function Footer() {
         <div className="main-footer flex gap-40">
           <div className="link-wrapper flex flex-col gap-2">
             <div className="title-link text-soft font-gt text-sm font-bold opacity-80">
-              CLASSES
-            </div>
-            <Link
-              href="src/about-us.html"
-              className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
-            >
-              Who Are We
-            </Link>
-            <Link
-              href="http://"
-              className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
-            >
-              Article
-            </Link>
-            <Link
-              href="http://"
-              className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
-            >
-              Contact
-            </Link>
-          </div>
-          <div className="link-wrapper flex flex-col gap-2">
-            <div className="title-link text-soft font-gt text-sm font-bold opacity-80">
-              SHOP
+              Classes
             </div>
             <Link
               href="http://"
@@ -53,19 +30,48 @@ export default function Footer() {
               href="http://"
               className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
             >
-              Decor
+              Private
             </Link>
             <Link
               href="http://"
               className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
             >
-              Furniture
+              Semi-Private
             </Link>
             <Link
               href="http://"
               className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
             >
-              Lamp
+              Group
+            </Link>
+          </div>
+          <div className="link-wrapper flex flex-col gap-2">
+            <div className="title-link text-soft font-gt text-sm font-bold opacity-80">
+              Packages
+            </div>
+            <Link
+              href="http://"
+              className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
+            >
+              All
+            </Link>
+            <Link
+              href="http://"
+              className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
+            >
+              Private
+            </Link>
+            <Link
+              href="http://"
+              className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
+            >
+              Semi-Private
+            </Link>
+            <Link
+              href="http://"
+              className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
+            >
+              Group
             </Link>
           </div>
           <div className="link-wrapper flex flex-col gap-2">
@@ -82,18 +88,12 @@ export default function Footer() {
               href="http://"
               className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
             >
-              Refunds & Returns
-            </Link>
-            <Link
-              href="http://"
-              className="text-soft font-gt text-sm font-thin no-underline opacity-60 hover:underline"
-            >
               Contact
             </Link>
           </div>
         </div>
       </div>
-      <div className="copyright text-soft flex h-10 place-content-center place-items-center font-gt text-xs font-extralight opacity-50">
+      <div className="copyright text-soft mt-8 flex h-10 place-content-center place-items-center font-gt text-xs font-extralight opacity-50">
         © 2024 Pilates Reform. All Rights Reserved.
       </div>
     </footer>

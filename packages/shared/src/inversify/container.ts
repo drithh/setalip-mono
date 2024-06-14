@@ -1,8 +1,7 @@
-import { ClassServiceImpl } from './../service/class.impl';
-import { KyselyMySqlClassRepository } from './../repository/kysely-mysql/class';
 import { Container } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
 import { Database, db } from '#dep/db/index';
+
 import {
   UserRepository,
   OtpRepository,
@@ -23,6 +22,7 @@ import {
   KyselyMySqlClassTypeRepository,
   KyselyMySqlAgendaRepository,
   KyselyMySqlCoachRepository,
+  KyselyMySqlClassRepository,
 } from '#dep/repository/kysely-mysql/index';
 import {
   NotificationService,
@@ -38,6 +38,7 @@ import {
   UserServiceImpl,
   AgendaServiceImpl,
   CoachServiceImpl,
+  ClassServiceImpl,
 } from '#dep/service/index.impl';
 import {
   AuthService,

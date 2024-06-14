@@ -1,11 +1,11 @@
 import { TYPES } from '#dep/inversify/types';
 import { AgendaService } from '#dep/service/agenda';
 import { TRPCRouterRecord } from '@trpc/server';
-import { protectedProcedure } from '../trpc';
+import { protectedProcedure, publicProcedure } from '../trpc';
 import { deleteParticipantSchema, findAllAgendaSchema } from '../schema';
 
 export const agendaRouter = {
-  findAll: protectedProcedure
+  findAll: publicProcedure
     .input(findAllAgendaSchema)
     .query(async ({ ctx, input }) => {
       const coaches =

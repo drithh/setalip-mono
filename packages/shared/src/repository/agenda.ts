@@ -2,6 +2,7 @@ import { Insertable, Selectable, Updateable } from 'kysely';
 import {
   AgendaBookings,
   Agendas,
+  ClassTypes,
   Classes,
   Coaches,
   Locations,
@@ -17,6 +18,13 @@ export interface FindAllAgendaOptions extends DefaultPagination {
   dateEnd?: Date;
 }
 
+export interface FindScheduleByDateOptions extends DefaultPagination {
+  coaches?: number[];
+  locations: number[];
+  classTypes?: number[];
+  date: Date;
+}
+
 export interface SelectAllAgenda {
   data: SelectAgendaWithCoachAndClass[];
   pageCount: number;
@@ -30,6 +38,8 @@ export type SelectCoachAgenda = {
 export type SelectClassAgenda = {
   class_id: Selectable<Classes>['id'];
   class_name: Selectable<Classes>['name'];
+  class_type_id: Selectable<ClassTypes>['id'];
+  class_type_name: Selectable<ClassTypes>['type'];
   class_duration: Selectable<Classes>['duration'];
 };
 
@@ -44,11 +54,10 @@ export type SelectLocationAgenda = {
   location_id: Selectable<Locations>['id'];
 };
 
-// export type SelectLocationFacilityAgenda = {
-//   location_id: Selectable<Locations>['id'];
-//   location_facility_name: Selectable<Locations>['name'];
-//   location_facility_id: Selectable<Locations>['id'];
-// };
+type SelectAgendaWithoutGenerated = Omit<
+  SelectAgenda,
+  'created_at' | 'updated_at' | 'id' | 'updated_by'
+>;
 
 export interface SelectAgendaWithCoachAndClass
   extends SelectAgenda,
@@ -57,6 +66,20 @@ export interface SelectAgendaWithCoachAndClass
     SelectLocationAgenda {
   participants: SelectParticipant[] | null;
   // location_facility: SelectLocationFacilityAgenda;
+}
+
+export interface SelectScheduleByDate
+  extends SelectAgendaWithoutGenerated,
+    SelectLocationAgenda,
+    SelectCoachAgenda,
+    SelectClassAgenda {
+  participant: number | null;
+  location_facility_name: string;
+}
+
+export interface SelectAllSchedule {
+  data: SelectScheduleByDate[];
+  pageCount: number;
 }
 
 export type SelectAgenda = Selectable<Agendas>;
@@ -74,6 +97,9 @@ export interface UpdateAgendaBooking {
 export interface AgendaRepository {
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;
+  findScheduleByDate(
+    data: FindScheduleByDateOptions
+  ): Promise<SelectAllSchedule>;
 
   create(data: InsertAgenda): Promise<SelectAgenda | Error>;
   // createParticipant(

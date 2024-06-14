@@ -9,6 +9,8 @@ import {
   SelectAgendaBooking,
   UpdateAgendaBooking,
   SelectParticipant,
+  FindScheduleByDateOptions,
+  SelectScheduleByDate,
 } from '../agenda';
 import { Database } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
@@ -50,11 +52,8 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'agendas.location_facility_id',
         'location_facilities.id'
       )
-      .innerJoin(
-        'locations',
-        'location_facilities.location_id',
-        'locations.id'
-      );
+      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id');
 
     if (className) {
       query = query.where('classes.name', 'like', `%${className}%`);
@@ -82,6 +81,8 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'classes.id as class_id',
         'classes.name as class_name',
         'classes.duration as class_duration',
+        'class_types.id as class_type_id',
+        'class_types.type as class_type_name',
         'locations.name as location_name',
         'locations.id as location_id',
         eb
@@ -122,6 +123,99 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .selectAll()
       .where('agendas.id', '=', id)
       .executeTakeFirst();
+  }
+
+  async findScheduleByDate(data: FindScheduleByDateOptions) {
+    const {
+      page = 1,
+      perPage = 10,
+      sort,
+      classTypes,
+      coaches,
+      locations,
+      date,
+    } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+    ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
+
+    let query = this._db
+      .selectFrom('agendas')
+      .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
+      .innerJoin('users', 'coaches.user_id', 'users.id')
+      .innerJoin('classes', 'agendas.class_id', 'classes.id')
+      .innerJoin(
+        'location_facilities',
+        'agendas.location_facility_id',
+        'location_facilities.id'
+      )
+      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id');
+
+    if (classTypes?.length && classTypes.length > 0) {
+      query = query.where('class_types.id', 'in', classTypes);
+    }
+
+    if (coaches?.length && coaches.length > 0) {
+      query = query.where('coaches.id', 'in', coaches);
+    }
+
+    if (locations?.length && locations.length > 0) {
+      query = query.where('locations.id', 'in', locations);
+    }
+
+    if (date) {
+      const dateTomorrow = new Date(date);
+      dateTomorrow.setDate(dateTomorrow.getDate() + 1);
+
+      query = query
+        .where('agendas.time', '>=', date)
+        .where('agendas.time', '<=', dateTomorrow);
+    }
+
+    const queryData = await query
+      .select((eb) => [
+        'agendas.class_id',
+        'agendas.id',
+        'agendas.time',
+        'agendas.location_facility_id',
+        'agendas.slot',
+        'users.name as coach_name',
+        'coaches.id as coach_id',
+        'classes.id as class_id',
+        'classes.name as class_name',
+        'classes.duration as class_duration',
+        'class_types.id as class_type_id',
+        'class_types.type as class_type_name',
+        'locations.name as location_name',
+        'locations.id as location_id',
+        'location_facilities.name as location_facility_name',
+        eb
+          .selectFrom('users')
+          .innerJoin('agenda_bookings', 'agenda_bookings.user_id', 'users.id')
+          .select(sql<number>`count(agenda_bookings.id)`.as('participant'))
+          .where('agenda_bookings.status', '!=', 'cancelled')
+          .whereRef('agenda_bookings.agenda_id', '=', 'agendas.id')
+          .as('participant'),
+      ])
+
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
+      .execute();
+    const test = queryData[0];
+    const queryCount = await query
+      .select(({ fn }) => [fn.count<number>('agendas.id').as('count')])
+      .executeTakeFirst();
+
+    const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
+
+    return {
+      data: queryData satisfies SelectScheduleByDate[],
+      pageCount: pageCount,
+    };
   }
 
   async create(data: InsertAgenda) {

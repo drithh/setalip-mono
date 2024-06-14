@@ -1,5 +1,4 @@
 import { Database, LocationOperationalHours, Otp } from '#dep/db/index';
-
 import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
 import {

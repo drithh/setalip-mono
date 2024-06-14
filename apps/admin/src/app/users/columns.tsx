@@ -25,8 +25,8 @@ import { Button } from '@repo/ui/components/ui/button';
 // import DeletePackageDialog from './delete-package.dialog';
 import EditUserForm from './edit-user.form';
 import { dateFormatter } from '@repo/shared/util';
-import CreateCreditForm from './create-credit.from';
-import DeleteCreditForm from './delete-credit.from';
+import CreateCreditForm from './create-credit.form';
+import DeleteCreditForm from './delete-credit.form';
 
 interface getColumnsProps {
   locations: SelectLocation[];

@@ -1,7 +1,7 @@
 import type { TRPCRouterRecord } from '@trpc/server';
 import { protectedProcedure, publicProcedure } from '../trpc';
 import { TYPES } from '#dep/inversify/types';
-import { LocationService } from '#dep/service/location';
+import { LocationService } from '#dep/service/index';
 import { z } from 'zod';
 import {
   deleteLocationAssetSchema,

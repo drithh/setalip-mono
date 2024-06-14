@@ -19,7 +19,7 @@ import {
 import { CreateCreditSchema, createCreditSchema, roles } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { DatePicker } from '@repo/ui/components/date-picker';
+import { FormDatePicker } from '@repo/ui/components/form-date-picker';
 import {
   SelectClassType,
   SelectDetailLocation,
@@ -232,7 +232,7 @@ export default function CreateCreditForm({
                             {...field}
                             value={field.value.toDateString()}
                           />
-                          <DatePicker
+                          <FormDatePicker
                             value={field.value}
                             onChange={(date) => field.onChange(date)}
                           />
