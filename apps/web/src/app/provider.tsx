@@ -2,7 +2,6 @@
 
 import { TRPCReactProvider } from '@/trpc/react';
 import { TooltipProvider } from '@repo/ui/components/ui/tooltip';
-import { ParallaxProvider } from 'react-scroll-parallax';
 export default function Provider({
   children,
 }: Readonly<{
@@ -10,9 +9,7 @@ export default function Provider({
 }>) {
   return (
     <TRPCReactProvider>
-      <TooltipProvider>
-        <ParallaxProvider>{children}</ParallaxProvider>
-      </TooltipProvider>
+      <TooltipProvider>{children}</TooltipProvider>
     </TRPCReactProvider>
   );
 }

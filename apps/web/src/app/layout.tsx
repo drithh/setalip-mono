@@ -5,7 +5,7 @@ import '@repo/ui/global.css';
 import './global.css';
 
 import { Toaster } from '@repo/ui/components/ui/sonner';
-import Navigation from './navigation';
+import Navigation from './menu';
 import { TooltipProvider } from '@repo/ui/components/ui/tooltip';
 import { Button } from '@repo/ui/components/ui/button';
 import { SheetContent, SheetTrigger } from '@repo/ui/components/ui/sheet';
@@ -22,8 +22,8 @@ import {
 } from 'lucide-react';
 import { Dialog } from '@repo/ui/components/ui/dialog';
 import Provider from './provider';
-import MobileNav from './header';
-import Header from './header';
+import MobileNav from './navigation';
+import Header from './navigation';
 import Footer from './footer';
 
 const rozhaOne = localFont({

@@ -15,10 +15,15 @@ import {
 
 type DatePickerProps = CalendarProps & {
   onDateChange?: (value: Date) => void;
+  defaultDate?: Date;
 };
 
-export function DatePicker({ onDateChange, ...props }: DatePickerProps) {
-  const [date, setDate] = React.useState<Date>();
+export function DatePicker({
+  defaultDate,
+  onDateChange,
+  ...props
+}: DatePickerProps) {
+  const [date, setDate] = React.useState<Date>(defaultDate ?? new Date());
 
   return (
     <Popover>
@@ -40,6 +45,7 @@ export function DatePicker({ onDateChange, ...props }: DatePickerProps) {
           mode="single"
           selected={date}
           onSelect={(date) => {
+            // add 1 day
             if (date) {
               setDate(date);
               if (onDateChange) {

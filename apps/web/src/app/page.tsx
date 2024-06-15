@@ -13,7 +13,6 @@ import {
 } from '@repo/ui/components/ui/carousel';
 import { Building, MapPin, Phone } from 'lucide-react';
 import Image from 'next/image';
-import { Parallax } from 'react-scroll-parallax';
 
 // image
 const images = [

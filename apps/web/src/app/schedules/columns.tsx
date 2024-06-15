@@ -14,19 +14,10 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import { dateFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
-import {
-  SelectAgenda,
-  SelectAgendaWithCoachAndClass,
-  SelectClass,
-  SelectClassType,
-  SelectCoach,
-  SelectCoachWithUser,
-  SelectLocation,
-  SelectPackage,
-} from '@repo/shared/repository';
+import { SelectScheduleByDate } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 
-export function getColumns(): ColumnDef<SelectAgendaWithCoachAndClass>[] {
+export function getColumns(): ColumnDef<SelectScheduleByDate>[] {
   return [
     {
       accessorKey: 'time',
@@ -65,7 +56,7 @@ export function getColumns(): ColumnDef<SelectAgendaWithCoachAndClass>[] {
       ),
       cell: ({ row }) => (
         <div>
-          {row.original.location_name}, {row.original.location_facility_id}
+          {row.original.location_name}, {row.original.location_facility_name}
         </div>
       ),
     },
@@ -100,30 +91,12 @@ export function getColumns(): ColumnDef<SelectAgendaWithCoachAndClass>[] {
       cell: ({ row }) => {
         return (
           <p className="-ml-5 text-center">
-            {row.original.participants?.length ?? 0} / {row.original.slot}
+            {row.original.participant} / {row.original.slot}
           </p>
         );
       },
     },
 
-    {
-      accessorKey: 'updated_at',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Updated At" />
-      ),
-      cell: ({ row }) => {
-        return <span>{row.original.updated_at.toDateString()}</span>;
-      },
-    },
-    {
-      accessorKey: 'updated_by',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Updated By" />
-      ),
-      cell: ({ row }) => {
-        return <span>{row.original.updated_by}</span>;
-      },
-    },
     {
       id: 'actions',
       cell: function Cell({ row }) {

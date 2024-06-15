@@ -7,6 +7,8 @@ import {
   SelectAgendaBooking,
   InsertAgendaBooking,
   UpdateAgendaBooking,
+  FindScheduleByDateOptions,
+  SelectAllSchedule,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -15,6 +17,9 @@ export interface AgendaService {
   findById(
     id: SelectAgenda['id']
   ): PromiseResult<SelectAgenda | undefined, Error>;
+  findScheduleByDate(
+    data: FindScheduleByDateOptions
+  ): PromiseResult<SelectAllSchedule, Error>;
 
   create(data: InsertAgenda): PromiseResult<SelectAgenda, Error>;
 

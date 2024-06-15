@@ -6,16 +6,15 @@ import {
 } from '@repo/shared/service';
 import { MultiSelect } from '@repo/ui/components/multi-select';
 import AgendaTable from './agenda';
-import { FindAllPackageOptions } from '@repo/shared/repository';
-import { findAllPackageSchema } from '@repo/shared/api/schema';
+import { findAllScheduleSchema } from '@repo/shared/api/schema';
 
-export interface IndexPageProps {
-  searchParams: FindAllPackageOptions;
-}
-
-export default async function Schedules({ searchParams }: IndexPageProps) {
-  const search = findAllPackageSchema.parse(searchParams);
-
+export default async function Schedules({
+  searchParams,
+}: {
+  searchParams: any;
+}) {
+  const search = findAllScheduleSchema.parse(searchParams);
+  console.log('search', search);
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,
   );

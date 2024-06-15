@@ -71,3 +71,10 @@ export const findAllAgendaSchema = defaultPaginationSchema.extend({
 export const deleteParticipantSchema = z.object({
   participantId: z.coerce.number().refine((data) => data > 0),
 });
+
+export const findAllScheduleSchema = defaultPaginationSchema.extend({
+  classType: z.string().optional(),
+  coach: z.string().optional(),
+  location: z.string().optional(),
+  date: z.string().optional(),
+});

@@ -8,6 +8,7 @@ import type {
   UpdateAgenda,
   InsertAgendaBooking,
   UpdateAgendaBooking,
+  FindScheduleByDateOptions,
 } from '../repository';
 import { AgendaService } from './agenda';
 
@@ -41,6 +42,15 @@ export class AgendaServiceImpl implements AgendaService {
 
     return {
       result: singleAgenda,
+    };
+  }
+
+  async findScheduleByDate(data: FindScheduleByDateOptions) {
+    const schedules = await this._agendaRepository.findScheduleByDate(data);
+
+    return {
+      result: schedules,
+      error: undefined,
     };
   }
 

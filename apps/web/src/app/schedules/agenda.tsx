@@ -19,10 +19,11 @@ import {
   SelectCoachWithUser,
   SelectClass,
   SelectAllClass,
+  SelectScheduleByDate,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
-import { findAllAgendaSchema } from '@repo/shared/api/schema';
+import { findAllScheduleSchema } from '@repo/shared/api/schema';
 import { Form } from '@repo/ui/components/ui/form';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 // import CreateAgendaForm from './create-agenda.form';
@@ -31,7 +32,7 @@ interface AgendaTableProps {
   locations: SelectLocation[];
   coaches: SelectCoachWithUser[];
   classTypes: SelectClassType[];
-  search: z.infer<typeof findAllAgendaSchema>;
+  search: z.infer<typeof findAllScheduleSchema>;
 }
 
 export default function AgendaTable({
@@ -40,7 +41,10 @@ export default function AgendaTable({
   classTypes,
   search,
 }: AgendaTableProps) {
-  const [{ result, error }] = api.agenda.findAll.useSuspenseQuery(search, {});
+  const [{ result, error }] = api.agenda.findAllSchedule.useSuspenseQuery(
+    search,
+    {},
+  );
   if (error) {
     throw new Error('Error fetching data', error);
   }
@@ -54,13 +58,13 @@ export default function AgendaTable({
   const onDateChange = (date: Date) => {
     // search params
     const newSearchParams = new URLSearchParams(searchParams.toString());
-    newSearchParams.set('date', date.toISOString().split('T')[0] ?? '');
-
+    // remove timzone in date
+    const stringDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate()}`;
+    newSearchParams.set('date', stringDate);
     router.push(`${pathname}?${newSearchParams.toString()}`);
-    console.log(date);
   };
 
-  const filterFields: DataTableFilterField<SelectAgendaWithCoachAndClass>[] = [
+  const filterFields: DataTableFilterField<SelectScheduleByDate>[] = [
     {
       label: 'Lokasi',
       value: 'location_name',
@@ -97,26 +101,22 @@ export default function AgendaTable({
     pageCount: result?.pageCount,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: 'created_at.asc',
-    visibleColumns: {
-      created_at: false,
-      updated_at: false,
-      updated_by: false,
-    },
+    defaultSort: 'time.asc',
+    visibleColumns: {},
   });
+
+  const convertDate = (date: string) => {
+    return new Date(`${date}T00:00:00`);
+  };
 
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
         <DatePicker
+          defaultDate={search.date ? convertDate(search.date) : new Date()}
           onDateChange={onDateChange}
           disabled={(date) => date < new Date()}
         />
-        {/* <CreateAgendaForm
-          coaches={coaches}
-          locations={locations}
-          classes={classes}
-        /> */}
       </DataTableToolbar>
     </DataTable>
   );

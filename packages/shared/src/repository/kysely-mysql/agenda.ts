@@ -166,6 +166,8 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       query = query.where('locations.id', 'in', locations);
     }
 
+    console.log('date', date);
+
     if (date) {
       const dateTomorrow = new Date(date);
       dateTomorrow.setDate(dateTomorrow.getDate() + 1);
