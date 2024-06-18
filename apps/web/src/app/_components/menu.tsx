@@ -66,28 +66,28 @@ export default function Menu({ user }: MenuProps) {
                   <p>{user.name}</p>
                 </Link>
                 <Link
-                  href="/profile"
+                  href="/me"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <User2 className="h-5 w-5" />
                   Profile
                 </Link>
                 <Link
-                  href="/booking"
+                  href="/me/booking"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <CalendarCheck className="h-5 w-5" />
                   Booking
                 </Link>
                 <Link
-                  href="/loyalty"
+                  href="/me/loyalty"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <Sparkles className="h-5 w-5" />
                   Loyalty
                 </Link>
                 <Link
-                  href="/transaction"
+                  href="/me/transaction"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <FileClock className="h-5 w-5" />

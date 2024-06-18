@@ -37,7 +37,7 @@ export function DataTableToolbar<TData>({
   return (
     <div
       className={cn(
-        'flex w-full items-center justify-between space-x-2 overflow-auto p-1',
+        'flex flex-col gap-4 sm:flex-row  w-full items-center justify-between space-x-2 overflow-auto p-1',
         className
       )}
       {...props}
@@ -90,7 +90,7 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-center sm:place-content-center gap-2">
         {children}
         <DataTableViewOptions table={table} />
       </div>

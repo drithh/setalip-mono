@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 30 50% 99.22%;
+    --background: 27.27 40.74% 94.41%;
     --foreground: 15 9.52% 8.24%;
 
     --primary: 25.91 46.81% 81.57%;
@@ -16,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 15 9.52% 8.24%;
 
-    --secondary: 27.27 40.74% 89.41%;
+    --secondary: 27.27 40.74% 79.41%;
     --secondary-foreground: 26 37% 53%;
 
     --muted: 24 55.56% 98.24%;
@@ -28,8 +28,8 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 90.2%;
-    --input: 0 0% 90.2%;
+    --border: 0 0% 75.2%;
+    --input: 0 0% 75.2%;
     --ring: 25.91 46.81% 81.57%;
 
     --radius: 0.5rem;

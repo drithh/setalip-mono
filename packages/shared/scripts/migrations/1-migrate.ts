@@ -386,6 +386,13 @@ export async function up(db: Kysely<any>): Promise<void> {
         .$call(addDefaultColumns)
         .execute();
 
+      // set timezone
+      trx
+        .getExecutor()
+        .executeQuery(sql`SET TIMEZONE='Asia/Jakarta'`.compile(trx), {
+          queryId: 'set_timezone',
+        });
+
       // await trx.schema
       //   .createTable('flash_sales')
       //   .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())

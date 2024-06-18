@@ -68,7 +68,7 @@ export default function RootLayout({
     >
       <body className="font-basic">
         <Provider>
-          <div className="flex w-full flex-col bg-secondary">
+          <div className="flex w-full flex-col bg-background">
             <Header />
             {children}
             <Footer />

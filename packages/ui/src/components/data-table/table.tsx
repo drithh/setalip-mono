@@ -42,7 +42,7 @@ export function DataTable<TData>({
     >
       {children}
       <div className="rounded-md border">
-        <Table>
+        <Table className="sm:block hidden">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -90,6 +90,24 @@ export function DataTable<TData>({
             )}
           </TableBody>
         </Table>
+        <div className="p-4">
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <div key={row.id} className="mb-4 border rounded p-4">
+                {row.getVisibleCells().map((cell) => (
+                  <div key={cell.id} className="mb-2">
+                    {/* <span className="font-semibold">
+                      {cell.column?.columnDef?.header ?? ''}:
+                    </span> */}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </div>
+                ))}
+              </div>
+            ))
+          ) : (
+            <div className="h-24 text-center">No results.</div>
+          )}
+        </div>
       </div>
       <div className="flex flex-col gap-2.5">
         <DataTablePagination table={table} />

@@ -111,7 +111,11 @@ export default function AgendaTable({
 
   return (
     <DataTable table={table}>
-      <DataTableToolbar table={table} filterFields={filterFields}>
+      <DataTableToolbar
+        table={table}
+        filterFields={filterFields}
+        className="flex-col sm:flex-row"
+      >
         <DatePicker
           defaultDate={search.date ? convertDate(search.date) : new Date()}
           onDateChange={onDateChange}

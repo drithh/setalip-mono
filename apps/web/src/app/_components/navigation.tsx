@@ -17,7 +17,7 @@ import Image from 'next/image';
 export default async function Navigation() {
   const auth = await getAuth();
   return (
-    <nav className="sticky top-0 z-30 h-auto gap-4 border-b-2 border-b-primary bg-secondary px-4 py-4  sm:h-auto sm:px-6">
+    <nav className="sticky top-0 z-30 h-auto gap-4 border-b-2 border-b-primary bg-background px-4 py-4  sm:h-auto sm:px-6">
       <div className="mx-auto flex max-w-screen-xl items-center justify-center">
         <Link
           href="/"
@@ -48,16 +48,16 @@ export default async function Navigation() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/profile">Profile</Link>
+                  <Link href="/me">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/booking">Booking</Link>
+                  <Link href="/me/booking">Booking</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/loyalty">Loyalty</Link>
+                  <Link href="/me/loyalty">Loyalty</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/transaction">Transaction</Link>
+                  <Link href="/me/transaction">Transaction</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>

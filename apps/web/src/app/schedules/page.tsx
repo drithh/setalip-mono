@@ -27,8 +27,8 @@ export default async function Schedules({
   const coaches = await coachService.findAll();
 
   return (
-    <div className="bg-white">
-      <div className="mx-auto flex min-h-screen w-full max-w-[90vw] flex-col gap-24  py-32 md:max-w-screen-xl">
+    <div className="">
+      <div className="mx-auto flex min-h-screen w-full max-w-[90vw] flex-col gap-24 py-4 sm:py-32 md:max-w-screen-xl">
         <AgendaTable
           locations={locations.result || []}
           coaches={coaches.result || []}

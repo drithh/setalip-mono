@@ -90,7 +90,7 @@ export function getColumns(): ColumnDef<SelectScheduleByDate>[] {
 
       cell: ({ row }) => {
         return (
-          <p className="-ml-5 text-center">
+          <p className="sm:-ml-5 sm:text-center">
             {row.original.participant} / {row.original.slot}
           </p>
         );
@@ -106,6 +106,7 @@ export function getColumns(): ColumnDef<SelectScheduleByDate>[] {
         return (
           <>
             <Button
+              className="w-full"
               variant="default"
               onClick={() => setShowEditAgendaSheet(true)}
             >

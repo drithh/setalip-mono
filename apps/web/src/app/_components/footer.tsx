@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 export default function Footer() {
   return (
-    <footer className="mx-auto w-[90vw] bg-secondary pt-12 md:w-full">
+    <footer className="mx-auto bg-primary pt-12 md:w-full">
       <div className="flex  max-w-screen-2xl flex-col place-content-around place-items-center gap-8 md:w-full md:flex-row  md:gap-0">
         <Link
           href="/"

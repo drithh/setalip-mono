@@ -34,7 +34,7 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
           </Button>
         </PopoverTrigger>
       </FormControl>
-      <PopoverContent className="w-auto p-0 bg-white">
+      <PopoverContent className="w-auto p-0 bg-background">
         <Calendar
           mode="single"
           selected={value}

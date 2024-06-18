@@ -54,7 +54,7 @@ export default async function Home() {
           </div>
         </Carousel>
       </div>
-      <div className="relative z-10 bg-secondary">
+      <div className="relative z-10 bg-background">
         <div className="">
           <div className="mx-auto flex h-screen max-w-screen-xl flex-col place-content-center place-items-center gap-6">
             <h2 className="text-center font-neue text-6xl md:text-[6rem]">
@@ -94,7 +94,7 @@ export default async function Home() {
                         src={location.asset_url ?? ''}
                       />
                     </div>
-                    <div className="flex flex-col place-content-center place-items-center  bg-secondary py-4">
+                    <div className="flex flex-col place-content-center place-items-center  bg-background py-4">
                       <h4 className="mb-4 font-neue text-2xl md:text-4xl">
                         {location.name}
                       </h4>
