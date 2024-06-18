@@ -9,13 +9,11 @@ interface AvatarImageProps {
   user: User;
 }
 
-export default async function Avatar({ user }: AvatarImageProps) {
+export default function Avatar({ user }: AvatarImageProps) {
   const avatar = useMemo(() => {
     return createAvatar(initials, {
       size: 128,
-      seed: user.email,
-
-      // ... other options
+      seed: user.name,
     }).toDataUriSync();
   }, []);
 

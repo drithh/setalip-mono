@@ -39,7 +39,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
     const offset = (page - 1) * perPage;
     const orderBy = (
-      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+      sort?.split('.').filter(Boolean) ?? ['agendas.created_at', 'desc']
     ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
 
     let query = this._db
@@ -138,7 +138,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
     const offset = (page - 1) * perPage;
     const orderBy = (
-      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+      sort?.split('.').filter(Boolean) ?? ['agendas.time', 'desc']
     ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
 
     let query = this._db

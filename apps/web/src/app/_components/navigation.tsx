@@ -9,7 +9,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuItem,
 } from '@repo/ui/components/ui/dropdown-menu';
-import { SheetTrigger, SheetContent } from '@repo/ui/components/ui/sheet';
 import Link from 'next/link';
 import Menu from './menu';
 import { getAuth } from '@/lib/get-auth';
@@ -18,7 +17,7 @@ import Image from 'next/image';
 export default async function Navigation() {
   const auth = await getAuth();
   return (
-    <nav className="sticky top-0 z-30 h-auto gap-4 border-0 bg-secondary px-4 py-4  sm:h-auto sm:px-6">
+    <nav className="sticky top-0 z-30 h-auto gap-4 border-b-2 border-b-primary bg-secondary px-4 py-4  sm:h-auto sm:px-6">
       <div className="mx-auto flex max-w-screen-xl items-center justify-center">
         <Link
           href="/"
@@ -32,7 +31,7 @@ export default async function Navigation() {
           />
         </Link>
 
-        <Menu isAuth={auth !== null} />
+        <Menu user={auth} />
         <div className=" hidden flex-shrink-0 md:block">
           {auth ? (
             <DropdownMenu>
@@ -48,12 +47,22 @@ export default async function Navigation() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Booking</DropdownMenuItem>
-                <DropdownMenuItem>Loyalty</DropdownMenuItem>
-                <DropdownMenuItem>Transaction</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/profile">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/booking">Booking</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/loyalty">Loyalty</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/transaction">Transaction</Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/logout">Logout</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
