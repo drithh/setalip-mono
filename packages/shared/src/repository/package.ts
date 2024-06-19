@@ -1,5 +1,5 @@
 import { Insertable, Selectable, Updateable } from 'kysely';
-import { Packages } from '../db';
+import { ClassTypes, Classes, Packages } from '../db';
 import { DefaultPagination, OptionalToRequired } from '.';
 
 export interface FindAllPackageOptions extends DefaultPagination {
@@ -7,8 +7,12 @@ export interface FindAllPackageOptions extends DefaultPagination {
   types?: number[];
 }
 
+export interface SelectPackages extends SelectPackage {
+  class_type: ClassTypes['type'];
+}
+
 export interface SelectAllPackage {
-  data: SelectPackage[];
+  data: SelectPackages[];
   pageCount: number;
 }
 

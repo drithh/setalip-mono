@@ -42,7 +42,7 @@ export function DataTable<TData>({
     >
       {children}
       <div className="rounded-md border">
-        <Table className="sm:block hidden">
+        <Table className="hidden sm:table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -90,15 +90,12 @@ export function DataTable<TData>({
             )}
           </TableBody>
         </Table>
-        <div className="p-4">
+        <div className="p-4 sm:hidden">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <div key={row.id} className="mb-4 border rounded p-4">
                 {row.getVisibleCells().map((cell) => (
                   <div key={cell.id} className="mb-2">
-                    {/* <span className="font-semibold">
-                      {cell.column?.columnDef?.header ?? ''}:
-                    </span> */}
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </div>
                 ))}

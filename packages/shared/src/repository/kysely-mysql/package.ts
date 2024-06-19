@@ -25,7 +25,9 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
     ).join(' ') as `${keyof SelectPackage} ${'asc' | 'desc'}`;
 
-    let query = this._db.selectFrom('packages');
+    let query = this._db
+      .selectFrom('packages')
+      .innerJoin('class_types', 'packages.class_type_id', 'class_types.id');
 
     if (name) {
       query = query.where('name', 'like', `%${name}%`);
@@ -34,14 +36,15 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       query = query.where('class_type_id', 'in', types);
     }
     const queryData = await query
-      .selectAll()
+      .selectAll('packages')
+      .select('class_types.type as class_type')
       .limit(perPage)
       .offset(offset)
       .orderBy(orderBy)
       .execute();
 
     const queryCount = await query
-      .select(({ fn }) => [fn.count<number>('id').as('count')])
+      .select(({ fn }) => [fn.count<number>('packages.id').as('count')])
       .executeTakeFirst();
 
     const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
