@@ -1,25 +1,27 @@
 'use client';
 import { useState, useEffect, forwardRef } from 'react';
 import Image, { ImageProps } from 'Next/image';
-interface ImageWithFallbackProps extends Omit<ImageProps, 'src'> {
-  fallback?: string;
-  alt: string;
-  src?: string;
-}
 
+interface ImageWithFallbackProps extends Omit<ImageProps, 'src' | 'alt'> {
+  fallback?: string;
+  alt: string | null;
+  src: string | null;
+}
 const fallbackImage = '/placeholder.svg';
 
 const ImageWithFallback = forwardRef<HTMLImageElement, ImageWithFallbackProps>(
-  ({ fallback = fallbackImage, alt, src, ...props }, ref) => {
-    const [imgSrc, setImgSrc] = useState(src);
-
+  (
+    { fallback = fallbackImage, alt = 'Image', src = fallbackImage, ...props },
+    ref,
+  ) => {
+    const [imgSrc, setImgSrc] = useState(src ?? fallbackImage);
     useEffect(() => {
-      setImgSrc(src);
+      setImgSrc(src ?? fallbackImage);
     }, [src]);
 
     return (
       <Image
-        alt={alt}
+        alt={alt || 'Image'}
         src={imgSrc || fallback}
         onError={() => setImgSrc(fallback)}
         ref={ref}

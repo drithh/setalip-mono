@@ -91,7 +91,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
           .select(
             sql<
               SelectParticipant[]
-            >`coalesce(json_arrayagg(json_object('agenda_booking_id', agenda_bookings.id, 'name', users.name,'user_id', users.id)), '[]')`.as(
+            >`coalesce(json_arrayagg(json_object('agenda_booking_id', 'agenda_bookings.id', 'name', users.name,'user_id', users.id)), '[]')`.as(
               'participants'
             )
           )

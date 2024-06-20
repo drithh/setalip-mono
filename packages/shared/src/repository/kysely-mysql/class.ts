@@ -5,9 +5,11 @@ import {
   ClassRepository,
   SelectClass,
   UpdateClass,
+  SelectDetailClassAssetAndLocation,
 } from '../class';
-import { Database } from '#dep/db/index';
+import { ClassAssets, Database } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
+import { Selectable, sql } from 'kysely';
 
 @injectable()
 export class KyselyMySqlClassRepository implements ClassRepository {
@@ -52,6 +54,50 @@ export class KyselyMySqlClassRepository implements ClassRepository {
     };
   }
 
+  async findAllClassWithAsset(data: FindAllClassOptions) {
+    const { page = 1, perPage = 10, sort } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+    ).join(' ') as `${keyof SelectClass} ${'asc' | 'desc'}`;
+
+    let query = this._db
+      .selectFrom('classes')
+      .leftJoin('class_assets', 'classes.id', 'class_assets.class_id')
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id');
+
+    // if (name) {
+    //   query = query.where('name', 'like', `%${name}%`);
+    // }
+    // if (types) {
+    //   query = query.where('class_type_id', 'in', types);
+    // }
+    const queryData = await query
+      .selectAll('classes')
+      .distinct()
+      .select([
+        'class_assets.url as asset',
+        'class_assets.name as asset_name',
+        'class_types.type as class_type',
+      ])
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
+      .execute();
+
+    const queryCount = await query
+      .select(({ fn }) => [fn.count<number>('classes.id').as('count')])
+      .executeTakeFirst();
+
+    const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
+
+    return {
+      data: queryData,
+      pageCount: pageCount,
+    };
+  }
+
   findById(id: SelectClass['id']) {
     return this._db
       .selectFrom('classes')
@@ -71,6 +117,42 @@ export class KyselyMySqlClassRepository implements ClassRepository {
       .selectAll('locations')
       .where('class_locations.class_id', '=', id)
       .execute();
+  }
+
+  findDetailClassAssetAndLocation(id: SelectClass['id']) {
+    return this._db
+      .selectFrom('classes')
+      .selectAll('classes')
+      .where('classes.id', '=', id)
+      .leftJoin('class_assets', 'classes.id', 'class_assets.class_id')
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id')
+      .select((eb) => [
+        'class_types.type as class_type',
+        eb
+          .selectFrom('class_assets')
+          .select(
+            sql<
+              SelectDetailClassAssetAndLocation['asset']
+            >`coalesce(json_arrayagg(json_object('name', class_assets.name, 'url', class_assets.url, 'type', class_assets.type)), '[]')`.as(
+              'asset'
+            )
+          )
+          .whereRef('class_assets.class_id', '=', 'classes.id')
+          .as('asset'),
+        eb
+          .selectFrom('class_locations')
+          .innerJoin('locations', 'locations.id', 'class_locations.location_id')
+          .select(
+            sql<
+              SelectDetailClassAssetAndLocation['locations']
+            >`coalesce(json_arrayagg(json_object('name', locations.name)), '[]')`.as(
+              'locations'
+            )
+          )
+          .whereRef('class_locations.class_id', '=', 'classes.id')
+          .as('locations'),
+      ])
+      .executeTakeFirst();
   }
 
   async create(data: InsertClass) {

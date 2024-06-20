@@ -26,8 +26,32 @@ export class ClassServiceImpl implements ClassService {
     };
   }
 
+  async findAllClassWithAsset(data: FindAllClassOptions) {
+    const classes = await this._classRepository.findAllClassWithAsset(data);
+
+    return {
+      result: classes,
+      error: undefined,
+    };
+  }
+
   async findById(id: SelectClass['id']) {
     const singleClass = await this._classRepository.findById(id);
+
+    if (!singleClass) {
+      return {
+        error: new Error('Class not found'),
+      };
+    }
+
+    return {
+      result: singleClass,
+    };
+  }
+
+  async findDetailClassAssetAndLocation(id: SelectClass['id']) {
+    const singleClass =
+      await this._classRepository.findDetailClassAssetAndLocation(id);
 
     if (!singleClass) {
       return {
