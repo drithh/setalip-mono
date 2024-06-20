@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Roboto_Mono } from 'next/font/google';
+import { Inter, Montserrat } from 'next/font/google';
 import localFont from 'next/font/local';
 import '@repo/ui/global.css';
 
@@ -25,28 +25,14 @@ import MobileNav from './_components/navigation';
 import Header from './_components/navigation';
 import Footer from './_components/footer';
 
-const rozhaOne = localFont({
-  src: '../../public/rozhaone-regular.otf',
-  variable: '--font-rozhaone',
-});
-
-const basicCommercial = localFont({
-  src: '../../public/basic-commercial.woff2',
-  variable: '--font-basic-commercial',
-});
-
-const gtAmerica = localFont({
-  src: '../../public/gt-america.woff2',
-  variable: '--font-gt-america',
-});
-
 const neueWorld = localFont({
   src: '../../public/neue-world.woff2',
   variable: '--font-neue-world',
 });
-const inter = Inter({
+
+const monserrat = Montserrat({
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-montserrat',
   subsets: ['latin'],
 });
 
@@ -61,11 +47,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${rozhaOne.variable} ${inter.variable} ${basicCommercial.variable} ${gtAmerica.variable} ${neueWorld.variable}`}
-    >
-      <body className="font-basic">
+    <html lang="en" className={`${monserrat.variable}  ${neueWorld.variable}`}>
+      <body className="font-sans">
         <Provider>
           <div className="flex w-full flex-col bg-background">
             <Header />

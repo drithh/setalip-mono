@@ -128,7 +128,7 @@ export default function Menu({ user }: MenuProps) {
           </nav>
         </SheetContent>
       </SheetWrapper>
-      <div className="mr-6 hidden h-full flex-grow flex-row place-content-end gap-4 pt-1 font-gt font-medium uppercase md:flex xl:gap-6">
+      <div className="mr-6 hidden h-full flex-grow flex-row place-content-end gap-4 pt-1 font-medium uppercase md:flex xl:gap-6">
         <Link href="classes">
           <Button
             variant="link"

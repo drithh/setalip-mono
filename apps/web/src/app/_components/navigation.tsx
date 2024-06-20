@@ -21,7 +21,7 @@ export default async function Navigation() {
       <div className="mx-auto flex max-w-screen-xl items-center justify-center">
         <Link
           href="/"
-          className="flex items-center gap-2 font-rozhaone text-3xl font-semibold"
+          className="flex items-center gap-2 text-3xl font-semibold"
         >
           <Image
             src="/logo.webp"
@@ -69,7 +69,7 @@ export default async function Navigation() {
             <div className="flex place-content-end gap-2 ">
               <Link href="/login">
                 <Button
-                  className="w-24 border-background bg-primary font-gt uppercase text-primary-foreground"
+                  className="w-24 border-background bg-primary uppercase text-primary-foreground"
                   variant="default"
                 >
                   Login

@@ -26,10 +26,7 @@ const config = {
       },
 
       fontFamily: {
-        sans: ['var(--font-inter)'],
-        rozhaone: ['var(--font-rozhaone)'],
-        basic: ['var(--font-basic-commercial)'],
-        gt: ['var(--font-gt-america)'],
+        sans: ['var(--font-montserrat)', 'ui-sans-serif', 'system-ui'],
         neue: ['var(--font-neue-world)'],
       },
       colors: {

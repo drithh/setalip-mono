@@ -57,7 +57,7 @@ export default async function Home() {
       <div className="relative z-10 bg-background">
         <div className="">
           <div className="mx-auto flex h-screen max-w-screen-xl flex-col place-content-center place-items-center gap-6">
-            <h2 className="text-center font-neue text-6xl md:text-[6rem]">
+            <h2 className="max-w-4xl text-center text-2xl font-bold md:text-6xl">
               Empowering Fitness, Elevating Life.
             </h2>
             <p className="mx-auto max-w-[80vw] text-center md:max-w-4xl md:text-lg">
@@ -76,16 +76,13 @@ export default async function Home() {
           <div className=" bg-primary">
             <div className="mx-auto flex max-w-[90vw] flex-col gap-24 py-32 md:max-w-screen-xl">
               <div className="flex flex-col place-content-center place-items-center gap-4">
-                <p className="font-gt text-[0.8rem] uppercase text-secondary-foreground md:text-lg">
-                  Visit Us Here
-                </p>
-                <h2 className="text-center font-neue text-6xl md:text-[6rem]">
+                <h2 className="text-center text-2xl font-bold md:text-6xl">
                   Our Locations
                 </h2>
               </div>
-              <div className="flex flex-row flex-wrap place-content-center gap-6 sm:px-6 md:place-content-between">
+              <div className="grid grid-cols-1 place-items-center gap-6 sm:grid-cols-2 sm:px-6 md:grid-cols-3 md:place-items-center">
                 {locations?.result?.map((location) => (
-                  <div key={location.id} className="w-40 md:w-80">
+                  <div key={location.id} className="w-56 max-w-80 sm:w-full">
                     <div className=" relative h-36 bg-transparent p-0 md:h-72">
                       <Image
                         fill
@@ -95,7 +92,7 @@ export default async function Home() {
                       />
                     </div>
                     <div className="flex flex-col place-content-center place-items-center  bg-background py-4">
-                      <h4 className="mb-4 font-neue text-2xl md:text-4xl">
+                      <h4 className="mb-4 text-lg font-semibold md:text-2xl">
                         {location.name}
                       </h4>
                       <h4 className="flex items-center gap-2 text-sm text-secondary-foreground  sm:text-base">
@@ -107,7 +104,7 @@ export default async function Home() {
                         {location.address}
                       </h4>
 
-                      <Button className="mt-6 font-gt text-tiny sm:text-sm">
+                      <Button className="mt-6 bg-secondary text-sm font-semibold uppercase sm:text-base">
                         See More
                       </Button>
                     </div>

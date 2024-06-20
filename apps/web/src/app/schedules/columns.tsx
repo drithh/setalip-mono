@@ -106,11 +106,14 @@ export function getColumns(): ColumnDef<SelectScheduleByDate>[] {
         return (
           <>
             <Button
+              disabled={row.original.participant === row.original.slot}
               className="w-full"
               variant="default"
               onClick={() => setShowEditAgendaSheet(true)}
             >
-              Join Class
+              {row.original.participant === row.original.slot
+                ? 'Full'
+                : 'Join Class'}
             </Button>
           </>
         );

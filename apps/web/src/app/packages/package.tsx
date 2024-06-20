@@ -13,7 +13,7 @@ export default function Package({ singlePackage }: Package) {
     <div className="flex flex-col rounded-xl border pt-8">
       <div className="mb-12 flex h-40 flex-col place-content-between px-4">
         <div className="flex flex-col">
-          <h1 className="text-center font-gt text-xl font-semibold uppercase text-secondary-foreground">
+          <h1 className="text-center text-xl font-semibold uppercase text-secondary-foreground">
             {singlePackage.name}
           </h1>
           <p className="text-center text-lg font-semibold capitalize text-gray-500">
@@ -26,7 +26,7 @@ export default function Package({ singlePackage }: Package) {
           </p>
           <p>
             {moneyFormatter.format(singlePackage.price / singlePackage.credit)}{' '}
-            / credit
+            / Session
           </p>
         </div>
       </div>
@@ -41,8 +41,7 @@ export default function Package({ singlePackage }: Package) {
           Buy now
         </Button>
       </div>
-      <Separator />
-      <div className="flex flex-col bg-secondary pb-8 pt-4">
+      <div className="flex flex-col bg-primary pb-8 pt-4">
         <p className="text-center font-semibold">
           Total credit worth: {singlePackage.credit} credits
         </p>
