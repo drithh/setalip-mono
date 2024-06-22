@@ -14,7 +14,7 @@ import { PromiseResult } from '../types';
 export interface UserService {
   findAll(data: FindAllUserOptions): PromiseResult<SelectAllUser, Error>;
   findAllMember(): PromiseResult<SelectUser[], Error>;
-  findById(id: SelectUser['id']): PromiseResult<SelectUser | undefined, Error>;
+  findById(id: SelectUser['id']): PromiseResult<SelectUser, Error>;
   findCreditsByUserId(
     userId: SelectUser['id']
   ): PromiseResult<SelectAmountCredit[], Error>;

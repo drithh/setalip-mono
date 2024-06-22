@@ -81,6 +81,14 @@ export default async function ClassDetail({
                 {singleClass.result.description}
               </p>
               <Button className="w-full max-w-[200px]">Book Now</Button>
+              <div className="space-y-2">
+                <h3 className="text-lg font-medium">Available Locations:</h3>
+                <ul className="list-disc space-y-1 pl-6">
+                  {singleClass.result.locations?.map((location) => (
+                    <li key={location.name}>{location.name}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </section>

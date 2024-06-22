@@ -20,9 +20,9 @@ export default function Layout({
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[90vw] flex-row gap-24 py-32 md:max-w-screen-xl">
-      <div className="relative">
-        <div className="sticky top-[89px] flex h-[calc(100vh-92px)] w-64 flex-col gap-4 border-2 border-primary px-4 py-8 pl-12 ">
+    <div className="mx-auto flex w-full max-w-[90vw] flex-row py-32 md:max-w-screen-xl">
+      <div className="relative hidden md:inline-block">
+        <div className="sticky top-[89px] flex h-[calc(100vh-92px)] w-64 flex-col gap-4 border-2 border-r-0 border-primary px-4 py-8 pl-12 ">
           <Link href="/me">
             <p className={cn('uppercase hover:underline', getActive('/me'))}>
               Profile
@@ -36,6 +36,16 @@ export default function Layout({
               )}
             >
               Booking
+            </p>
+          </Link>
+          <Link href="/me/credit">
+            <p
+              className={cn(
+                'uppercase hover:underline',
+                getActive('/me/credit'),
+              )}
+            >
+              Credit
             </p>
           </Link>
           <Link href="/me/loyalty">
