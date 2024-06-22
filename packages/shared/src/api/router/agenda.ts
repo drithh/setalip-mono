@@ -6,6 +6,7 @@ import {
   deleteParticipantSchema,
   findAllAgendaSchema,
   findAllScheduleSchema,
+  findAllUserAgendaSchema,
 } from '../schema';
 
 export const agendaRouter = {
@@ -39,14 +40,16 @@ export const agendaRouter = {
     .input(findAllScheduleSchema)
     .query(async ({ ctx, input }) => {
       const coaches =
-        input.coach?.split('.').map((coach) => parseInt(coach)) ?? [];
+        input.coach_name?.split('.').map((coach) => parseInt(coach)) ?? [];
 
       const locations =
-        input.location?.split('.').map((location) => parseInt(location)) ?? [];
+        input.location_name?.split('.').map((location) => parseInt(location)) ??
+        [];
 
       const classTypes =
-        input.classType?.split('.').map((classType) => parseInt(classType)) ??
-        [];
+        input.class_type_name
+          ?.split('.')
+          .map((classType) => parseInt(classType)) ?? [];
       const agendaService = ctx.container.get<AgendaService>(
         TYPES.AgendaService
       );
@@ -77,5 +80,46 @@ export const agendaRouter = {
       });
 
       return schedules;
+    }),
+  findAllUserAgenda: protectedProcedure
+    .input(findAllUserAgendaSchema)
+    .query(async ({ ctx, input }) => {
+      const coaches =
+        input.coach_name?.split('.').map((coach) => parseInt(coach)) ?? [];
+
+      const locations =
+        input.location_name?.split('.').map((location) => parseInt(location)) ??
+        [];
+
+      console.log('input', input);
+
+      const classTypes =
+        input.class_type_name
+          ?.split('.')
+          .map((classType) => parseInt(classType)) ?? [];
+
+      const user = ctx.session.user;
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      console.log('input', classTypes);
+
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+
+      const agendas = await agendaService.findAgendaByUserId({
+        page: input.page,
+        perPage: input.per_page,
+        sort: input.sort,
+        locations: locations,
+        coaches: coaches,
+        classTypes: classTypes,
+        userId: user.id,
+      });
+
+      return agendas;
     }),
 } satisfies TRPCRouterRecord;

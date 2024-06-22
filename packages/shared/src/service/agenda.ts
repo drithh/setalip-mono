@@ -9,6 +9,8 @@ import {
   UpdateAgendaBooking,
   FindScheduleByDateOptions,
   SelectAllSchedule,
+  SelectAllAgendaByUser,
+  FindAgendaByUserOptions,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -20,6 +22,9 @@ export interface AgendaService {
   findScheduleByDate(
     data: FindScheduleByDateOptions
   ): PromiseResult<SelectAllSchedule, Error>;
+  findAgendaByUserId(
+    data: FindAgendaByUserOptions
+  ): PromiseResult<SelectAllAgendaByUser, Error>;
 
   create(data: InsertAgenda): PromiseResult<SelectAgenda, Error>;
 

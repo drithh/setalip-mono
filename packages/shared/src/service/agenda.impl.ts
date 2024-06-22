@@ -9,6 +9,7 @@ import type {
   InsertAgendaBooking,
   UpdateAgendaBooking,
   FindScheduleByDateOptions,
+  FindAgendaByUserOptions,
 } from '../repository';
 import { AgendaService } from './agenda';
 
@@ -50,6 +51,15 @@ export class AgendaServiceImpl implements AgendaService {
 
     return {
       result: schedules,
+      error: undefined,
+    };
+  }
+
+  async findAgendaByUserId(data: FindAgendaByUserOptions) {
+    const agendas = await this._agendaRepository.findAgendaByUserId(data);
+
+    return {
+      result: agendas,
       error: undefined,
     };
   }

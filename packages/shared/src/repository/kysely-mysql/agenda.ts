@@ -10,12 +10,14 @@ import {
   UpdateAgendaBooking,
   SelectParticipant,
   FindScheduleByDateOptions,
-  SelectScheduleByDate,
+  SelectAllSchedule,
+  FindAgendaByUserOptions,
+  SelectAllAgendaByUser,
 } from '../agenda';
-import { Database } from '#dep/db/index';
+import { Database, Users } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/mysql';
-import { sql } from 'kysely';
+import { Selectable, sql } from 'kysely';
 
 @injectable()
 export class KyselyMySqlAgendaRepository implements AgendaRepository {
@@ -166,8 +168,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       query = query.where('locations.id', 'in', locations);
     }
 
-    console.log('date', date);
-
     if (date) {
       const dateTomorrow = new Date(date);
       dateTomorrow.setDate(dateTomorrow.getDate() + 1);
@@ -215,7 +215,88 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
 
     return {
-      data: queryData satisfies SelectScheduleByDate[],
+      data: queryData satisfies SelectAllSchedule['data'],
+      pageCount: pageCount,
+    };
+  }
+
+  async findAgendaByUserId(data: FindAgendaByUserOptions) {
+    const {
+      page = 1,
+      userId,
+      perPage = 10,
+      sort,
+      classTypes,
+      coaches,
+      locations,
+    } = data;
+
+    const offset = (page - 1) * perPage;
+
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['agenda_bookings.updated_at', 'desc']
+    ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
+
+    let query = this._db
+      .selectFrom('agendas')
+      .innerJoin('agenda_bookings', 'agenda_bookings.agenda_id', 'agendas.id')
+      .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
+      .innerJoin('users', 'coaches.user_id', 'users.id')
+      .innerJoin('classes', 'agendas.class_id', 'classes.id')
+      .innerJoin(
+        'location_facilities',
+        'agendas.location_facility_id',
+        'location_facilities.id'
+      )
+      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id');
+
+    if (classTypes?.length && classTypes.length > 0) {
+      query = query.where('class_types.id', 'in', classTypes);
+    }
+
+    if (coaches?.length && coaches.length > 0) {
+      query = query.where('coaches.id', 'in', coaches);
+    }
+
+    if (locations?.length && locations.length > 0) {
+      query = query.where('locations.id', 'in', locations);
+    }
+
+    const queryData = await query
+      .select((eb) => [
+        'agendas.class_id',
+        'agendas.id',
+        'agendas.time',
+        'agendas.location_facility_id',
+        'agendas.slot',
+        'agenda_bookings.status as agenda_booking_status',
+        'agenda_bookings.created_at as agenda_booking_updated_at',
+        'users.name as coach_name',
+        'coaches.id as coach_id',
+        'classes.id as class_id',
+        'classes.name as class_name',
+        'classes.duration as class_duration',
+        'class_types.id as class_type_id',
+        'class_types.type as class_type_name',
+        'locations.name as location_name',
+        'locations.id as location_id',
+        'location_facilities.name as location_facility_name',
+      ])
+
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
+      .execute();
+    const test = queryData[0];
+    const queryCount = await query
+      .select(({ fn }) => [fn.count<number>('agendas.id').as('count')])
+      .executeTakeFirst();
+
+    const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
+
+    return {
+      data: queryData satisfies SelectAllAgendaByUser['data'],
       pageCount: pageCount,
     };
   }

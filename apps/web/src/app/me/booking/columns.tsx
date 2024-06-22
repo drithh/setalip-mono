@@ -14,11 +14,39 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import { dateFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
-import { SelectAllSchedule } from '@repo/shared/repository';
-import { Button } from '@repo/ui/components/ui/button';
+import { SelectAllAgendaByUser } from '@repo/shared/repository';
+import { Badge } from '@repo/ui/components/ui/badge';
 
-export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
+export function getColumns(): ColumnDef<SelectAllAgendaByUser['data'][0]>[] {
   return [
+    {
+      accessorKey: 'agenda_booking_updated_at',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          className="justify-center"
+          column={column}
+          title="Tanggal Booking"
+        />
+      ),
+      cell: ({ row }) => {
+        return (
+          <div className="flex place-content-center sm:-ml-5">
+            <span className="inline-block font-semibold sm:hidden">
+              Tanggal Book:&ensp;
+            </span>
+            <p className="font-semibold">
+              {dateFormatter({
+                year: undefined,
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+              }).format(row.original.agenda_booking_updated_at)}
+            </p>
+          </div>
+        );
+      },
+    },
     {
       accessorKey: 'time',
       header: ({ column }) => (
@@ -91,10 +119,10 @@ export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
       },
     },
     {
-      accessorKey: 'slot',
+      accessorKey: 'status',
       header: ({ column }) => (
         <DataTableColumnHeader
-          className="justify-center"
+          className="w-32 justify-center"
           column={column}
           title="Slot"
         />
@@ -102,35 +130,14 @@ export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
 
       cell: ({ row }) => {
         return (
-          <p className="sm:-ml-5 sm:text-center">
+          <div className="sm:-ml-5 sm:text-center">
             <span className="inline-block font-semibold sm:hidden">
-              Participant :&ensp;
+              Status :&ensp;
             </span>
-            {row.original.participant} / {row.original.slot}
-          </p>
-        );
-      },
-    },
-
-    {
-      id: 'actions',
-      cell: function Cell({ row }) {
-        const [showEditAgendaSheet, setShowEditAgendaSheet] =
-          React.useState(false);
-
-        return (
-          <>
-            <Button
-              disabled={row.original.participant === row.original.slot}
-              className="w-full"
-              variant="default"
-              onClick={() => setShowEditAgendaSheet(true)}
-            >
-              {row.original.participant === row.original.slot
-                ? 'Full'
-                : 'Join Class'}
-            </Button>
-          </>
+            <Badge className="text-center capitalize">
+              {row.original.agenda_booking_status.split('_').join(' ')}
+            </Badge>
+          </div>
         );
       },
     },

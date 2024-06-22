@@ -98,28 +98,28 @@ export default function Menu({ user }: MenuProps) {
 
             <Separator />
             <Link
-              href="#"
+              href="/classes"
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
             >
               <PilatesSvg className="h-5 w-5 fill-current" />
               Classes
             </Link>
             <Link
-              href="#"
+              href="/schedules"
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
             >
               <CalendarClock className="h-5 w-5" />
               Schedules
             </Link>
             <Link
-              href="#"
+              href="/packages"
               className="flex items-center gap-4 px-2.5 text-foreground"
             >
               <Tag className="h-5 w-5" />
               Packages
             </Link>
             <Link
-              href="#"
+              href="/contact"
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
             >
               <Phone className="h-5 w-5" />
@@ -129,7 +129,7 @@ export default function Menu({ user }: MenuProps) {
         </SheetContent>
       </SheetWrapper>
       <div className="mr-6 hidden h-full flex-grow flex-row place-content-end gap-4 pt-1 font-medium uppercase md:flex xl:gap-6">
-        <Link href="classes">
+        <Link href="/classes">
           <Button
             variant="link"
             size="default"
@@ -138,7 +138,7 @@ export default function Menu({ user }: MenuProps) {
             Classes
           </Button>
         </Link>
-        <Link href="schedules">
+        <Link href="/schedules">
           <Button
             variant="link"
             size="default"
@@ -147,7 +147,7 @@ export default function Menu({ user }: MenuProps) {
             Schedules
           </Button>
         </Link>
-        <Link href="packages">
+        <Link href="/packages">
           <Button
             variant="link"
             size="default"
@@ -156,7 +156,7 @@ export default function Menu({ user }: MenuProps) {
             Packages
           </Button>
         </Link>
-        <Link href="contact">
+        <Link href="/contact">
           <Button
             variant="link"
             size="default"

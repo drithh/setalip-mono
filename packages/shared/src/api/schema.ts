@@ -73,9 +73,17 @@ export const deleteParticipantSchema = z.object({
 });
 
 export const findAllScheduleSchema = defaultPaginationSchema.extend({
-  classType: z.string().optional(),
-  coach: z.string().optional(),
-  location: z.string().optional(),
+  class_type_name: z.string().optional(),
+  coach_name: z.string().optional(),
+  location_name: z.string().optional(),
   date: z.string().optional(),
   sort: z.string().default('time.asc'),
+});
+
+export const findAllUserAgendaSchema = defaultPaginationSchema.extend({
+  class_type_name: z.string().optional(),
+  coach_name: z.string().optional(),
+  location_name: z.string().optional(),
+  userId: z.coerce.number().refine((data) => data > 0),
+  sort: z.string().default('agenda_booking_updated_at.desc'),
 });

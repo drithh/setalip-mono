@@ -19,11 +19,11 @@ import {
   SelectCoachWithUser,
   SelectClass,
   SelectAllClass,
-  SelectAllSchedule,
+  SelectAllAgendaByUser,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
-import { findAllScheduleSchema } from '@repo/shared/api/schema';
+import { findAllUserAgendaSchema } from '@repo/shared/api/schema';
 import { Form } from '@repo/ui/components/ui/form';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 // import CreateAgendaForm from './create-agenda.form';
@@ -32,7 +32,7 @@ interface AgendaTableProps {
   locations: SelectLocation[];
   coaches: SelectCoachWithUser[];
   classTypes: SelectClassType[];
-  search: z.infer<typeof findAllScheduleSchema>;
+  search: z.infer<typeof findAllUserAgendaSchema>;
 }
 
 export default function AgendaTable({
@@ -41,7 +41,7 @@ export default function AgendaTable({
   classTypes,
   search,
 }: AgendaTableProps) {
-  const [{ result, error }] = api.agenda.findAllSchedule.useSuspenseQuery(
+  const [{ result, error }] = api.agenda.findAllUserAgenda.useSuspenseQuery(
     search,
     {},
   );
@@ -64,36 +64,37 @@ export default function AgendaTable({
     router.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
-  const filterFields: DataTableFilterField<SelectAllSchedule['data'][0]>[] = [
-    {
-      label: 'Lokasi',
-      value: 'location_name',
-      options: locations.map((location) => ({
-        label: location.name,
-        value: location.id.toString(),
-        withCount: true,
-      })),
-    },
+  const filterFields: DataTableFilterField<SelectAllAgendaByUser['data'][0]>[] =
+    [
+      {
+        label: 'Lokasi',
+        value: 'location_name',
+        options: locations.map((location) => ({
+          label: location.name,
+          value: location.id.toString(),
+          withCount: true,
+        })),
+      },
 
-    {
-      label: 'Kelas',
-      value: 'class_type_name',
-      options: classTypes.map((classType) => ({
-        label: classType.type,
-        value: classType.id.toString(),
-        withCount: true,
-      })),
-    },
-    {
-      label: 'Instruktur',
-      value: 'coach_name',
-      options: coaches.map((coach) => ({
-        label: coach.name,
-        value: coach.id.toString(),
-        withCount: true,
-      })),
-    },
-  ];
+      {
+        label: 'Kelas',
+        value: 'class_type_name',
+        options: classTypes.map((classType) => ({
+          label: classType.type,
+          value: classType.id.toString(),
+          withCount: true,
+        })),
+      },
+      {
+        label: 'Instruktur',
+        value: 'coach_name',
+        options: coaches.map((coach) => ({
+          label: coach.name,
+          value: coach.id.toString(),
+          withCount: true,
+        })),
+      },
+    ];
 
   const { table } = useDataTable({
     data: result?.data ?? [],
@@ -101,8 +102,12 @@ export default function AgendaTable({
     pageCount: result?.pageCount,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: 'time.asc',
-    visibleColumns: {},
+    defaultSort: 'agenda_booking_updated_at.desc',
+    visibleColumns: {
+      coach_id: false,
+      location_id: false,
+      class_type_id: false,
+    },
   });
 
   const convertDate = (date: string) => {
@@ -115,13 +120,7 @@ export default function AgendaTable({
         table={table}
         filterFields={filterFields}
         className="flex-col sm:flex-row"
-      >
-        <DatePicker
-          defaultDate={search.date ? convertDate(search.date) : new Date()}
-          onDateChange={onDateChange}
-          disabled={(date) => date < new Date()}
-        />
-      </DataTableToolbar>
+      ></DataTableToolbar>
     </DataTable>
   );
 }

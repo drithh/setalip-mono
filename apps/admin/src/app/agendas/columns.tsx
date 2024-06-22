@@ -76,7 +76,7 @@ export function getColumns({
       },
     },
     {
-      accessorKey: 'location_name',
+      accessorKey: 'location_id',
       header: ({ column }) => (
         <DataTableColumnHeader
           className="w-40"
