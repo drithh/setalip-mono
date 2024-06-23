@@ -1,3 +1,5 @@
+'server-only';
+
 import type { TRPCRouterRecord } from '@trpc/server';
 import { protectedProcedure, publicProcedure } from '../trpc';
 import { TYPES } from '#dep/inversify/types';

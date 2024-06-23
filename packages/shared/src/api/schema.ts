@@ -87,3 +87,8 @@ export const findAllUserAgendaSchema = defaultPaginationSchema.extend({
   userId: z.coerce.number().refine((data) => data > 0),
   sort: z.string().default('agenda_booking_updated_at.desc'),
 });
+
+export const findAllUserCreditSchema = defaultPaginationSchema.extend({
+  user_id: z.coerce.number().refine((data) => data > 0),
+  credit_type: z.string().optional(),
+});

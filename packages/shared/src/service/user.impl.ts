@@ -59,71 +59,8 @@ export class UserServiceImpl implements UserService {
     };
   }
 
-  async findCreditsByUserId(userId: SelectUser['id']) {
-    const credits = await this._userRepository.findCreditsByUserId(userId);
-
-    return {
-      result: credits,
-      error: undefined,
-    };
-  }
-
-  async createCredit(data: InsertCredit) {
-    const classType = await this._classTypeRepository.findById(
-      data.class_type_id
-    );
-
-    if (!classType) {
-      return {
-        result: undefined,
-        error: new Error('Class type not found'),
-      };
-    }
-
-    const user = await this._userRepository.findById(data.user_id);
-
-    if (!user) {
-      return {
-        result: undefined,
-        error: new Error('User not found'),
-      };
-    }
-
-    const insertedData = {
-      ...data,
-    } satisfies InsertCredit;
-
-    const result = await this._userRepository.createCredit(insertedData);
-
-    if (result instanceof Error) {
-      return {
-        result: undefined,
-        error: result,
-      };
-    }
-
-    return {
-      result,
-    };
-  }
-
   async update(data: UpdateUser) {
     const result = await this._userRepository.update(data);
-
-    if (result instanceof Error) {
-      return {
-        result: undefined,
-        error: result,
-      };
-    }
-
-    return {
-      result,
-    };
-  }
-
-  async deleteCredit(data: InsertCredit) {
-    const result = await this._userRepository.deleteCredit(data);
 
     if (result instanceof Error) {
       return {

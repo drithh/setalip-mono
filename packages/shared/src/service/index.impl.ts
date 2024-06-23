@@ -8,3 +8,4 @@ export * from '#dep/service/user.impl';
 export * from '#dep/service/agenda.impl';
 export * from '#dep/service/class.impl';
 export * from '#dep/service/coach.impl';
+export * from '#dep/service/credit.impl';

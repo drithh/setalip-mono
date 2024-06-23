@@ -22,6 +22,8 @@ const TYPES = {
   ClassService: Symbol.for('ClassService'),
   CoachRepository: Symbol.for('CoachRepository'),
   CoachService: Symbol.for('CoachService'),
+  CreditRepository: Symbol.for('CreditRepository'),
+  CreditService: Symbol.for('CreditService'),
 };
 
 export { TYPES };

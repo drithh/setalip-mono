@@ -7,3 +7,4 @@ export * from '#dep/repository/kysely-mysql/classType';
 export * from '#dep/repository/kysely-mysql/agenda';
 export * from '#dep/repository/kysely-mysql/class';
 export * from '#dep/repository/kysely-mysql/coach';
+export * from '#dep/repository/kysely-mysql/credit';

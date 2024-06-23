@@ -42,7 +42,7 @@ export default async function Schedules({
 
   return (
     <div className="w-full border-2 border-primary p-6">
-      <h1 className="text-3xl font-bold">Booking</h1>
+      <h1 className="text-3xl font-bold">Credit</h1>
       <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[90vw] flex-col gap-24 md:max-w-screen-xl">
         <AgendaTable
           locations={locations.result || []}

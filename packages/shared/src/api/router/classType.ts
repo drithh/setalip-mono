@@ -1,3 +1,5 @@
+'server-only';
+
 import { TYPES } from '#dep/inversify/types';
 import { ClassTypeService } from '#dep/service/index';
 import { TRPCRouterRecord } from '@trpc/server';

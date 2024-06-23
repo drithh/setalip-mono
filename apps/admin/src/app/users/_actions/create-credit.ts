@@ -1,6 +1,6 @@
 'use server';
 import { cookies } from 'next/headers';
-import { ClassTypeService, UserService } from '@repo/shared/service';
+import { ClassTypeService, CreditService } from '@repo/shared/service';
 import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
@@ -36,9 +36,9 @@ export async function createCredit(
     type: 'debit' as const,
   } satisfies InsertCredit;
 
-  const userService = container.get<UserService>(TYPES.UserService);
+  const creditService = container.get<CreditService>(TYPES.CreditService);
 
-  const createCredit = await userService.createCredit(insertData);
+  const createCredit = await creditService.create(insertData);
 
   if (createCredit.error) {
     return {

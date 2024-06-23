@@ -1,6 +1,10 @@
 'use server';
 import { cookies } from 'next/headers';
-import { ClassTypeService, UserService } from '@repo/shared/service';
+import {
+  ClassTypeService,
+  CreditService,
+  UserService,
+} from '@repo/shared/service';
 import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
@@ -36,9 +40,9 @@ export async function deleteCredit(
     type: 'credit' as const,
   } satisfies InsertCredit;
 
-  const userService = container.get<UserService>(TYPES.UserService);
+  const creditService = container.get<CreditService>(TYPES.CreditService);
 
-  const deleteCredit = await userService.deleteCredit(insertData);
+  const deleteCredit = await creditService.delete(insertData);
 
   if (deleteCredit.error) {
     return {

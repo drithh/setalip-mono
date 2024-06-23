@@ -12,6 +12,7 @@ import {
   AgendaRepository,
   CoachRepository,
   ClassRepository,
+  CreditRepository,
 } from '#dep/repository/index';
 import {
   KyselyMySqlUserRepository,
@@ -23,6 +24,7 @@ import {
   KyselyMySqlAgendaRepository,
   KyselyMySqlCoachRepository,
   KyselyMySqlClassRepository,
+  KyselyMySqlCreditRepository,
 } from '#dep/repository/kysely-mysql/index';
 import {
   NotificationService,
@@ -39,6 +41,7 @@ import {
   AgendaServiceImpl,
   CoachServiceImpl,
   ClassServiceImpl,
+  CreditServiceImpl,
 } from '#dep/service/index.impl';
 import {
   AuthService,
@@ -51,6 +54,7 @@ import {
   AgendaService,
   CoachService,
   ClassService,
+  CreditService,
 } from '#dep/service/index';
 
 const container = new Container();
@@ -98,6 +102,10 @@ container
   .bind<CoachRepository>(TYPES.CoachRepository)
   .to(KyselyMySqlCoachRepository);
 container.bind<CoachService>(TYPES.CoachService).to(CoachServiceImpl);
+container
+  .bind<CreditRepository>(TYPES.CreditRepository)
+  .to(KyselyMySqlCreditRepository);
+container.bind<CreditService>(TYPES.CreditService).to(CreditServiceImpl);
 
 export { container };
 
