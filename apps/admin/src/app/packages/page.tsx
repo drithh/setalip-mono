@@ -16,7 +16,7 @@ import { ClassTypeService } from '@repo/shared/service';
 import { findAllPackageSchema } from '@repo/shared/api/schema';
 import QueryResetBoundary from '../../lib/query-reset-boundary';
 import React from 'react';
-import { getAuth } from '@/lib/auth';
+import { validateAdmin } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export interface IndexPageProps {
@@ -24,10 +24,7 @@ export interface IndexPageProps {
 }
 
 export default async function Packages({ searchParams }: IndexPageProps) {
-  // const session = await getAuth();
-  // if (!session) {
-  //   redirect('/login');
-  // }
+  const auth = validateAdmin();
 
   const search = findAllPackageSchema.parse(searchParams);
   console.log('search', search);

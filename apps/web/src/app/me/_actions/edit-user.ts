@@ -11,12 +11,14 @@ import {
   convertFormData,
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
-import { getAuth } from '@/lib/get-auth';
+import { validateUser } from '@/lib/auth';
 
 export async function editUser(
   state: FormEditUser,
   data: FormData,
 ): Promise<FormEditUser> {
+  const auth = await validateUser();
+
   const formData = convertFormData(data);
   const parsed = editUserSchema.safeParse(formData);
 
@@ -28,12 +30,6 @@ export async function editUser(
         parsed.error.formErrors.fieldErrors,
       ),
     };
-  }
-
-  const auth = await getAuth();
-
-  if (!auth) {
-    redirect('/login');
   }
 
   const userService = container.get<UserService>(TYPES.UserService);
@@ -56,7 +52,7 @@ export async function editUser(
     };
   }
 
-  if (user.result.id !== auth.id) {
+  if (user.result.id !== auth.user.id) {
     return {
       form: parsed.data,
       status: 'error',

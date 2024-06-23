@@ -33,7 +33,7 @@ import FileCard from './file-card';
 import { PhotoProvider, PhotoSlider } from 'react-photo-view';
 import UploadLocationAsset from './upload-location-asset.form';
 import LocationAssets from './location-assets';
-import { getAuth } from '@/lib/auth';
+import { validateAdmin, validateUser } from '@/lib/auth';
 import FacilityCard from './facility-card';
 import EditDetailLocationForm from './edit-detail-location.form';
 import CreateFacilityForm from './create-facility.form';
@@ -46,10 +46,7 @@ export default async function LocationDetail({
 }: {
   params: { locationId: string };
 }) {
-  const auth = await getAuth();
-  if (!auth) {
-    redirect('/login');
-  }
+  const auth = await validateAdmin();
 
   const locationService = container.get<LocationService>(TYPES.LocationService);
   const locationIdNumber = parseInt(params.locationId);

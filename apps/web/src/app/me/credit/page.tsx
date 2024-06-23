@@ -8,7 +8,6 @@ import {
 import { MultiSelect } from '@repo/ui/components/multi-select';
 import CreditTransactionTable from './credit-transaction';
 import { findAllUserCreditSchema } from '@repo/shared/api/schema';
-import { getAuth } from '@/lib/get-auth';
 import { redirect } from 'next/navigation';
 import {
   Card,
@@ -17,17 +16,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
+import { validateUser } from '@/lib/auth';
 
 export default async function Credit({ searchParams }: { searchParams: any }) {
-  const auth = await getAuth();
-  if (!auth) {
-    redirect('/login');
-  }
+  const auth = await validateUser();
 
   const search = findAllUserCreditSchema.parse(searchParams);
 
   const creditService = container.get<CreditService>(TYPES.CreditService);
-  const credits = await creditService.findAmountByUserId(auth.id);
+  const credits = await creditService.findAmountByUserId(auth.user.id);
 
   return (
     <div className="w-full border-2 border-primary p-6">

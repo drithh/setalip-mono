@@ -1,4 +1,3 @@
-import { getAuth } from '@/lib/get-auth';
 import { container, TYPES } from '@repo/shared/inversify';
 import { LocationService, UserService } from '@repo/shared/service';
 import { Input } from '@repo/ui/components/ui/input';
@@ -8,16 +7,13 @@ import { Textarea } from '@repo/ui/components/ui/textarea';
 import { dateFormatter } from '../../../../../packages/shared/src/util/local';
 import { Button } from '@repo/ui/components/ui/button';
 import EditUserForm from './edit-user.form';
+import { validateUser } from '@/lib/auth';
 
 export default async function Page() {
-  const auth = await getAuth();
-
-  if (!auth) {
-    redirect('/login');
-  }
+  const auth = await validateUser();
 
   const userService = container.get<UserService>(TYPES.UserService);
-  const user = await userService.findById(auth.id);
+  const user = await userService.findById(auth.user.id);
 
   const locationService = container.get<LocationService>(TYPES.LocationService);
   const locations = await locationService.findAll();

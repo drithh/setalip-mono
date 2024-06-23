@@ -6,16 +6,14 @@ import React from 'react';
 import UserTable from './user-table';
 import { TYPES, container } from '@repo/shared/inversify';
 import { ClassTypeService, LocationService } from '@repo/shared/service';
+import { validateAdmin } from '@/lib/auth';
 
 export interface IndexPageProps {
   searchParams: FindAllPackageOptions;
 }
 
 export default async function Packages({ searchParams }: IndexPageProps) {
-  // const session = await getAuth();
-  // if (!session) {
-  //   redirect('/login');
-  // }
+  const auth = validateAdmin();
 
   const search = findAllUserSchema.parse(searchParams);
 

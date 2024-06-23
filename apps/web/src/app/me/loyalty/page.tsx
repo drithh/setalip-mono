@@ -7,7 +7,6 @@ import {
   findAllUserAgendaSchema,
   findAllUserLoyaltySchema,
 } from '@repo/shared/api/schema';
-import { getAuth } from '@/lib/get-auth';
 import { redirect } from 'next/navigation';
 import {
   Card,
@@ -16,21 +15,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
+import { validateUser } from '@/lib/auth';
 
 export default async function Loyalty({ searchParams }: { searchParams: any }) {
-  const auth = await getAuth();
-  if (!auth) {
-    redirect('/login');
-  }
+  const auth = await validateUser();
 
-  const searchWithUser = {
-    ...searchParams,
-    user_id: auth.id,
-  };
-  const search = findAllUserLoyaltySchema.parse(searchWithUser);
+  const search = findAllUserLoyaltySchema.parse(searchParams);
 
   const loyaltyService = container.get<LoyaltyService>(TYPES.LoyaltyService);
-  const loyaltys = await loyaltyService.findAmountByUserId(auth.id);
+  const loyaltys = await loyaltyService.findAmountByUserId(auth.user.id);
 
   return (
     <div className="w-full border-2 border-primary p-6">

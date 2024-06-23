@@ -101,7 +101,9 @@ export const agendaRouter = {
       const user = ctx.session.user;
 
       if (!user) {
-        throw new Error('User not found');
+        return {
+          error: new Error('User not found'),
+        };
       }
 
       console.log('input', classTypes);

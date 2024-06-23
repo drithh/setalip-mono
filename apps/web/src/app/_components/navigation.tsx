@@ -11,11 +11,11 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import Link from 'next/link';
 import Menu from './menu';
-import { getAuth } from '@/lib/get-auth';
 import Image from 'next/image';
+import { validateRequest } from '@/lib/auth';
 
 export default async function Navigation() {
-  const auth = await getAuth();
+  const auth = await validateRequest();
   return (
     <nav className="sticky top-0 z-30 h-auto gap-4 border-b-2 border-b-primary bg-background px-4 py-4  sm:h-auto sm:px-6">
       <div className="mx-auto flex max-w-screen-xl items-center justify-center">
@@ -31,9 +31,9 @@ export default async function Navigation() {
           />
         </Link>
 
-        <Menu user={auth} />
+        <Menu user={auth?.user ?? null} />
         <div className=" hidden flex-shrink-0 md:block">
-          {auth ? (
+          {auth?.user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -41,7 +41,7 @@ export default async function Navigation() {
                   size="icon"
                   className="overflow-hidden rounded-full"
                 >
-                  <Avatar user={auth} />
+                  <Avatar user={auth.user} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

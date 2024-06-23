@@ -10,24 +10,17 @@ import {
   findAllScheduleSchema,
   findAllUserAgendaSchema,
 } from '@repo/shared/api/schema';
-import { getAuth } from '@/lib/get-auth';
 import { redirect } from 'next/navigation';
+import { validateUser } from '@/lib/auth';
 
 export default async function Schedules({
   searchParams,
 }: {
   searchParams: any;
 }) {
-  const auth = await getAuth();
-  if (!auth) {
-    redirect('/login');
-  }
+  const auth = await validateUser();
 
-  const searchWithUser = {
-    ...searchParams,
-    userId: auth.id,
-  };
-  const search = findAllUserAgendaSchema.parse(searchWithUser);
+  const search = findAllUserAgendaSchema.parse(searchParams);
 
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,

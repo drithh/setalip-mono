@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { headers } from 'next/headers';
 
-export const getAuth = cache(async () => {
+export const validateRequest = cache(async () => {
   const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
   if (!sessionId) return null;
   const { user, session } = await lucia.validateSession(sessionId);
@@ -28,8 +28,23 @@ export const getAuth = cache(async () => {
       );
     }
   } catch {
+    return null;
     // Next.js throws error when attempting to set cookies when rendering page
   }
+  return { user, session };
+});
+
+export const validateUser = cache(async () => {
+  const data = await validateRequest();
+  if (!data) {
+    redirect('/login');
+  }
+
+  const { user, session } = data;
+  if (!user || !session) {
+    redirect('/login');
+  }
+
   const headersList = headers();
   const pathname = headersList.get('x-path');
   if (
@@ -39,5 +54,24 @@ export const getAuth = cache(async () => {
   ) {
     redirect('/verification');
   }
-  return user;
+  return { user, session };
+});
+
+export const validateAdmin = cache(async () => {
+  const data = await validateUser();
+  const { user } = data;
+  if (!user || user.role !== 'admin') {
+    redirect('/');
+  }
+  return data;
+});
+
+export const validateCoach = cache(async () => {
+  const data = await validateUser();
+
+  const { user } = data;
+  if (!user || user.role !== 'coach') {
+    redirect('/');
+  }
+  return data;
 });
