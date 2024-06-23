@@ -102,6 +102,7 @@ export const agendaRouter = {
 
       if (!user) {
         return {
+          result: undefined,
           error: new Error('User not found'),
         };
       }
