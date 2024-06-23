@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import RegisterUserForm from './register-user.form';
-import { getAuth } from '@/lib/get-auth';
-import { redirect } from 'next/navigation';
 
 export default async function Register() {
   return (

@@ -1,39 +1,21 @@
-import {
-  ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import { FindAllPackageOptions, SelectPackage } from '@repo/shared/repository';
-import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
-import Link from 'next/link';
-import { api } from '@/trpc/react';
-import PackageTable from './package-table';
-import { Pencil, Trash2 } from 'lucide-react';
-import { useDataTable } from '@/hooks/use-data-table';
-import { getColumns } from './columns';
+import { findAllPackageSchema } from '@repo/shared/api/schema';
 import { TYPES, container } from '@repo/shared/inversify';
+import { FindAllPackageOptions } from '@repo/shared/repository';
 import {
   ClassService,
-  ClassTypeService,
   CoachService,
   LocationService,
 } from '@repo/shared/service';
-import { findAllPackageSchema } from '@repo/shared/api/schema';
-import QueryResetBoundary from '../../lib/query-reset-boundary';
+import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import React from 'react';
-import { getAuth } from '@/lib/get-auth';
-import { redirect } from 'next/navigation';
+import QueryResetBoundary from '../../lib/query-reset-boundary';
+import PackageTable from './package-table';
 
 export interface IndexPageProps {
   searchParams: FindAllPackageOptions;
 }
 
 export default async function Packages({ searchParams }: IndexPageProps) {
-  // const session = await getAuth();
-  // if (!session) {
-  //   redirect('/login');
-  // }
-
   const search = findAllPackageSchema.parse(searchParams);
   console.log('search', search);
   const classService = container.get<ClassService>(TYPES.ClassService);

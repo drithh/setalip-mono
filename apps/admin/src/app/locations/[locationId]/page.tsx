@@ -33,7 +33,7 @@ import FileCard from './file-card';
 import { PhotoProvider, PhotoSlider } from 'react-photo-view';
 import UploadLocationAsset from './upload-location-asset.form';
 import LocationAssets from './location-assets';
-import { getAuth } from '@/lib/get-auth';
+import { getAuth } from '@/lib/auth';
 import FacilityCard from './facility-card';
 import EditDetailLocationForm from './edit-detail-location.form';
 import CreateFacilityForm from './create-facility.form';

@@ -6,11 +6,14 @@ import { TRPCRouterRecord } from '@trpc/server';
 import { protectedProcedure } from '../trpc';
 import { findAllUserCreditSchema } from '../schema';
 import { SelectCredit } from '#dep/repository/credit';
+import { lucia } from '#dep/auth/index';
 
 export const creditRouter = {
   findAllByUserId: protectedProcedure
     .input(findAllUserCreditSchema)
     .query(async ({ ctx, input }) => {
+      const userId = ctx.session.userId;
+
       const types = input.type
         ?.split('.')
         .map((type) => type as SelectCredit['type']);
@@ -24,6 +27,7 @@ export const creditRouter = {
         perPage: input.per_page,
         sort: input.sort,
         types: types,
+        user_id: userId,
       });
 
       return credits;

@@ -11,6 +11,8 @@ export const loyaltyRouter = {
   findAllByUserId: protectedProcedure
     .input(findAllUserLoyaltySchema)
     .query(async ({ ctx, input }) => {
+      const userId = ctx.session.userId;
+
       const types = input.type
         ?.split('.')
         .map((type) => type as SelectLoyalty['type']);
@@ -24,6 +26,7 @@ export const loyaltyRouter = {
         perPage: input.per_page,
         sort: input.sort,
         types: types,
+        user_id: userId,
       });
 
       return loyaltys;

@@ -63,7 +63,9 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
       sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
     ).join(' ') as `${keyof SelectLoyalty} ${'asc' | 'desc'}`;
 
-    let query = this._db.selectFrom('loyalty_transactions');
+    let query = this._db
+      .selectFrom('loyalty_transactions')
+      .where('loyalty_transactions.user_id', '=', data.user_id);
 
     if (types) {
       query = query.where('loyalty_transactions.type', 'in', types);

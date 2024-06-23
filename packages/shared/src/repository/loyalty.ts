@@ -28,6 +28,7 @@ export interface DeleteLoyalty {
 
 export interface FindAllLoyaltyOptions extends DefaultPagination {
   types?: SelectLoyalty['type'][];
+  user_id: SelectUser['id'];
 }
 
 // export interface SelectLoyaltys extends SelectLoyalty {

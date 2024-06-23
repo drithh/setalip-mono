@@ -89,11 +89,9 @@ export const findAllUserAgendaSchema = defaultPaginationSchema.extend({
 });
 
 export const findAllUserCreditSchema = defaultPaginationSchema.extend({
-  user_id: z.coerce.number().refine((data) => data > 0),
   type: z.string().optional(),
 });
 
 export const findAllUserLoyaltySchema = defaultPaginationSchema.extend({
-  user_id: z.coerce.number().refine((data) => data > 0),
   type: z.string().optional(),
 });

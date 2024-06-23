@@ -57,7 +57,7 @@ export function getColumns(): ColumnDef<SelectAllCredit['data'][0]>[] {
           <span className="inline-block font-semibold sm:hidden">
             Jumlah :&ensp;
           </span>
-          {row.original.amount * (row.original.type === 'credit' ? 1 : -1)}
+          {row.original.amount * (row.original.type === 'credit' ? -1 : 1)}
         </p>
       ),
     },

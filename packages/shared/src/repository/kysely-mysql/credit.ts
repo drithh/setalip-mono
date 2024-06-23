@@ -104,7 +104,9 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
       sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
     ).join(' ') as `${keyof SelectCredit} ${'asc' | 'desc'}`;
 
-    let query = this._db.selectFrom('credit_transactions');
+    let query = this._db
+      .selectFrom('credit_transactions')
+      .where('credit_transactions.user_id', '=', data.user_id);
 
     if (types) {
       query = query.where('credit_transactions.type', 'in', types);

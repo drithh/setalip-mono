@@ -27,11 +27,8 @@ export interface SelectAmountCredit {
 
 export interface FindAllCreditOptions extends DefaultPagination {
   types?: SelectCredit['type'][];
+  user_id: SelectUser['id'];
 }
-
-// export interface SelectCredits extends SelectCredit {
-//   class_type: ClassTypes['type'];
-// }
 
 export interface SelectAllCredit {
   data: SelectCredit[];

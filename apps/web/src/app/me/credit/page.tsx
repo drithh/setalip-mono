@@ -7,11 +7,7 @@ import {
 } from '@repo/shared/service';
 import { MultiSelect } from '@repo/ui/components/multi-select';
 import CreditTransactionTable from './credit-transaction';
-import {
-  findAllScheduleSchema,
-  findAllUserAgendaSchema,
-  findAllUserCreditSchema,
-} from '@repo/shared/api/schema';
+import { findAllUserCreditSchema } from '@repo/shared/api/schema';
 import { getAuth } from '@/lib/get-auth';
 import { redirect } from 'next/navigation';
 import {
@@ -28,11 +24,7 @@ export default async function Credit({ searchParams }: { searchParams: any }) {
     redirect('/login');
   }
 
-  const searchWithUser = {
-    ...searchParams,
-    user_id: auth.id,
-  };
-  const search = findAllUserCreditSchema.parse(searchWithUser);
+  const search = findAllUserCreditSchema.parse(searchParams);
 
   const creditService = container.get<CreditService>(TYPES.CreditService);
   const credits = await creditService.findAmountByUserId(auth.id);

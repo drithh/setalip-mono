@@ -20,7 +20,7 @@ export default function Layout({
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[90vw] flex-row py-32 md:max-w-screen-xl">
+    <div className="mx-auto flex w-full max-w-[90vw] flex-row pb-32 pt-16 md:max-w-screen-xl">
       <div className="relative hidden md:inline-block">
         <div className="sticky top-[89px] flex h-[calc(100vh-92px)] w-64 flex-col gap-4 border-2 border-r-0 border-primary px-4 py-8 pl-12 ">
           <Link href="/me">
