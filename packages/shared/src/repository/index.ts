@@ -8,6 +8,7 @@ export * from '#dep/repository/agenda';
 export * from '#dep/repository/class';
 export * from '#dep/repository/coach';
 export * from '#dep/repository/credit';
+export * from '#dep/repository/loyalty';
 
 export type DefaultPagination = {
   page?: number;

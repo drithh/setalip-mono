@@ -13,6 +13,7 @@ import {
   CoachRepository,
   ClassRepository,
   CreditRepository,
+  LoyaltyRepository,
 } from '#dep/repository/index';
 import {
   KyselyMySqlUserRepository,
@@ -25,6 +26,7 @@ import {
   KyselyMySqlCoachRepository,
   KyselyMySqlClassRepository,
   KyselyMySqlCreditRepository,
+  KyselyMySqlLoyaltyRepository,
 } from '#dep/repository/kysely-mysql/index';
 import {
   NotificationService,
@@ -42,6 +44,7 @@ import {
   CoachServiceImpl,
   ClassServiceImpl,
   CreditServiceImpl,
+  LoyaltyServiceImpl,
 } from '#dep/service/index.impl';
 import {
   AuthService,
@@ -55,6 +58,7 @@ import {
   CoachService,
   ClassService,
   CreditService,
+  LoyaltyService,
 } from '#dep/service/index';
 
 const container = new Container();
@@ -106,7 +110,10 @@ container
   .bind<CreditRepository>(TYPES.CreditRepository)
   .to(KyselyMySqlCreditRepository);
 container.bind<CreditService>(TYPES.CreditService).to(CreditServiceImpl);
-
+container
+  .bind<LoyaltyRepository>(TYPES.LoyaltyRepository)
+  .to(KyselyMySqlLoyaltyRepository);
+container.bind<LoyaltyService>(TYPES.LoyaltyService).to(LoyaltyServiceImpl);
 export { container };
 
 // pretty query

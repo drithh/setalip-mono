@@ -11,7 +11,7 @@ export const creditRouter = {
   findAllByUserId: protectedProcedure
     .input(findAllUserCreditSchema)
     .query(async ({ ctx, input }) => {
-      const types = input.credit_type
+      const types = input.type
         ?.split('.')
         .map((type) => type as SelectCredit['type']);
 

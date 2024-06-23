@@ -24,6 +24,8 @@ const TYPES = {
   CoachService: Symbol.for('CoachService'),
   CreditRepository: Symbol.for('CreditRepository'),
   CreditService: Symbol.for('CreditService'),
+  LoyaltyRepository: Symbol.for('LoyaltyRepository'),
+  LoyaltyService: Symbol.for('LoyaltyService'),
 };
 
 export { TYPES };

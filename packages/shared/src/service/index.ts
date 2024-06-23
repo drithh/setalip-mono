@@ -9,3 +9,4 @@ export * from '#dep/service/agenda';
 export * from '#dep/service/class';
 export * from '#dep/service/coach';
 export * from '#dep/service/credit';
+export * from '#dep/service/loyalty';
