@@ -1,5 +1,6 @@
 import { agendaRouter } from './router/agenda';
 import { authRouter } from './router/auth';
+import { creditRouter } from './router/credit';
 import { fileRouter } from './router/file';
 import { locationRouter } from './router/location';
 import { packageRouter } from './router/package';
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   package: packageRouter,
   user: userRouter,
   agenda: agendaRouter,
+  credit: creditRouter,
 });
 
 // export type definition of API

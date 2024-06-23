@@ -1,14 +1,13 @@
 'server-only';
 
 import { TYPES } from '#dep/inversify/types';
-import { PackageService } from '#dep/service/package';
+import { CreditService } from '#dep/service/credit';
 import { TRPCRouterRecord } from '@trpc/server';
 import { protectedProcedure } from '../trpc';
 import { findAllUserCreditSchema } from '../schema';
-import { CreditService } from '#dep/service/index';
 import { SelectCredit } from '#dep/repository/credit';
 
-export const packageRouter = {
+export const creditRouter = {
   findAllByUserId: protectedProcedure
     .input(findAllUserCreditSchema)
     .query(async ({ ctx, input }) => {
@@ -20,13 +19,13 @@ export const packageRouter = {
         TYPES.CreditService
       );
 
-      const packages = await creditService.findAllByUserId({
+      const credits = await creditService.findAllByUserId({
         page: input.page,
         perPage: input.per_page,
         sort: input.sort,
         types: types,
       });
 
-      return packages;
+      return credits;
     }),
 } satisfies TRPCRouterRecord;

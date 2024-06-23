@@ -37,7 +37,13 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
         .with('ct_debit', (q) =>
           q
             .selectFrom('credit_transactions')
-            .selectAll()
+            .innerJoin(
+              'class_types',
+              'credit_transactions.class_type_id',
+              'class_types.id'
+            )
+            .selectAll('credit_transactions')
+            .select('class_types.type as class_type_name')
             .where('credit_transactions.user_id', '=', userId)
             .where('credit_transactions.expired_at', '>', new Date())
         )
@@ -46,6 +52,7 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
             .selectFrom('ct_debit')
             .select([
               'ct_debit.class_type_id',
+              'ct_debit.class_type_name',
               'ct_debit.amount',
               sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`.as(
                 'amount_used'
@@ -66,6 +73,7 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
         .selectFrom('debit_summary')
         .select([
           'debit_summary.class_type_id',
+          'debit_summary.class_type_name',
           sql<number>`SUM((debit_summary.amount - debit_summary.amount_used))`.as(
             'remaining_amount'
           ),

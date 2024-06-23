@@ -1,6 +1,11 @@
 import { Insertable, Selectable, Updateable } from 'kysely';
 import { CreditTransactions } from '../db';
-import { DefaultPagination, OptionalToRequired, SelectUser } from '.';
+import {
+  DefaultPagination,
+  OptionalToRequired,
+  SelectClassType,
+  SelectUser,
+} from '.';
 
 export type SelectCredit = Selectable<CreditTransactions>;
 export type InsertCredit = Insertable<CreditTransactions>;
@@ -16,6 +21,7 @@ export interface DeleteCredit {
 }
 export interface SelectAmountCredit {
   class_type_id: SelectCredit['class_type_id'];
+  class_type_name: SelectClassType['type'];
   remaining_amount: SelectCredit['amount'];
 }
 
