@@ -32,7 +32,6 @@ export default async function Contacts() {
   ];
 
   const locationService = container.get<LocationService>(TYPES.LocationService);
-
   const locations = await locationService.findAll();
 
   return (

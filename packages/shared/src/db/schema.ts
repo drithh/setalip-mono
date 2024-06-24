@@ -20,7 +20,6 @@ export interface Agendas {
   created_at: Generated<Date>;
   id: Generated<number>;
   location_facility_id: number;
-  slot: number;
   time: Date;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
@@ -44,6 +43,7 @@ export interface Classes {
   duration: number;
   id: Generated<number>;
   name: string;
+  slot: number;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
 }
@@ -92,6 +92,15 @@ export interface DepositAccounts {
   created_at: Generated<Date>;
   id: Generated<number>;
   name: string;
+  updated_at: Generated<Date>;
+  updated_by: Generated<number>;
+}
+
+export interface FrequentlyAskedQuestions {
+  answer: string;
+  created_at: Generated<Date>;
+  id: Generated<number>;
+  question: string;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
 }
@@ -223,6 +232,16 @@ export interface ResetPassword {
   user_id: number;
 }
 
+export interface Reviews {
+  created_at: Generated<Date>;
+  id: Generated<number>;
+  rating: number;
+  review: string;
+  updated_at: Generated<Date>;
+  updated_by: Generated<number>;
+  user_id: number;
+}
+
 export interface UserPackages {
   class_type_id: Generated<number | null>;
   created_at: Generated<Date>;
@@ -272,6 +291,15 @@ export interface Vouchers {
   user_id: Generated<number | null>;
 }
 
+export interface WebSettings {
+  created_at: Generated<Date>;
+  id: Generated<number>;
+  key: string;
+  updated_at: Generated<Date>;
+  updated_by: Generated<number>;
+  value: string;
+}
+
 export interface DB {
   agenda_bookings: AgendaBookings;
   agendas: Agendas;
@@ -282,6 +310,7 @@ export interface DB {
   coaches: Coaches;
   credit_transactions: CreditTransactions;
   deposit_accounts: DepositAccounts;
+  frequently_asked_questions: FrequentlyAskedQuestions;
   location_assets: LocationAssets;
   location_facilities: LocationFacilities;
   location_operational_hours: LocationOperationalHours;
@@ -293,8 +322,10 @@ export interface DB {
   package_transactions: PackageTransactions;
   packages: Packages;
   reset_password: ResetPassword;
+  reviews: Reviews;
   user_packages: UserPackages;
   user_sessions: UserSessions;
   users: Users;
   vouchers: Vouchers;
+  web_settings: WebSettings;
 }

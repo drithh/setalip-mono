@@ -31,7 +31,7 @@ export default function Class({ singleClass }: Class) {
             <h1 className="text-xl font-semibold uppercase text-secondary-foreground">
               {singleClass.name}
             </h1>
-            <Badge variant="default" color="secondary" className="h-6 w-28">
+            <Badge variant="default" color="secondary" className="h-6 min-w-28">
               <p className="w-full text-center">
                 {singleClass.duration} minutes
               </p>

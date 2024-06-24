@@ -23,6 +23,9 @@ import {
   LoyaltyShops,
   CreditTransactions,
   PackageTransactions,
+  WebSettings,
+  Reviews,
+  FrequentlyAskedQuestions,
 } from '@repo/shared/db';
 import { DB } from '@repo/shared/db';
 import { hash } from '@node-rs/argon2';
@@ -39,6 +42,45 @@ export async function up(db: Kysely<DB>): Promise<void> {
       }));
 
       await trx.insertInto('class_types').values(class_types).execute();
+
+      const web_settings: Insertable<WebSettings>[] = [
+        {
+          key: 'terms_and_conditions',
+          value: faker.lorem.paragraph(),
+        },
+        {
+          key: 'privacy_policy',
+          value: faker.lorem.paragraph(),
+        },
+        {
+          key: 'instagram_handle',
+          value: faker.internet.userName(),
+        },
+        {
+          key: 'tiktok_handle',
+          value: faker.internet.userName(),
+        },
+        {
+          key: 'logo',
+          value: 'http://localhost:3000/uploads/logo.webp',
+        },
+      ];
+
+      await trx.insertInto('web_settings').values(web_settings).execute();
+
+      const frequently_asked_questions: Insertable<FrequentlyAskedQuestions>[] =
+        Array.from({
+          length: 10,
+        }).map((_, index) => ({
+          id: index + 1,
+          question: faker.lorem.sentence(),
+          answer: faker.lorem.paragraph(),
+        }));
+
+      await trx
+        .insertInto('frequently_asked_questions')
+        .values(frequently_asked_questions)
+        .execute();
 
       const deposit_accounts: Insertable<DepositAccounts>[] = Array.from({
         length: 2,
@@ -103,6 +145,17 @@ export async function up(db: Kysely<DB>): Promise<void> {
       );
 
       await trx.insertInto('users').values(users).execute();
+
+      const reviews: Insertable<Reviews>[] = Array.from({ length: 10 }).map(
+        (_, index) => ({
+          id: index + 1,
+          user_id: users[Math.floor(Math.random() * 10)]?.id ?? 1,
+          rating: faker.number.int({ min: 1, max: 5 }),
+          review: faker.lorem.sentence(),
+        })
+      );
+
+      await trx.insertInto('reviews').values(reviews).execute();
 
       const coaches: Insertable<Coaches>[] = Array.from({ length: 2 }).map(
         (_, index) => ({
@@ -257,6 +310,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
           name: faker.commerce.productName(),
           description: faker.lorem.sentence(),
           class_type_id: class_types[Math.floor(Math.random() * 3)]?.id ?? 1,
+          slot: faker.number.int({ min: 1, max: 10 }),
           duration: faker.number.int({ min: 30, max: 60 }),
         })
       );
@@ -323,7 +377,6 @@ export async function up(db: Kysely<DB>): Promise<void> {
             location_facility_id:
               location_facilities[Math.floor(Math.random() * 15)]?.id ?? 1,
             coach_id: coaches[Math.floor(Math.random() * 2)]?.id ?? 1,
-            slot: faker.number.int({ min: 1, max: 10 }),
             time: faker.date.between({
               from: faker.date.past(),
               to: faker.date.future(),

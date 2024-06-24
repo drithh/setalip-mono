@@ -172,6 +172,8 @@ export default async function Home() {
                       <MapPin className="h-3 w-3 sm:h-5 sm:w-5" />
                       {location.address}
                     </h4>
+
+                    <Button className="mt-4">View Location</Button>
                   </div>
                 </div>
               ))}

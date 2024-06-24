@@ -18,6 +18,22 @@ export async function up(db: Kysely<any>): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
       await trx.schema
+        .createTable('web_settings')
+        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('key', 'text', (col) => col.notNull().unique())
+        .addColumn('value', 'text', (col) => col.notNull())
+        .$call(addDefaultColumns)
+        .execute();
+
+      await trx.schema
+        .createTable('frequently_asked_questions')
+        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('question', 'text', (col) => col.notNull())
+        .addColumn('answer', 'text', (col) => col.notNull())
+        .$call(addDefaultColumns)
+        .execute();
+
+      await trx.schema
         .createTable('locations')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('email', 'text', (col) => col.notNull().unique())
@@ -46,6 +62,17 @@ export async function up(db: Kysely<any>): Promise<void> {
           col.notNull().references('locations.id')
         )
         .addColumn('verified_at', 'timestamp')
+        .$call(addDefaultColumns)
+        .execute();
+
+      await trx.schema
+        .createTable('reviews')
+        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('rating', 'int4', (col) => col.notNull())
+        .addColumn('review', 'text', (col) => col.notNull())
+        .addColumn('user_id', 'bigint', (col) =>
+          col.notNull().references('users.id')
+        )
         .$call(addDefaultColumns)
         .execute();
 
@@ -247,11 +274,18 @@ export async function up(db: Kysely<any>): Promise<void> {
         .execute();
 
       await trx.schema
+        .createIndex('package_transactions_unique_code_index')
+        .on('package_transactions')
+        .column('unique_code')
+        .execute();
+
+      await trx.schema
         .createTable('classes')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('duration', 'int4', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.notNull())
+        .addColumn('slot', 'int4', (col) => col.notNull())
         .addColumn('class_type_id', 'bigint', (col) =>
           col.notNull().references('class_types.id')
         )
@@ -290,7 +324,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('agendas')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('time', 'timestamp', (col) => col.notNull())
-        .addColumn('slot', 'int4', (col) => col.notNull())
         .addColumn('class_id', 'bigint', (col) =>
           col.notNull().references('classes.id')
         )
@@ -389,7 +422,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       // set timezone
       trx
         .getExecutor()
-        .executeQuery(sql`SET TIMEZONE='Asia/Jakarta'`.compile(trx), {
+        .executeQuery(sql`SET time_zone='Asia/Jakarta'`.compile(trx), {
           queryId: 'set_timezone',
         });
 
