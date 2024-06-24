@@ -3,7 +3,7 @@ import Image from 'next/image';
 export default function Footer() {
   return (
     <footer className="w-full bg-primary pt-12">
-      <div className="flex max-w-screen-2xl flex-col place-content-around place-items-center gap-8 font-sans md:w-full md:flex-row  md:gap-0">
+      <div className="mx-auto flex max-w-screen-xl flex-col place-content-around place-items-center gap-8 font-sans md:w-full md:flex-row  md:gap-0">
         <Link
           href="/"
           className="relative flex h-28 w-56 items-center gap-2 font-semibold"

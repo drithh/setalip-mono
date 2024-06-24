@@ -1,16 +1,42 @@
 import { InstagramLogoIcon } from '@radix-ui/react-icons';
 import { container, TYPES } from '@repo/shared/inversify';
 import { LocationService } from '@repo/shared/service';
-import { MailIcon, PhoneIcon } from 'lucide-react';
+import { ChevronDownIcon, MailIcon, PhoneIcon } from 'lucide-react';
 import Link from 'next/link';
-
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@repo/ui/components/ui/collapsible';
 export default async function Contacts() {
+  const faq = [
+    {
+      question: 'What is your refund policy?',
+      answer:
+        "We offer a 30-day money-back guarantee on all our products. If you're not satisfied, you can request a refund within 30 days of your purchase.",
+    },
+    {
+      question: 'How do I contact customer support?',
+      answer: 'You can reach our customer support team by email at',
+    },
+    {
+      question: 'Do you offer any discounts or promotions?',
+      answer:
+        'Yes, we offer various discounts and promotions throughout the year. You can check our website or sign up for our newsletter to stay up-to-date on our latest offers.',
+    },
+    {
+      question: 'How long does shipping take?',
+      answer:
+        'Shipping times vary depending on your location and the shipping method you choose. Standard shipping typically takes 5-7 business days, while expedited shipping is available for an additional fee.',
+    },
+  ];
+
   const locationService = container.get<LocationService>(TYPES.LocationService);
 
   const locations = await locationService.findAll();
 
   return (
-    <div className="mx-auto flex  max-w-screen-2xl flex-col">
+    <div className="mx-auto flex  max-w-screen-xl flex-col">
       <section className="w-full py-8 md:py-16 lg:py-24">
         <div className="container px-4 md:px-6">
           <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
@@ -94,6 +120,24 @@ export default async function Contacts() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+      <section className="mb-12 mt-4 w-full px-4">
+        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+          Frequently Asked Questions
+        </h2>
+        <div className="mt-6 flex flex-col gap-2 space-y-2">
+          {faq.map((item) => (
+            <Collapsible key={item.question}>
+              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md  border px-4 py-3 text-left text-sm font-medium transition-colors hover:bg-muted/80 [&[data-state=open]>svg]:rotate-180">
+                {item.question}
+                <ChevronDownIcon className="h-4 w-4 transition-transform" />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="w-full px-4 pt-2 text-sm text-muted-foreground">
+                <p>{item.answer}</p>
+              </CollapsibleContent>
+            </Collapsible>
+          ))}
         </div>
       </section>
     </div>

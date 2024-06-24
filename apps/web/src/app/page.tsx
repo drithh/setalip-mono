@@ -13,6 +13,8 @@ import {
 } from '@repo/ui/components/ui/carousel';
 import { Building, MapPin, Phone } from 'lucide-react';
 import Image from 'next/image';
+import { Review } from './_components/review';
+import Link from 'next/link';
 
 // image
 const images = [
@@ -54,67 +56,152 @@ export default async function Home() {
           </div>
         </Carousel>
       </div>
-      <div className="relative z-10 bg-background">
-        <div className="">
-          <div className="mx-auto flex h-screen max-w-screen-xl flex-col place-content-center place-items-center gap-6">
-            <h2 className="max-w-4xl text-center text-2xl font-bold md:text-6xl">
-              Empowering Fitness, Elevating Life.
-            </h2>
-            <p className="mx-auto max-w-[80vw] text-center md:max-w-4xl md:text-lg">
-              Pilates Reform is a pilates studio that offers a range of classes
-              designed to help clients increase their fitness levels and improve
-              their quality of life. Our studio is equipped with the latest
-              pilates equipment, including the reformer bed, wunda chair and
-              ladder barrel. Our highly qualified instructors provide
-              personalised training to each client, ensuring that everyone gets
-              the best workout possible. We offer a range of classes that cater
-              to all fitness levels, and we're committed to creating a
-              supportive and inspiring environment that will help you achieve
-              your fitness goals.
-            </p>
-          </div>
-          <div className=" bg-primary">
-            <div className="mx-auto flex max-w-[90vw] flex-col gap-24 py-32 md:max-w-screen-xl">
-              <div className="flex flex-col place-content-center place-items-center gap-4">
-                <h2 className="text-center text-2xl font-bold md:text-6xl">
-                  Our Locations
+      <section className="relative z-10 ">
+        <section className="w-full bg-background py-12 md:py-24 lg:py-32">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
+                  Why Choose Pilates Reform
+                </div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Unlock Your Potential
                 </h2>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Discover how our comprehensive suite of services can transform
+                  your health and wellness journey.
+                </p>
               </div>
-              <div className="grid grid-cols-1 place-items-center gap-6 sm:grid-cols-2 sm:px-6 md:grid-cols-3 md:place-items-center">
-                {locations?.result?.map((location) => (
-                  <div key={location.id} className="w-56 max-w-80 sm:w-full">
-                    <div className=" relative h-36 bg-transparent p-0 md:h-72">
-                      <Image
-                        fill
-                        className="absolute rounded-t-full border border-primary-foreground object-cover"
-                        alt={location.asset_name ?? ''}
-                        src={location.asset_url ?? ''}
-                      />
+            </div>
+            <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
+              <div className="flex flex-col justify-center space-y-4">
+                <ul className="grid gap-6">
+                  <li>
+                    <div className="grid gap-1">
+                      <h3 className="text-xl font-bold">
+                        Comprehensive Services
+                      </h3>
+                      <p className="text-muted-foreground">
+                        Explore a wide range of services that cater to your
+                        unique needs.
+                      </p>
                     </div>
-                    <div className="flex flex-col place-content-center place-items-center  bg-background py-4">
-                      <h4 className="mb-4 text-lg font-semibold md:text-2xl">
-                        {location.name}
-                      </h4>
-                      <h4 className="flex items-center gap-2 text-sm text-secondary-foreground  sm:text-base">
-                        <Phone className="h-3 w-3 sm:h-5 sm:w-5" />
-                        {location.phone_number}
-                      </h4>
-                      <h4 className="flex items-center gap-2 text-sm text-secondary-foreground  sm:text-base">
-                        <MapPin className="h-3 w-3 sm:h-5 sm:w-5" />
-                        {location.address}
-                      </h4>
-
-                      <Button className="mt-6 bg-secondary text-sm font-semibold uppercase sm:text-base">
-                        See More
-                      </Button>
+                  </li>
+                  <li>
+                    <div className="grid gap-1">
+                      <h3 className="text-xl font-bold">
+                        Personalized Approach
+                      </h3>
+                      <p className="text-muted-foreground">
+                        Receive tailored guidance from our expert instructors.
+                      </p>
                     </div>
+                  </li>
+                  <li>
+                    <div className="grid gap-1">
+                      <h3 className="text-xl font-bold">Exceptional Support</h3>
+                      <p className="text-muted-foreground">
+                        Rely on our dedicated team to provide expert guidance
+                        and support.
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <img
+                src="/placeholder.svg"
+                alt="Why Us"
+                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
+              />
+            </div>
+          </div>
+        </section>
+        <section className="w-full bg-primary py-12 md:py-24 lg:py-32">
+          <div className="container px-4 md:px-6">
+            <div className="grid items-center gap-6 lg:grid-cols-[1fr_500px] lg:gap-12 xl:grid-cols-[1fr_550px]">
+              <div className="space-y-2">
+                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
+                  Our Story
+                </div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  A Legacy of Excellence
+                </h2>
+                <p className="flex max-w-[600px] flex-row gap-4 overflow-x-auto text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Pilates Reform has been a trusted name in the fitness industry
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                  Facere necessitatibus ea fugiat consequatur reprehenderit eos,
+                  magnam sapiente corrupti illo dolor.
+                </p>
+              </div>
+              <img
+                src="/placeholder.svg"
+                alt="Our Story"
+                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
+              />
+            </div>
+          </div>
+        </section>
+        <Review />
+        <section className=" bg-primary">
+          <div className="mx-auto flex max-w-[90vw] flex-col gap-24 pb-12 pt-32 md:max-w-screen-xl">
+            <div className="flex flex-col place-content-center place-items-center gap-4">
+              <h2 className="text-center text-2xl font-bold md:text-6xl">
+                Our Locations
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 place-items-center gap-6 sm:grid-cols-2 sm:px-6 md:grid-cols-3 md:place-items-center">
+              {locations?.result?.map((location) => (
+                <div key={location.id} className="w-56 max-w-80 sm:w-full">
+                  <div className=" relative h-36 bg-transparent p-0 md:h-72">
+                    <Image
+                      fill
+                      className="absolute rounded-t-full border border-primary-foreground object-cover"
+                      alt={location.asset_name ?? ''}
+                      src={location.asset_url ?? ''}
+                    />
                   </div>
-                ))}
+                  <div className="flex flex-col place-content-center place-items-center  bg-background py-4">
+                    <h4 className="mb-4 text-lg font-semibold md:text-2xl">
+                      {location.name}
+                    </h4>
+                    <h4 className="flex items-center gap-2 text-sm text-secondary-foreground  sm:text-base">
+                      <Phone className="h-3 w-3 sm:h-5 sm:w-5" />
+                      {location.phone_number}
+                    </h4>
+                    <h4 className="flex items-center gap-2 text-sm text-secondary-foreground  sm:text-base">
+                      <MapPin className="h-3 w-3 sm:h-5 sm:w-5" />
+                      {location.address}
+                    </h4>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+        <section className="w-full bg-primary py-8 md:py-16 lg:py-24">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Interested? Come Join Us!
+                </h2>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Take the first step towards a healthier you by signing up for
+                  a class today.
+                </p>
+              </div>
+              <div className="flex flex-row gap-2">
+                <Link href="/login" passHref>
+                  <Button variant={'outline'}>Get Started</Button>
+                </Link>
+                <Link href="/contact" passHref>
+                  <Button className="border">Contact Us</Button>
+                </Link>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
+      </section>
     </main>
   );
 }
