@@ -7,7 +7,7 @@ import {
   InsertClassType,
   SelectClassType,
   UpdateClassType,
-} from '../classType';
+} from '..';
 
 @injectable()
 export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {

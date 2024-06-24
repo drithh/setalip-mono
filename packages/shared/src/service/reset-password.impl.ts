@@ -1,8 +1,8 @@
 import { inject, injectable } from 'inversify';
 import { ResetPassword } from '../db';
 import { PromiseResult } from '../types';
-import { ResetPasswordService, VerifyResetPassword } from './resetPassword';
-import type { ResetPasswordRepository } from '#dep/repository/resetPassword';
+import { ResetPasswordService, VerifyResetPassword } from './reset-password';
+import type { ResetPasswordRepository } from '#dep/repository/reset-password';
 import { TYPES } from '../inversify';
 import { UserValidationError } from './auth';
 import type { NotificationService } from '../notification';

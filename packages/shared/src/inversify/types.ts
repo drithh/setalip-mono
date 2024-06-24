@@ -26,6 +26,8 @@ const TYPES = {
   CreditService: Symbol.for('CreditService'),
   LoyaltyRepository: Symbol.for('LoyaltyRepository'),
   LoyaltyService: Symbol.for('LoyaltyService'),
+  WebSettingRepository: Symbol.for('WebSettingRepository'),
+  WebSettingService: Symbol.for('WebSettingService'),
 };
 
 export { TYPES };

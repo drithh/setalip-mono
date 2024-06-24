@@ -26,6 +26,11 @@ export async function up(db: Kysely<any>): Promise<void> {
         .execute();
 
       await trx.schema
+        .createIndex('web_settings_key_index')
+        .on('web_settings')
+        .column('key');
+
+      await trx.schema
         .createTable('frequently_asked_questions')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('question', 'text', (col) => col.notNull())

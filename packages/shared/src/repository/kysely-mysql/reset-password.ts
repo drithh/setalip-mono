@@ -4,7 +4,7 @@ import {
   ResetPasswordRepository,
   SelectResetPassword,
   UpdateResetPassword,
-} from '../resetPassword';
+} from '../reset-password';
 import { Database } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
 

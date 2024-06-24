@@ -1,14 +1,15 @@
 export * from '#dep/repository/user';
 export * from '#dep/repository/location';
 export * from '#dep/repository/otp';
-export * from '#dep/repository/resetPassword';
+export * from '#dep/repository/reset-password';
 export * from '#dep/repository/package';
-export * from '#dep/repository/classType';
+export * from '#dep/repository/class-type';
 export * from '#dep/repository/agenda';
 export * from '#dep/repository/class';
 export * from '#dep/repository/coach';
 export * from '#dep/repository/credit';
 export * from '#dep/repository/loyalty';
+export * from '#dep/repository/web-setting';
 
 export type DefaultPagination = {
   page?: number;

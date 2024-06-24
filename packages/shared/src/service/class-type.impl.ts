@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
-import { ClassTypeService } from './classType';
+import { ClassTypeService } from './index';
 import type {
   ClassTypeRepository,
   InsertClassType,
