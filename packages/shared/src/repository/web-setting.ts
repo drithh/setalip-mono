@@ -24,7 +24,11 @@ export interface SelectLogo {
   logo: string;
 }
 
-export interface SelectAllReview extends Selectable<Reviews> {}
+export interface SelectAllReview extends Selectable<Reviews> {
+  name: SelectUser['name'];
+  email: SelectUser['email'];
+  joined_at: SelectUser['created_at'];
+}
 
 export interface WebSettingRepository {
   findContact(): Promise<SelectContact | undefined>;

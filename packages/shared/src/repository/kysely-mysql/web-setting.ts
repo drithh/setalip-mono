@@ -59,6 +59,11 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
   }
 
   async findAllReview() {
-    return this._db.selectFrom('reviews').selectAll().execute();
+    return this._db
+      .selectFrom('reviews')
+      .innerJoin('users', 'reviews.user_id', 'users.id')
+      .selectAll('reviews')
+      .select(['users.created_at as joined_at', 'name', 'email'])
+      .execute();
   }
 }

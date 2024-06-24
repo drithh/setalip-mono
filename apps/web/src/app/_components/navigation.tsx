@@ -13,9 +13,18 @@ import Link from 'next/link';
 import Menu from './menu';
 import Image from 'next/image';
 import { validateRequest } from '@/lib/auth';
+import { container, TYPES } from '@repo/shared/inversify';
+import { WebSettingService } from '@repo/shared/service';
 
 export default async function Navigation() {
   const auth = await validateRequest();
+
+  const webSettingService = container.get<WebSettingService>(
+    TYPES.WebSettingService,
+  );
+
+  const logo = await webSettingService.findLogo();
+
   return (
     <nav className="sticky top-0 z-30 h-auto gap-4 border-b-2 border-b-primary bg-background px-4 py-4  sm:h-auto sm:px-6">
       <div className="mx-auto flex max-w-screen-xl items-center justify-center">
@@ -24,7 +33,7 @@ export default async function Navigation() {
           className="flex items-center gap-2 text-3xl font-semibold"
         >
           <Image
-            src="/logo.webp"
+            src={logo.result?.logo ?? '/logo.webp'}
             alt="Pilates Reform"
             width={160}
             height={40}

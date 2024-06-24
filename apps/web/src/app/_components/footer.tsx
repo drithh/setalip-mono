@@ -1,6 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
-export default function Footer() {
+import { container, TYPES } from '@repo/shared/inversify';
+import { WebSettingService } from '@repo/shared/service';
+export default async function Footer() {
+  const webSettingService = container.get<WebSettingService>(
+    TYPES.WebSettingService,
+  );
+
+  const logo = await webSettingService.findLogo();
+
   return (
     <footer className="w-full bg-primary pt-12">
       <div className="mx-auto flex max-w-screen-xl flex-col place-content-around place-items-center gap-8 font-sans md:w-full md:flex-row  md:gap-0">
@@ -10,7 +18,7 @@ export default function Footer() {
         >
           <Image
             fill
-            src="/logo.webp"
+            src={logo.result?.logo ?? '/logo.webp'}
             alt="Pilates Reform"
             className="absolute object-cover"
           />

@@ -10,3 +10,4 @@ export * from '#dep/service/class';
 export * from '#dep/service/coach';
 export * from '#dep/service/credit';
 export * from '#dep/service/loyalty';
+export * from '#dep/service/web-setting';

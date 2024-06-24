@@ -1,6 +1,6 @@
 import { InstagramLogoIcon } from '@radix-ui/react-icons';
 import { container, TYPES } from '@repo/shared/inversify';
-import { LocationService } from '@repo/shared/service';
+import { LocationService, WebSettingService } from '@repo/shared/service';
 import { ChevronDownIcon, MailIcon, PhoneIcon } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -9,30 +9,14 @@ import {
   CollapsibleTrigger,
 } from '@repo/ui/components/ui/collapsible';
 export default async function Contacts() {
-  const faq = [
-    {
-      question: 'What is your refund policy?',
-      answer:
-        "We offer a 30-day money-back guarantee on all our products. If you're not satisfied, you can request a refund within 30 days of your purchase.",
-    },
-    {
-      question: 'How do I contact customer support?',
-      answer: 'You can reach our customer support team by email at',
-    },
-    {
-      question: 'Do you offer any discounts or promotions?',
-      answer:
-        'Yes, we offer various discounts and promotions throughout the year. You can check our website or sign up for our newsletter to stay up-to-date on our latest offers.',
-    },
-    {
-      question: 'How long does shipping take?',
-      answer:
-        'Shipping times vary depending on your location and the shipping method you choose. Standard shipping typically takes 5-7 business days, while expedited shipping is available for an additional fee.',
-    },
-  ];
-
   const locationService = container.get<LocationService>(TYPES.LocationService);
   const locations = await locationService.findAll();
+
+  const webSettingService = container.get<WebSettingService>(
+    TYPES.WebSettingService,
+  );
+
+  const contact = await webSettingService.findContact();
 
   return (
     <div className="mx-auto flex  max-w-screen-xl flex-col">
@@ -60,7 +44,7 @@ export default async function Contacts() {
                 >
                   <InstagramLogoIcon className="h-6 w-6" />
                   <span className="sr-only">Instagram</span>
-                  <p>Our Instagram</p>
+                  <p>{contact.result?.instagram}</p>
                 </Link>
                 <Link
                   href="#"
@@ -69,7 +53,7 @@ export default async function Contacts() {
                 >
                   <TiktokSvg className="h-6 w-6 fill-current" />
                   <span className="sr-only">TikTok</span>
-                  <p>Our TikTok</p>
+                  <p>{contact.result?.tiktok}</p>
                 </Link>
               </div>
             </div>
@@ -126,7 +110,7 @@ export default async function Contacts() {
           Frequently Asked Questions
         </h2>
         <div className="mt-6 flex flex-col gap-2 space-y-2">
-          {faq.map((item) => (
+          {contact.result?.frequenly_asked_questions?.map((item) => (
             <Collapsible key={item.question}>
               <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md  border px-4 py-3 text-left text-sm font-medium transition-colors hover:bg-muted/80 [&[data-state=open]>svg]:rotate-180">
                 {item.question}

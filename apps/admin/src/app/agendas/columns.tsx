@@ -26,8 +26,6 @@ import {
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import EditParticipantForm from './edit-participant.form';
-import DeletePackageDialog from './delete-participant.dialog';
-import DeleteParticipantDialog from './delete-participant.dialog';
 import EditAgendaForm from './edit-agenda.form';
 
 interface getColumnsProps {
