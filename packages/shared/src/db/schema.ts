@@ -209,7 +209,7 @@ export interface Packages {
 }
 
 export interface PackageTransactions {
-  amount: number;
+  amount_paid: number;
   created_at: Generated<Date>;
   deposit_account_id: Generated<number | null>;
   discount: Generated<number | null>;
@@ -243,7 +243,6 @@ export interface Reviews {
 }
 
 export interface UserPackages {
-  class_type_id: Generated<number | null>;
   created_at: Generated<Date>;
   credit: number;
   expired_at: Date;
@@ -252,7 +251,6 @@ export interface UserPackages {
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
   user_id: number;
-  voucher_id: Generated<number | null>;
 }
 
 export interface Users {

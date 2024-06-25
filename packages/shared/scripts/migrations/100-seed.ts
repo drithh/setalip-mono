@@ -510,7 +510,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
           status: statusRandom as 'pending' | 'completed' | 'failed',
           discount: faker.number.int({ min: 1, max: 10 }),
           unique_code: faker.number.int({ min: 0, max: 1000 }),
-          amount: faker.number.int({ min: 1, max: 8 }),
+          amount_paid: faker.number.int({ min: 100000, max: 1000000 }),
           deposit_account_id:
             deposit_accounts[Math.floor(Math.random() * 2)]?.id ?? 1,
           user_package_id:

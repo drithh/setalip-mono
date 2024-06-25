@@ -1,5 +1,6 @@
 import { TYPES, container } from '@repo/shared/inversify';
 import {
+  ClassService,
   ClassTypeService,
   CoachService,
   LocationService,
@@ -14,11 +15,16 @@ export default async function Schedules({
   searchParams: any;
 }) {
   const search = findAllScheduleSchema.parse(searchParams);
-  console.log('search', search);
+
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,
   );
   const classTypes = await classTypeService.findAll();
+
+  const classService = container.get<ClassService>(TYPES.ClassService);
+  const classes = await classService.findAll({
+    perPage: 100,
+  });
 
   const locationService = container.get<LocationService>(TYPES.LocationService);
   const locations = await locationService.findAll();
@@ -33,6 +39,7 @@ export default async function Schedules({
           locations={locations.result || []}
           coaches={coaches.result || []}
           classTypes={classTypes.result || []}
+          classes={classes.result?.data || []}
           search={search}
         />
       </div>

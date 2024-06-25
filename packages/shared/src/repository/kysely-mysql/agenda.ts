@@ -83,6 +83,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'classes.id as class_id',
         'classes.name as class_name',
         'classes.duration as class_duration',
+        'classes.slot',
         'class_types.id as class_type_id',
         'class_types.type as class_type_name',
         'locations.name as location_name',
@@ -135,6 +136,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       classTypes,
       coaches,
       locations,
+      classNames,
       date,
     } = data;
 
@@ -166,6 +168,10 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
     if (locations?.length && locations.length > 0) {
       query = query.where('locations.id', 'in', locations);
+    }
+
+    if (classNames) {
+      query = query.where('classes.id', 'in', classNames);
     }
 
     if (date) {

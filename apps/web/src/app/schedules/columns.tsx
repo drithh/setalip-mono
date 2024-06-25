@@ -16,6 +16,7 @@ import { dateFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { SelectAllSchedule } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
+import { Badge } from '@repo/ui/components/ui/badge';
 
 export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
   return [
@@ -61,16 +62,30 @@ export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
       ),
     },
     {
-      accessorKey: 'class_type_name',
+      accessorKey: 'class_name',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Kelas" />
       ),
       cell: ({ row }) => (
         <div className="capitalize">
           <span className="inline-block font-semibold sm:hidden">
-            Tipe :&ensp;
+            Kelas :&ensp;
           </span>
-          {row.original.class_type_name}
+          {row.original.class_name}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'class_type_name',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Tipe" />
+      ),
+      cell: ({ row }) => (
+        <div className="capitalize">
+          <span className="inline-block font-semibold sm:hidden">
+            Type :&ensp;
+          </span>
+          <Badge>{row.original.class_type_name}</Badge>
         </div>
       ),
     },

@@ -32,6 +32,7 @@ interface AgendaTableProps {
   locations: SelectLocation[];
   coaches: SelectCoachWithUser[];
   classTypes: SelectClassType[];
+  classes: SelectAllClass['data'];
   search: z.infer<typeof findAllScheduleSchema>;
 }
 
@@ -39,6 +40,7 @@ export default function AgendaTable({
   locations,
   coaches,
   classTypes,
+  classes,
   search,
 }: AgendaTableProps) {
   const [{ result, error }] = api.agenda.findAllSchedule.useSuspenseQuery(
@@ -74,9 +76,17 @@ export default function AgendaTable({
         withCount: true,
       })),
     },
-
     {
       label: 'Kelas',
+      value: 'class_name',
+      options: classes.map((singleClass) => ({
+        label: singleClass.name,
+        value: singleClass.id.toString(),
+        withCount: true,
+      })),
+    },
+    {
+      label: 'Tipe Kelas',
       value: 'class_type_name',
       options: classTypes.map((classType) => ({
         label: classType.type,

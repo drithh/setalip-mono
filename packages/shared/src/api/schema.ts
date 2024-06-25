@@ -76,6 +76,7 @@ export const findAllScheduleSchema = defaultPaginationSchema.extend({
   class_type_name: z.string().optional(),
   coach_name: z.string().optional(),
   location_name: z.string().optional(),
+  class_name: z.string().optional(),
   date: z.string().optional(),
   sort: z.string().default('time.asc'),
 });

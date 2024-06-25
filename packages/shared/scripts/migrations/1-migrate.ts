@@ -28,7 +28,8 @@ export async function up(db: Kysely<any>): Promise<void> {
       await trx.schema
         .createIndex('web_settings_key_index')
         .on('web_settings')
-        .column('key');
+        .column('key')
+        .execute();
 
       await trx.schema
         .createTable('frequently_asked_questions')
@@ -231,17 +232,11 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('credit', 'int4', (col) => col.notNull())
         .addColumn('expired_at', 'timestamp', (col) => col.notNull())
-        .addColumn('class_type_id', 'bigint', (col) =>
-          col.references('class_types.id')
-        )
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
         )
         .addColumn('package_id', 'bigint', (col) =>
           col.notNull().references('packages.id')
-        )
-        .addColumn('voucher_id', 'bigint', (col) =>
-          col.references('vouchers.id')
         )
         .$call(addDefaultColumns)
         .execute();
@@ -258,7 +253,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       await trx.schema
         .createTable('package_transactions')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
-        .addColumn('amount', 'int4', (col) => col.notNull().unsigned())
+        .addColumn('amount_paid', 'int4', (col) => col.notNull().unsigned())
         .addColumn('unique_code', 'int4', (col) => col.unsigned())
         .addColumn('discount', 'int4', (col) => col.unsigned())
         .addColumn(
@@ -483,6 +478,13 @@ export async function down(db: Kysely<any>): Promise<void> {
         .execute();
 
       await trx.schema.dropTable('vouchers').ifExists().execute();
+
+      await trx.schema.dropTable('web_settings').ifExists().execute();
+      await trx.schema
+        .dropTable('frequently_asked_questions')
+        .ifExists()
+        .execute();
+      await trx.schema.dropTable('reviews').ifExists().execute();
 
       await trx.schema.dropTable('coaches').ifExists().execute();
       await trx.schema.dropTable('user_sessions').ifExists().execute();

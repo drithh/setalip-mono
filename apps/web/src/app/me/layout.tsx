@@ -58,14 +58,14 @@ export default function Layout({
               Loyalty
             </p>
           </Link>
-          <Link href="/me/transaction">
+          <Link href="/me/package">
             <p
               className={cn(
                 'uppercase hover:underline',
-                getActive('/me/transaction'),
+                getActive('/me/package'),
               )}
             >
-              Transaction
+              Package
             </p>
           </Link>
         </div>

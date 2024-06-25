@@ -1,10 +1,13 @@
 import VerifyUserForm from './verify-user.form';
 import ResendOtpForm from './resend-otp.form';
 import { validateUser } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export default async function UserVerification() {
   const auth = await validateUser();
-
+  if (auth.user.verifiedAt) {
+    redirect('/');
+  }
   return (
     <div className="mx-auto grid w-[350px] gap-6">
       <div className="grid gap-2 text-center">

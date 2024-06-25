@@ -54,6 +54,10 @@ export const agendaRouter = {
         TYPES.AgendaService
       );
 
+      const classNames =
+        input.class_name?.split('.').map((className) => parseInt(className)) ??
+        [];
+
       const today = () => {
         const date = new Date();
         date.setHours(0, 0, 0, 0);
@@ -76,6 +80,7 @@ export const agendaRouter = {
         coaches: coaches,
         locations: locations,
         classTypes: classTypes,
+        classNames: classNames,
         date: getDate(input.date),
       });
 

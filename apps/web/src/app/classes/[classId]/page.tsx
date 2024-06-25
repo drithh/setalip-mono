@@ -77,9 +77,14 @@ export default async function ClassDetail({
                 </h1>
                 <p className="text-muted-foreground md:text-xl">60 minutes</p>
               </div>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                {singleClass.result.description}
-              </p>
+              <div className="flex flex-col">
+                <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
+                  {singleClass.result.description}
+                </p>
+                <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
+                  Participants: {singleClass.result.slot}
+                </p>
+              </div>
               <Button className="w-full max-w-[200px]">Book Now</Button>
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Available Locations:</h3>

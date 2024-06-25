@@ -57,20 +57,30 @@ export default async function Navigation() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/me">Profile</Link>
+                  <Link className="cursor-pointer" href="/me">
+                    Profile
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/me/booking">Booking</Link>
+                  <Link className="cursor-pointer" href="/me/booking">
+                    Booking
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/me/loyalty">Loyalty</Link>
+                  <Link className="cursor-pointer" href="/me/loyalty">
+                    Loyalty
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/me/transaction">Transaction</Link>
+                  <Link className="cursor-pointer" href="/me/package">
+                    Package
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/logout">Logout</Link>
+                  <Link className="cursor-pointer" href="/logout">
+                    Logout
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

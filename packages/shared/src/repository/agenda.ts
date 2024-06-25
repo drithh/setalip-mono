@@ -23,6 +23,7 @@ export interface FindScheduleByDateOptions extends DefaultPagination {
   coaches?: number[];
   locations: number[];
   classTypes?: number[];
+  classNames?: number[];
   date?: Date;
 }
 
@@ -49,6 +50,7 @@ export type SelectClassAgenda = {
   class_type_id: Selectable<ClassTypes>['id'];
   class_type_name: Selectable<ClassTypes>['type'];
   class_duration: Selectable<Classes>['duration'];
+  slot: Selectable<Classes>['slot'];
 };
 
 export type SelectParticipant = {
