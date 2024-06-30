@@ -95,6 +95,7 @@ export default function LoginUserForm() {
       toast.dismiss();
       toast.success(TOAST_MESSAGES.success.title, {
         description: TOAST_MESSAGES.success.description,
+        duration: 2000,
       });
       router.push('/');
     }

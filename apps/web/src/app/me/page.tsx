@@ -23,7 +23,7 @@ export default async function Page() {
   }
 
   return (
-    <div className="w-full border-2 border-primary p-6">
+    <div className="w-full p-6">
       <div className="flex place-content-between">
         <h1 className="text-3xl font-bold">Profile</h1>
         <EditUserForm user={user.result} locations={locations.result ?? []} />

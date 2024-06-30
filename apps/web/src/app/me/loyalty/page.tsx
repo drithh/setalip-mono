@@ -27,7 +27,7 @@ export default async function Loyalty({ searchParams }: { searchParams: any }) {
   const loyaltys = await loyaltyService.findAmountByUserId(auth.user.id);
 
   return (
-    <div className="w-full border-2 border-primary p-6">
+    <div className="w-full p-6">
       <h1 className="text-3xl font-bold">Loyalty</h1>
       <div className="my-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <Card className="sm:col-span-1">

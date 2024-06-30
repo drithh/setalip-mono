@@ -1,13 +1,15 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { container, TYPES } from '@repo/shared/inversify';
-import { WebSettingService } from '@repo/shared/service';
+import { LocationService, WebSettingService } from '@repo/shared/service';
 export default async function Footer() {
   const webSettingService = container.get<WebSettingService>(
     TYPES.WebSettingService,
   );
 
   const logo = await webSettingService.findLogo();
+  const locationService = container.get<LocationService>(TYPES.LocationService);
+  const locations = await locationService.findAll();
 
   return (
     <footer className="w-full bg-primary pt-12">
@@ -26,60 +28,39 @@ export default async function Footer() {
         <div className="flex flex-row flex-wrap place-content-center gap-12 md:gap-x-40">
           <div className="link-wrapper flex flex-col gap-2">
             <div className="text-sm font-bold text-primary-foreground opacity-80">
-              Classes
+              LOCATIONS
             </div>
-            <Link
-              href="http://"
-              className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
-            >
-              All
-            </Link>
-            <Link
-              href="http://"
-              className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
-            >
-              Private
-            </Link>
-            <Link
-              href="http://"
-              className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
-            >
-              Semi-Private
-            </Link>
-            <Link
-              href="http://"
-              className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
-            >
-              Group
-            </Link>
+            {locations.result?.map((location) => (
+              <Link
+                key={location.id}
+                href={`/locations/${location.id}`}
+                className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
+              >
+                {location.name}
+              </Link>
+            ))}
           </div>
           <div className="link-wrapper flex flex-col gap-2">
             <div className="text-sm font-bold text-primary-foreground opacity-80">
-              Packages
+              PILATES
             </div>
             <Link
               href="http://"
               className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
             >
-              All
+              Classes
             </Link>
             <Link
               href="http://"
               className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
             >
-              Private
+              Schedule
             </Link>
             <Link
               href="http://"
               className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
             >
-              Semi-Private
-            </Link>
-            <Link
-              href="http://"
-              className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
-            >
-              Group
+              Package
             </Link>
           </div>
           <div className="link-wrapper flex flex-col gap-2">
@@ -93,10 +74,16 @@ export default async function Footer() {
               Privacy Policy
             </Link>
             <Link
-              href="http://"
+              href="contact"
               className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
             >
               Contact
+            </Link>
+            <Link
+              href="/contact#faq"
+              className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
+            >
+              FAQ
             </Link>
           </div>
         </div>

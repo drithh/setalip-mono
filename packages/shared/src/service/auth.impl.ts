@@ -11,8 +11,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
 import type { UserRepository } from '../repository';
 import type { OtpService } from './otp';
-import type { ResetPasswordRepository } from '#dep/repository/resetPassword';
-import type { ResetPasswordService } from './resetPassword';
+import type { ResetPasswordService } from './reset-password';
 import { Database } from '../db';
 
 @injectable()

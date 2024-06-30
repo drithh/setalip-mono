@@ -5,6 +5,13 @@ import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { headers } from 'next/headers';
 
+export const logout = async () => {
+  const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
+  if (!sessionId) return;
+  await lucia.invalidateSession(sessionId);
+  redirect('/login');
+};
+
 export const validateRequest = cache(async () => {
   const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
   if (!sessionId) return null;

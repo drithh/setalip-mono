@@ -105,7 +105,7 @@ export default async function Contacts() {
           </div>
         </div>
       </section>
-      <section className="mb-12 mt-4 w-full px-4">
+      <section className="mb-12 mt-4 w-full px-4" id="faq">
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
           Frequently Asked Questions
         </h2>

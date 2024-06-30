@@ -151,29 +151,36 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-1 place-items-center gap-6 sm:grid-cols-2 sm:px-6 md:grid-cols-3 md:place-items-center">
               {locations?.result?.map((location) => (
-                <div key={location.id} className="w-56 max-w-80 sm:w-full">
-                  <div className=" relative h-36 bg-transparent p-0 md:h-72">
+                <div
+                  key={location.id}
+                  className="w-full max-w-80 overflow-hidden rounded-xl border border-secondary sm:w-full"
+                >
+                  <div className=" relative h-56 bg-transparent p-0 md:h-56">
                     <Image
                       fill
-                      className="absolute rounded-t-full border border-primary-foreground object-cover"
+                      className="absolute object-cover"
                       alt={location.asset_name ?? ''}
                       src={location.asset_url ?? ''}
                     />
                   </div>
-                  <div className="flex flex-col place-content-center place-items-center  bg-background py-4">
+                  <div className="flex flex-col place-content-start bg-background  px-6 py-4">
                     <h4 className="mb-4 text-lg font-semibold md:text-2xl">
                       {location.name}
                     </h4>
-                    <h4 className="flex items-center gap-2 text-sm text-secondary-foreground  sm:text-base">
-                      <Phone className="h-3 w-3 sm:h-5 sm:w-5" />
-                      {location.phone_number}
-                    </h4>
-                    <h4 className="flex items-center gap-2 text-sm text-secondary-foreground  sm:text-base">
-                      <MapPin className="h-3 w-3 sm:h-5 sm:w-5" />
-                      {location.address}
-                    </h4>
+                    <div className="flex flex-col">
+                      <div className="flex  gap-2 text-base  text-secondary-foreground">
+                        <Phone className="mt-1 h-4 w-4 flex-shrink-0" />
+                        <p className="">{location.phone_number}</p>
+                      </div>
+                      <div className="flex  gap-2 text-base  text-secondary-foreground">
+                        <MapPin className="mt-1 h-4 w-4 flex-shrink-0" />
+                        <p className="">{location.address}</p>
+                      </div>
+                    </div>
 
-                    <Button className="mt-4">View Location</Button>
+                    <Button variant={'outline'} className="mt-4">
+                      View Location
+                    </Button>
                   </div>
                 </div>
               ))}
