@@ -142,7 +142,7 @@ export default async function Home() {
           </div>
         </section>
         <Review />
-        <section className=" bg-primary">
+        <section className=" bg-primary" id="locations">
           <div className="mx-auto flex max-w-[90vw] flex-col gap-24 pb-12 pt-32 md:max-w-screen-xl">
             <div className="flex flex-col place-content-center place-items-center gap-4">
               <h2 className="text-center text-2xl font-bold md:text-6xl">
@@ -177,10 +177,15 @@ export default async function Home() {
                         <p className="">{location.address}</p>
                       </div>
                     </div>
-
-                    <Button variant={'outline'} className="mt-4">
-                      View Location
-                    </Button>
+                    <Link
+                      href={`/locations/${location.id}`}
+                      passHref
+                      className="mt-4 w-full"
+                    >
+                      <Button variant={'outline'} className="w-full">
+                        View Location
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               ))}

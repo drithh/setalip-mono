@@ -5,45 +5,6 @@ import Marquee from '@repo/ui/components/marquee';
 import { StarHalfIcon, StarIcon } from 'lucide-react';
 import { dateFormatter } from '@repo/shared/util';
 
-// const reviews = [
-//   {
-//     name: 'Jack',
-//     joined: '12-12-2022',
-//     body: "I've never seen anything like this before. It's amazing. I love it.",
-//     rating: 10,
-//   },
-//   {
-//     name: 'Jill',
-//     joined: '12-12-2022',
-//     body: "I don't know what to say. I'm speechless. This is amazing.",
-//     rating: 9,
-//   },
-//   {
-//     name: 'John',
-//     joined: '12-12-2022',
-//     body: "I'm at a loss for words. This is amazing. I love it.",
-//     rating: 5,
-//   },
-//   {
-//     name: 'Jane',
-//     joined: '12-12-2022',
-//     body: "I'm at a loss for words. This is amazing. I love it.",
-//     rating: 8,
-//   },
-//   {
-//     name: 'Jenny',
-//     joined: '12-12-2022',
-//     body: "I'm at a loss for words. This is amazing. I love it.",
-//     rating: 8,
-//   },
-//   {
-//     name: 'James',
-//     joined: '12-12-2022',
-//     body: "I've never seen anything like this before. It's amazing. I love it.",
-//     rating: 7,
-//   },
-// ];
-
 const ReviewCard = ({ review }: { review: SelectAllReview }) => {
   return (
     <figure className="relative w-64 cursor-pointer overflow-hidden rounded-xl border border-gray-950/[.1] bg-background p-4">
@@ -99,7 +60,7 @@ export async function Review() {
   // const secondRow = reviews.slice(reviews.length / 2);
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-primary py-2">
-      <Marquee pauseOnHover className="[--duration:20s]">
+      <Marquee pauseOnHover className="[--duration:40s]">
         {reviews.map((review) => (
           <ReviewCard key={review.id} review={review} />
         ))}
@@ -109,8 +70,6 @@ export async function Review() {
           <ReviewCard key={review.id} review={review} />
         ))}
       </Marquee> */}
-      {/* <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white dark:from-background"></div> */}
-      {/* <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-white dark:from-background"></div> */}
     </div>
   );
 }

@@ -39,19 +39,19 @@ export default async function ClassDetail({
               <div className="relative w-full overflow-hidden rounded-xl">
                 <CarouselMainContainer className="">
                   {singleClass.result.asset?.map((src, index) => (
-                    <AspectRatio ratio={16 / 12}>
-                      <SliderMainItem
-                        key={index}
-                        className="relative h-full  w-full bg-transparent p-0"
-                      >
+                    <SliderMainItem
+                      key={index}
+                      className="relative h-full  w-full bg-transparent p-0"
+                    >
+                      <AspectRatio ratio={16 / 12}>
                         <Image
                           fill
                           className="absolute object-cover"
                           alt={src.name}
                           src={src.url}
                         />
-                      </SliderMainItem>
-                    </AspectRatio>
+                      </AspectRatio>
+                    </SliderMainItem>
                   ))}
                 </CarouselMainContainer>
                 <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
@@ -75,7 +75,9 @@ export default async function ClassDetail({
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                   {singleClass.result.name}
                 </h1>
-                <p className="text-muted-foreground md:text-xl">60 minutes</p>
+                <p className="text-muted-foreground md:text-xl">
+                  Duration: {singleClass.result.duration} minutes
+                </p>
               </div>
               <div className="flex flex-col">
                 <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">

@@ -24,6 +24,7 @@
     "@trpc/client": "next",
     "@trpc/react-query": "next",
     "@trpc/server": "next",
+    "date-fns": "^3.6.0",
     "inversify": "^6.0.2",
     "libphonenumber-js": "^1.11.1",
     "lucia": "^3.2.0",

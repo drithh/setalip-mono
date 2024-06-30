@@ -52,8 +52,6 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
       .groupBy('locations.id')
       .execute();
 
-    console.log('locationWithAssets', locationWithAssets);
-
     return locationWithAssets;
   }
 
