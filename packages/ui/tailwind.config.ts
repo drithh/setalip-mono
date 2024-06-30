@@ -76,8 +76,18 @@ const config = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         marquee: 'marquee var(--duration) linear infinite',
         'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
+        'scale-in': 'scale-in 0.2s ease-out forwards',
+        'scale-out': 'scale-out 0.2s ease-out forwards',
       },
       keyframes: {
+        'scale-in': {
+          '0%': { transform: 'scale(1)' },
+          '100%': { transform: 'scale(1.1)' },
+        },
+        'scale-out': {
+          '0%': { transform: 'scale(1.1)' },
+          '100%': { transform: 'scale(1)' },
+        },
         'slide-in-up': {
           '0%': { transform: 'translateY(100%)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },

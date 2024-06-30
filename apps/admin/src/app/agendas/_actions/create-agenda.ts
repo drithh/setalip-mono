@@ -38,7 +38,6 @@ export async function createAgenda(
   const agendaService = container.get<AgendaService>(TYPES.AgendaService);
 
   const result = await agendaService.create({
-    slot: parsed.data.slot,
     time: parsed.data.time,
     class_id: parsed.data.class_id,
     coach_id: parsed.data.coach_id,

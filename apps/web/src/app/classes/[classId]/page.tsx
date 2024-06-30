@@ -12,7 +12,7 @@ import {
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
-
+import Link from 'next/link';
 export default async function ClassDetail({
   params,
 }: {
@@ -87,7 +87,9 @@ export default async function ClassDetail({
                   Participants: {singleClass.result.slot}
                 </p>
               </div>
-              <Button className="w-full max-w-[200px]">Book Now</Button>
+              <Link href={`/schedules?class_name=${singleClass.result.id}`}>
+                <Button className="w-full max-w-[200px]">Book Now</Button>
+              </Link>
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Available Locations:</h3>
                 <ul className="list-disc space-y-1 pl-6">

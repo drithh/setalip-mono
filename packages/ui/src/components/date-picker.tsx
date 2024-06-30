@@ -14,17 +14,18 @@ import {
 } from '#dep/components/ui/popover';
 
 type DatePickerProps = CalendarProps & {
+  selected: Date;
+  setSelected: (date: Date) => void;
   onDateChange?: (value: Date) => void;
-  defaultDate?: Date;
+  // defaultDate?: Date;
 };
 
 export function DatePicker({
-  defaultDate,
+  selected: date,
+  setSelected: setDate,
   onDateChange,
   ...props
 }: DatePickerProps) {
-  const [date, setDate] = React.useState<Date>(defaultDate ?? new Date());
-
   return (
     <Popover>
       <PopoverTrigger asChild>

@@ -42,7 +42,7 @@ export function DataTableToolbar<TData>({
       )}
       {...props}
     >
-      <div className="flex flex-1 items-center space-x-2">
+      <div className="flex flex-1 flex-wrap items-center gap-2">
         {searchableColumns.length > 0 &&
           searchableColumns.map(
             (column) =>

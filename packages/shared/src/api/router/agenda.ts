@@ -8,6 +8,7 @@ import {
   findAllScheduleSchema,
   findAllUserAgendaSchema,
 } from '../schema';
+import { parse } from 'date-fns';
 
 export const agendaRouter = {
   findAll: protectedProcedure
@@ -63,11 +64,8 @@ export const agendaRouter = {
         date.setHours(0, 0, 0, 0);
         return date;
       };
-
-      const convertDate = (date: string) => {
-        // from 2022-02-02 to 2022-02-02T00:00:00.000Z
-        return new Date(`${date}T00:00:00.000Z`);
-      };
+      const convertDate = (date: string) =>
+        parse(date, 'yyyy-MM-dd', new Date());
 
       const getDate = (date?: string) => {
         return date ? convertDate(date) : today();

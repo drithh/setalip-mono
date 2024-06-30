@@ -26,6 +26,8 @@ import { z } from 'zod';
 import { findAllScheduleSchema } from '@repo/shared/api/schema';
 import { Form } from '@repo/ui/components/ui/form';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import DayPicker from './day-picker';
+import { parse } from 'date-fns';
 // import CreateAgendaForm from './create-agenda.form';
 
 interface AgendaTableProps {
@@ -50,17 +52,21 @@ export default function AgendaTable({
   if (error) {
     throw new Error('Error fetching data', error);
   }
+  const columns = React.useMemo(() => getColumns(), []);
 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const columns = React.useMemo(() => getColumns(), []);
+  const convertDate = (date: string) => parse(date, 'yyyy-MM-dd', new Date());
+  const defaultDate = search.date ? convertDate(search.date) : new Date();
+  const [date, setDate] = React.useState<Date>(defaultDate);
 
   const onDateChange = (date: Date) => {
+    setDate(date);
+
     // search params
     const newSearchParams = new URLSearchParams(searchParams.toString());
-    // remove timzone in date
     const stringDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate()}`;
     newSearchParams.set('date', stringDate);
     router.push(`${pathname}?${newSearchParams.toString()}`);
@@ -115,23 +121,25 @@ export default function AgendaTable({
     visibleColumns: {},
   });
 
-  const convertDate = (date: string) => {
-    return new Date(`${date}T00:00:00`);
-  };
-
   return (
     <DataTable table={table}>
-      <DataTableToolbar
-        table={table}
-        filterFields={filterFields}
-        className="flex-col sm:flex-row"
-      >
-        <DatePicker
-          defaultDate={search.date ? convertDate(search.date) : new Date()}
-          onDateChange={onDateChange}
-          disabled={(date) => date < new Date()}
-        />
-      </DataTableToolbar>
+      <>
+        <DayPicker date={date} setDate={onDateChange} />
+        <DataTableToolbar
+          table={table}
+          filterFields={filterFields}
+          className="flex-col sm:flex-row"
+        >
+          <DatePicker
+            selected={date}
+            setSelected={onDateChange}
+            onDateChange={onDateChange}
+            disabled={(date) =>
+              date < new Date(new Date().setDate(new Date().getDate() - 1))
+            }
+          />
+        </DataTableToolbar>
+      </>
     </DataTable>
   );
 }
