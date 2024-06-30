@@ -11,6 +11,7 @@ import { findAllUserCreditSchema } from '@repo/shared/api/schema';
 import { redirect } from 'next/navigation';
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -36,10 +37,10 @@ export default async function Credit({ searchParams }: { searchParams: any }) {
               <CardTitle className="capitalize">
                 {credit?.class_type_name} Class
               </CardTitle>
-              <CardDescription className="text-lg font-semibold">
-                {credit?.remaining_amount} Credit
-              </CardDescription>
             </CardHeader>
+            <CardContent className="">
+              <p>{credit?.remaining_amount} credit remaining</p>
+            </CardContent>
           </Card>
         ))}
       </div>

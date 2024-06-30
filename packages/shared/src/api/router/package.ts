@@ -4,7 +4,12 @@ import { TYPES } from '#dep/inversify/types';
 import { PackageService } from '#dep/service/package';
 import { TRPCRouterRecord } from '@trpc/server';
 import { protectedProcedure } from '../trpc';
-import { deletePackageSchema, findAllPackageSchema } from '../schema';
+import {
+  deletePackageSchema,
+  findAllPackageSchema,
+  findAllPackageTransactionByUserIdSchema,
+} from '../schema';
+import { PackageTransactions } from '#dep/db/schema';
 
 export const packageRouter = {
   findAll: protectedProcedure
@@ -24,6 +29,29 @@ export const packageRouter = {
         sort: input.sort,
         name: input.name,
         types: types,
+      });
+
+      return packages;
+    }),
+  findAllPackageTransactionByUserId: protectedProcedure
+    .input(findAllPackageTransactionByUserIdSchema)
+    .query(async ({ ctx, input }) => {
+      const user_id = ctx.session.userId;
+
+      const statuses = input.status
+        ?.split('.')
+        .map((status) => status as PackageTransactions['status']);
+
+      const packageService = ctx.container.get<PackageService>(
+        TYPES.PackageService
+      );
+
+      const packages = await packageService.findAllPackageTransactionByUserId({
+        page: input.page,
+        perPage: input.per_page,
+        sort: input.sort,
+        user_id: user_id,
+        status: statuses,
       });
 
       return packages;

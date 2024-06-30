@@ -170,7 +170,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       query = query.where('locations.id', 'in', locations);
     }
 
-    if (classNames) {
+    if (classNames?.length && classNames.length > 0) {
       query = query.where('classes.id', 'in', classNames);
     }
 

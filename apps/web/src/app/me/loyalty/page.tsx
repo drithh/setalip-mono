@@ -10,6 +10,7 @@ import {
 import { redirect } from 'next/navigation';
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -32,11 +33,12 @@ export default async function Loyalty({ searchParams }: { searchParams: any }) {
         <Card className="sm:col-span-1">
           <CardHeader>
             <CardTitle className="capitalize">Balance</CardTitle>
-            <CardDescription className="text-lg font-semibold">
-              {(loyaltys.result?.total_debit ?? 0) -
-                (loyaltys.result?.total_credit ?? 0)}
-            </CardDescription>
           </CardHeader>
+          <CardContent>
+            {(loyaltys.result?.total_debit ?? 0) -
+              (loyaltys.result?.total_credit ?? 0)}{' '}
+            points
+          </CardContent>
         </Card>
       </div>
       <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[90vw] flex-col gap-24 md:max-w-screen-xl">

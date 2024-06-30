@@ -2,9 +2,11 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
 import type {
   FindAllPackageOptions,
+  FindAllUserPackageOption,
   InsertPackage,
   PackageRepository,
   SelectPackage,
+  SelectPackageTransaction,
   UpdatePackage,
 } from '../repository';
 import { PackageService } from './package';
@@ -39,6 +41,28 @@ export class PackageServiceImpl implements PackageService {
 
     return {
       result: singlePackage,
+    };
+  }
+
+  async findAllPackageTransactionByUserId(data: FindAllUserPackageOption) {
+    const packages =
+      await this._packageRepository.findAllPackageTransactionByUserId(data);
+
+    return {
+      result: packages,
+      error: undefined,
+    };
+  }
+
+  async findAllActivePackageByUserId(
+    user_id: SelectPackageTransaction['user_id']
+  ) {
+    const packages =
+      await this._packageRepository.findAllActivePackageByUserId(user_id);
+
+    return {
+      result: packages,
+      error: undefined,
     };
   }
 

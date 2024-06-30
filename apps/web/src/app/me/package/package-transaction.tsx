@@ -13,25 +13,24 @@ import {
   SelectLocation,
   SelectCoachWithUser,
   SelectAllPackage,
+  SelectAllPackageTransaction,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
-import { findAllUserPackageSchema } from '@repo/shared/api/schema';
+import { findAllPackageTransactionByUserIdSchema } from '@repo/shared/api/schema';
 import { Form } from '@repo/ui/components/ui/form';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 // import CreatePackageTransactionForm from './create-packageTransaction.form';
 
 interface PackageTransactionTableProps {
-  search: z.infer<typeof findAllUserPackageSchema>;
+  search: z.infer<typeof findAllPackageTransactionByUserIdSchema>;
 }
 
 export default function PackageTransactionTable({
   search,
 }: PackageTransactionTableProps) {
-  const [{ result, error }] = api.package.findAllByUserId.useSuspenseQuery(
-    search,
-    {},
-  );
+  const [{ result, error }] =
+    api.package.findAllPackageTransactionByUserId.useSuspenseQuery(search, {});
   if (error) {
     throw new Error('Error fetching data', error);
   }
@@ -42,18 +41,21 @@ export default function PackageTransactionTable({
 
   const columns = React.useMemo(() => getColumns(), []);
 
-  const packageTypes = [
-    'package',
-    'debit',
-  ] satisfies SelectAllPackage['data'][0]['type'][];
+  const statues = [
+    'completed',
+    'pending',
+    'failed',
+  ] satisfies SelectAllPackageTransaction['data'][0]['status'][];
 
-  const filterFields: DataTableFilterField<SelectAllPackage['data'][0]>[] = [
+  const filterFields: DataTableFilterField<
+    SelectAllPackageTransaction['data'][0]
+  >[] = [
     {
-      label: 'Type',
-      value: 'type',
-      options: packageTypes.map((type) => ({
-        label: type,
-        value: type,
+      label: 'Status',
+      value: 'status',
+      options: statues.map((status) => ({
+        label: status,
+        value: status,
         withCount: true,
       })),
     },
@@ -65,7 +67,7 @@ export default function PackageTransactionTable({
     pageCount: result?.pageCount,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: 'created_at.asc',
+    defaultSort: 'package_expired_at.desc',
     visibleColumns: {},
   });
 

@@ -95,3 +95,8 @@ export const findAllUserCreditSchema = defaultPaginationSchema.extend({
 export const findAllUserLoyaltySchema = defaultPaginationSchema.extend({
   type: z.string().optional(),
 });
+
+export const findAllPackageTransactionByUserIdSchema =
+  defaultPaginationSchema.extend({
+    status: z.string().optional(),
+  });

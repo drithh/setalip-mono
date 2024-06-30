@@ -2,49 +2,62 @@ import { TYPES, container } from '@repo/shared/inversify';
 import {
   ClassTypeService,
   CoachService,
-  CreditService,
+  PackageService,
   LocationService,
 } from '@repo/shared/service';
 import { MultiSelect } from '@repo/ui/components/multi-select';
-import CreditTransactionTable from './package-transaction';
-import { findAllUserCreditSchema } from '@repo/shared/api/schema';
+import PackageTransactionTable from './package-transaction';
+import { findAllPackageTransactionByUserIdSchema } from '@repo/shared/api/schema';
 import { redirect } from 'next/navigation';
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
 import { validateUser } from '@/lib/auth';
+import { dateFormatter } from '@repo/shared/util';
 
-export default async function Credit({ searchParams }: { searchParams: any }) {
+export default async function Package({ searchParams }: { searchParams: any }) {
   const auth = await validateUser();
 
-  const search = findAllUserCreditSchema.parse(searchParams);
+  const search = findAllPackageTransactionByUserIdSchema.parse(searchParams);
 
-  const creditService = container.get<CreditService>(TYPES.CreditService);
-  const credits = await creditService.findAmountByUserId(auth.user.id);
+  const packageService = container.get<PackageService>(TYPES.PackageService);
+  const packages = await packageService.findAllActivePackageByUserId(
+    auth.user.id,
+  );
 
   return (
     <div className="w-full border-2 border-primary p-6">
-      <h1 className="text-3xl font-bold">Credit</h1>
-      <div className="my-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {credits?.result?.map((credit) => (
-          <Card key={credit?.class_type_id} className="sm:col-span-1">
+      <h1 className="text-3xl font-bold">Package</h1>
+      <div className="my-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
+        {packages?.result?.map((singlePackage) => (
+          <Card key={singlePackage?.id} className="sm:col-span-1">
             <CardHeader>
               <CardTitle className="capitalize">
-                {credit?.class_type_name} Class
+                {singlePackage?.package_name}
               </CardTitle>
-              <CardDescription className="text-lg font-semibold">
-                {credit?.remaining_amount} Credit
+              <CardDescription className="capitalize">
+                {singlePackage?.class_type}
               </CardDescription>
             </CardHeader>
+            <CardContent className="">
+              <p>
+                Sessions Remaining:{' '}
+                {singlePackage?.credit - (singlePackage?.credit_used ?? 0)}
+              </p>
+              <p>
+                Expired At: {dateFormatter().format(singlePackage?.expired_at)}
+              </p>
+            </CardContent>
           </Card>
         ))}
       </div>
       <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[90vw] flex-col gap-24 md:max-w-screen-xl">
-        <CreditTransactionTable search={search} />
+        <PackageTransactionTable search={search} />
       </div>
     </div>
   );

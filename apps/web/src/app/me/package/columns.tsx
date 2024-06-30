@@ -4,70 +4,43 @@ import * as React from 'react';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { type ColumnDef } from '@tanstack/react-table';
 
-import { dateFormatter } from '@repo/shared/util';
+import { dateFormatter, moneyFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
-import { SelectAllCredit } from '@repo/shared/repository';
+import { SelectAllPackageTransaction } from '@repo/shared/repository';
 import { Badge } from '@repo/ui/components/ui/badge';
 
-export function getColumns(): ColumnDef<SelectAllCredit['data'][0]>[] {
+export function getColumns(): ColumnDef<
+  SelectAllPackageTransaction['data'][0]
+>[] {
   return [
     {
-      accessorKey: 'updated_at',
+      accessorKey: 'package_name',
       header: ({ column }) => (
-        <DataTableColumnHeader
-          className="justify-center"
-          column={column}
-          title="Tanggal Transaksi"
-        />
+        <DataTableColumnHeader column={column} title="Package" />
       ),
-      cell: ({ row }) => {
-        return (
-          <div className="flex place-content-center sm:-ml-5">
-            <span className="inline-block font-semibold sm:hidden">
-              Tanggal Transaksi:&ensp;
-            </span>
-            <p className="font-semibold">
-              {dateFormatter({
-                year: undefined,
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-              }).format(row.original.updated_at)}
-            </p>
-          </div>
-        );
-      },
-    },
-
-    {
-      accessorKey: 'note',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Catatan" />
-      ),
-      cell: ({ row }) => <div>{row.original.note}</div>,
+      cell: ({ row }) => <div>{row.original.package_name}</div>,
     },
     {
-      accessorKey: 'amount',
+      accessorKey: 'amount_paid',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Jumlah" />
+        <DataTableColumnHeader column={column} title="Harga Beli" />
       ),
       cell: ({ row }) => (
-        <p className="md:-ml-5 md:text-center">
+        <p className="">
           <span className="inline-block font-semibold sm:hidden">
-            Jumlah :&ensp;
+            Harga Beli:&ensp;
           </span>
-          {row.original.amount * (row.original.type === 'credit' ? -1 : 1)}
+          {moneyFormatter.format(row.original.amount_paid)}
         </p>
       ),
     },
     {
-      accessorKey: 'type',
+      accessorKey: 'status',
       header: ({ column }) => (
         <DataTableColumnHeader
-          className="w-32 justify-center"
+          className="justify-center"
           column={column}
-          title="Type"
+          title="Status Transaksi"
         />
       ),
 
@@ -78,8 +51,36 @@ export function getColumns(): ColumnDef<SelectAllCredit['data'][0]>[] {
               Type :&ensp;
             </span>
             <Badge className="text-center capitalize">
-              {row.original.type}
+              {row.original.status}
             </Badge>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'package_expired_at',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          className=""
+          column={column}
+          title="Tanggal Expired"
+        />
+      ),
+      cell: ({ row }) => {
+        return (
+          <div className="flex ">
+            <span className="inline-block font-semibold sm:hidden">
+              Tanggal Expired:&ensp;
+            </span>
+            <p className="font-semibold">
+              {dateFormatter({
+                year: undefined,
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+              }).format(row.original.package_expired_at)}
+            </p>
           </div>
         );
       },

@@ -49,6 +49,7 @@ export interface SelectAllPackageTransaction {
 export interface SelectAllActivePackage extends Selectable<UserPackages> {
   credit_used: Selectable<UserPackages>['credit'] | null;
   package_name: Selectable<Packages>['name'];
+  class_type: ClassTypes['type'];
 }
 
 export interface PackageRepository {

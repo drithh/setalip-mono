@@ -121,21 +121,19 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     const query = this._db
       .selectFrom('user_packages')
       .innerJoin('packages', 'user_packages.package_id', 'packages.id')
+      .innerJoin('class_types', 'packages.class_type_id', 'class_types.id')
       .where('user_packages.user_id', '=', user_id)
       .where('user_packages.expired_at', '>', new Date())
       .selectAll('user_packages')
       .select((eb) => [
         'packages.name as package_name',
-
+        'class_types.type as class_type',
         eb
-          .selectFrom('credit_transactions')
-          .where('credit_transactions.user_id', '=', user_id)
+          .selectFrom('credit_transactions as ct')
+          .whereRef('ct.id', '=', 'credit_transaction_id')
           .select(({ fn }) => [
             fn
-              .coalesce(
-                fn.sum<number | null>('credit_transactions.amount'),
-                sql<number>`0`
-              )
+              .coalesce(fn.sum<number | null>('ct.amount'), sql<number>`0`)
               .as('credit_used'),
           ])
           .as('credit_used'),
