@@ -17,6 +17,7 @@ import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-hea
 import { SelectAllSchedule } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import { Badge } from '@repo/ui/components/ui/badge';
+import Link from 'next/link';
 
 export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
   return [
@@ -130,22 +131,19 @@ export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
     {
       id: 'actions',
       cell: function Cell({ row }) {
-        const [showEditAgendaSheet, setShowEditAgendaSheet] =
-          React.useState(false);
-
-        return (
-          <>
-            <Button
-              disabled={row.original.participant === row.original.slot}
-              className="w-full"
-              variant="default"
-              onClick={() => setShowEditAgendaSheet(true)}
-            >
-              {row.original.participant === row.original.slot
-                ? 'Full'
-                : 'Join Class'}
+        return (row.original?.participant ?? 0) >= row.original.slot ? (
+          <Button
+            variant={'outline'}
+            className="w-full cursor-not-allowed  hover:text-primary-foreground"
+          >
+            Full
+          </Button>
+        ) : (
+          <Link href={`/schedules/${row.original.id}`}>
+            <Button className="w-full" variant="default">
+              Join Class
             </Button>
-          </>
+          </Link>
         );
       },
     },

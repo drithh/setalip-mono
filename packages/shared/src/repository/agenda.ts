@@ -9,7 +9,7 @@ import {
   Locations,
   Users,
 } from '../db';
-import { DefaultPagination, OptionalToRequired } from '.';
+import { DefaultPagination, OptionalToRequired, SelectLocation } from '.';
 
 export interface FindAllAgendaOptions extends DefaultPagination {
   className?: string;
@@ -60,13 +60,13 @@ export type SelectParticipant = {
 };
 
 export type SelectLocationAgenda = {
-  location_name: Selectable<Locations>['name'];
-  location_id: Selectable<Locations>['id'];
+  location_name: SelectLocation['name'];
+  location_id: SelectLocation['id'];
 };
 
 type SelectAgendaWithoutGenerated = Omit<
   SelectAgenda,
-  'created_at' | 'updated_at' | 'id' | 'updated_by'
+  'created_at' | 'updated_at' | 'updated_by'
 >;
 
 export interface SelectAgendaWithCoachAndClass
@@ -78,13 +78,15 @@ export interface SelectAgendaWithCoachAndClass
   // location_facility: SelectLocationFacilityAgenda;
 }
 
-interface SelectScheduleByDate
+export interface SelectScheduleByDate
   extends SelectAgendaWithoutGenerated,
     SelectLocationAgenda,
     SelectCoachAgenda,
     SelectClassAgenda {
   participant: number | null;
   location_facility_name: Selectable<LocationFacilities>['name'];
+  location_link_maps: SelectLocation['link_maps'];
+  location_address: SelectLocation['address'];
 }
 
 interface SelectAgendaByUser
@@ -122,6 +124,9 @@ export interface UpdateAgendaBooking {
 export interface AgendaRepository {
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;
+  findScheduleById(
+    id: SelectAgenda['id']
+  ): Promise<SelectScheduleByDate | undefined>;
   findScheduleByDate(
     data: FindScheduleByDateOptions
   ): Promise<SelectAllSchedule>;

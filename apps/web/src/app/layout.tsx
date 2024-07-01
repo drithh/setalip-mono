@@ -50,9 +50,9 @@ export default function RootLayout({
     <html lang="en" className={`${monserrat.variable}  ${neueWorld.variable}`}>
       <body className="font-sans">
         <Provider>
-          <div className="flex w-full flex-col bg-background">
+          <div className="flex min-h-screen w-full flex-col  bg-background">
             <Header />
-            {children}
+            <div className="flex-grow">{children}</div>
             <Footer />
           </div>
         </Provider>

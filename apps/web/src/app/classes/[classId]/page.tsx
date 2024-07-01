@@ -13,6 +13,7 @@ import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
 import Link from 'next/link';
+import { ImageWithFallback } from '@/lib/image-with-fallback';
 export default async function ClassDetail({
   params,
 }: {
@@ -44,7 +45,7 @@ export default async function ClassDetail({
                       className="relative h-full  w-full bg-transparent p-0"
                     >
                       <AspectRatio ratio={16 / 12}>
-                        <Image
+                        <ImageWithFallback
                           fill
                           className="absolute object-cover"
                           alt={src.name}

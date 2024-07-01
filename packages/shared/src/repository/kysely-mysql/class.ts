@@ -59,7 +59,7 @@ export class KyselyMySqlClassRepository implements ClassRepository {
 
     const offset = (page - 1) * perPage;
     const orderBy = (
-      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+      sort?.split('.').filter(Boolean) ?? ['classes.created_at', 'desc']
     ).join(' ') as `${keyof SelectClass} ${'asc' | 'desc'}`;
 
     let query = this._db
@@ -74,13 +74,19 @@ export class KyselyMySqlClassRepository implements ClassRepository {
     //   query = query.where('class_type_id', 'in', types);
     // }
     const queryData = await query
-      .selectAll('classes')
-      .distinct()
-      .select([
-        'class_assets.url as asset',
-        'class_assets.name as asset_name',
+      .select((eb) => [
+        'classes.id',
+        'classes.name',
+        'classes.duration',
+        'classes.description',
+        'classes.slot',
+        'classes.class_type_id',
+        'classes.created_at',
+        eb.fn.max('class_assets.url').as('asset'),
+        eb.fn.max('class_assets.name').as('asset_name'),
         'class_types.type as class_type',
       ])
+      .groupBy(['classes.id', 'class_type'])
       .limit(perPage)
       .offset(offset)
       .orderBy(orderBy)

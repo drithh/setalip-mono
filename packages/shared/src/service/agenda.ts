@@ -11,6 +11,7 @@ import {
   SelectAllSchedule,
   SelectAllAgendaByUser,
   FindAgendaByUserOptions,
+  SelectScheduleByDate,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -22,6 +23,9 @@ export interface AgendaService {
   findScheduleByDate(
     data: FindScheduleByDateOptions
   ): PromiseResult<SelectAllSchedule, Error>;
+  findScheduleById(
+    id: SelectAgenda['id']
+  ): PromiseResult<SelectScheduleByDate, Error>;
   findAgendaByUserId(
     data: FindAgendaByUserOptions
   ): PromiseResult<SelectAllAgendaByUser, Error>;

@@ -55,6 +55,20 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
+  async findScheduleById(id: SelectAgenda['id']) {
+    const singleSchedule = await this._agendaRepository.findScheduleById(id);
+
+    if (!singleSchedule) {
+      return {
+        error: new Error('Schedule not found'),
+      };
+    }
+
+    return {
+      result: singleSchedule,
+    };
+  }
+
   async findAgendaByUserId(data: FindAgendaByUserOptions) {
     const agendas = await this._agendaRepository.findAgendaByUserId(data);
 

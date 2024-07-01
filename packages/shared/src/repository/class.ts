@@ -12,12 +12,13 @@ export interface SelectAllClass {
   pageCount: number;
 }
 
-export interface SelectClassWithAsset extends SelectClass {
+export interface SelectClassWithAsset extends ClassWithoutGenerated {
   asset: ClassAssets['url'] | null;
   asset_name: ClassAssets['name'] | null;
   class_type: ClassTypes['type'];
 }
 
+type ClassWithoutGenerated = Omit<SelectClass, 'updated_at' | 'updated_by'>;
 export interface SelectDetailClassAssetAndLocation extends SelectClass {
   asset: Selectable<ClassAssets>[] | null;
   locations: Record<'name', string>[] | null;
