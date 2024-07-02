@@ -15,6 +15,7 @@ import { Building, MapPin, Phone } from 'lucide-react';
 import Image from 'next/image';
 import { Review } from './_components/review';
 import Link from 'next/link';
+import { Card } from '@repo/ui/components/ui/card';
 
 // image
 const images = [
@@ -151,7 +152,7 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-1 place-items-center gap-6 sm:grid-cols-2 sm:px-6 md:grid-cols-3 md:place-items-center">
               {locations?.result?.map((location) => (
-                <div
+                <Card
                   key={location.id}
                   className="w-full max-w-80 overflow-hidden rounded-xl border border-secondary sm:w-full"
                 >
@@ -187,7 +188,7 @@ export default async function Home() {
                       </Button>
                     </Link>
                   </div>
-                </div>
+                </Card>
               ))}
             </div>
           </div>

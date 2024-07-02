@@ -4,7 +4,7 @@ import localFont from 'next/font/local';
 import '@repo/ui/global.css';
 
 import { Toaster } from '@repo/ui/components/ui/sonner';
-import Navigation from './_components/menu';
+import Navigation from './_components/hamburger-menu';
 import { TooltipProvider } from '@repo/ui/components/ui/tooltip';
 import { Button } from '@repo/ui/components/ui/button';
 import { SheetContent, SheetTrigger } from '@repo/ui/components/ui/sheet';

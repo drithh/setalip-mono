@@ -122,18 +122,17 @@ export default async function AgendaDetail({
                   </div>
                 </div>
               </div>
-              <iframe
-                src={singleAgenda.result.location_link_maps}
-                className="h-[20rem] w-full rounded-xl border p-1"
-                loading="lazy"
-              ></iframe>
-              <Button className="w-full ">Get Directions</Button>
               <div className="space-y-2">
-                <h3 className="text-lg font-medium">
-                  Opening Hours This Week:
-                </h3>
-                <Card className="flex flex-col gap-2 py-2"></Card>
+                <h3 className="text-lg font-medium">Location on Map:</h3>
+                <iframe
+                  src={singleAgenda.result.location_link_maps}
+                  className="h-[20rem] w-full rounded-xl border p-1"
+                  loading="lazy"
+                ></iframe>
               </div>
+              <Link href={`/schedules/${singleAgenda.result.id}/book`} passHref>
+                <Button className="w-full">Book Now</Button>
+              </Link>
             </div>
 
             <div className=" flex flex-col gap-2">

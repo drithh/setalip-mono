@@ -2,6 +2,7 @@
 import { SelectPackages } from '@repo/shared/repository';
 import { moneyFormatter } from '@repo/shared/util';
 import { Button } from '@repo/ui/components/ui/button';
+import { Card } from '@repo/ui/components/ui/card';
 import { Separator } from '@repo/ui/components/ui/separator';
 
 interface Package {
@@ -10,7 +11,7 @@ interface Package {
 
 export default function Package({ singlePackage }: Package) {
   return (
-    <div className="flex flex-col rounded-xl border pt-8">
+    <Card className="flex flex-col rounded-xl border pt-8">
       <div className="mb-12 flex h-40 flex-col place-content-between px-4">
         <div className="flex flex-col">
           <h1 className="text-center text-xl font-semibold uppercase text-secondary-foreground">
@@ -59,6 +60,6 @@ export default function Package({ singlePackage }: Package) {
           </p>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

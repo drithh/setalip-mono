@@ -8,13 +8,14 @@ import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
 import { Clock } from 'lucide-react';
 import { Badge } from '@repo/ui/components/ui/badge';
 import Link from 'next/link';
+import { Card } from '@repo/ui/components/ui/card';
 interface Class {
   singleClass: SelectClassWithAsset;
 }
 
 export default function Class({ singleClass }: Class) {
   return (
-    <div className="flex flex-col rounded-xl border ">
+    <Card className="flex flex-col rounded-xl border ">
       <div>
         <AspectRatio ratio={16 / 12}>
           <ImageWithFallback
@@ -40,6 +41,7 @@ export default function Class({ singleClass }: Class) {
           <p className="text-lg font-semibold capitalize">
             {singleClass.class_type} class
           </p>
+          <p className="text-lg capitalize">{singleClass.description}</p>
         </div>
       </div>
       <div className="px-4 py-2">
@@ -49,6 +51,6 @@ export default function Class({ singleClass }: Class) {
           </Button>
         </Link>
       </div>
-    </div>
+    </Card>
   );
 }

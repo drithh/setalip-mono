@@ -127,12 +127,14 @@ export default async function LocationDetail({
                   </div>
                 </div>
               </div>
-              <iframe
-                src={singleLocation.result.link_maps}
-                className="h-[20rem] w-full rounded-xl border p-1"
-                loading="lazy"
-              ></iframe>
-              <Button className="w-full ">Get Directions</Button>
+              <div className="space-y-2">
+                <h3 className="text-lg font-medium">Location on Map:</h3>
+                <iframe
+                  src={singleLocation.result.link_maps}
+                  className="h-[20rem] w-full rounded-xl border p-1"
+                  loading="lazy"
+                ></iframe>
+              </div>
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">
                   Opening Hours This Week:
