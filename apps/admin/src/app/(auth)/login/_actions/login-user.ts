@@ -66,11 +66,13 @@ export async function loginUser(
 
   // check
   const auth = await lucia.validateSession(loginUser.result.value);
+  console.log('auth', auth, loginUser.result.value);
   if (
     auth &&
     auth.session &&
-    auth?.user?.role !== 'owner' &&
-    auth?.user?.role !== 'admin'
+    auth.user &&
+    auth.user.role !== 'owner' &&
+    auth.user.role !== 'admin'
   ) {
     lucia.invalidateSession(auth.session.id);
     return {

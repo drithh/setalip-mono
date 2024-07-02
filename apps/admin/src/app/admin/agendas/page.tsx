@@ -8,7 +8,7 @@ import {
 } from '@repo/shared/service';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import React from 'react';
-import QueryResetBoundary from '../../lib/query-reset-boundary';
+import QueryResetBoundary from '../../../lib/query-reset-boundary';
 import PackageTable from './package-table';
 
 export interface IndexPageProps {

@@ -42,7 +42,7 @@ interface MenuProps {
 export default function HamburgerMenu({ user }: MenuProps) {
   return (
     <SheetWrapper>
-      <div className="justify-start md:hidden">
+      <div className="justify-start sm:hidden">
         <SheetTrigger asChild>
           <Button
             size="icon"

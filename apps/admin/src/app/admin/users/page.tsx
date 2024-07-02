@@ -1,7 +1,7 @@
 import { FindAllPackageOptions, SelectPackage } from '@repo/shared/repository';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import { findAllUserSchema } from '@repo/shared/api/schema';
-import QueryResetBoundary from '../../lib/query-reset-boundary';
+import QueryResetBoundary from '../../../lib/query-reset-boundary';
 import React from 'react';
 import UserTable from './user-table';
 import { TYPES, container } from '@repo/shared/inversify';
