@@ -64,7 +64,6 @@ export default function CreateFacilityForm({
     form: {
       locationId: locationId,
       name: '',
-      level: 0,
       capacity: 0,
       file: null,
     } as FormSchema,
@@ -185,7 +184,7 @@ export default function CreateFacilityForm({
                   </FormItem>
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="level"
                 render={({ field }) => (
@@ -197,7 +196,7 @@ export default function CreateFacilityForm({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <FormField
                 control={form.control}
                 name="file"

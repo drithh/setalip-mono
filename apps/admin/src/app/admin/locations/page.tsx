@@ -2,6 +2,7 @@ import { container, TYPES } from '@repo/shared/inversify';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -20,9 +21,6 @@ export default async function Locations() {
   const locations = await locationService.findAll();
   return (
     <main className="flex flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6 ">
-      <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">Lokasi</h1>
-      </div>
       {locations?.result && locations.result.length === 0 ? (
         <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
           <div className="flex flex-col items-center gap-1 text-center">
@@ -48,9 +46,10 @@ export default async function Locations() {
                     className="rounded-lg object-cover"
                   />
                 </AspectRatio>
-
+              </CardHeader>
+              <CardContent>
                 <CardTitle>{location.name}</CardTitle>
-                <CardDescription className="flex flex-col gap-2">
+                <div className="mt-2 flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <MapPin className="h-5 w-5" />
                     <p>{location.address}</p>
@@ -59,11 +58,11 @@ export default async function Locations() {
                     <Phone className="h-5 w-5" />
                     <p>{location.phone_number}</p>
                   </div>
-                </CardDescription>
-              </CardHeader>
+                </div>
+              </CardContent>
               <CardFooter>
                 <div className="flex w-full place-content-between">
-                  <Link href={`/locations/${location.id}`}>
+                  <Link href={`/admin/locations/${location.id}`}>
                     <Button variant={'outline'}>Edit Lokasi</Button>
                   </Link>
                 </div>

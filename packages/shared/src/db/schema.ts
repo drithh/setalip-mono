@@ -121,7 +121,6 @@ export interface LocationFacilities {
   deleted_at: Generated<Date | null>;
   id: Generated<number>;
   image_url: Generated<string | null>;
-  level: number;
   location_id: number;
   name: string;
   updated_at: Generated<Date>;

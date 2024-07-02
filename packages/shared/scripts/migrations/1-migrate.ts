@@ -159,7 +159,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('capacity', 'int4', (col) => col.notNull())
-        .addColumn('level', 'int4', (col) => col.notNull())
+        // .addColumn('level', 'int4', (col) => col.notNull())
         .addColumn('image_url', 'text')
         .addColumn('location_id', 'bigint', (col) =>
           col.notNull().references('locations.id')

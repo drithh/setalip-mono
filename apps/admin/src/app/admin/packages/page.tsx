@@ -5,29 +5,20 @@ import {
 } from '@tanstack/react-table';
 import { FindAllPackageOptions, SelectPackage } from '@repo/shared/repository';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
-import Link from 'next/link';
-import { api } from '@/trpc/react';
 import PackageTable from './package-table';
-import { Pencil, Trash2 } from 'lucide-react';
-import { useDataTable } from '@/hooks/use-data-table';
-import { getColumns } from './columns';
 import { TYPES, container } from '@repo/shared/inversify';
 import { ClassTypeService } from '@repo/shared/service';
 import { findAllPackageSchema } from '@repo/shared/api/schema';
-import QueryResetBoundary from '../../lib/query-reset-boundary';
+import QueryResetBoundary from '@/lib/query-reset-boundary';
 import React from 'react';
-import { validateAdmin } from '@/lib/auth';
-import { redirect } from 'next/navigation';
 
 export interface IndexPageProps {
   searchParams: FindAllPackageOptions;
 }
 
 export default async function Packages({ searchParams }: IndexPageProps) {
-  const auth = validateAdmin();
-
   const search = findAllPackageSchema.parse(searchParams);
-  console.log('search', search);
+
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,
   );

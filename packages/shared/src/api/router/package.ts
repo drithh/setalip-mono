@@ -3,7 +3,7 @@
 import { TYPES } from '#dep/inversify/types';
 import { PackageService } from '#dep/service/package';
 import { TRPCRouterRecord } from '@trpc/server';
-import { protectedProcedure } from '../trpc';
+import { adminProcedure, protectedProcedure } from '../trpc';
 import {
   deletePackageSchema,
   findAllPackageSchema,
@@ -12,7 +12,7 @@ import {
 import { PackageTransactions } from '#dep/db/schema';
 
 export const packageRouter = {
-  findAll: protectedProcedure
+  findAll: adminProcedure
     .input(findAllPackageSchema)
     .query(async ({ ctx, input }) => {
       const types = input.class_type_id

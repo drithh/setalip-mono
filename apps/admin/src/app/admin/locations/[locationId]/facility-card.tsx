@@ -69,10 +69,10 @@ export default function FacilityCard({ facility }: FacilityCardProps) {
             <p>{facility.capacity}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <p>Level:</p>
           <p>{facility.level}</p>
-        </div>
+        </div> */}
       </CardContent>
       <CardFooter className="flex place-content-between">
         <EditFacilityForm facility={facility} />

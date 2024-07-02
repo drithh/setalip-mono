@@ -66,7 +66,6 @@ export const validateUser = cache(async () => {
 
 export const validateAdmin = cache(async () => {
   const data = await validateUser();
-  console.log('data', data);
   const { user } = data;
   if (!user || (user.role !== 'admin' && user.role !== 'owner')) {
     redirect('/login');

@@ -60,7 +60,6 @@ export async function editFacility(
   const facility = await locationService.updateFacility({
     id: state.form?.facilityId ?? 0,
     name: parsed.data.name,
-    level: parsed.data.level,
     capacity: parsed.data.capacity,
     image_url: fileUpload[0]?.url ?? null,
   });

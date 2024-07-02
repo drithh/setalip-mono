@@ -62,7 +62,7 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
       facilityId: facility.id,
       locationId: facility.location_id,
       name: facility.name,
-      level: facility.level,
+      // level: facility.level,
       capacity: facility.capacity,
       file: null,
     },
@@ -196,7 +196,7 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
                   </FormItem>
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="level"
                 render={({ field }) => (
@@ -208,7 +208,7 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <FormField
                 control={form.control}
                 name="file"

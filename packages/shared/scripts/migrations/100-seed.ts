@@ -269,7 +269,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
         location_id:
           locations[Math.floor(Math.random() * locations.length)]?.id ?? 1,
         image_url: faker.image.urlPlaceholder(),
-        level: faker.number.int({ min: 1, max: 5 }),
+        // level: faker.number.int({ min: 1, max: 5 }),
         capacity: faker.number.int({ min: 1, max: 10 }),
       }));
 

@@ -19,7 +19,6 @@ export type FormEditDetailLocation = FormState<EditDetailLocationSchema>;
 export const createFacilitySchema = z.object({
   name: z.string().min(3).max(255),
   capacity: z.coerce.number(),
-  level: z.coerce.number(),
   locationId: z.coerce.number(),
   file: z.custom<File | null>(
     (data) => data === null || data instanceof File,
@@ -34,7 +33,6 @@ export const editFacilitySchema = z.object({
   facilityId: z.coerce.number(),
   name: z.string().min(3).max(255),
   capacity: z.coerce.number(),
-  level: z.coerce.number(),
   locationId: z.coerce.number(),
   file: z.custom<File | null>((data) => {
     return data === null || data instanceof File;

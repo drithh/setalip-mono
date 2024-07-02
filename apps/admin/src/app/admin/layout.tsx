@@ -45,7 +45,7 @@ export default async function RootLayout({
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Navigation />
       <div className="z-0 flex min-h-screen flex-col sm:gap-4 sm:py-4 sm:pl-14">
-        <Header />
+        <Header auth={auth} />
         {children}
       </div>
     </div>

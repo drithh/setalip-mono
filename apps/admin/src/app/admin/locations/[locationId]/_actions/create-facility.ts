@@ -57,7 +57,6 @@ export async function createFacility(
   const facility = await locationService.createFacility({
     location_id: parsed.data.locationId,
     name: parsed.data.name,
-    level: parsed.data.level,
     capacity: parsed.data.capacity,
     image_url: fileUpload[0]?.url ?? null,
   });

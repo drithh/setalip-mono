@@ -14,7 +14,7 @@ import {
   Users2,
 } from 'lucide-react';
 
-const menus: Menu[] = [
+export const menus: Menu[] = [
   {
     icon: <Home className="h-5 w-5" />,
     label: 'Dashboard',
