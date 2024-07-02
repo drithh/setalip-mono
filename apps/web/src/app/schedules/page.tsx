@@ -15,7 +15,9 @@ export default async function Schedules({
   searchParams: any;
 }) {
   const search = findAllScheduleSchema.parse(searchParams);
-
+  if (search.location_name) {
+    console.log('search.location_name', search.location_name);
+  }
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,
   );

@@ -11,12 +11,12 @@ interface DayPickerProps {
   // onDateChange: (value: Date) => void;
 }
 
-const DayPicker = ({
+export default function DayPicker({
   date: selectedDate,
   setDate: setSelectedDate,
   // onDateChangex
-}: DayPickerProps) => {
-  const [numberOfDays, setNumberOfDays] = useState(calculateNumberOfDays());
+}: DayPickerProps) {
+  const [numberOfDays, setNumberOfDays] = useState(3);
   const [currentDayIndex, setCurrentDayIndex] = useState(
     selectedDate.getDay() % numberOfDays,
   );
@@ -25,7 +25,7 @@ const DayPicker = ({
     function handleResize() {
       setNumberOfDays(calculateNumberOfDays());
     }
-
+    handleResize();
     window.addEventListener('resize', handleResize);
 
     return () => {
@@ -140,6 +140,4 @@ const DayPicker = ({
       </div>
     </div>
   );
-};
-
-export default DayPicker;
+}
