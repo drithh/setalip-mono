@@ -1,10 +1,5 @@
 'use client';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@repo/ui/components/ui/tooltip';
-import Link from 'next/link';
+import NavigationLink, { Menu } from './navigation-link';
 import {
   CalendarClock,
   Gift,
@@ -19,65 +14,57 @@ import {
   Users2,
 } from 'lucide-react';
 
-export default function Navigation() {
-  interface NavLinkProps {
-    children: React.ReactNode;
-    label: string;
-    href: string;
-  }
-  function NavLink({ children, label, href }: NavLinkProps) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Link
-            href={href}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-          >
-            {children}
-            <span className="sr-only">{label}</span>
-          </Link>
-        </TooltipTrigger>
-        <TooltipContent side="right">{label}</TooltipContent>
-      </Tooltip>
-    );
-  }
+const menus: Menu[] = [
+  {
+    icon: <Home className="h-5 w-5" />,
+    label: 'Dashboard',
+    path: '/admin',
+  },
+  {
+    icon: <MapPin className="h-5 w-5" />,
+    label: 'Locations',
+    path: '/admin/locations',
+  },
+  {
+    icon: <Package className="h-5 w-5" />,
+    label: 'Packages',
+    path: '/admin/packages',
+  },
+  {
+    icon: <Users2 className="h-5 w-5" />,
+    label: 'Users',
+    path: '/admin/users',
+  },
+  {
+    icon: <CalendarClock className="h-5 w-5" />,
+    label: 'Agendas',
+    path: '/admin/agendas',
+  },
+  {
+    icon: <Gift className="h-5 w-5" />,
+    label: 'Loyalty',
+    path: '/admin/loyalties',
+  },
+  {
+    icon: <SquarePercent className="h-5 w-5" />,
+    label: 'Voucher & Flash Sale',
+    path: '/admin/discounts',
+  },
+  {
+    icon: <Settings className="h-5 w-5" />,
+    label: 'Settings',
+    path: '/admin/settings',
+    isBottom: true,
+  },
+];
 
+export default function Navigation() {
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-      <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-        <Link
-          href="#"
-          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-        >
-          <Package2 className="h-4 w-4 transition-all group-hover:scale-110" />
-          <span className="sr-only">Acme Inc</span>
-        </Link>
-        <NavLink label="Dashboard" href="#">
-          <Home className="h-5 w-5" />
-        </NavLink>
-        <NavLink label="Locations" href="locations">
-          <MapPin className="h-5 w-5" />
-        </NavLink>
-        <NavLink label="Packages" href="packages">
-          <PilatesSvg className="h-5 w-5 fill-current" />
-        </NavLink>
-        <NavLink label="Users" href="users">
-          <Users2 className="h-5 w-5" />
-        </NavLink>
-        <NavLink label="Agendas" href="#">
-          <CalendarClock className="h-5 w-5" />
-        </NavLink>
-        <NavLink label="Loyalty" href="#">
-          <Gift className="h-5 w-5" />
-        </NavLink>
-        <NavLink label="Voucher & Flash Sale" href="#">
-          <SquarePercent className="h-5 w-5" />
-        </NavLink>
-      </nav>
-      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
-        <NavLink label="Settings" href="#">
-          <Settings className="h-5 w-5" />
-        </NavLink>
+      <nav className="flex h-full flex-col items-center gap-4 px-2 sm:py-5">
+        {menus.map((menu) => (
+          <NavigationLink key={menu.label} {...menu} />
+        ))}
       </nav>
     </aside>
   );
