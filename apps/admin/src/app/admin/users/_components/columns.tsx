@@ -23,10 +23,10 @@ import {
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 // import DeletePackageDialog from './delete-package.dialog';
-import EditUserForm from './edit-user.form';
+import EditUserForm from '../edit-user.form';
 import { dateFormatter } from '@repo/shared/util';
-import CreateCreditForm from './create-credit.form';
-import DeleteCreditForm from './delete-credit.form';
+import CreateCreditForm from '../create-credit.form';
+import DeleteCreditForm from '../delete-credit.form';
 
 interface getColumnsProps {
   locations: SelectLocation[];
@@ -38,30 +38,6 @@ export function getColumns({
   classTypes,
 }: getColumnsProps): ColumnDef<SelectUserWithCredits>[] {
   return [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-          className="translate-y-0.5"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-          className="translate-y-0.5"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
     {
       accessorKey: 'name',
       header: ({ column }) => (

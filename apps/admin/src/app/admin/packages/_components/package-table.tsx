@@ -12,7 +12,7 @@ import { SelectClassType, SelectPackage } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllPackageSchema } from '@repo/shared/api/schema';
-import CreatePackageForm from './create-package.form';
+import CreatePackageForm from '../create-package.form';
 
 interface PackageTableProps {
   classTypes: SelectClassType[];

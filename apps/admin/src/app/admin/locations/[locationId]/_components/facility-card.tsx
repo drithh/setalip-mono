@@ -14,8 +14,8 @@ import {
 import Link from 'next/link';
 import { User2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import EditFacilityForm from './edit-facility.form';
-import { useDeleteFacilityMutation } from './_functions/delete-facility';
+import EditFacilityForm from '../edit-facility.form';
+import { useDeleteFacilityMutation } from '../_functions/delete-facility';
 import {
   AlertDialog,
   AlertDialogTrigger,

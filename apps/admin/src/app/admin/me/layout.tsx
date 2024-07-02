@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Avatar from '../_components/avatar';
 import { validateUser } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
-import NavigationLink from './navigation-link';
+import NavigationLink from './_components/navigation-link';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   CalendarCheck,

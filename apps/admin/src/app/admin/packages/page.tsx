@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-table';
 import { FindAllPackageOptions, SelectPackage } from '@repo/shared/repository';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
-import PackageTable from './package-table';
+import PackageTable from './_components/package-table';
 import { TYPES, container } from '@repo/shared/inversify';
 import { ClassTypeService } from '@repo/shared/service';
 import { findAllPackageSchema } from '@repo/shared/api/schema';

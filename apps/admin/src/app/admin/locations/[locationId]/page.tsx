@@ -17,7 +17,7 @@ import { ChevronLeft, Phone, User2 } from 'lucide-react';
 import { redirect, useRouter } from 'next/navigation';
 import { Label } from '@repo/ui/components/ui/label';
 import { Input } from '@repo/ui/components/ui/input';
-import ImageCard from './file-card';
+import ImageCard from './_components/file-card';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
 import 'react-photo-view/dist/react-photo-view.css';
@@ -29,15 +29,15 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
-import FileCard from './file-card';
+import FileCard from './_components/file-card';
 import { PhotoProvider, PhotoSlider } from 'react-photo-view';
 import UploadLocationAsset from './upload-location-asset.form';
-import LocationAssets from './location-assets';
+import LocationAssets from './_components/location-assets';
 import { validateAdmin, validateUser } from '@/lib/auth';
-import FacilityCard from './facility-card';
+import FacilityCard from './_components/facility-card';
 import EditDetailLocationForm from './edit-detail-location.form';
 import CreateFacilityForm from './create-facility.form';
-import OperationalHour from './operational-hour';
+import OperationalHour from './_components/operational-hour';
 import EditOperationalHourForm from './edit-operational-hour.form';
 import DeleteLocation from './delete-location.dialog';
 

@@ -23,7 +23,7 @@ import {
 import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllAgendaSchema } from '@repo/shared/api/schema';
-import CreateAgendaForm from './create-agenda.form';
+import CreateAgendaForm from '../create-agenda.form';
 
 interface AgendaTableProps {
   locations: SelectLocation[];

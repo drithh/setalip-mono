@@ -27,7 +27,8 @@ export default function Header({ auth }: HeaderProps) {
 
   const getActive = () => {
     const menu = menus.find((menu) => {
-      return menu.path === pathname;
+      // console.log(menu.path, pathname);
+      return menu.path.startsWith(pathname);
     });
     return menu?.label || '';
   };
@@ -35,38 +36,40 @@ export default function Header({ auth }: HeaderProps) {
   console.log(getActive());
 
   return (
-    <header className="sticky top-0 z-30 flex h-12 place-content-between place-items-center gap-4 border-b bg-background px-4  sm:static sm:h-auto sm:border-0  sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 place-content-between place-items-center gap-4 border-b bg-background px-4  sm:static  sm:border-0  sm:px-6">
       <h2 className="text-2xl font-semibold">{getActive()}</h2>
-      <div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="mt-2 overflow-hidden rounded-full"
-            >
-              <Avatar user={auth.user} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link className="cursor-pointer" href="/admin/me">
-                Profile
-              </Link>
-            </DropdownMenuItem>
+      <div className="flex place-items-center gap-2">
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="mt-2 overflow-hidden rounded-full"
+              >
+                <Avatar user={auth.user} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link className="cursor-pointer" href="/admin/me">
+                  Profile
+                </Link>
+              </DropdownMenuItem>
 
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link className="cursor-pointer" href="/logout">
-                Logout
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link className="cursor-pointer" href="/logout">
+                  Logout
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <HamburgerMenu user={auth.user ?? null} />
       </div>
-      <HamburgerMenu user={auth.user ?? null} />
     </header>
   );
 }

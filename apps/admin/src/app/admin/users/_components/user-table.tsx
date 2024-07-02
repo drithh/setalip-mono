@@ -17,7 +17,7 @@ import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllUserSchema } from '@repo/shared/api/schema';
 // import CreateUserForm from './create-user.form';
-import { roles } from './form-schema';
+import { roles } from '../form-schema';
 
 interface UserTableProps {
   locations: SelectLocation[];

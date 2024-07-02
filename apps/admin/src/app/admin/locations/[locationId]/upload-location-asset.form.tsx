@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
-import FileCard from './file-card';
+import FileCard from './_components/file-card';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFormState } from 'react-dom';

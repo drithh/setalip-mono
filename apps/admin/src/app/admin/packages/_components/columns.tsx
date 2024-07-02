@@ -16,8 +16,8 @@ import { moneyFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { SelectClassType, SelectPackage } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
-import EditPackageForm from './edit-package.form';
-import DeletePackageDialog from './delete-package.dialog';
+import EditPackageForm from '../edit-package.form';
+import DeletePackageDialog from '../delete-package.dialog';
 
 interface getColumnsProps {
   classTypes: SelectClassType[];
@@ -27,30 +27,6 @@ export function getColumns({
   classTypes,
 }: getColumnsProps): ColumnDef<SelectPackage>[] {
   return [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-          className="translate-y-0.5"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-          className="translate-y-0.5"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
     {
       accessorKey: 'name',
       header: ({ column }) => (

@@ -14,7 +14,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@repo/ui/components/ui/alert-dialog';
-import UploadLocationAsset from './upload-location-asset.form';
+import UploadLocationAsset from '../upload-location-asset.form';
 
 type FileWithPreview = File & { preview: string };
 
