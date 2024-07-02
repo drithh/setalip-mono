@@ -25,11 +25,6 @@ import MobileNav from './_components/navigation';
 import Header from './_components/navigation';
 import Footer from './_components/footer';
 
-const neueWorld = localFont({
-  src: '../../public/neue-world.woff2',
-  variable: '--font-neue-world',
-});
-
 const monserrat = Montserrat({
   display: 'swap',
   variable: '--font-montserrat',
@@ -47,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${monserrat.variable}  ${neueWorld.variable}`}>
+    <html lang="en" className={`${monserrat.variable} `}>
       <body className="font-sans">
         <Provider>
           <div className="flex min-h-screen w-full flex-col  bg-background">

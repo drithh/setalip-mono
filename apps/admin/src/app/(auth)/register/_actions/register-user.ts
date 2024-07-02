@@ -15,6 +15,8 @@ import {
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
+import { validateRequest } from '@/lib/auth';
+import { lucia } from '@repo/shared/auth';
 
 export async function registerUser(
   state: FormRegisterUser,

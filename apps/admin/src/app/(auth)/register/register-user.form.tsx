@@ -29,7 +29,6 @@ import { api } from '@/trpc/react';
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal registrasi',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mendaftarkan User...',
@@ -52,7 +51,10 @@ export default function RegisterUserForm() {
   });
 
   useEffect(() => {
-    if (auth.data) {
+    if (
+      auth.data?.user?.role === 'admin' ||
+      auth.data?.user?.role === 'owner'
+    ) {
       router.push('/');
     }
   }, [auth]);
@@ -90,7 +92,7 @@ export default function RegisterUserForm() {
       }
     } else if (formState.status === 'error') {
       toast.error(TOAST_MESSAGES.error.title, {
-        description: TOAST_MESSAGES.error.description,
+        description: formState.errors,
       });
       form.setError('root', { message: formState.errors });
     } else {
@@ -101,7 +103,7 @@ export default function RegisterUserForm() {
         description: TOAST_MESSAGES.success.description,
       });
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

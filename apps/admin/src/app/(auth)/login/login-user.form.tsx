@@ -49,11 +49,14 @@ export default function LoginUserForm() {
     retry: false,
   });
 
-  useEffect(() => {
-    if (auth.data) {
-      router.push('/');
-    }
-  }, [auth]);
+  // useEffect(() => {
+  //   if (
+  //     auth.data?.user?.role === 'admin' ||
+  //     auth.data?.user?.role === 'owner'
+  //   ) {
+  //     router.push('/');
+  //   }
+  // }, [auth]);
 
   const [formState, formAction] = useFormState(loginUser, {
     status: 'default',
@@ -96,9 +99,9 @@ export default function LoginUserForm() {
       toast.success(TOAST_MESSAGES.success.title, {
         description: TOAST_MESSAGES.success.description,
       });
-      router.push('/');
+      // router.push('/');
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

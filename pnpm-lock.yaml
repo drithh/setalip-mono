@@ -26,6 +26,12 @@ importers:
 
   apps/admin:
     dependencies:
+      '@dicebear/collection':
+        specifier: ^8.0.2
+        version: 8.0.2(@dicebear/core@8.0.2)
+      '@dicebear/core':
+        specifier: ^8.0.2
+        version: 8.0.2
       '@formkit/auto-animate':
         specifier: ^0.8.2
         version: 0.8.2

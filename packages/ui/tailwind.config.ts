@@ -27,7 +27,6 @@ const config = {
 
       fontFamily: {
         sans: ['var(--font-montserrat)', 'ui-sans-serif', 'system-ui'],
-        neue: ['var(--font-neue-world)'],
       },
       colors: {
         border: 'hsl(var(--border))',

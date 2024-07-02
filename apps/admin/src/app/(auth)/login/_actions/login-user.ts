@@ -16,6 +16,8 @@ import {
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
+import { validateRequest } from '@/lib/auth';
+import { lucia } from '@repo/shared/auth';
 
 export async function loginUser(
   state: FormLoginUser,
@@ -59,6 +61,22 @@ export async function loginUser(
 
       status: 'error',
       errors: loginUser.error.message,
+    };
+  }
+
+  // check
+  const auth = await lucia.validateSession(loginUser.result.value);
+  if (
+    auth &&
+    auth.session &&
+    auth?.user?.role !== 'owner' &&
+    auth?.user?.role !== 'admin'
+  ) {
+    lucia.invalidateSession(auth.session.id);
+    return {
+      form: undefined,
+      status: 'error',
+      errors: 'You are not authorized to access this page',
     };
   }
 

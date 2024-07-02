@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Montserrat } from 'next/font/google';
 import '@repo/ui/global.css';
 const inter = Inter({ subsets: ['latin'] });
 import { Toaster } from '@repo/ui/components/ui/sonner';
-import Navigation from './navigation';
+import Navigation from './_components/navigation';
 import { TooltipProvider } from '@repo/ui/components/ui/tooltip';
 import { Button } from '@repo/ui/components/ui/button';
 import { SheetContent, SheetTrigger } from '@repo/ui/components/ui/sheet';
@@ -19,12 +19,18 @@ import {
   LineChart,
 } from 'lucide-react';
 import { Dialog } from '@repo/ui/components/ui/dialog';
-import Provider from './provider';
-import MobileNav from './header';
-import Header from './header';
+import Provider from './_components/provider';
+import MobileNav from './_components/header';
+import Header from './_components/header';
+
+const monserrat = Montserrat({
+  display: 'swap',
+  variable: '--font-montserrat',
+  subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
-  title: 'Pilates Reformers',
+  title: 'Admin Pilates',
   description: 'Pilates Reformers Indonesia',
 };
 
