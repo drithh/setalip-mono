@@ -33,7 +33,7 @@ export default async function Header() {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link className="cursor-pointer" href="/me">
+                <Link className="cursor-pointer" href="/admin/me">
                   Profile
                 </Link>
               </DropdownMenuItem>
