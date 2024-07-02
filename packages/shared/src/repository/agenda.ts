@@ -122,6 +122,8 @@ export interface UpdateAgendaBooking {
   agendaBookings: Updateable<AgendaBookings>[];
 }
 export interface AgendaRepository {
+  count(): Promise<number>;
+
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;
   findScheduleById(

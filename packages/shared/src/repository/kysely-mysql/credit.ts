@@ -22,6 +22,17 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
     this._db = db;
   }
 
+  async count() {
+    const query = await this._db
+      .selectFrom('credit_transactions')
+      .select(({ fn }) => [
+        fn.count<number>('credit_transactions.id').as('count'),
+      ])
+      .executeTakeFirst();
+
+    return query?.count ?? 0;
+  }
+
   async findAll() {
     return this._db
       .selectFrom('credit_transactions')

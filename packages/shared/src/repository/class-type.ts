@@ -9,6 +9,8 @@ export type InsertClassType = Insertable<ClassTypes>;
 export type UpdateClassType = OptionalToRequired<Updateable<ClassTypes>, 'id'>;
 
 export interface ClassTypeRepository {
+  count(): Promise<number>;
+
   findAll(): Promise<SelectClassType[]>;
   findById(id: SelectClassType['id']): Promise<SelectClassType | undefined>;
   create(data: InsertClassType): Promise<SelectClassType | Error>;

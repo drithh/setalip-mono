@@ -53,6 +53,8 @@ export interface SelectAllActivePackage extends Selectable<UserPackages> {
 }
 
 export interface PackageRepository {
+  count(): Promise<number>;
+
   findAll(data: FindAllPackageOptions): Promise<SelectAllPackage>;
   findById(id: SelectPackage['id']): Promise<SelectPackage | undefined>;
   findAllPackageTransactionByUserId(

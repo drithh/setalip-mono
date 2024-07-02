@@ -17,6 +17,15 @@ export class KyselyMySqlCoachRepository implements CoachRepository {
     this._db = db;
   }
 
+  async count() {
+    const query = await this._db
+      .selectFrom('coaches')
+      .select(({ fn }) => [fn.count<number>('coaches.id').as('count')])
+      .executeTakeFirst();
+
+    return query?.count ?? 0;
+  }
+
   async findAll() {
     return this._db
       .selectFrom('coaches')

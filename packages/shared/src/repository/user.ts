@@ -33,6 +33,8 @@ export interface SelectAllUser {
 }
 
 export interface UserRepository {
+  count(): Promise<number>;
+
   findAll(data: FindAllUserOptions): Promise<SelectAllUser>;
   findAllMember(): Promise<SelectUser[]>;
   findById(id: SelectUser['id']): Promise<SelectUser | undefined>;

@@ -21,6 +21,15 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     this._db = db;
   }
 
+  async count() {
+    const query = await this._db
+      .selectFrom('packages')
+      .select(({ fn }) => [fn.count<number>('packages.id').as('count')])
+      .executeTakeFirst();
+
+    return query?.count ?? 0;
+  }
+
   async findAll(data: FindAllPackageOptions) {
     const { page = 1, perPage = 10, sort, name, types } = data;
 

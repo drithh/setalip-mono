@@ -19,6 +19,15 @@ export class KyselyMySqlClassRepository implements ClassRepository {
     this._db = db;
   }
 
+  async count() {
+    const query = await this._db
+      .selectFrom('classes')
+      .select(({ fn }) => [fn.count<number>('classes.id').as('count')])
+      .executeTakeFirst();
+
+    return query?.count ?? 0;
+  }
+
   async findAll(data: FindAllClassOptions) {
     const { page = 1, perPage = 10, sort } = data;
 

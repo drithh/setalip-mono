@@ -26,6 +26,15 @@ export class KyselyMySqlUserRepository implements UserRepository {
     this._creditRepository = creditRepository;
   }
 
+  async count() {
+    const query = await this._db
+      .selectFrom('users')
+      .select(({ fn }) => [fn.count<number>('users.id').as('count')])
+      .executeTakeFirst();
+
+    return query?.count ?? 0;
+  }
+
   async findAll(data: FindAllUserOptions) {
     console.log('findAll', data);
     const { page = 1, perPage = 10, sort, name, roles } = data || {};

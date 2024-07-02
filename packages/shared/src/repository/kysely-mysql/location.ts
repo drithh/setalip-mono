@@ -25,6 +25,15 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
     this._db = db;
   }
 
+  async count() {
+    const query = await this._db
+      .selectFrom('locations')
+      .select(({ fn }) => [fn.count<number>('locations.id').as('count')])
+      .executeTakeFirst();
+
+    return query?.count ?? 0;
+  }
+
   async findAll(): Promise<SelectLocationWithAsset[]> {
     const locationWithAssets = await this._db
       .selectFrom('locations')

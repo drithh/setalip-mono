@@ -48,6 +48,8 @@ export type SelectLocationWithAsset = SelectLocation & {
 };
 
 export interface LocationRepository {
+  count(): Promise<number>;
+
   findAll(): Promise<SelectLocationWithAsset[]>;
   findById(id: SelectLocation['id']): Promise<SelectDetailLocation | undefined>;
   findAllFacilityById(id: SelectLocation['id']): Promise<SelectFacility[]>;

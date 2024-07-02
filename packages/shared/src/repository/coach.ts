@@ -8,6 +8,8 @@ export type InsertCoach = Insertable<Coaches>;
 export type UpdateCoach = OptionalToRequired<Updateable<Coaches>, 'id'>;
 
 export interface CoachRepository {
+  count(): Promise<number>;
+
   findAll(): Promise<SelectCoachWithUser[]>;
   findById(id: SelectCoach['id']): Promise<SelectCoach | undefined>;
   findByUserId(

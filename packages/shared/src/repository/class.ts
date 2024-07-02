@@ -38,6 +38,8 @@ export type InsertClass = Insertable<Classes>;
 export type UpdateClass = OptionalToRequired<Updateable<Classes>, 'id'>;
 
 export interface ClassRepository {
+  count(): Promise<number>;
+
   findAll(data: FindAllClassOptions): Promise<SelectAllClass>;
   findAllClassWithAsset(
     data: FindAllClassOptions

@@ -41,6 +41,8 @@ export interface SelectAllLoyalty {
 }
 
 export interface LoyaltyRepository {
+  count(): Promise<number>;
+
   findAll(): Promise<SelectLoyalty[]>;
   findById(id: SelectLoyalty['id']): Promise<SelectLoyalty | undefined>;
 

@@ -17,6 +17,15 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
     this._db = db;
   }
 
+  async count() {
+    const query = await this._db
+      .selectFrom('class_types')
+      .select(({ fn }) => [fn.count<number>('class_types.id').as('count')])
+      .executeTakeFirst();
+
+    return query?.count ?? 0;
+  }
+
   async findAll() {
     return this._db.selectFrom('class_types').selectAll().execute();
   }

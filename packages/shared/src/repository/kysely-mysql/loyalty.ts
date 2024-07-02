@@ -21,6 +21,15 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
     this._db = db;
   }
 
+  async count() {
+    const query = await this._db
+      .selectFrom('loyalty_rewards')
+      .select(({ fn }) => [fn.count<number>('loyalty_rewards.id').as('count')])
+      .executeTakeFirst();
+
+    return query?.count ?? 0;
+  }
+
   async findAll() {
     return this._db
       .selectFrom('loyalty_transactions')

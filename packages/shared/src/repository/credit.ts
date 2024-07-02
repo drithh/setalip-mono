@@ -36,6 +36,8 @@ export interface SelectAllCredit {
 }
 
 export interface CreditRepository {
+  count(): Promise<number>;
+
   findAll(): Promise<SelectCredit[]>;
   findById(id: SelectCredit['id']): Promise<SelectCredit | undefined>;
   findAmountByUserId(
