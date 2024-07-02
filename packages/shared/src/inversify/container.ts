@@ -48,6 +48,7 @@ import {
   CreditServiceImpl,
   LoyaltyServiceImpl,
   WebSettingServiceImpl,
+  DashboardServiceImpl,
 } from '#dep/service/index.impl';
 import {
   AuthService,
@@ -63,6 +64,7 @@ import {
   CreditService,
   LoyaltyService,
   WebSettingService,
+  DashboardService,
 } from '#dep/service/index';
 
 const container = new Container();
@@ -124,6 +126,9 @@ container
 container
   .bind<WebSettingService>(TYPES.WebSettingService)
   .to(WebSettingServiceImpl);
+container
+  .bind<DashboardService>(TYPES.DashboardService)
+  .to(DashboardServiceImpl);
 
 export { container };
 

@@ -27,8 +27,14 @@ export default function Header({ auth }: HeaderProps) {
 
   const getActive = () => {
     const menu = menus.find((menu) => {
-      // console.log(menu.path, pathname);
-      return menu.path.startsWith(pathname);
+      if (menu.path === '/admin') {
+        if (pathname === '/admin') {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      return pathname.startsWith(menu.path);
     });
     return menu?.label || '';
   };
@@ -36,7 +42,7 @@ export default function Header({ auth }: HeaderProps) {
   console.log(getActive());
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 place-content-between place-items-center gap-4 border-b bg-background px-4  sm:static  sm:border-0  sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 w-full place-content-between  place-items-center gap-4 border-b bg-background px-4 sm:static  sm:border-0  sm:px-6">
       <h2 className="text-2xl font-semibold">{getActive()}</h2>
       <div className="flex place-items-center gap-2">
         <div>

@@ -34,4 +34,6 @@ export interface WebSettingRepository {
   findContact(): Promise<SelectContact | undefined>;
   findLogo(): Promise<SelectLogo | undefined>;
   findAllReview(): Promise<SelectAllReview[]>;
+  findTermsAndConditions(): Promise<string | undefined>;
+  findPrivacyPolicy(): Promise<string | undefined>;
 }

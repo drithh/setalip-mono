@@ -28,6 +28,7 @@ const TYPES = {
   LoyaltyService: Symbol.for('LoyaltyService'),
   WebSettingRepository: Symbol.for('WebSettingRepository'),
   WebSettingService: Symbol.for('WebSettingService'),
+  DashboardService: Symbol.for('DashboardService'),
 };
 
 export { TYPES };

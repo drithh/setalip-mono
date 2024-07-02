@@ -33,6 +33,35 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
       logo: query.value,
     };
   }
+
+  async findTermsAndConditions() {
+    const query = await this._db
+      .selectFrom('web_settings')
+      .where('web_settings.key', '=', 'terms_and_conditions')
+      .select('value')
+      .executeTakeFirst();
+
+    if (!query) {
+      return;
+    }
+
+    return query.value;
+  }
+
+  async findPrivacyPolicy() {
+    const query = await this._db
+      .selectFrom('web_settings')
+      .where('web_settings.key', '=', 'privacy_policy')
+      .select('value')
+      .executeTakeFirst();
+
+    if (!query) {
+      return;
+    }
+
+    return query.value;
+  }
+
   async findContact() {
     const contact = ['instagram_handle', 'tiktok_handle'];
     const queryContact = await this._db

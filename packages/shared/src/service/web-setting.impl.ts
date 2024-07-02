@@ -48,4 +48,23 @@ export class WebSettingServiceImpl implements WebSettingService {
       error: undefined,
     };
   }
+
+  async findTermsAndConditions() {
+    const termsAndConditions =
+      await this._webSettingRepository.findTermsAndConditions();
+
+    return {
+      result: termsAndConditions || '',
+      error: undefined,
+    };
+  }
+
+  async findPrivacyPolicy() {
+    const privacyPolicy = await this._webSettingRepository.findPrivacyPolicy();
+
+    return {
+      result: privacyPolicy || '',
+      error: undefined,
+    };
+  }
 }
