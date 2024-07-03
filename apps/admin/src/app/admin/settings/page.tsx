@@ -90,6 +90,24 @@ export default async function Page() {
           </div>
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Review</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ReviewTable />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Frequently Asked Questions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FaqTable />
+        </CardContent>
+      </Card>
     </main>
   );
 }

@@ -24,7 +24,7 @@ const AddonInput = React.forwardRef<HTMLInputElement, AddonInputProps>(
           <input
             type={type}
             className={cn(
-              'hide-arrows flex-1 px-3 py-2 placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus:ring-none disabled:opacity-50'
+              'hide-arrows flex-1 px-3 py-2 bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus:ring-none disabled:opacity-50'
             )}
             ref={ref}
             {...props}
