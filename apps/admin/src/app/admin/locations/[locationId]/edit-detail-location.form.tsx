@@ -101,7 +101,7 @@ export default function EditDetailLocationForm({
       router.refresh();
       setOpenSheet(false);
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

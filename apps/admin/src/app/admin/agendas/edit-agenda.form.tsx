@@ -138,7 +138,7 @@ export default function EditAgendaForm({
       trpcUtils.invalidate();
       onOpenChange(false);
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

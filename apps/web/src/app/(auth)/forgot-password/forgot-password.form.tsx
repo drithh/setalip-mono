@@ -78,7 +78,7 @@ export default function ForgotPasswordForm() {
         description: TOAST_MESSAGES.success.description,
       });
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

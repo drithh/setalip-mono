@@ -107,7 +107,7 @@ export default function CreateFrequentlyAskedQuestionForm({}: CreateFrequentlyAs
       trpcUtils.invalidate();
       setOpenSheet(false);
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
