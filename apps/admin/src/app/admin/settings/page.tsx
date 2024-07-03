@@ -10,11 +10,13 @@ import DeleteLocation from '../locations/[locationId]/delete-location.dialog';
 import { Label } from '@repo/ui/components/ui/label';
 import { Input } from '@repo/ui/components/ui/input';
 import { container, TYPES } from '@repo/shared/inversify';
-import { WebSettingService } from '@repo/shared/service';
+import { UserService, WebSettingService } from '@repo/shared/service';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import FaqTable from './_components/faq-table';
 import { findAllDepositReviewFaqSchema } from '@repo/shared/api/schema';
+import ReviewTable from './_components/review-table';
+import DepositAccountTable from './_components/deposit-account-table';
 
 interface IndexPageProps {
   searchParams: Record<string, any>;
@@ -30,6 +32,9 @@ export default async function Page({ searchParams }: IndexPageProps) {
   const logo = await webSettingService.findLogo();
   const termsAndConditions = await webSettingService.findTermsAndConditions();
   const privacyPolicy = await webSettingService.findPrivacyPolicy();
+
+  const userService = container.get<UserService>(TYPES.UserService);
+  const users = await userService.findAllUserName();
 
   return (
     <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
@@ -101,9 +106,23 @@ export default async function Page({ searchParams }: IndexPageProps) {
 
       <Card>
         <CardHeader>
+          <CardTitle>Deposit Account</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DepositAccountTable search={{ name: search.name }} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Review</CardTitle>
         </CardHeader>
-        <CardContent>{/* <ReviewTable /> */}</CardContent>
+        <CardContent>
+          <ReviewTable
+            users={users.result ?? []}
+            search={{ email: search.email }}
+          />
+        </CardContent>
       </Card>
 
       <Card>

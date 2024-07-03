@@ -27,6 +27,11 @@ export interface FindAllUserOptions extends DefaultPagination {
   roles?: SelectUser['role'][];
 }
 
+export type SelectAllUserName = {
+  name: SelectUser['name'];
+  id: SelectUser['id'];
+}[];
+
 export interface SelectAllUser {
   data: SelectUserWithCredits[];
   pageCount: number;
@@ -36,6 +41,8 @@ export interface UserRepository {
   count(): Promise<number>;
 
   findAll(data: FindAllUserOptions): Promise<SelectAllUser>;
+  findAllUserName(): Promise<SelectAllUserName>;
+
   findAllMember(): Promise<SelectUser[]>;
   findById(id: SelectUser['id']): Promise<SelectUser | undefined>;
   findByPhoneNumber(

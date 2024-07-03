@@ -79,6 +79,10 @@ export class KyselyMySqlUserRepository implements UserRepository {
     };
   }
 
+  async findAllUserName() {
+    return this._db.selectFrom('users').select(['name', 'id']).execute();
+  }
+
   async findAllMember() {
     return this._db
       .selectFrom('users')

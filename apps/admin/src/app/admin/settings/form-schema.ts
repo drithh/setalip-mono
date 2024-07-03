@@ -14,9 +14,9 @@ export const editWebSettingSchema = z.object({
 }) satisfies ZodType<UpdateWebSetting>;
 
 export const createDepositAccountSchema = z.object({
-  account_number: z.string().min(3).max(255),
-  bank_name: z.string().min(3).max(255),
   name: z.string().min(3).max(255),
+  bank_name: z.string().min(3).max(255),
+  account_number: z.coerce.string(),
 }) satisfies ZodType<InsertDepositAccount>;
 
 export type CreateDepositAccountSchema = z.infer<
