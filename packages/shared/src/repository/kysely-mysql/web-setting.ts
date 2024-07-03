@@ -1,4 +1,4 @@
-import { Database } from '#dep/db/index';
+import { Database, db } from '#dep/db/index';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
@@ -44,9 +44,10 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     }
 
     return {
-      instagram:
+      instagram_handle:
         queryContact.find((q) => q.key === 'instagram_handle')?.value || '',
-      tiktok: queryContact.find((q) => q.key === 'tiktok_handle')?.value || '',
+      tiktok_handle:
+        queryContact.find((q) => q.key === 'tiktok_handle')?.value || '',
     };
   }
 
@@ -266,18 +267,27 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     }
   }
 
-  async update(data: UpdateWebSetting) {
+  async update(data: UpdateWebSetting[]) {
     try {
-      const query = await this._db
-        .updateTable('web_settings')
-        .set(data)
-        .where('web_settings.id', '=', data.id)
-        .executeTakeFirst();
+      await db.transaction().execute(async (trx) => {
+        for (const d of data) {
+          if (!d.key) {
+            continue;
+          }
+          const query = await trx
+            .updateTable('web_settings')
+            .set({
+              value: d.value,
+            })
+            .where('web_settings.key', '=', d.key)
+            .executeTakeFirst();
 
-      if (query.numUpdatedRows === undefined) {
-        console.error('Failed to update web setting', query);
-        return new Error('Failed to update web setting');
-      }
+          if (query.numUpdatedRows === undefined) {
+            console.error('Failed to update web setting', query);
+            return new Error('Failed to update web setting');
+          }
+        }
+      });
 
       return;
     } catch (error) {

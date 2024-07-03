@@ -14,12 +14,11 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { EditDetailLocationSchema } from './form-schema';
+import { EditWebSettingSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { SelectDetailLocation } from '@repo/shared/repository';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
-import { SelectLocation } from '@repo/shared/repository';
+import { SelectWebSetting } from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,
@@ -28,50 +27,59 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
-import { editDetailLocationSchema } from './form-schema';
-import { editDetailLocation } from './_actions/edit-detail-location';
+import { editWebSettingSchema } from './form-schema';
+import { editWebSetting } from './_actions/edit-web-setting';
 import { PhoneInput } from '@repo/ui/components/phone-input';
+import { Dropzone } from '@repo/ui/components/dropzone';
+import { PhotoProvider } from 'react-photo-view';
+import FileCard from '../locations/[locationId]/_components/file-card';
 
-interface EditDetailLocationFormProps {
-  location: SelectLocation;
+interface EditWebSettingFormProps {
+  webSetting: EditWebSettingSchema;
 }
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal mengubah detail lokasi',
+    title: 'Gagal mengubah pengaturan',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Mengubah detail lokasi...',
+    title: 'Mengubah pengaturan...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Detail lokasi berhasil diubah',
+    title: 'Pengaturan berhasil diubah',
   },
 };
 
-export default function EditDetailLocationForm({
-  location,
-}: EditDetailLocationFormProps) {
+type FileWithPreview = File & { preview: string };
+
+export default function EditWebSettingForm({
+  webSetting,
+}: EditWebSettingFormProps) {
   const router = useRouter();
+  const [imageRemoved, setImageRemoved] = useState(false);
 
   const [openSheet, setOpenSheet] = useState(false);
 
-  const [formState, formAction] = useFormState(editDetailLocation, {
+  const [formState, formAction] = useFormState(editWebSetting, {
     status: 'default',
     form: {
-      locationId: location.id,
-      name: location.name,
-      address: location.address,
-      phoneNumber: location.phone_number,
-      email: location.email,
-      linkMaps: location.link_maps,
+      instagram_handle: webSetting.instagram_handle,
+      tiktok_handle: webSetting.tiktok_handle,
+      logo: null,
+      terms_and_conditions: webSetting.terms_and_conditions,
+      privacy_policy: webSetting.privacy_policy,
+      url:
+        webSetting.url && webSetting.url.length > 0
+          ? webSetting.url
+          : undefined,
     },
   });
 
-  type FormSchema = EditDetailLocationSchema;
+  type FormSchema = EditWebSettingSchema;
   const form = useForm<FormSchema>({
-    resolver: zodResolver(editDetailLocationSchema),
+    resolver: zodResolver(editWebSettingSchema),
     defaultValues: formState.form,
   });
 
@@ -113,6 +121,22 @@ export default function EditDetailLocationForm({
     })(event);
   };
 
+  function handleOnDrop(acceptedFiles: FileList | null) {
+    if (!acceptedFiles || acceptedFiles.length === 0) {
+      form.setError('logo', { message: 'File tidak valid' });
+      return;
+    }
+    const file = acceptedFiles[0];
+
+    if (!file) {
+      form.setError('logo', { message: 'File tidak valid' });
+      return;
+    }
+
+    form.setValue('logo', file);
+    form.clearErrors('logo');
+  }
+
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
@@ -136,18 +160,35 @@ export default function EditDetailLocationForm({
               action={formAction}
               onSubmit={onFormSubmit}
             >
-              <FormField
+              {/* <Input
+                {...form.register('url')}
+                value={webSetting.url ?? undefined}
+              /> */}
+              {/* <FormField
                 control={form.control}
-                name="locationId"
-                render={({ field }) => <Input type="hidden" {...field} />}
-              />
+                name="url"
+                render={({ field }) => (
+                  <FormItem className="grid w-full gap-2">
+                    <FormControl></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              /> */}
+
+              {webSetting.url && (
+                <Input
+                  type="hidden"
+                  {...form.register('url')}
+                  value={webSetting.url ?? undefined}
+                />
+              )}
 
               <FormField
                 control={form.control}
-                name="name"
+                name="instagram_handle"
                 render={({ field }) => (
                   <FormItem className="grid w-full gap-2">
-                    <FormLabel>Nama Lokasi</FormLabel>
+                    <FormLabel>Instagram</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
                     </FormControl>
@@ -157,10 +198,10 @@ export default function EditDetailLocationForm({
               />
               <FormField
                 control={form.control}
-                name="address"
+                name="tiktok_handle"
                 render={({ field }) => (
                   <FormItem className="grid w-full gap-2">
-                    <FormLabel>Alamat</FormLabel>
+                    <FormLabel>Tiktok</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
                     </FormControl>
@@ -170,15 +211,55 @@ export default function EditDetailLocationForm({
               />
               <FormField
                 control={form.control}
-                name="phoneNumber"
+                name="logo"
                 render={({ field }) => (
-                  <FormItem className="grid w-full gap-2">
-                    <FormLabel>Telepon</FormLabel>
+                  <FormItem className="w-full">
                     <FormControl>
-                      <PhoneInput
-                        {...field}
-                        value={field.value as PhoneNumberValue}
-                      />
+                      <>
+                        <FormLabel>Foto</FormLabel>
+                        {field.value && field.value.size !== 0 ? (
+                          <PhotoProvider>
+                            <div className="grid grid-cols-2 gap-2">
+                              <FileCard
+                                file={{
+                                  ...field.value,
+                                  preview: URL.createObjectURL(field.value),
+                                }}
+                                onDelete={() => {
+                                  form.setValue('logo', null);
+                                }}
+                              />
+                            </div>
+                          </PhotoProvider>
+                        ) : (
+                          webSetting.url &&
+                          !imageRemoved && (
+                            <PhotoProvider>
+                              <div className="grid grid-cols-2 gap-2">
+                                <FileCard
+                                  file={
+                                    {
+                                      preview: webSetting.url,
+                                      name: 'Logo',
+                                    } as FileWithPreview
+                                  }
+                                  onDelete={() => {
+                                    setImageRemoved(true);
+                                  }}
+                                />
+                              </div>
+                            </PhotoProvider>
+                          )
+                        )}
+                        <div className="space-y-6">
+                          <Dropzone
+                            {...field}
+                            accept="image/*"
+                            dropMessage="Tarik dan lepas file di sini atau klik untuk memilih file"
+                            handleOnDrop={handleOnDrop}
+                          />
+                        </div>
+                      </>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -186,12 +267,12 @@ export default function EditDetailLocationForm({
               />
               <FormField
                 control={form.control}
-                name="email"
+                name="privacy_policy"
                 render={({ field }) => (
                   <FormItem className="grid w-full gap-2">
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -199,7 +280,7 @@ export default function EditDetailLocationForm({
               />
               <FormField
                 control={form.control}
-                name="linkMaps"
+                name="terms_and_conditions"
                 render={({ field }) => (
                   <FormItem className="grid w-full gap-2">
                     <FormLabel>Google Maps URL</FormLabel>

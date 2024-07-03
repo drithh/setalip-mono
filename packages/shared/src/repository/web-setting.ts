@@ -14,16 +14,13 @@ import {
 
 export type SelectWebSetting = Selectable<WebSettings>;
 export type InsertWebSetting = Insertable<WebSettings>;
-export type UpdateWebSetting = OptionalToRequired<
-  Updateable<WebSettings>,
-  'id'
->;
+export type UpdateWebSetting = Updateable<WebSettings>;
 
 export type SelectFrequentlyAskedQuestion =
   Selectable<FrequentlyAskedQuestions>;
 export interface SelectContact {
-  instagram: string;
-  tiktok: string;
+  instagram_handle: string;
+  tiktok_handle: string;
 }
 
 export interface SelectLogo {
@@ -103,7 +100,7 @@ export interface WebSettingRepository {
     data: InsertFrequentlyAskedQuestion
   ): Promise<SelectFrequentlyAskedQuestion | Error>;
 
-  update(data: UpdateWebSetting): Promise<undefined | Error>;
+  update(data: UpdateWebSetting[]): Promise<undefined | Error>;
   updateDepositAccount(data: UpdateDepositAccount): Promise<undefined | Error>;
   updateReview(data: UpdateReview): Promise<undefined | Error>;
   updateFrequentlyAskedQuestion(

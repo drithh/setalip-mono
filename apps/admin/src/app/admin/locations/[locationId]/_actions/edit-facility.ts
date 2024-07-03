@@ -35,7 +35,6 @@ export async function editFacility(
       ),
     };
   }
-  console.log('fileUpload', parsed.data.file);
 
   const fileUpload =
     parsed.data.file?.size && parsed.data.file?.size > 0

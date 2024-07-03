@@ -17,6 +17,7 @@ import FaqTable from './_components/faq-table';
 import { findAllDepositReviewFaqSchema } from '@repo/shared/api/schema';
 import ReviewTable from './_components/review-table';
 import DepositAccountTable from './_components/deposit-account-table';
+import EditWebSettingForm from './edit-web-settings.form';
 
 interface IndexPageProps {
   searchParams: Record<string, any>;
@@ -45,8 +46,18 @@ export default async function Page({ searchParams }: IndexPageProps) {
         </Button>
       </div>
       <Card>
-        <CardHeader>
-          <CardTitle>Settings</CardTitle>
+        <CardHeader className="flex flex-row place-content-between items-center">
+          <CardTitle className="w-fit">Settings</CardTitle>
+          <EditWebSettingForm
+            webSetting={{
+              instagram_handle: contact.result?.instagram_handle ?? '',
+              tiktok_handle: contact.result?.tiktok_handle ?? '',
+              logo: null,
+              url: logo.result?.logo ?? '',
+              terms_and_conditions: termsAndConditions.result ?? '',
+              privacy_policy: privacyPolicy.result ?? '',
+            }}
+          />
         </CardHeader>
         <CardContent>
           <div className="grid gap-6">
@@ -57,7 +68,7 @@ export default async function Page({ searchParams }: IndexPageProps) {
                   readOnly
                   type="text"
                   className="w-full"
-                  defaultValue={contact.result?.instagram}
+                  defaultValue={contact.result?.instagram_handle}
                 />
               </div>
 
@@ -78,7 +89,7 @@ export default async function Page({ searchParams }: IndexPageProps) {
                 <Input
                   readOnly
                   className="w-full"
-                  defaultValue={contact.result?.tiktok}
+                  defaultValue={contact.result?.tiktok_handle}
                 />
               </div>
             </div>
@@ -113,7 +124,7 @@ export default async function Page({ searchParams }: IndexPageProps) {
         </CardContent>
       </Card>
 
-      {/* <Card>
+      <Card>
         <CardHeader>
           <CardTitle>Review</CardTitle>
         </CardHeader>
@@ -132,7 +143,7 @@ export default async function Page({ searchParams }: IndexPageProps) {
         <CardContent>
           <FaqTable search={{ question: search.question }} />
         </CardContent>
-      </Card> */}
+      </Card>
     </main>
   );
 }

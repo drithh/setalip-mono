@@ -1,11 +1,11 @@
 import { container, TYPES } from '@repo/shared/inversify';
-import { SelectAllReview } from '@repo/shared/repository';
+import { SelectAllReview, SelectReviewWithUser } from '@repo/shared/repository';
 import { WebSettingService } from '@repo/shared/service';
 import Marquee from '@repo/ui/components/marquee';
 import { StarHalfIcon, StarIcon } from 'lucide-react';
 import { dateFormatter } from '@repo/shared/util';
 
-const ReviewCard = ({ review }: { review: SelectAllReview }) => {
+const ReviewCard = ({ review }: { review: SelectReviewWithUser }) => {
   return (
     <figure className="relative w-64 cursor-pointer overflow-hidden rounded-xl border border-gray-950/[.1] bg-background p-4">
       <div className="flex flex-row items-center gap-2">
@@ -53,8 +53,10 @@ export async function Review() {
     TYPES.WebSettingService,
   );
 
-  const reviewQuery = await webSettingService.findAllReview();
-  const reviews = reviewQuery.result ?? [];
+  const reviewQuery = await webSettingService.findAllReview({
+    perPage: 100,
+  });
+  const reviews = reviewQuery.result?.data ?? [];
 
   // const firstRow = reviews.slice(0, reviews.length / 2);
   // const secondRow = reviews.slice(reviews.length / 2);

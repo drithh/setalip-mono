@@ -43,7 +43,7 @@ export interface WebSettingService {
     data: InsertFrequentlyAskedQuestion
   ): PromiseResult<SelectFrequentlyAskedQuestion, Error>;
 
-  update(data: UpdateWebSetting): PromiseResult<undefined, Error>;
+  update(data: UpdateWebSetting[]): PromiseResult<undefined, Error>;
   updateDepositAccount(
     data: UpdateDepositAccount
   ): PromiseResult<undefined, Error>;
