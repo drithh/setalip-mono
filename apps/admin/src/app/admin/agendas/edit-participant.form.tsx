@@ -147,8 +147,8 @@ export default function EditParticipantForm({
     <Sheet
       open={open}
       onOpenChange={(ev) => {
-        onOpenChange(ev);
         form.reset();
+        onOpenChange(ev);
       }}
     >
       <SheetContent className="p-0">

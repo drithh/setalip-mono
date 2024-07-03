@@ -150,8 +150,8 @@ export default function DeleteCreditForm({
     <Sheet
       open={open}
       onOpenChange={(ev) => {
-        onOpenChange(ev);
         form.reset();
+        onOpenChange(ev);
       }}
     >
       <SheetContent className="p-0">
