@@ -101,7 +101,7 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
       setOpenSheet(false);
       router.refresh();
     }
-  }, [formState]);
+  }, [formState.form]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -84,7 +84,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       });
       router.push('/login');
     }
-  }, [formState]);
+  }, [formState.form]);
 
   const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

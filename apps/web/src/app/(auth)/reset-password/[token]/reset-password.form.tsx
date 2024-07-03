@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { Button } from '@repo/ui/components/ui/button';
-import { resetPassword } from './_actions/reset-password';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from "@repo/ui/components/ui/button";
+import { resetPassword } from "./_actions/reset-password";
+import { useFormState } from "react-dom";
+import { useEffect, useRef } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -14,12 +14,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@repo/ui/components/ui/form';
-import { ResetPasswordSchema, resetPasswordSchema } from './form-schema';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { PasswordInput } from '@repo/ui/components/password-input';
-import { Input } from '@repo/ui/components/ui/input';
+} from "@repo/ui/components/ui/form";
+import { ResetPasswordSchema, resetPasswordSchema } from "./form-schema";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { PasswordInput } from "@repo/ui/components/password-input";
+import { Input } from "@repo/ui/components/ui/input";
 
 interface ResetPasswordFormProps {
   token: string;
@@ -27,26 +27,26 @@ interface ResetPasswordFormProps {
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal melakukan reset password',
-    description: 'Silahkan coba lagi',
+    title: "Gagal melakukan reset password",
+    description: "Silahkan coba lagi",
   },
   loading: {
-    title: 'Mereset password...',
-    description: 'Mohon tunggu',
+    title: "Mereset password...",
+    description: "Mohon tunggu",
   },
   success: {
-    title: 'Reset password berhasil',
-    description: 'Silahkan login kembali',
+    title: "Reset password berhasil",
+    description: "Silahkan login kembali",
   },
 };
 
 export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const router = useRouter();
   const [formState, formAction] = useFormState(resetPassword, {
-    status: 'default',
+    status: "default",
     form: {
-      password: '',
-      passwordConfirmation: '',
+      password: "",
+      passwordConfirmation: "",
       token: token,
     },
   });
@@ -60,7 +60,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
   useEffect(() => {
     toast.dismiss();
-    if (formState.status === 'field-errors') {
+    if (formState.status === "field-errors") {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
           const typedFieldName = fieldName as keyof FormSchema;
@@ -70,21 +70,21 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           }
         }
       }
-    } else if (formState.status === 'error') {
+    } else if (formState.status === "error") {
       toast.error(TOAST_MESSAGES.error.title, {
         description: TOAST_MESSAGES.error.description,
       });
-      form.setError('root', { message: formState.errors });
+      form.setError("root", { message: formState.errors });
     } else {
       form.clearErrors();
     }
-    if (formState.status === 'success') {
+    if (formState.status === "success") {
       toast.success(TOAST_MESSAGES.success.title, {
         description: TOAST_MESSAGES.success.description,
       });
-      router.push('/login');
+      router.push("/login");
     }
-  }, [formState]);
+  }, [formState.form]);
 
   const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

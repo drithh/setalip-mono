@@ -12,7 +12,7 @@ import {
 } from '@repo/ui/components/ui/alert-dialog';
 import { Button } from '@repo/ui/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { useDeleteMutation } from './_functions/delete-faq';
+import { useDeleteMutation } from './_functions/delete-review';
 import { api } from '@/trpc/react';
 import { SelectReview, SelectReviewWithUser } from '@repo/shared/repository';
 

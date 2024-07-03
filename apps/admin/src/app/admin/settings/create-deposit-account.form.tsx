@@ -109,12 +109,10 @@ export default function CreateDepositAccountForm({}: CreateDepositAccountProps) 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
       form.reset();
-      trpcUtils.invalidate(undefined, {
-        queryKey: ['webSetting.findAllDepositAccount'],
-      });
+      trpcUtils.invalidate();
       setOpenSheet(false);
     }
-  }, [formState]);
+  }, [formState.form]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

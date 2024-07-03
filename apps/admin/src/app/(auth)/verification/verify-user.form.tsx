@@ -92,7 +92,7 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
       });
       router.push('/');
     }
-  }, [formState]);
+  }, [formState.form]);
 
   const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -100,7 +100,7 @@ export default function CreateFacilityForm({
       setOpenSheet(false);
       router.refresh();
     }
-  }, [formState]);
+  }, [formState.form]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

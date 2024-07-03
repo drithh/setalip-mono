@@ -113,7 +113,7 @@ export default async function Page({ searchParams }: IndexPageProps) {
         </CardContent>
       </Card>
 
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Review</CardTitle>
         </CardHeader>
@@ -132,7 +132,7 @@ export default async function Page({ searchParams }: IndexPageProps) {
         <CardContent>
           <FaqTable search={{ question: search.question }} />
         </CardContent>
-      </Card>
+      </Card> */}
     </main>
   );
 }

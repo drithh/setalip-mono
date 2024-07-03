@@ -15,10 +15,11 @@ export const agendaRouter = {
     .input(findAllAgendaSchema)
     .query(async ({ ctx, input }) => {
       const coaches =
-        input.coach?.split('.').map((coach) => parseInt(coach)) ?? [];
+        input.coach_name?.split('.').map((coach) => parseInt(coach)) ?? [];
 
       const locations =
-        input.location?.split('.').map((location) => parseInt(location)) ?? [];
+        input.location_name?.split('.').map((location) => parseInt(location)) ??
+        [];
 
       const agendaService = ctx.container.get<AgendaService>(
         TYPES.AgendaService

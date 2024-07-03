@@ -64,8 +64,8 @@ export const findCreditsByUserIdSchema = z.object({
 
 export const findAllAgendaSchema = defaultPaginationSchema.extend({
   className: z.string().optional(),
-  coach: z.string().optional(),
-  location: z.string().optional(),
+  coach_name: z.string().optional(),
+  location_name: z.string().optional(),
   dateStart: z.date().optional(),
   dateEnd: z.date().optional(),
 });

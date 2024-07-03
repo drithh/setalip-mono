@@ -5,19 +5,23 @@ import {
   PopoverContent,
 } from '@repo/ui/components/ui/popover';
 import { format } from 'date-fns';
-import { Calendar } from '#dep/components/ui/calendar';
+import { Calendar, CalendarProps } from '#dep/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { FormControl } from '#dep/components/ui/form';
 import React from 'react';
 import { TimePickerInput } from '#dep/components/time-picker-input';
 import { Button } from '#dep/components/ui/button';
 
-interface DatetimePickerProps {
+type DatetimePickerProps = CalendarProps & {
   value: Date;
   onChange: (value: Date) => void;
-}
+};
 
-export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
+export function DatetimePicker({
+  value,
+  onChange,
+  ...props
+}: DatetimePickerProps) {
   return (
     <Popover>
       <FormControl>
@@ -36,6 +40,7 @@ export function DatetimePicker({ value, onChange }: DatetimePickerProps) {
       </FormControl>
       <PopoverContent className="w-auto p-0 bg-background">
         <Calendar
+          {...props}
           mode="single"
           selected={value}
           onSelect={(date) => date && onChange(date)}

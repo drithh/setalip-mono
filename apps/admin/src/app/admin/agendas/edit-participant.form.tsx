@@ -175,7 +175,7 @@ export default function EditParticipantForm({
                   )}
                 />
                 {selectedParticipants.map((participant, index) => (
-                  <>
+                  <div key={participant.user_id}>
                     <FormField
                       control={form.control}
                       name={`participants.${index}.user_id`}
@@ -209,7 +209,7 @@ export default function EditParticipantForm({
                       key={index}
                       render={({ field }) => <Input hidden {...field} />}
                     />
-                  </>
+                  </div>
                 ))}
 
                 <Button type="submit" className="w-full">

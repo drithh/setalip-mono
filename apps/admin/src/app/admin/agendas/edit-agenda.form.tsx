@@ -138,7 +138,7 @@ export default function EditAgendaForm({
       trpcUtils.invalidate();
       onOpenChange(false);
     }
-  }, [formState]);
+  }, [formState.form]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -157,9 +157,9 @@ export default function EditAgendaForm({
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">Buat Agenda</SheetTitle>
+            <SheetTitle className="text-left">Edit Agenda</SheetTitle>
             <SheetDescription className="text-left">
-              Buat agenda baru. Pastikan klik simpan ketika selesai.
+              Edit agenda. Pastikan klik simpan ketika selesai.
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -198,7 +198,7 @@ export default function EditAgendaForm({
                             <SelectContent>
                               {classes.map((singleClass) => (
                                 <SelectItem
-                                  key={singleClass.duration}
+                                  key={singleClass.id}
                                   value={singleClass.id.toString()}
                                 >
                                   {singleClass.name}
@@ -226,6 +226,12 @@ export default function EditAgendaForm({
                           onChange={(value) => {
                             field.onChange(value);
                           }}
+                          disabled={(date) =>
+                            date <
+                            new Date(
+                              new Date().setDate(new Date().getDate() - 1),
+                            )
+                          }
                         />
                       </FormControl>
                       <FormMessage />

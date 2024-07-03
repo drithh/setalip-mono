@@ -9,7 +9,7 @@ import {
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import React from 'react';
 import QueryResetBoundary from '../../../lib/query-reset-boundary';
-import PackageTable from './_components/package-table';
+import PackageTable from './_components/agenda-table';
 
 export interface IndexPageProps {
   searchParams: FindAllPackageOptions;

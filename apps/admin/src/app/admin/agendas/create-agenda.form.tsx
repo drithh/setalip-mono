@@ -132,7 +132,7 @@ export default function CreateAgendaForm({
       trpcUtils.invalidate();
       setOpenSheet(false);
     }
-  }, [formState]);
+  }, [formState.form]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -187,7 +187,7 @@ export default function CreateAgendaForm({
                             <SelectContent>
                               {classes.map((singleClass) => (
                                 <SelectItem
-                                  key={singleClass.duration}
+                                  key={singleClass.id}
                                   value={singleClass.id.toString()}
                                 >
                                   {singleClass.name}
@@ -216,6 +216,12 @@ export default function CreateAgendaForm({
                             onChange={(value) => {
                               field.onChange(value);
                             }}
+                            disabled={(date) =>
+                              date <
+                              new Date(
+                                new Date().setDate(new Date().getDate() - 1),
+                              )
+                            }
                           />
                         </>
                       </FormControl>
@@ -229,14 +235,13 @@ export default function CreateAgendaForm({
                   <FormControl>
                     <Input
                       readOnly
-                      value={
-                        `${
-                          classes.find(
-                            (singleClass) =>
-                              singleClass.id === form.getValues('class_id'),
-                          )?.duration
-                        } menit` ?? ''
-                      }
+                      value={`${
+                        classes.find(
+                          (singleClass) =>
+                            singleClass.id.toString() ===
+                            form.getValues('class_id').toString(),
+                        )?.duration ?? ''
+                      } menit`}
                     />
                   </FormControl>
                   <FormMessage />

@@ -56,7 +56,7 @@ export default function AgendaTable({
     },
     {
       label: 'Lokasi',
-      value: 'location_id',
+      value: 'location_name',
       options: locations.map((location) => ({
         label: location.name,
         value: location.id.toString(),
@@ -65,7 +65,7 @@ export default function AgendaTable({
     },
     {
       label: 'Instruktur',
-      value: 'coach_id',
+      value: 'coach_name',
       options: coaches.map((coach) => ({
         label: coach.name,
         value: coach.id.toString(),
@@ -82,6 +82,7 @@ export default function AgendaTable({
     defaultPerPage: 10,
     defaultSort: 'created_at.asc',
     visibleColumns: {
+      coach_id: false,
       created_at: false,
       updated_at: false,
       updated_by: false,

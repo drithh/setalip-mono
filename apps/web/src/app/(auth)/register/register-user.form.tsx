@@ -101,7 +101,7 @@ export default function RegisterUserForm() {
         description: TOAST_MESSAGES.success.description,
       });
     }
-  }, [formState]);
+  }, [formState.form]);
 
   const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -179,7 +179,7 @@ export default function EditReviewForm({
                   name="user_id"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Tipe Kelas</FormLabel>
+                      <FormLabel>User</FormLabel>
                       <FormControl>
                         <>
                           <Input type="hidden" {...field} />
@@ -189,7 +189,7 @@ export default function EditReviewForm({
                             defaultValue={field.value.toString()}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Pilih tipe kelas" />
+                              <SelectValue placeholder="Pilih user" />
                             </SelectTrigger>
                             <SelectContent>
                               {users.map((user) => (
