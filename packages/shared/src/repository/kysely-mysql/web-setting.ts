@@ -4,18 +4,21 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
 import {
   InsertDepositAccount,
-  InsertFrequentlyAskedQuestions,
+  InsertFrequentlyAskedQuestion,
   InsertReview,
   SelectContact,
   SelectDepositAccount,
-  SelectFrequencyAskedQuestions,
+  SelectFrequentlyAskedQuestion,
   SelectLogo,
   SelectReview,
   UpdateDepositAccount,
-  UpdateFrequentlyAskedQuestions,
+  UpdateFrequentlyAskedQuestion,
   UpdateReview,
   UpdateWebSetting,
   WebSettingRepository,
+  findAllDepositAccountOption,
+  findAllFrequentlyAskedQuestionOption,
+  findAllReviewOption,
 } from '../web-setting';
 import { sql } from 'kysely';
 import { SelectUser } from '../user';
@@ -40,16 +43,10 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
       return;
     }
 
-    const queryFAQ = await this._db
-      .selectFrom('frequently_asked_questions')
-      .selectAll()
-      .execute();
-
     return {
       instagram:
         queryContact.find((q) => q.key === 'instagram_handle')?.value || '',
       tiktok: queryContact.find((q) => q.key === 'tiktok_handle')?.value || '',
-      frequenly_asked_questions: queryFAQ,
     };
   }
 
@@ -69,17 +66,110 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     };
   }
 
-  async findAllDepositAccount() {
-    return this._db.selectFrom('deposit_accounts').selectAll().execute();
+  async findAllFrequentlyAskedQuestion(
+    data: findAllFrequentlyAskedQuestionOption
+  ) {
+    const { page = 1, perPage = 10, sort, question } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+    ).join(' ') as `${keyof SelectFrequentlyAskedQuestion} ${'asc' | 'desc'}`;
+
+    let query = this._db.selectFrom('frequently_asked_questions');
+
+    if (question) {
+      query = query.where('question', 'like', `%${question}%`);
+    }
+
+    const queryData = await query
+      .selectAll()
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
+      .execute();
+
+    const queryCount = await query
+      .select(({ fn }) => [
+        fn.count<number>('frequently_asked_questions.id').as('count'),
+      ])
+      .executeTakeFirst();
+
+    const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
+
+    return {
+      data: queryData,
+      pageCount: pageCount,
+    };
   }
 
-  async findAllReview() {
-    return this._db
+  async findAllDepositAccount(data: findAllDepositAccountOption) {
+    const { page = 1, perPage = 10, sort, name } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+    ).join(' ') as `${keyof SelectDepositAccount} ${'asc' | 'desc'}`;
+
+    let query = this._db.selectFrom('deposit_accounts');
+
+    if (name) {
+      query = query.where('name', 'like', `%${name}%`);
+    }
+
+    const queryData = await query
+      .selectAll()
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
+      .execute();
+
+    const queryCount = await query
+      .select(({ fn }) => [fn.count<number>('deposit_accounts.id').as('count')])
+      .executeTakeFirst();
+
+    const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
+
+    return {
+      data: queryData,
+      pageCount: pageCount,
+    };
+  }
+
+  async findAllReview(data: findAllReviewOption) {
+    const { page = 1, perPage = 10, sort, email } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+    ).join(' ') as `${keyof SelectReview} ${'asc' | 'desc'}`;
+
+    let query = this._db
       .selectFrom('reviews')
-      .innerJoin('users', 'reviews.user_id', 'users.id')
+      .innerJoin('users', 'reviews.user_id', 'users.id');
+
+    if (email) {
+      query = query.where('users.email', 'like', `%${email}%`);
+    }
+
+    const queryData = await query
       .selectAll('reviews')
       .select(['users.created_at as joined_at', 'name', 'email'])
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
       .execute();
+
+    const queryCount = await query
+      .select(({ fn }) => [fn.count<number>('reviews.id').as('count')])
+      .executeTakeFirst();
+
+    const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
+
+    return {
+      data: queryData,
+      pageCount: pageCount,
+    };
   }
 
   async findTermsAndConditions() {
@@ -154,7 +244,7 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     }
   }
 
-  async createFrequentlyAskedQuestions(data: InsertFrequentlyAskedQuestions) {
+  async createFrequentlyAskedQuestion(data: InsertFrequentlyAskedQuestion) {
     try {
       const query = this._db
         .insertInto('frequently_asked_questions')
@@ -238,8 +328,8 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     }
   }
 
-  async updateFrequentlyAskedQuestions(
-    data: UpdateFrequentlyAskedQuestions
+  async updateFrequentlyAskedQuestion(
+    data: UpdateFrequentlyAskedQuestion
   ): Promise<Error | undefined> {
     try {
       const query = await this._db
@@ -304,9 +394,7 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     }
   }
 
-  async deleteFrequentlyAskedQuestions(
-    id: SelectFrequencyAskedQuestions['id']
-  ) {
+  async deleteFrequentlyAskedQuestion(id: SelectFrequentlyAskedQuestion['id']) {
     try {
       const query = this._db
         .deleteFrom('frequently_asked_questions')

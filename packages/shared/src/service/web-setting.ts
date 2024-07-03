@@ -1,25 +1,37 @@
 import {
   InsertDepositAccount,
-  InsertFrequentlyAskedQuestions,
+  InsertFrequentlyAskedQuestion,
   InsertReview,
+  SelectAllDepositAccount,
+  SelectAllFrequentlyAskedQuestion,
   SelectAllReview,
   SelectContact,
   SelectDepositAccount,
-  SelectFrequencyAskedQuestions,
+  SelectFrequentlyAskedQuestion,
   SelectLogo,
   SelectReview,
   UpdateDepositAccount,
-  UpdateFrequentlyAskedQuestions,
+  UpdateFrequentlyAskedQuestion,
   UpdateReview,
   UpdateWebSetting,
+  findAllDepositAccountOption,
+  findAllFrequentlyAskedQuestionOption,
+  findAllReviewOption,
 } from '../repository';
 import { PromiseResult } from '../types';
 
 export interface WebSettingService {
   findContact(): PromiseResult<SelectContact | undefined, Error>;
   findLogo(): PromiseResult<SelectLogo | undefined, Error>;
-  findAllDepositAccount(): PromiseResult<SelectDepositAccount[], Error>;
-  findAllReview(): PromiseResult<SelectAllReview[], Error>;
+  findAllFrequentlyAskedQuestion(
+    data: findAllFrequentlyAskedQuestionOption
+  ): PromiseResult<SelectAllFrequentlyAskedQuestion, Error>;
+  findAllDepositAccount(
+    data: findAllDepositAccountOption
+  ): PromiseResult<SelectAllDepositAccount, Error>;
+  findAllReview(
+    data: findAllReviewOption
+  ): PromiseResult<SelectAllReview, Error>;
   findTermsAndConditions(): PromiseResult<string, Error>;
   findPrivacyPolicy(): PromiseResult<string, Error>;
 
@@ -27,24 +39,24 @@ export interface WebSettingService {
     data: InsertDepositAccount
   ): PromiseResult<SelectDepositAccount, Error>;
   createReview(data: InsertReview): PromiseResult<SelectReview, Error>;
-  createFrequentlyAskedQuestions(
-    data: InsertFrequentlyAskedQuestions
-  ): PromiseResult<SelectFrequencyAskedQuestions, Error>;
+  createFrequentlyAskedQuestion(
+    data: InsertFrequentlyAskedQuestion
+  ): PromiseResult<SelectFrequentlyAskedQuestion, Error>;
 
   update(data: UpdateWebSetting): PromiseResult<undefined, Error>;
   updateDepositAccount(
     data: UpdateDepositAccount
   ): PromiseResult<undefined, Error>;
   updateReview(data: UpdateReview): PromiseResult<undefined, Error>;
-  updateFrequentlyAskedQuestions(
-    data: UpdateFrequentlyAskedQuestions
+  updateFrequentlyAskedQuestion(
+    data: UpdateFrequentlyAskedQuestion
   ): PromiseResult<undefined, Error>;
 
   deleteDepositAccount(
     id: SelectDepositAccount['id']
   ): PromiseResult<undefined, Error>;
   deleteReview(id: SelectReview['id']): PromiseResult<undefined, Error>;
-  deleteFrequentlyAskedQuestions(
-    id: SelectFrequencyAskedQuestions['id']
+  deleteFrequentlyAskedQuestion(
+    id: SelectFrequentlyAskedQuestion['id']
   ): PromiseResult<undefined, Error>;
 }

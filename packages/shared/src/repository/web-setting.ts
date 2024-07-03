@@ -19,12 +19,11 @@ export type UpdateWebSetting = OptionalToRequired<
   'id'
 >;
 
-export type SelectFrequencyAskedQuestions =
+export type SelectFrequentlyAskedQuestion =
   Selectable<FrequentlyAskedQuestions>;
 export interface SelectContact {
   instagram: string;
   tiktok: string;
-  frequenly_asked_questions: SelectFrequencyAskedQuestions[];
 }
 
 export interface SelectLogo {
@@ -32,7 +31,7 @@ export interface SelectLogo {
 }
 
 export type SelectReview = Selectable<Reviews>;
-export interface SelectAllReview extends SelectReview {
+export interface SelectReviewWithUser extends SelectReview {
   name: SelectUser['name'];
   email: SelectUser['email'];
   joined_at: SelectUser['created_at'];
@@ -48,18 +47,51 @@ export type UpdateDepositAccount = OptionalToRequired<
 export type InsertReview = Insertable<Reviews>;
 export type UpdateReview = OptionalToRequired<Updateable<Reviews>, 'id'>;
 
-export type InsertFrequentlyAskedQuestions =
+export type InsertFrequentlyAskedQuestion =
   Insertable<FrequentlyAskedQuestions>;
-export type UpdateFrequentlyAskedQuestions = OptionalToRequired<
+export type UpdateFrequentlyAskedQuestion = OptionalToRequired<
   Updateable<FrequentlyAskedQuestions>,
   'id'
 >;
 
+export interface findAllFrequentlyAskedQuestionOption
+  extends DefaultPagination {
+  question?: SelectFrequentlyAskedQuestion['question'];
+}
+
+export interface SelectAllFrequentlyAskedQuestion {
+  data: SelectFrequentlyAskedQuestion[];
+  pageCount: number;
+}
+
+export interface findAllReviewOption extends DefaultPagination {
+  email?: SelectUser['email'];
+}
+
+export interface SelectAllReview {
+  data: SelectReviewWithUser[];
+  pageCount: number;
+}
+
+export interface findAllDepositAccountOption extends DefaultPagination {
+  name?: SelectDepositAccount['name'];
+}
+
+export interface SelectAllDepositAccount {
+  data: SelectDepositAccount[];
+  pageCount: number;
+}
+
 export interface WebSettingRepository {
   findContact(): Promise<SelectContact | undefined>;
   findLogo(): Promise<SelectLogo | undefined>;
-  findAllDepositAccount(): Promise<SelectDepositAccount[]>;
-  findAllReview(): Promise<SelectAllReview[]>;
+  findAllFrequentlyAskedQuestion(
+    data: findAllFrequentlyAskedQuestionOption
+  ): Promise<SelectAllFrequentlyAskedQuestion>;
+  findAllDepositAccount(
+    data: findAllDepositAccountOption
+  ): Promise<SelectAllDepositAccount>;
+  findAllReview(data: findAllReviewOption): Promise<SelectAllReview>;
   findTermsAndConditions(): Promise<string | undefined>;
   findPrivacyPolicy(): Promise<string | undefined>;
 
@@ -67,22 +99,22 @@ export interface WebSettingRepository {
     data: InsertDepositAccount
   ): Promise<SelectDepositAccount | Error>;
   createReview(data: InsertReview): Promise<SelectReview | Error>;
-  createFrequentlyAskedQuestions(
-    data: InsertFrequentlyAskedQuestions
-  ): Promise<SelectFrequencyAskedQuestions | Error>;
+  createFrequentlyAskedQuestion(
+    data: InsertFrequentlyAskedQuestion
+  ): Promise<SelectFrequentlyAskedQuestion | Error>;
 
   update(data: UpdateWebSetting): Promise<undefined | Error>;
   updateDepositAccount(data: UpdateDepositAccount): Promise<undefined | Error>;
   updateReview(data: UpdateReview): Promise<undefined | Error>;
-  updateFrequentlyAskedQuestions(
-    data: UpdateFrequentlyAskedQuestions
+  updateFrequentlyAskedQuestion(
+    data: UpdateFrequentlyAskedQuestion
   ): Promise<undefined | Error>;
 
   deleteDepositAccount(
     id: SelectDepositAccount['id']
   ): Promise<undefined | Error>;
   deleteReview(id: SelectReview['id']): Promise<undefined | Error>;
-  deleteFrequentlyAskedQuestions(
-    id: SelectFrequencyAskedQuestions['id']
+  deleteFrequentlyAskedQuestion(
+    id: SelectFrequentlyAskedQuestion['id']
   ): Promise<undefined | Error>;
 }

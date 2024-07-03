@@ -2,16 +2,19 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
 import type {
   InsertDepositAccount,
-  InsertFrequentlyAskedQuestions,
+  InsertFrequentlyAskedQuestion,
   InsertReview,
   SelectDepositAccount,
-  SelectFrequencyAskedQuestions,
+  SelectFrequentlyAskedQuestion,
   SelectReview,
   UpdateDepositAccount,
-  UpdateFrequentlyAskedQuestions,
+  UpdateFrequentlyAskedQuestion,
   UpdateReview,
   UpdateWebSetting,
   WebSettingRepository,
+  findAllDepositAccountOption,
+  findAllFrequentlyAskedQuestionOption,
+  findAllReviewOption,
 } from '../repository';
 import { WebSettingService } from './web-setting';
 
@@ -52,9 +55,21 @@ export class WebSettingServiceImpl implements WebSettingService {
     };
   }
 
-  async findAllDepositAccount() {
+  async findAllFrequentlyAskedQuestion(
+    data: findAllFrequentlyAskedQuestionOption
+  ) {
+    const faq =
+      await this._webSettingRepository.findAllFrequentlyAskedQuestion(data);
+
+    return {
+      result: faq,
+      error: undefined,
+    };
+  }
+
+  async findAllDepositAccount(data: findAllDepositAccountOption) {
     const depositAccounts =
-      await this._webSettingRepository.findAllDepositAccount();
+      await this._webSettingRepository.findAllDepositAccount(data);
 
     return {
       result: depositAccounts,
@@ -62,8 +77,8 @@ export class WebSettingServiceImpl implements WebSettingService {
     };
   }
 
-  async findAllReview() {
-    const faq = await this._webSettingRepository.findAllReview();
+  async findAllReview(data: findAllReviewOption) {
+    const faq = await this._webSettingRepository.findAllReview(data);
 
     return {
       result: faq,
@@ -119,9 +134,9 @@ export class WebSettingServiceImpl implements WebSettingService {
     };
   }
 
-  async createFrequentlyAskedQuestions(data: InsertFrequentlyAskedQuestions) {
+  async createFrequentlyAskedQuestion(data: InsertFrequentlyAskedQuestion) {
     const faq =
-      await this._webSettingRepository.createFrequentlyAskedQuestions(data);
+      await this._webSettingRepository.createFrequentlyAskedQuestion(data);
 
     if (faq instanceof Error) {
       return {
@@ -179,9 +194,9 @@ export class WebSettingServiceImpl implements WebSettingService {
     };
   }
 
-  async updateFrequentlyAskedQuestions(data: UpdateFrequentlyAskedQuestions) {
+  async updateFrequentlyAskedQuestion(data: UpdateFrequentlyAskedQuestion) {
     const result =
-      await this._webSettingRepository.updateFrequentlyAskedQuestions(data);
+      await this._webSettingRepository.updateFrequentlyAskedQuestion(data);
 
     if (result instanceof Error) {
       return {
@@ -225,11 +240,9 @@ export class WebSettingServiceImpl implements WebSettingService {
     };
   }
 
-  async deleteFrequentlyAskedQuestions(
-    id: SelectFrequencyAskedQuestions['id']
-  ) {
+  async deleteFrequentlyAskedQuestion(id: SelectFrequentlyAskedQuestion['id']) {
     const result =
-      await this._webSettingRepository.deleteFrequentlyAskedQuestions(id);
+      await this._webSettingRepository.deleteFrequentlyAskedQuestion(id);
 
     if (result instanceof Error) {
       return {
