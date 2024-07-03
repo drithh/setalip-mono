@@ -8,45 +8,41 @@ import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './faq-columns';
-import { SelectClassType, SelectPackage } from '@repo/shared/repository';
+import {
+  SelectClassType,
+  SelectFrequentlyAskedQuestion,
+} from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
-import { findAllPackageSchema } from '@repo/shared/api/schema';
-import CreatePackageForm from '../create-faq.form';
+import { findAllFrequentlyAskedQuestionSchema } from '@repo/shared/api/schema';
+import CreateFrequentlyAskedQuestionForm from '../create-faq.form';
 
-interface PackageTableProps {
-  classTypes: SelectClassType[];
-  search: z.infer<typeof findAllPackageSchema>;
+interface FrequentlyAskedQuestionTableProps {
+  search: z.infer<typeof findAllFrequentlyAskedQuestionSchema>;
 }
 
-export default function PackageTable({
-  classTypes,
+export default function FrequentlyAskedQuestionTable({
   search,
-}: PackageTableProps) {
-  const [{ result, error }] = api.package.findAll.useSuspenseQuery(search, {});
+}: FrequentlyAskedQuestionTableProps) {
+  const [{ result, error }] =
+    api.webSetting.findAllFrequentlyAskedQuestion.useSuspenseQuery(
+      {
+        ...search,
+        per_page: 100,
+      },
+      {},
+    );
   if (error) {
     throw new Error('Error fetching data', error);
   }
 
-  const columns = React.useMemo(
-    () => getColumns({ classTypes: classTypes }),
-    [],
-  );
+  const columns = React.useMemo(() => getColumns({}), []);
 
-  const filterFields: DataTableFilterField<SelectPackage>[] = [
+  const filterFields: DataTableFilterField<SelectFrequentlyAskedQuestion>[] = [
     {
-      label: 'Nama',
-      value: 'name',
-      placeholder: 'Filter nama...',
-    },
-    {
-      label: 'Tipe Kelas',
-      value: 'class_type_id',
-      options: classTypes.map(({ id, type }) => ({
-        label: type,
-        value: id.toString(),
-        withCount: true,
-      })),
+      label: 'Question',
+      value: 'question',
+      placeholder: 'Filter pertanyaan...',
     },
   ];
 
@@ -57,17 +53,13 @@ export default function PackageTable({
     filterFields,
     defaultPerPage: 10,
     defaultSort: 'created_at.asc',
-    visibleColumns: {
-      updated_at: false,
-      updated_by: false,
-      one_time_only: false,
-    },
+    visibleColumns: {},
   });
 
   return (
-    <DataTable table={table}>
+    <DataTable table={table} pagination={false}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <CreatePackageForm classTypes={classTypes} />
+        <CreateFrequentlyAskedQuestionForm />
       </DataTableToolbar>
     </DataTable>
   );

@@ -90,7 +90,6 @@ export default function EditAgendaForm({
     status: 'default',
     form: {
       id: agenda.id,
-      slot: agenda.slot,
       time: agenda.time,
       class_id: agenda.class_id,
       coach_id: agenda.coach_id,
@@ -252,7 +251,7 @@ export default function EditAgendaForm({
                   <FormMessage />
                 </FormItem>
 
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="slot"
                   render={({ field }) => (
@@ -264,7 +263,7 @@ export default function EditAgendaForm({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 <FormField
                   control={form.control}

@@ -34,12 +34,14 @@ export const defaultPaginationSchema = z.object({
   page: z.coerce
     .number()
     .refine((data) => data > 0)
-    .default(1),
+    .default(1)
+    .optional(),
   per_page: z.coerce
     .number()
     .refine((data) => data > 0)
-    .default(10),
-  sort: z.string().default('created_at.asc'),
+    .default(10)
+    .optional(),
+  sort: z.string().default('created_at.asc').optional(),
 });
 
 export const findAllPackageSchema = defaultPaginationSchema.extend({
@@ -100,3 +102,34 @@ export const findAllPackageTransactionByUserIdSchema =
   defaultPaginationSchema.extend({
     status: z.string().optional(),
   });
+
+export const findAllDepositAccountSchema = defaultPaginationSchema.extend({
+  name: z.string().optional(),
+});
+
+export const deleteDepositAccountSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});
+
+export const findAllReviewSchema = defaultPaginationSchema.extend({
+  email: z.string().optional(),
+});
+
+export const deleteReviewSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});
+
+export const findAllFrequentlyAskedQuestionSchema =
+  defaultPaginationSchema.extend({
+    question: z.string().optional(),
+  });
+
+export const deleteFrequentlyAskedQuestionSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});
+
+export const findAllDepositReviewFaqSchema = z.object({
+  name: z.string().optional(),
+  email: z.string().optional(),
+  question: z.string().optional(),
+});

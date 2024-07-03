@@ -26,6 +26,8 @@ interface DataTableProps<TData> extends React.HTMLAttributes<HTMLDivElement> {
    * @example floatingBar={<TasksTableFloatingBar table={table} />}
    */
   floatingBar?: React.ReactNode | null;
+
+  pagination?: boolean;
 }
 
 export function DataTable<TData>({
@@ -33,6 +35,7 @@ export function DataTable<TData>({
   floatingBar = null,
   children,
   className,
+  pagination = true,
   ...props
 }: DataTableProps<TData>) {
   return (
@@ -106,10 +109,12 @@ export function DataTable<TData>({
           )}
         </div>
       </div>
-      <div className="flex flex-col gap-2.5">
-        <DataTablePagination table={table} />
-        {table.getFilteredSelectedRowModel().rows.length > 0 && floatingBar}
-      </div>
+      {pagination && (
+        <div className="flex flex-col gap-2.5">
+          <DataTablePagination table={table} />
+          {table.getFilteredSelectedRowModel().rows.length > 0 && floatingBar}
+        </div>
+      )}
     </div>
   );
 }

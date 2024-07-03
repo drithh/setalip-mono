@@ -3,7 +3,6 @@ import { InsertAgenda } from '@repo/shared/repository';
 import { ZodType, z } from 'zod';
 
 export const createAgendaSchema = z.object({
-  slot: z.coerce.number(),
   time: z.coerce.date(),
   class_id: z.coerce.number(),
   coach_id: z.coerce.number(),

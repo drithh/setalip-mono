@@ -84,7 +84,6 @@ export default function CreateAgendaForm({
   const [formState, formAction] = useFormState(createAgenda, {
     status: 'default',
     form: {
-      slot: 0,
       time: new Date(),
       class_id: 0,
       coach_id: 0,
@@ -231,17 +230,19 @@ export default function CreateAgendaForm({
                     <Input
                       readOnly
                       value={
-                        `${classes.find(
-                          (singleClass) =>
-                            singleClass.id === form.getValues('class_id'),
-                        )?.duration} menit` ?? ''
+                        `${
+                          classes.find(
+                            (singleClass) =>
+                              singleClass.id === form.getValues('class_id'),
+                          )?.duration
+                        } menit` ?? ''
                       }
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
 
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="slot"
                   render={({ field }) => (
@@ -253,7 +254,7 @@ export default function CreateAgendaForm({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 <FormField
                   control={form.control}

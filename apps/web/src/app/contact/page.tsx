@@ -17,6 +17,9 @@ export default async function Contacts() {
   );
 
   const contact = await webSettingService.findContact();
+  const faq = await webSettingService.findAllFrequentlyAskedQuestion({
+    perPage: 100,
+  });
 
   return (
     <div className="mx-auto flex  max-w-screen-xl flex-col">
@@ -110,7 +113,7 @@ export default async function Contacts() {
           Frequently Asked Questions
         </h2>
         <div className="mt-6 flex flex-col gap-2 space-y-2">
-          {contact.result?.frequenly_asked_questions?.map((item) => (
+          {faq.result?.data.map((item) => (
             <Collapsible key={item.question}>
               <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md  border px-4 py-3 text-left text-sm font-medium transition-colors hover:bg-muted/80 [&[data-state=open]>svg]:rotate-180">
                 {item.question}

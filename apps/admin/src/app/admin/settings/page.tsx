@@ -13,8 +13,16 @@ import { container, TYPES } from '@repo/shared/inversify';
 import { WebSettingService } from '@repo/shared/service';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { Textarea } from '@repo/ui/components/ui/textarea';
+import FaqTable from './_components/faq-table';
+import { findAllDepositReviewFaqSchema } from '@repo/shared/api/schema';
 
-export default async function Page() {
+interface IndexPageProps {
+  searchParams: Record<string, any>;
+}
+
+export default async function Page({ searchParams }: IndexPageProps) {
+  const search = findAllDepositReviewFaqSchema.parse(searchParams);
+
   const webSettingService = container.get<WebSettingService>(
     TYPES.WebSettingService,
   );
@@ -95,9 +103,7 @@ export default async function Page() {
         <CardHeader>
           <CardTitle>Review</CardTitle>
         </CardHeader>
-        <CardContent>
-          <ReviewTable />
-        </CardContent>
+        <CardContent>{/* <ReviewTable /> */}</CardContent>
       </Card>
 
       <Card>
@@ -105,7 +111,7 @@ export default async function Page() {
           <CardTitle>Frequently Asked Questions</CardTitle>
         </CardHeader>
         <CardContent>
-          <FaqTable />
+          <FaqTable search={{ question: search.question }} />
         </CardContent>
       </Card>
     </main>

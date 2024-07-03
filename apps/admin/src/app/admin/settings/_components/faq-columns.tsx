@@ -14,118 +14,35 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import { moneyFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
-import { SelectClassType, SelectPackage } from '@repo/shared/repository';
+import {
+  SelectClassType,
+  SelectFrequentlyAskedQuestion,
+} from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
-import EditPackageForm from '../edit-package.form';
-import DeletePackageDialog from '../delete-package.dialog';
+import EditFrequentlyAskedQuestionForm from '../edit-faq.form';
+import DeleteFrequentlyAskedQuestionDialog from '../delete-faq.dialog';
 
-interface getColumnsProps {
-  classTypes: SelectClassType[];
-}
+interface getColumnsProps {}
 
-export function getColumns({
-  classTypes,
-}: getColumnsProps): ColumnDef<SelectPackage>[] {
+export function getColumns({}: getColumnsProps): ColumnDef<SelectFrequentlyAskedQuestion>[] {
   return [
     {
-      accessorKey: 'name',
+      accessorKey: 'question',
       header: ({ column }) => (
-        <DataTableColumnHeader className="w-40" column={column} title="Name" />
+        <DataTableColumnHeader column={column} title="question" />
       ),
-      cell: ({ row }) => <div>{row.original.name}</div>,
+      cell: ({ row }) => <div>{row.original.question}</div>,
       enableSorting: false,
       enableHiding: false,
     },
     {
-      accessorKey: 'price',
+      accessorKey: 'answer',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Price" />
+        <DataTableColumnHeader column={column} title="Answer" />
       ),
-      cell: ({ row }) => {
-        return <span>{moneyFormatter.format(row.original.price)}</span>;
-      },
-    },
-    {
-      accessorKey: 'credit',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          className="justify-center"
-          column={column}
-          title="Credit"
-        />
-      ),
-
-      cell: ({ row }) => {
-        return <p className="-ml-5 text-center">{row.original.credit}</p>;
-      },
-    },
-    {
-      accessorKey: 'loyalty_points',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          className="justify-center"
-          column={column}
-          title="Loyalty Points"
-        />
-      ),
-      cell: ({ row }) => {
-        return (
-          <p className="-ml-5 text-center">{row.original.loyalty_points}</p>
-        );
-      },
-    },
-    {
-      accessorKey: 'valid_for',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Validity" />
-      ),
-      cell: ({ row }) => {
-        return <span>{row.original.valid_for} days</span>;
-      },
-    },
-    {
-      accessorKey: 'class_type_id',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Class Type" />
-      ),
-      cell: ({ row }) => {
-        return (
-          <span className="capitalize">
-            {
-              classTypes.find(
-                (classType) => classType.id === row.original.class_type_id,
-              )?.type
-            }
-          </span>
-        );
-      },
-    },
-    {
-      accessorKey: 'one_time_only',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="One Time Only" />
-      ),
-      cell: ({ row }) => {
-        return <span>{row.original.one_time_only ? 'Yes' : 'No'}</span>;
-      },
-    },
-    {
-      accessorKey: 'updated_at',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Updated At" />
-      ),
-      cell: ({ row }) => {
-        return <span>{row.original.updated_at.toDateString()}</span>;
-      },
-    },
-    {
-      accessorKey: 'updated_by',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Updated By" />
-      ),
-      cell: ({ row }) => {
-        return <span>{row.original.updated_by}</span>;
-      },
+      cell: ({ row }) => <div>{row.original.answer}</div>,
+      enableSorting: false,
+      enableHiding: false,
     },
     {
       id: 'actions',
@@ -137,16 +54,15 @@ export function getColumns({
 
         return (
           <>
-            <EditPackageForm
-              classTypes={classTypes}
+            <EditFrequentlyAskedQuestionForm
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}
-              singlePackage={row.original}
+              data={row.original}
             />
-            <DeletePackageDialog
+            <DeleteFrequentlyAskedQuestionDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
-              singlePackage={row.original}
+              data={row.original}
             />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

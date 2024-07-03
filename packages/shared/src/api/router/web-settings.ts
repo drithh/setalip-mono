@@ -7,7 +7,9 @@ import {
   deleteDepositAccountSchema,
   deleteFrequentlyAskedQuestionSchema,
   deleteReviewSchema,
+  findAllDepositAccountSchema,
   findAllFrequentlyAskedQuestionSchema,
+  findAllReviewSchema,
 } from '../schema';
 import { WebSettings } from '#dep/db/schema';
 import { WebSettingService } from '#dep/service/web-setting';
@@ -15,14 +17,53 @@ import { WebSettingService } from '#dep/service/web-setting';
 export const webSettingRouter = {
   findAllFrequentlyAskedQuestion: adminProcedure
     .input(findAllFrequentlyAskedQuestionSchema)
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
       const webSettingService = ctx.container.get<WebSettingService>(
         TYPES.WebSettingService
       );
 
-      return webSettingService.findAllFrequentlyAskedQuestion({
-        pag
-      }
+      const faqs = webSettingService.findAllFrequentlyAskedQuestion({
+        page: input.page,
+        perPage: input.per_page,
+        sort: input.sort,
+        question: input.question,
+      });
+
+      return faqs;
+    }),
+
+  findAllReview: adminProcedure
+    .input(findAllReviewSchema)
+    .query(async ({ ctx, input }) => {
+      const webSettingService = ctx.container.get<WebSettingService>(
+        TYPES.WebSettingService
+      );
+
+      const reviews = webSettingService.findAllReview({
+        page: input.page,
+        perPage: input.per_page,
+        sort: input.sort,
+        email: input.email,
+      });
+
+      return reviews;
+    }),
+
+  findAllDepositAccount: adminProcedure
+    .input(findAllDepositAccountSchema)
+    .query(async ({ ctx, input }) => {
+      const webSettingService = ctx.container.get<WebSettingService>(
+        TYPES.WebSettingService
+      );
+
+      const depositAccounts = webSettingService.findAllDepositAccount({
+        page: input.page,
+        perPage: input.per_page,
+        sort: input.sort,
+        name: input.name,
+      });
+
+      return depositAccounts;
     }),
 
   deleteDepositAccount: adminProcedure
