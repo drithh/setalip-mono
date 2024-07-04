@@ -198,6 +198,7 @@ export interface Packages {
   created_at: Generated<Date>;
   credit: number;
   id: Generated<number>;
+  is_active: Generated<number>;
   loyalty_points: number;
   name: string;
   one_time_only: number;
@@ -234,6 +235,7 @@ export interface ResetPassword {
 export interface Reviews {
   created_at: Generated<Date>;
   id: Generated<number>;
+  is_show: Generated<number>;
   rating: number;
   review: string;
   updated_at: Generated<Date>;

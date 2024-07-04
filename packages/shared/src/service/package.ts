@@ -8,6 +8,7 @@ import {
   SelectAllActivePackage,
   SelectAllPackageTransaction,
   SelectPackageTransaction,
+  SelectClassType,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -22,6 +23,10 @@ export interface PackageService {
   findAllActivePackageByUserId(
     user_id: SelectPackageTransaction['user_id']
   ): PromiseResult<SelectAllActivePackage[], Error>;
+  findAboutToExpiredPackage(
+    user_id: SelectPackageTransaction['user_id'],
+    class_type: SelectClassType['id']
+  ): PromiseResult<SelectAllActivePackage | undefined, Error>;
 
   create(data: InsertPackage): PromiseResult<SelectPackage, Error>;
 

@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { startOfDay, addDays, isBefore } from 'date-fns';
 
 interface DayPickerProps {
   date: Date;
@@ -44,34 +45,38 @@ export default function DayPicker({
   }
 
   const handleArrowClick = (direction: string) => {
-    const currentDate = new Date(new Date().setHours(0, 0, 0, 0));
-    const newDate = new Date();
+    const currentDate = startOfDay(new Date());
+    let newDate = selectedDate;
+
     if (direction === 'left') {
-      newDate.setDate(selectedDate.getDate() - 1);
+      newDate = addDays(selectedDate, -1);
     } else if (direction === 'right') {
-      newDate.setDate(selectedDate.getDate() + 1);
+      newDate = addDays(selectedDate, 1);
     }
-    if (newDate < currentDate) {
+
+    console.log(newDate, currentDate, selectedDate);
+
+    if (isBefore(newDate, currentDate)) {
       toast.error('Cannot go back to past dates');
       return;
     }
+
     setSelectedDate(newDate);
     setCurrentDayIndex(newDate.getDay() % numberOfDays);
   };
 
   const handleDateClick = (index: number) => {
     if (index === currentDayIndex) return;
-    const currentDate = new Date(new Date().setHours(0, 0, 0, 0));
-    const newDate = new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth(),
-      selectedDate.getDate() + index - currentDayIndex,
-    );
 
-    if (newDate < currentDate) {
+    const currentDate = startOfDay(new Date());
+    const daysToAdd = index - currentDayIndex;
+    const newDate = addDays(selectedDate, daysToAdd);
+
+    if (isBefore(newDate, currentDate)) {
       toast.error('Cannot go back to past dates');
       return;
     }
+
     setSelectedDate(newDate);
     setCurrentDayIndex(index);
   };

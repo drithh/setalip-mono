@@ -76,6 +76,9 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('rating', 'int4', (col) => col.notNull())
         .addColumn('review', 'text', (col) => col.notNull())
+        .addColumn('is_show', 'boolean', (col) =>
+          col.notNull().defaultTo(false)
+        )
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
         )
@@ -204,6 +207,9 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('valid_for', 'int4', (col) => col.notNull())
         .addColumn('one_time_only', 'boolean', (col) => col.notNull())
         .addColumn('loyalty_points', 'int4', (col) => col.notNull())
+        .addColumn('is_active', 'boolean', (col) =>
+          col.notNull().defaultTo(true)
+        )
         .addColumn('class_type_id', 'bigint', (col) =>
           col.notNull().references('class_types.id')
         )

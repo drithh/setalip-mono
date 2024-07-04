@@ -6,7 +6,7 @@ import {
   Packages,
   UserPackages,
 } from '../db';
-import { DefaultPagination, OptionalToRequired } from '.';
+import { DefaultPagination, OptionalToRequired, SelectClassType } from '.';
 
 export interface FindAllPackageOptions extends DefaultPagination {
   name?: string;
@@ -63,6 +63,11 @@ export interface PackageRepository {
   findAllActivePackageByUserId(
     user_id: SelectPackageTransaction['user_id']
   ): Promise<SelectAllActivePackage[]>;
+  findAboutToExpiredPackage(
+    user_id: SelectPackageTransaction['user_id'],
+    class_type: SelectClassType['id']
+  ): Promise<SelectAllActivePackage | undefined>;
+
   create(data: InsertPackage): Promise<SelectPackage | Error>;
 
   update(data: UpdatePackage): Promise<undefined | Error>;

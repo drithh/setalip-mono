@@ -15,7 +15,10 @@ export default function ListPackage({ packages, classTypes }: PackageProps) {
   const [filteredPackages, setFilteredPackages] =
     useState<SelectAllPackage['data']>(packages);
   const [selectedPackageType, setSelectedPackageType] =
-    useState<SelectClassType>();
+    useState<SelectClassType>({
+      id: 0,
+      type: 'All',
+    });
 
   const packagesTypeWithAll: SelectClassType[] = [
     { id: 0, type: 'All' },

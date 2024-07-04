@@ -117,7 +117,7 @@ export default async function Home() {
             </div>
           </div>
         </section>
-        <section className="w-full bg-primary py-12 md:py-24 lg:py-32">
+        <section className="w-full bg-background py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="grid items-center gap-6 lg:grid-cols-[1fr_500px] lg:gap-12 xl:grid-cols-[1fr_550px]">
               <div className="space-y-2">
@@ -142,11 +142,22 @@ export default async function Home() {
             </div>
           </div>
         </section>
-        <Review />
-        <section className=" bg-primary" id="locations">
+        <section className="flex h-[40rem] flex-col gap-4 bg-background py-12 md:py-24 lg:pb-24 lg:pt-32 ">
+          <div className="flex flex-col place-items-center">
+            <h2 className="text-center text-3xl font-bold tracking-tighter sm:text-5xl">
+              Reviews that Speak Volumes
+            </h2>
+            <p className="max-w-[900px] text-center text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              Hear from our satisfied clients on how Pilates Reform has
+              transformed their lives.
+            </p>
+          </div>
+          <Review />
+        </section>
+        <section className="bg-background" id="locations">
           <div className="mx-auto flex max-w-[90vw] flex-col gap-24 pb-12 pt-32 md:max-w-screen-xl">
             <div className="flex flex-col place-content-center place-items-center gap-4">
-              <h2 className="text-center text-2xl font-bold md:text-6xl">
+              <h2 className="text-center text-4xl font-bold md:text-6xl">
                 Our Locations
               </h2>
             </div>
@@ -193,7 +204,7 @@ export default async function Home() {
             </div>
           </div>
         </section>
-        <section className="w-full bg-primary py-8 md:py-16 lg:py-24">
+        <section className="w-full bg-background py-8 md:py-16 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">

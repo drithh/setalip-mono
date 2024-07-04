@@ -17,7 +17,10 @@ interface ClassProps {
 export default function ListClass({ classes, classTypes }: ClassProps) {
   const [filteredClasses, setFilteredClasses] =
     useState<SelectAllClassWithAsset['data']>(classes);
-  const [selectedClassType, setSelectedClassType] = useState<SelectClassType>();
+  const [selectedClassType, setSelectedClassType] = useState<SelectClassType>({
+    id: 0,
+    type: 'All',
+  });
 
   const classesTypeWithAll: SelectClassType[] = [
     { id: 0, type: 'All' },

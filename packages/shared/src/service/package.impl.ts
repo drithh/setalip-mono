@@ -5,6 +5,7 @@ import type {
   FindAllUserPackageOption,
   InsertPackage,
   PackageRepository,
+  SelectClassType,
   SelectPackage,
   SelectPackageTransaction,
   UpdatePackage,
@@ -62,6 +63,22 @@ export class PackageServiceImpl implements PackageService {
 
     return {
       result: packages,
+      error: undefined,
+    };
+  }
+
+  async findAboutToExpiredPackage(
+    user_id: SelectPackageTransaction['user_id'],
+    class_type: SelectClassType['id']
+  ) {
+    const singlePackage =
+      await this._packageRepository.findAboutToExpiredPackage(
+        user_id,
+        class_type
+      );
+
+    return {
+      result: singlePackage,
       error: undefined,
     };
   }

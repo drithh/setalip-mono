@@ -58,20 +58,25 @@ export async function Review() {
   });
   const reviews = reviewQuery.result?.data ?? [];
 
-  // const firstRow = reviews.slice(0, reviews.length / 2);
-  // const secondRow = reviews.slice(reviews.length / 2);
+  const firstRow = reviews.slice(0, reviews.length / 2);
+  const secondRow = reviews.slice(reviews.length / 2);
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-primary py-2">
-      <Marquee pauseOnHover className="[--duration:40s]">
+    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg  py-2">
+      <Marquee pauseOnHover className="hidden [--duration:40s] md:inline-flex ">
         {reviews.map((review) => (
           <ReviewCard key={review.id} review={review} />
         ))}
       </Marquee>
-      {/* <Marquee reverse pauseOnHover className="[--duration:20s]">
+      <Marquee pauseOnHover className="[--duration:40s] md:hidden">
+        {firstRow.map((review) => (
+          <ReviewCard key={review.id} review={review} />
+        ))}
+      </Marquee>
+      <Marquee reverse pauseOnHover className="[--duration:40s] md:hidden">
         {secondRow.map((review) => (
           <ReviewCard key={review.id} review={review} />
         ))}
-      </Marquee> */}
+      </Marquee>
     </div>
   );
 }
