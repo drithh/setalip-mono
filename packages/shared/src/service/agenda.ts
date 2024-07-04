@@ -31,7 +31,9 @@ export interface AgendaService {
   ): PromiseResult<SelectAllAgendaByUser, Error>;
 
   create(data: InsertAgenda): PromiseResult<SelectAgenda, Error>;
-
+  createAgendaBooking(
+    data: InsertAgendaBooking
+  ): PromiseResult<SelectAgendaBooking, Error>;
   update(data: UpdateAgenda): PromiseResult<undefined, Error>;
   updateAgendaBooking(
     data: UpdateAgendaBooking

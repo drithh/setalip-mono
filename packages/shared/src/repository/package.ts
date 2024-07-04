@@ -41,6 +41,11 @@ export interface FindAllUserPackageOption extends DefaultPagination {
   user_id: SelectPackageTransaction['user_id'];
 }
 
+export interface SelectUniqueCode {
+  unique_code: SelectPackageTransaction['unique_code'];
+  is_new: boolean;
+}
+
 export interface SelectAllPackageTransaction {
   data: SelectPackageTransaction[];
   pageCount: number;
@@ -67,6 +72,10 @@ export interface PackageRepository {
     user_id: SelectPackageTransaction['user_id'],
     class_type: SelectClassType['id']
   ): Promise<SelectAllActivePackage | undefined>;
+  findPackageTransactionUniqueCode(
+    user_id: SelectPackageTransaction['user_id'],
+    package_id: SelectPackage['id']
+  ): Promise<SelectUniqueCode>;
 
   create(data: InsertPackage): Promise<SelectPackage | Error>;
 

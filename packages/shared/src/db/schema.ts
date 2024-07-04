@@ -215,7 +215,7 @@ export interface PackageTransactions {
   discount: Generated<number | null>;
   id: Generated<number>;
   status: "completed" | "failed" | "pending";
-  unique_code: Generated<number | null>;
+  unique_code: number;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
   user_id: number;

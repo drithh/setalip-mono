@@ -260,7 +260,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('package_transactions')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('amount_paid', 'int4', (col) => col.notNull().unsigned())
-        .addColumn('unique_code', 'int4', (col) => col.unsigned())
+        .addColumn('unique_code', 'int4', (col) => col.notNull().unsigned())
         .addColumn('discount', 'int4', (col) => col.unsigned())
         .addColumn(
           'status',

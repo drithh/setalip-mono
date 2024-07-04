@@ -9,6 +9,7 @@ import {
   SelectAllPackageTransaction,
   SelectPackageTransaction,
   SelectClassType,
+  SelectUniqueCode,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -27,6 +28,10 @@ export interface PackageService {
     user_id: SelectPackageTransaction['user_id'],
     class_type: SelectClassType['id']
   ): PromiseResult<SelectAllActivePackage | undefined, Error>;
+  findPackageTransactionUniqueCode(
+    user_id: SelectPackageTransaction['user_id'],
+    package_id: SelectPackage['id']
+  ): PromiseResult<SelectUniqueCode, Error>;
 
   create(data: InsertPackage): PromiseResult<SelectPackage, Error>;
 

@@ -30,6 +30,7 @@ import { MapPin, Mail, Phone, User2, CalendarClock, Clock } from 'lucide-react';
 import { addMinutes, format } from 'date-fns';
 import { validateUser } from '@/lib/auth';
 import { dateFormatter } from '@repo/shared/util';
+import { cn } from '@repo/ui/lib/utils';
 export default async function AgendaDetail({
   params,
 }: {
@@ -62,8 +63,6 @@ export default async function AgendaDetail({
     singleClass.result.class_type_id,
   );
 
-  console.log(singlePackage.result);
-
   return (
     <div>
       <div className="w-full">
@@ -85,37 +84,57 @@ export default async function AgendaDetail({
                   {singleClass.result.description}
                 </p>
               </div>
-              <h1 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl">
-                Package Used
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                You are using <span className="font-semibold">1 credit</span> on{' '}
-                {singlePackage.result?.package_name} package
-              </p>
-              <Card
-                key={singlePackage.result?.id}
-                className="w-fit sm:col-span-1"
+              <h1
+                className={cn(
+                  `text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl`,
+                  singlePackage.result ? '' : 'text-destructive',
+                )}
               >
-                <CardHeader>
-                  <CardTitle className="capitalize">
-                    {singlePackage.result?.package_name}
-                  </CardTitle>
-                  <CardDescription className="capitalize">
-                    {singlePackage.result?.class_type}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="">
-                  <p>
-                    Sessions Remaining:{' '}
-                    {(singlePackage.result?.credit ?? 0) -
-                      (singlePackage.result?.credit_used ?? 0)}
+                {singlePackage.result ? 'Package Used' : 'No Package Used'}
+              </h1>
+              {singlePackage.result ? (
+                <p className="text-lg text-muted-foreground">
+                  You are using <span className="font-semibold">1 credit</span>{' '}
+                  on {singlePackage.result?.package_name} package
+                </p>
+              ) : (
+                <>
+                  <p className="text-lg text-muted-foreground">
+                    You don't have any package to use, please buy a package
+                    first
                   </p>
-                  <p>
-                    Expired At:{' '}
-                    {dateFormatter().format(singlePackage.result?.expired_at)}
-                  </p>
-                </CardContent>
-              </Card>
+                  <Link href="/packages" className="w-fit" passHref>
+                    <Button className="w-full">Buy Package</Button>
+                  </Link>
+                </>
+              )}
+
+              {singlePackage.result && (
+                <Card
+                  key={singlePackage.result?.id}
+                  className="w-fit sm:col-span-1"
+                >
+                  <CardHeader>
+                    <CardTitle className="capitalize">
+                      {singlePackage.result?.package_name}
+                    </CardTitle>
+                    <CardDescription className="capitalize">
+                      {singlePackage.result?.class_type}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="">
+                    <p>
+                      Sessions Remaining:{' '}
+                      {(singlePackage.result?.credit ?? 0) -
+                        (singlePackage.result?.credit_used ?? 0)}
+                    </p>
+                    <p>
+                      Expired At:{' '}
+                      {dateFormatter().format(singlePackage.result?.expired_at)}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
             </div>
             <div className="row-span-2 flex  flex-col gap-2 space-y-4">
               <h1 className="mt-6 text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl">

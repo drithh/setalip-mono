@@ -9,7 +9,13 @@ import {
   Locations,
   Users,
 } from '../db';
-import { DefaultPagination, OptionalToRequired, SelectLocation } from '.';
+import {
+  DefaultPagination,
+  InsertCredit,
+  OptionalToRequired,
+  SelectLocation,
+  SelectUser,
+} from '.';
 
 export interface FindAllAgendaOptions extends DefaultPagination {
   className?: string;
@@ -113,7 +119,9 @@ export type SelectAgenda = Selectable<Agendas>;
 export type SelectAgendaBooking = Selectable<AgendaBookings>;
 
 export type InsertAgenda = Insertable<Agendas>;
+
 export type InsertAgendaBooking = Insertable<AgendaBookings>;
+export type InsertAgendaAndTransaction = InsertAgendaBooking & InsertCredit;
 
 export type UpdateAgenda = OptionalToRequired<Updateable<Agendas>, 'id'>;
 
@@ -135,7 +143,14 @@ export interface AgendaRepository {
   findAgendaByUserId(
     data: FindAgendaByUserOptions
   ): Promise<SelectAllAgendaByUser>;
+  findActiveAgendaByUserId(
+    data: SelectUser['id']
+  ): Promise<SelectAgendaByUser[]>;
+
   create(data: InsertAgenda): Promise<SelectAgenda | Error>;
+  createAgendaBooking(
+    data: InsertAgendaAndTransaction
+  ): Promise<SelectAgendaBooking | Error>;
   // createParticipant(
   //   data: InsertAgendaBooking
   // ): Promise<SelectAgendaBooking | Error>;

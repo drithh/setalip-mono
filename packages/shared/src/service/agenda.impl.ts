@@ -10,17 +10,35 @@ import type {
   UpdateAgendaBooking,
   FindScheduleByDateOptions,
   FindAgendaByUserOptions,
+  UserRepository,
+  ClassRepository,
+  PackageRepository,
+  CreditRepository,
+  InsertAgendaAndTransaction,
 } from '../repository';
 import { AgendaService } from './agenda';
+import { addMinutes, isAfter, isBefore, isEqual } from 'date-fns';
 
 @injectable()
 export class AgendaServiceImpl implements AgendaService {
   private _agendaRepository: AgendaRepository;
+  private _userRepository: UserRepository;
+  private _classRepository: ClassRepository;
+  private _packageRepository: PackageRepository;
+  private _creditRepository: CreditRepository;
 
   constructor(
-    @inject(TYPES.AgendaRepository) agendaRepository: AgendaRepository
+    @inject(TYPES.AgendaRepository) agendaRepository: AgendaRepository,
+    @inject(TYPES.UserRepository) userRepository: UserRepository,
+    @inject(TYPES.ClassRepository) classRepository: ClassRepository,
+    @inject(TYPES.PackageRepository) packageRepository: PackageRepository,
+    @inject(TYPES.CreditRepository) creditRepository: CreditRepository
   ) {
     this._agendaRepository = agendaRepository;
+    this._userRepository = userRepository;
+    this._classRepository = classRepository;
+    this._packageRepository = packageRepository;
+    this._creditRepository = creditRepository;
   }
 
   async findAll(data: FindAllAgendaOptions) {
@@ -80,6 +98,95 @@ export class AgendaServiceImpl implements AgendaService {
 
   async create(data: InsertAgenda) {
     const result = await this._agendaRepository.create(data);
+
+    if (result instanceof Error) {
+      return {
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
+  async createAgendaBooking(data: InsertAgendaBooking) {
+    const user = await this._userRepository.findById(data.user_id);
+
+    if (!user) {
+      return {
+        error: new Error('User not found'),
+      };
+    }
+
+    const agenda = await this._agendaRepository.findById(data.agenda_id);
+    if (!agenda) {
+      return {
+        error: new Error('Agenda not found'),
+      };
+    }
+    const agendaClass = await this._classRepository.findById(agenda.class_id);
+
+    if (!agendaClass) {
+      return {
+        error: new Error('Class not found'),
+      };
+    }
+
+    const userPackage = await this._packageRepository.findAboutToExpiredPackage(
+      user.id,
+      agendaClass.class_type_id
+    );
+
+    if (!userPackage) {
+      return {
+        error: new Error('User does not have a package for this class'),
+      };
+    }
+
+    const credit = await this._creditRepository.findById(user.id);
+
+    if (!credit) {
+      return {
+        error: new Error('User does not have any credit'),
+      };
+    }
+
+    const userAgenda = await this._agendaRepository.findActiveAgendaByUserId(
+      user.id
+    );
+    // iterate over userAgenda to check if user overlaps with existing agenda
+    // const agendaEndTime = addMinutes(agenda.time, agendaClass.duration);
+
+    for (const userAgendaItem of userAgenda) {
+      const userAgendaEndTime = addMinutes(
+        userAgendaItem.time,
+        userAgendaItem.class_duration
+      );
+
+      if (
+        (isBefore(userAgendaItem.time, agenda.time) ||
+          isEqual(userAgendaItem.time, agenda.time)) &&
+        (isAfter(userAgendaEndTime, agenda.time) ||
+          isEqual(userAgendaEndTime, agenda.time))
+      ) {
+        return {
+          error: new Error('User already has an agenda at this time'),
+        };
+      }
+    }
+
+    const inputData: InsertAgendaAndTransaction = {
+      ...data,
+      status: 'booked',
+      credit_transaction_id: credit.id,
+      class_type_id: agendaClass.class_type_id,
+      type: 'credit',
+      amount: 1,
+      note: `Booked ${agendaClass.name} class on ${agenda.time}`,
+    };
+
+    const result = await this._agendaRepository.createAgendaBooking(inputData);
 
     if (result instanceof Error) {
       return {

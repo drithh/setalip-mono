@@ -83,6 +83,22 @@ export class PackageServiceImpl implements PackageService {
     };
   }
 
+  async findPackageTransactionUniqueCode(
+    user_id: SelectPackageTransaction['user_id'],
+    package_id: SelectPackage['id']
+  ) {
+    const uniqueCode =
+      await this._packageRepository.findPackageTransactionUniqueCode(
+        user_id,
+        package_id
+      );
+
+    return {
+      result: uniqueCode,
+      error: undefined,
+    };
+  }
+
   async create(data: InsertPackage) {
     const result = await this._packageRepository.create(data);
 

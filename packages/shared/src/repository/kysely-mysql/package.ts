@@ -181,6 +181,52 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     return query;
   }
 
+  async findPackageTransactionUniqueCode(
+    user_id: SelectPackageTransaction['user_id'],
+    package_id: SelectPackage['id']
+  ) {
+    const lastUniqueCode = await this._db
+      .selectFrom('package_transactions')
+      .innerJoin(
+        'user_packages',
+        'package_transactions.user_package_id',
+        'user_packages.id'
+      )
+      .select('unique_code')
+      .where('package_transactions.user_id', '=', user_id)
+      .where('package_id', '=', package_id)
+      .where('status', '=', 'pending')
+      .executeTakeFirst();
+
+    if (lastUniqueCode) {
+      return {
+        unique_code: lastUniqueCode.unique_code,
+        is_new: false,
+      };
+    }
+
+    // find a unique code that is not used by any other pending transaction
+    const allPendingTransactions = await this._db
+      .selectFrom('package_transactions')
+      .select('unique_code')
+      .where('status', '=', 'pending')
+      .execute();
+
+    const uniqueCodes = new Set(
+      allPendingTransactions.map((transaction) => transaction.unique_code)
+    );
+
+    let newUniqueCode;
+    do {
+      newUniqueCode = Math.floor(Math.random() * 1000);
+    } while (uniqueCodes.has(newUniqueCode));
+
+    return {
+      unique_code: newUniqueCode,
+      is_new: true,
+    };
+  }
+
   async create(data: InsertPackage) {
     try {
       const query = this._db

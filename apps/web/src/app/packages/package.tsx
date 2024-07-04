@@ -4,6 +4,7 @@ import { moneyFormatter } from '@repo/shared/util';
 import { Button } from '@repo/ui/components/ui/button';
 import { Card } from '@repo/ui/components/ui/card';
 import { Separator } from '@repo/ui/components/ui/separator';
+import Link from 'next/link';
 
 interface Package {
   singlePackage: SelectPackages;
@@ -32,15 +33,15 @@ export default function Package({ singlePackage }: Package) {
         </div>
       </div>
       <div className="px-4 py-2">
-        <Button
-          variant={'outline'}
+        <Link
+          href={`/packages/${singlePackage.id}`}
+          passHref
           className="w-full"
-          onClick={() => {
-            console.log('clicked');
-          }}
         >
-          Buy now
-        </Button>
+          <Button variant={'outline'} className="w-full">
+            Buy now
+          </Button>
+        </Link>
       </div>
       <div className="flex flex-col bg-primary pb-8 pt-4">
         <p className="text-center font-semibold">
