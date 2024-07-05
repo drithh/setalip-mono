@@ -3,16 +3,19 @@ import {
   FindAllPackageOptions,
   FindAllUserPackageOption,
   InsertPackage,
+  InsertPackageTransaction,
   PackageRepository,
   SelectAllActivePackage,
   SelectAllPackage,
   SelectPackage,
   SelectPackageTransaction,
   UpdatePackage,
+  UpdatePackageTransaction,
 } from '../package';
 import { Database } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
 import { ColumnType, sql } from 'kysely';
+import { addDays } from 'date-fns';
 
 @injectable()
 export class KyselyMySqlPackageRepository implements PackageRepository {
@@ -187,20 +190,17 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
   ) {
     const lastUniqueCode = await this._db
       .selectFrom('package_transactions')
-      .innerJoin(
-        'user_packages',
-        'package_transactions.user_package_id',
-        'user_packages.id'
-      )
-      .select('unique_code')
+      .select(['unique_code', 'deposit_account_id', 'package_transactions.id'])
       .where('package_transactions.user_id', '=', user_id)
-      .where('package_id', '=', package_id)
+      .where('package_transactions.package_id', '=', package_id)
       .where('status', '=', 'pending')
       .executeTakeFirst();
 
     if (lastUniqueCode) {
       return {
         unique_code: lastUniqueCode.unique_code,
+        deposit_account_id: lastUniqueCode.deposit_account_id,
+        id: lastUniqueCode.id,
         is_new: false,
       };
     }
@@ -223,6 +223,8 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
     return {
       unique_code: newUniqueCode,
+      deposit_account_id: null,
+      id: -1,
       is_new: true,
     };
   }
@@ -249,6 +251,52 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     }
   }
 
+  async createPackageTransaction(data: InsertPackageTransaction) {
+    try {
+      const result = await this._db.transaction().execute(async (trx) => {
+        const queryPackage = await trx
+          .selectFrom('packages')
+          .selectAll()
+          .where('packages.id', '=', data.package_id)
+          .executeTakeFirst();
+
+        if (queryPackage === undefined) {
+          console.error('Package not found', queryPackage);
+          return new Error('Package not found');
+        }
+
+        const total = queryPackage.price + data.unique_code;
+
+        const queryUserPackage = trx
+          .insertInto('package_transactions')
+          .values({
+            user_id: data.user_id,
+            package_id: queryPackage.id,
+            discount: data.discount,
+            deposit_account_id: data.deposit_account_id,
+            unique_code: data.unique_code,
+            status: 'pending',
+            amount_paid: total,
+          })
+          .returningAll()
+          .compile();
+
+        const resultUserPackage = await trx.executeQuery(queryUserPackage);
+
+        if (resultUserPackage.rows[0] === undefined) {
+          console.error('Failed to create user package', resultUserPackage);
+          return new Error('Failed to create user package');
+        }
+
+        return resultUserPackage.rows[0];
+      });
+      return result;
+    } catch (error) {
+      console.error('Error creating package transaction:', error);
+      return new Error('Failed to create package transaction');
+    }
+  }
+
   async update(data: UpdatePackage) {
     try {
       const query = await this._db
@@ -266,6 +314,80 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     } catch (error) {
       console.error('Error updating package:', error);
       return new Error('Failed to update package');
+    }
+  }
+
+  async updatePackageTransaction(data: UpdatePackageTransaction) {
+    try {
+      await this._db.transaction().execute(async (trx) => {
+        const packageTransaction = await trx
+          .selectFrom('package_transactions')
+          .selectAll()
+          .where('package_transactions.id', '=', data.id)
+          .executeTakeFirst();
+
+        if (packageTransaction === undefined) {
+          console.error('Package transaction not found', packageTransaction);
+          return new Error('Package transaction not found');
+        }
+
+        const singlePackage = await trx
+          .selectFrom('packages')
+          .selectAll()
+          .where('packages.id', '=', packageTransaction.package_id)
+          .executeTakeFirst();
+
+        const expiredAt = addDays(new Date(), singlePackage?.valid_for ?? 0);
+
+        if (singlePackage === undefined) {
+          console.error('Package transaction not found', singlePackage);
+          return new Error('Package transaction not found');
+        }
+
+        let userPackageId: number | null = null;
+
+        if (data.status === 'completed') {
+          // insert user package
+          const userPackage = await trx
+            .insertInto('user_packages')
+            .values({
+              user_id: packageTransaction.user_id,
+              package_id: packageTransaction.package_id,
+              expired_at: expiredAt,
+              credit: singlePackage.credit,
+            })
+            .returningAll()
+            .compile();
+
+          const resultUserPackage = await trx.executeQuery(userPackage);
+
+          if (resultUserPackage.rows[0] === undefined) {
+            console.error('Failed to create user package', resultUserPackage);
+            return new Error('Failed to create user package');
+          }
+
+          userPackageId = resultUserPackage.rows[0].id;
+        }
+
+        const query = await trx
+          .updateTable('package_transactions')
+          .set({
+            ...data,
+            user_package_id: userPackageId,
+          })
+          .where('package_transactions.id', '=', data.id)
+          .executeTakeFirst();
+
+        if (query.numUpdatedRows === undefined) {
+          console.error('Failed to update package transaction', query);
+          return new Error('Failed to update package transaction');
+        }
+      });
+
+      return;
+    } catch (error) {
+      console.error('Error updating package transaction:', error);
+      return new Error('Failed to update package transaction');
     }
   }
 

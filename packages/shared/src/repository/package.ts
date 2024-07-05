@@ -26,7 +26,23 @@ export type SelectPackage = Selectable<Packages>;
 export type InsertPackage = Insertable<Packages>;
 export type UpdatePackage = OptionalToRequired<Updateable<Packages>, 'id'>;
 
-export interface SelectPackageTransaction
+export type SelectPackageTransaction = Selectable<PackageTransactions>;
+
+export interface InsertPackageTransaction {
+  user_id: SelectPackageTransaction['user_id'];
+  package_id: SelectPackage['id'];
+  discount: SelectPackageTransaction['discount'];
+  deposit_account_id: SelectPackageTransaction['deposit_account_id'];
+  unique_code: SelectPackageTransaction['unique_code'];
+}
+
+export interface UpdatePackageTransaction {
+  id: SelectPackageTransaction['id'];
+  status: SelectPackageTransaction['status'];
+  deposit_account_id: SelectPackageTransaction['deposit_account_id'];
+}
+
+export interface SelectPackageTransactionWithPackage
   extends Omit<
     Selectable<PackageTransactions>,
     'created_at' | 'updated_at' | 'updated_by'
@@ -43,6 +59,8 @@ export interface FindAllUserPackageOption extends DefaultPagination {
 
 export interface SelectUniqueCode {
   unique_code: SelectPackageTransaction['unique_code'];
+  deposit_account_id: SelectPackageTransaction['deposit_account_id'];
+  id: SelectPackageTransaction['id'];
   is_new: boolean;
 }
 
@@ -78,8 +96,14 @@ export interface PackageRepository {
   ): Promise<SelectUniqueCode>;
 
   create(data: InsertPackage): Promise<SelectPackage | Error>;
+  createPackageTransaction(
+    data: InsertPackageTransaction
+  ): Promise<SelectPackageTransaction | Error>;
 
   update(data: UpdatePackage): Promise<undefined | Error>;
+  updatePackageTransaction(
+    data: UpdatePackageTransaction
+  ): Promise<undefined | Error>;
 
   delete(id: SelectPackage['id']): Promise<undefined | Error>;
 }

@@ -10,6 +10,8 @@ import {
   SelectPackageTransaction,
   SelectClassType,
   SelectUniqueCode,
+  InsertPackageTransaction,
+  UpdatePackageTransaction,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -34,8 +36,14 @@ export interface PackageService {
   ): PromiseResult<SelectUniqueCode, Error>;
 
   create(data: InsertPackage): PromiseResult<SelectPackage, Error>;
+  createPackageTransaction(
+    data: InsertPackageTransaction
+  ): PromiseResult<SelectPackageTransaction, Error>;
 
   update(data: UpdatePackage): PromiseResult<undefined, Error>;
+  updatePackageTransaction(
+    data: UpdatePackageTransaction
+  ): PromiseResult<undefined, Error>;
 
   delete(id: SelectPackage['id']): PromiseResult<undefined, Error>;
 }

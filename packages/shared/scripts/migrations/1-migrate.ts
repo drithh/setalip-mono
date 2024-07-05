@@ -273,6 +273,9 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('user_package_id', 'bigint', (col) =>
           col.references('user_packages.id')
         )
+        .addColumn('package_id', 'bigint', (col) =>
+          col.notNull().references('packages.id')
+        )
         .addColumn('deposit_account_id', 'bigint', (col) =>
           col.references('deposit_accounts.id')
         )

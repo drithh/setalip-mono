@@ -214,6 +214,7 @@ export interface PackageTransactions {
   deposit_account_id: Generated<number | null>;
   discount: Generated<number | null>;
   id: Generated<number>;
+  package_id: number;
   status: "completed" | "failed" | "pending";
   unique_code: number;
   updated_at: Generated<Date>;

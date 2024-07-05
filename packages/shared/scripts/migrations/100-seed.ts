@@ -503,7 +503,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
       ).map((_, index) => {
         const status = ['pending', 'completed', 'failed'];
         const statusRandom = status[Math.floor(Math.random() * 3)] ?? 'pending';
-
+        const userPackage = user_packages[Math.floor(Math.random() * 30)];
         return {
           id: index + 1,
           user_id: users[Math.floor(Math.random() * 10)]?.id ?? 1,
@@ -513,8 +513,8 @@ export async function up(db: Kysely<DB>): Promise<void> {
           amount_paid: faker.number.int({ min: 100000, max: 1000000 }),
           deposit_account_id:
             deposit_accounts[Math.floor(Math.random() * 2)]?.id ?? 1,
-          user_package_id:
-            user_packages[Math.floor(Math.random() * 30)]?.id ?? 1,
+          user_package_id: userPackage?.id ?? 1,
+          package_id: userPackage?.package_id ?? 1,
           created_at: faker.date.between({
             from: faker.date.past({ years: 4 }),
             to: faker.date.recent(),

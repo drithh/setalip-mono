@@ -3,6 +3,7 @@ import {
   ClassService,
   PackageService,
   ClassTypeService,
+  WebSettingService,
 } from '@repo/shared/service';
 import { Badge } from '@repo/ui/components/ui/badge';
 import { Button } from '@repo/ui/components/ui/button';
@@ -43,6 +44,14 @@ import { validateUser } from '@/lib/auth';
 import { dateFormatter } from '@repo/shared/util';
 import { moneyFormatter } from '@repo/shared/util';
 import { Input } from '@repo/ui/components/ui/input';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@repo/ui/components/ui/alert';
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
+import { Checkbox } from '@repo/ui/components/ui/checkbox';
+import CreateTransaction from './create-transaction.form';
 
 export default async function PackageDetail({
   params,
@@ -76,6 +85,20 @@ export default async function PackageDetail({
     auth.user.id,
     singlePackage.result.id,
   );
+
+  if (uniqueCode.error) {
+    redirect('/packages');
+  }
+
+  const totalPrice =
+    singlePackage.result.price + uniqueCode.result?.unique_code;
+
+  const WebSettingService = container.get<WebSettingService>(
+    TYPES.WebSettingService,
+  );
+  const depositAccounts = await WebSettingService.findAllDepositAccount({
+    perPage: 100,
+  });
 
   return (
     <div>
@@ -124,56 +147,30 @@ export default async function PackageDetail({
                 </p>
               </div>
               {uniqueCode.result?.is_new === false && (
-                <Card className="mt-6 w-full">
-                  <CardHeader>
-                    <CardTitle className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl">
-                      Warning
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-2">
-                    <div className="flex place-content-between gap-3">
-                      <p className="text-base/relaxed text-muted-foreground md:text-lg/relaxed">
-                        You already have a transaction with this package,
-                      </p>
-                      <p className="text-base/relaxed text-muted-foreground md:text-lg/relaxed">
-                        {uniqueCode.result.unique_code}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <Alert>
+                  <AlertTitle className="flex gap-2">
+                    <ExclamationTriangleIcon />
+                    Warning
+                  </AlertTitle>
+                  <AlertDescription className="flex flex-col gap-2">
+                    You already have a transaction with this package, this
+                    current transaction will be added to the existing
+                    transaction, and the expiry date will be extended if you
+                    update the transaction.
+                    {/* <Link href="/me/package">
+                      <Button className="w-full">Open My Transaction</Button>
+                    </Link> */}
+                  </AlertDescription>
+                </Alert>
               )}
-              <Button
-                className="w-full"
-                // onClick={() => {
-                //   redirect(`/packages/${singlePackage.result.id}/buy`);
-                // }}
-              >
-                Buy Now
-              </Button>
-              <Card
-                key={singlePackage.result?.id}
-                className="w-fit sm:col-span-1"
-              >
-                <CardHeader>
-                  <CardTitle className="capitalize">
-                    {/* {singlePackage.result?.package_name} */}
-                  </CardTitle>
-                  <CardDescription className="capitalize">
-                    {/* {singlePackage.result?.class_type} */}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="">
-                  <p>
-                    {/* Sessions Remaining:{' '} */}
-                    {/* {(singlePackage.result?.credit ?? 0) - */}
-                    {/* (singlePackage.result?.credit_used ?? 0)} */}
-                  </p>
-                  <p>
-                    {/* Expired At:{' '} */}
-                    {/* {dateFormatter().format(singlePackage.result?.expired_at)} */}
-                  </p>
-                </CardContent>
-              </Card>
+
+              <CreateTransaction
+                packageId={singlePackage.result.id}
+                id={uniqueCode.result.id}
+                depositAccounts={depositAccounts.result?.data ?? []}
+                price={totalPrice}
+                uniqueCode={uniqueCode.result.unique_code}
+              />
             </div>
             <div className="row-span-2 flex flex-col">
               <Card className="row-span-2 mt-6 flex  flex-col gap-2 space-y-4">
@@ -224,7 +221,7 @@ export default async function PackageDetail({
                         Total
                       </p>
                       <p className="text-base/relaxed text-muted-foreground md:text-lg/relaxed">
-                        {moneyFormatter.format(singlePackage.result.price)}
+                        {moneyFormatter.format(totalPrice)}
                       </p>
                     </div>
                   </div>

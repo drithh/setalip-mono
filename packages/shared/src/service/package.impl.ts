@@ -4,11 +4,13 @@ import type {
   FindAllPackageOptions,
   FindAllUserPackageOption,
   InsertPackage,
+  InsertPackageTransaction,
   PackageRepository,
   SelectClassType,
   SelectPackage,
   SelectPackageTransaction,
   UpdatePackage,
+  UpdatePackageTransaction,
 } from '../repository';
 import { PackageService } from './package';
 
@@ -113,8 +115,37 @@ export class PackageServiceImpl implements PackageService {
     };
   }
 
+  async createPackageTransaction(data: InsertPackageTransaction) {
+    const result = await this._packageRepository.createPackageTransaction(data);
+
+    if (result instanceof Error) {
+      return {
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
   async update(data: UpdatePackage) {
     const result = await this._packageRepository.update(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result: result,
+    };
+  }
+
+  async updatePackageTransaction(data: UpdatePackageTransaction) {
+    const result = await this._packageRepository.updatePackageTransaction(data);
 
     if (result instanceof Error) {
       return {
