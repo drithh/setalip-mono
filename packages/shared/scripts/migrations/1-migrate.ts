@@ -5,10 +5,10 @@ export async function up(db: Kysely<any>): Promise<void> {
     builder: CreateTableBuilder<T, C>
   ) => {
     return builder
-      .addColumn('created_at', 'date', (col) =>
+      .addColumn('created_at', 'datetime', (col) =>
         col.notNull().defaultTo(sql`now()`)
       )
-      .addColumn('updated_at', 'date', (col) =>
+      .addColumn('updated_at', 'datetime', (col) =>
         col.notNull().defaultTo(sql`now()`)
       )
       .addColumn('updated_by', 'bigint', (col) =>

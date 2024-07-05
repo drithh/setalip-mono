@@ -31,6 +31,7 @@ import { addMinutes, format } from 'date-fns';
 import { validateUser } from '@/lib/auth';
 import { dateFormatter } from '@repo/shared/util';
 import { cn } from '@repo/ui/lib/utils';
+import CreateAgendaBooking from './create-agenda-booking.form';
 export default async function AgendaDetail({
   params,
 }: {
@@ -62,6 +63,11 @@ export default async function AgendaDetail({
     auth.user.id,
     singleClass.result.class_type_id,
   );
+
+  const time = `${format(singleAgenda.result.time, 'dd MMM yyyy')} at ${format(singleAgenda.result.time, 'HH:mm')} - ${format(
+    addMinutes(singleAgenda.result.time, singleClass.result.duration),
+    'HH:mm',
+  )}`;
 
   return (
     <div>
@@ -151,15 +157,7 @@ export default async function AgendaDetail({
                   <div className="flex items-center gap-3">
                     <CalendarClock className="h-6 w-6 text-muted-foreground" />
                     <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
-                      {format(singleAgenda.result.time, 'dd MMM yyyy')} at{' '}
-                      {format(singleAgenda.result.time, 'HH:mm')} -
-                      {format(
-                        addMinutes(
-                          singleAgenda.result.time,
-                          singleClass.result.duration,
-                        ),
-                        'HH:mm',
-                      )}
+                      {time}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
@@ -178,9 +176,11 @@ export default async function AgendaDetail({
                   loading="lazy"
                 ></iframe>
               </div>
-              <Link href={`/schedules/${singleAgenda.result.id}/book`} passHref>
-                <Button className="w-full">Book Now</Button>
-              </Link>
+              <CreateAgendaBooking
+                time={time}
+                class_name={singleClass.result.name}
+                id={singleAgenda.result.id}
+              />
             </div>
           </div>
         </section>

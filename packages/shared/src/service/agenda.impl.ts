@@ -144,12 +144,19 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const credit = await this._creditRepository.findById(user.id);
-
+    const credit = await this._creditRepository.findAmountByUserId(user.id);
     if (!credit) {
       return {
         error: new Error('User does not have any credit'),
       };
+    }
+
+    for (const creditItem of credit) {
+      if (creditItem.remaining_amount < 1) {
+        return {
+          error: new Error('User does not have enough credit'),
+        };
+      }
     }
 
     const userAgenda = await this._agendaRepository.findActiveAgendaByUserId(

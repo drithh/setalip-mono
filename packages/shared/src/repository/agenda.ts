@@ -120,8 +120,12 @@ export type SelectAgendaBooking = Selectable<AgendaBookings>;
 
 export type InsertAgenda = Insertable<Agendas>;
 
-export type InsertAgendaBooking = Insertable<AgendaBookings>;
-export type InsertAgendaAndTransaction = InsertAgendaBooking & InsertCredit;
+export interface InsertAgendaBooking {
+  agenda_id: SelectAgendaBooking['agenda_id'];
+  user_id: SelectAgendaBooking['user_id'];
+}
+export type InsertAgendaAndTransaction = Insertable<AgendaBookings> &
+  InsertCredit;
 
 export type UpdateAgenda = OptionalToRequired<Updateable<Agendas>, 'id'>;
 

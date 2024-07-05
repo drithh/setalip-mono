@@ -473,7 +473,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
   async createAgendaBooking(data: InsertAgendaAndTransaction) {
     try {
-      await this._db.transaction().execute(async (trx) => {
+      const result = await this._db.transaction().execute(async (trx) => {
         const credit = await trx
           .insertInto('credit_transactions')
           .values({
@@ -493,15 +493,13 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
           return new Error('Failed to create credit transaction');
         }
 
-        const inputData: InsertAgendaBooking = {
-          agenda_id: data.agenda_id,
-          user_id: data.user_id,
-          status: 'booked',
-        };
-
         const agendaBooking = await trx
           .insertInto('agenda_bookings')
-          .values(inputData)
+          .values({
+            agenda_id: data.agenda_id,
+            user_id: data.user_id,
+            status: 'booked',
+          })
           .returningAll()
           .compile();
 
@@ -514,11 +512,11 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
         return resultAgendaBooking.rows[0];
       });
+      return result;
     } catch (error) {
       console.error('Error creating agenda booking:', error);
       return new Error('Error creating agenda booking');
     }
-    return new Error('Error creating agenda booking');
   }
 
   //       return result;

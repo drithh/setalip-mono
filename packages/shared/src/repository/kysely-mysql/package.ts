@@ -422,6 +422,31 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
           }
 
           userPackageId = resultUserPackage.rows[0].id;
+
+          const creditTransaction = await trx
+            .insertInto('credit_transactions')
+            .values({
+              user_package_id: userPackageId,
+              expired_at: expiredAt,
+              note: `Credit from package ${singlePackage.name}`,
+              class_type_id: singlePackage.class_type_id,
+              user_id: packageTransaction.user_id,
+              amount: singlePackage.credit,
+              type: 'debit',
+            })
+            .returningAll()
+            .compile();
+
+          const resultCreditTransaction =
+            await trx.executeQuery(creditTransaction);
+
+          if (resultCreditTransaction.rows[0] === undefined) {
+            console.error(
+              'Failed to create credit transaction',
+              resultCreditTransaction
+            );
+            return new Error('Failed to create credit transaction');
+          }
         }
 
         const query = await trx
