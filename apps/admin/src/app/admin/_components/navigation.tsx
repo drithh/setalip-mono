@@ -1,6 +1,7 @@
 'use client';
 import NavigationLink, { Menu } from './navigation-link';
 import {
+  BadgeDollarSign,
   CalendarClock,
   Gift,
   Home,
@@ -39,6 +40,11 @@ export const menus: Menu[] = [
     icon: <CalendarClock className="h-5 w-5" />,
     label: 'Agendas',
     path: '/admin/agendas',
+  },
+  {
+    icon: <BadgeDollarSign className="h-5 w-5" />,
+    label: 'Transactions',
+    path: '/admin/transactions',
   },
   {
     icon: <Gift className="h-5 w-5" />,

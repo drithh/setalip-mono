@@ -100,7 +100,7 @@ export default function CreateTransaction({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
-      router.refresh();
+      router.push('/me/package');
     }
   }, [formState]);
 
@@ -139,7 +139,7 @@ export default function CreateTransaction({
             Select Payment Method
           </h1>
 
-          {id && (
+          {id && id > 0 && (
             <FormField
               control={form.control}
               name="id"

@@ -8,6 +8,7 @@ import {
   deletePackageSchema,
   findAllPackageSchema,
   findAllPackageTransactionByUserIdSchema,
+  findAllPackageTransactionSchema,
 } from '../schema';
 import { PackageTransactions } from '#dep/db/schema';
 
@@ -33,6 +34,28 @@ export const packageRouter = {
 
       return packages;
     }),
+  findAllPackageTransaction: adminProcedure
+    .input(findAllPackageTransactionSchema)
+    .query(async ({ ctx, input }) => {
+      const statuses = input.status
+        ?.split('.')
+        .map((status) => status as PackageTransactions['status']);
+
+      const packageService = ctx.container.get<PackageService>(
+        TYPES.PackageService
+      );
+
+      const packages = await packageService.findAllPackageTransaction({
+        page: input.page,
+        perPage: input.per_page,
+        sort: input.sort,
+        status: statuses,
+        user_name: input.name,
+      });
+
+      return packages;
+    }),
+
   findAllPackageTransactionByUserId: protectedProcedure
     .input(findAllPackageTransactionByUserIdSchema)
     .query(async ({ ctx, input }) => {

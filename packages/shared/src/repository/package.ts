@@ -2,9 +2,11 @@ import { Insertable, Selectable, Updateable } from 'kysely';
 import {
   ClassTypes,
   Classes,
+  DepositAccounts,
   PackageTransactions,
   Packages,
   UserPackages,
+  Users,
 } from '../db';
 import { DefaultPagination, OptionalToRequired, SelectClassType } from '.';
 
@@ -39,7 +41,15 @@ export interface InsertPackageTransaction {
 export interface UpdatePackageTransaction {
   id: SelectPackageTransaction['id'];
   status: SelectPackageTransaction['status'];
-  deposit_account_id: SelectPackageTransaction['deposit_account_id'];
+  deposit_account_id?: SelectPackageTransaction['deposit_account_id'];
+}
+
+export interface SelectPackageTransactionWithUser
+  extends SelectPackageTransaction {
+  package_name: Selectable<Packages>['name'];
+  deposit_account_bank: Selectable<DepositAccounts>['bank_name'];
+  user_id: Selectable<Users>['id'];
+  user_name: Selectable<Users>['name'];
 }
 
 export interface SelectPackageTransactionWithPackage
@@ -47,9 +57,14 @@ export interface SelectPackageTransactionWithPackage
     Selectable<PackageTransactions>,
     'created_at' | 'updated_at' | 'updated_by'
   > {
-  package_expired_at: Selectable<UserPackages>['expired_at'];
-  package_name: Selectable<Packages>['name'];
-  credit: Selectable<UserPackages>['credit'];
+  package_expired_at: Selectable<UserPackages>['expired_at'] | null;
+  package_name: Selectable<Packages>['name'] | null;
+  credit: Selectable<UserPackages>['credit'] | null;
+}
+
+export interface FindAllUserPackageTransactionOption extends DefaultPagination {
+  status?: SelectPackageTransaction['status'][];
+  user_name?: Selectable<Users>['name'];
 }
 
 export interface FindAllUserPackageOption extends DefaultPagination {
@@ -64,8 +79,12 @@ export interface SelectUniqueCode {
   is_new: boolean;
 }
 
+export interface SelectAllPackageTransactionWithUser {
+  data: SelectPackageTransactionWithUser[];
+  pageCount: number;
+}
 export interface SelectAllPackageTransaction {
-  data: SelectPackageTransaction[];
+  data: SelectPackageTransactionWithPackage[];
   pageCount: number;
 }
 
@@ -80,6 +99,9 @@ export interface PackageRepository {
 
   findAll(data: FindAllPackageOptions): Promise<SelectAllPackage>;
   findById(id: SelectPackage['id']): Promise<SelectPackage | undefined>;
+  findAllPackageTransaction(
+    data: FindAllUserPackageTransactionOption
+  ): Promise<SelectAllPackageTransactionWithUser>;
   findAllPackageTransactionByUserId(
     data: FindAllUserPackageOption
   ): Promise<SelectAllPackageTransaction>;

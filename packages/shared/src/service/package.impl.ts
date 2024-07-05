@@ -3,6 +3,7 @@ import { TYPES } from '../inversify';
 import type {
   FindAllPackageOptions,
   FindAllUserPackageOption,
+  FindAllUserPackageTransactionOption,
   InsertPackage,
   InsertPackageTransaction,
   PackageRepository,
@@ -44,6 +45,16 @@ export class PackageServiceImpl implements PackageService {
 
     return {
       result: singlePackage,
+    };
+  }
+
+  async findAllPackageTransaction(data: FindAllUserPackageTransactionOption) {
+    const packages =
+      await this._packageRepository.findAllPackageTransaction(data);
+
+    return {
+      result: packages,
+      error: undefined,
     };
   }
 

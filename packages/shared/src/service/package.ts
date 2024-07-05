@@ -12,6 +12,8 @@ import {
   SelectUniqueCode,
   InsertPackageTransaction,
   UpdatePackageTransaction,
+  FindAllUserPackageTransactionOption,
+  SelectAllPackageTransactionWithUser,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -20,6 +22,10 @@ export interface PackageService {
   findById(
     id: SelectPackage['id']
   ): PromiseResult<SelectPackage | undefined, Error>;
+  findAllPackageTransaction(
+    data: FindAllUserPackageTransactionOption
+  ): PromiseResult<SelectAllPackageTransactionWithUser, Error>;
+
   findAllPackageTransactionByUserId(
     data: FindAllUserPackageOption
   ): PromiseResult<SelectAllPackageTransaction, Error>;

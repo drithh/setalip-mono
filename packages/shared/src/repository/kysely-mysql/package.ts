@@ -2,11 +2,13 @@ import { inject, injectable } from 'inversify';
 import {
   FindAllPackageOptions,
   FindAllUserPackageOption,
+  FindAllUserPackageTransactionOption,
   InsertPackage,
   InsertPackageTransaction,
   PackageRepository,
   SelectAllActivePackage,
   SelectAllPackage,
+  SelectAllPackageTransactionWithUser,
   SelectPackage,
   SelectPackageTransaction,
   UpdatePackage,
@@ -80,6 +82,59 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       .executeTakeFirst();
   }
 
+  async findAllPackageTransaction(data: FindAllUserPackageTransactionOption) {
+    const { page = 1, perPage = 10, sort, user_name, status } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+    ).join(' ') as `${keyof SelectPackageTransaction} ${'asc' | 'desc'}`;
+
+    let query = this._db
+      .selectFrom('package_transactions')
+      .innerJoin('packages', 'package_transactions.package_id', 'packages.id')
+      .innerJoin('users', 'package_transactions.user_id', 'users.id')
+      .innerJoin(
+        'deposit_accounts',
+        'package_transactions.deposit_account_id',
+        'deposit_accounts.id'
+      );
+
+    if (status && status.length > 0) {
+      query = query.where('package_transactions.status', 'in', status);
+    }
+
+    if (user_name) {
+      query = query.where('users.name', 'like', `%${user_name}%`);
+    }
+
+    const queryData = await query
+      .selectAll('package_transactions')
+      .select([
+        'packages.name as package_name',
+        'users.name as user_name',
+        'users.id as user_id',
+        'deposit_accounts.bank_name as deposit_account_bank',
+      ])
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
+      .execute();
+
+    const queryCount = await query
+      .select(({ fn }) => [
+        fn.count<number>('package_transactions.id').as('count'),
+      ])
+      .executeTakeFirst();
+
+    const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
+
+    return {
+      data: queryData,
+      pageCount: pageCount,
+    };
+  }
+
   async findAllPackageTransactionByUserId(data: FindAllUserPackageOption) {
     const { page = 1, perPage = 10, sort, user_id, status } = data;
 
@@ -90,12 +145,12 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
     let query = this._db
       .selectFrom('package_transactions')
-      .innerJoin(
+      .leftJoin(
         'user_packages',
         'package_transactions.user_package_id',
         'user_packages.id'
       )
-      .innerJoin('packages', 'user_packages.package_id', 'packages.id')
+      .innerJoin('packages', 'package_transactions.package_id', 'packages.id')
       .where('package_transactions.user_id', '=', user_id);
 
     if (status) {

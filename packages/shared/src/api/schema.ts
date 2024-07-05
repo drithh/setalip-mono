@@ -49,6 +49,11 @@ export const findAllPackageSchema = defaultPaginationSchema.extend({
   class_type_id: z.string().optional(),
 });
 
+export const findAllPackageTransactionSchema = defaultPaginationSchema.extend({
+  name: z.string().optional(),
+  status: z.string().optional(),
+});
+
 export const deletePackageSchema = z.object({
   packageId: z.coerce.number().refine((data) => data > 0),
 });

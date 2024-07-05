@@ -18,7 +18,7 @@ export function getColumns(): ColumnDef<
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Package" />
       ),
-      cell: ({ row }) => <div>{row.original.package_name}</div>,
+      cell: ({ row }) => <div>{row.original?.package_name}</div>,
     },
     {
       accessorKey: 'amount_paid',
@@ -73,13 +73,15 @@ export function getColumns(): ColumnDef<
               Tanggal Expired:&ensp;
             </span>
             <p className="font-semibold">
-              {dateFormatter({
-                year: undefined,
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-              }).format(row.original.package_expired_at)}
+              {row.original.package_expired_at
+                ? dateFormatter({
+                    year: undefined,
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                  }).format(row.original.package_expired_at)
+                : '-'}
             </p>
           </div>
         );
