@@ -16,6 +16,9 @@ import {
 import { PromiseResult } from '../types';
 
 export interface AgendaService {
+  count(): Promise<number>;
+  countParticipant(id: SelectAgenda['id']): Promise<number>;
+
   findAll(data: FindAllAgendaOptions): PromiseResult<SelectAllAgenda, Error>;
   findById(
     id: SelectAgenda['id']

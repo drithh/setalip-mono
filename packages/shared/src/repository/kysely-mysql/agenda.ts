@@ -37,6 +37,16 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     return query?.count ?? 0;
   }
 
+  async countParticipant(id: SelectAgenda['id']) {
+    const query = await this._db
+      .selectFrom('agenda_bookings')
+      .select(({ fn }) => [fn.count<number>('agenda_bookings.id').as('count')])
+      .where('agenda_id', '=', id)
+      .executeTakeFirst();
+
+    return query?.count ?? 0;
+  }
+
   async findAll(data: FindAllAgendaOptions) {
     const {
       page = 1,

@@ -135,6 +135,7 @@ export interface UpdateAgendaBooking {
 }
 export interface AgendaRepository {
   count(): Promise<number>;
+  countParticipant(id: SelectAgenda['id']): Promise<number>;
 
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;

@@ -41,6 +41,14 @@ export class AgendaServiceImpl implements AgendaService {
     this._creditRepository = creditRepository;
   }
 
+  async count() {
+    return this._agendaRepository.count();
+  }
+
+  async countParticipant(id: SelectAgenda['id']) {
+    return this._agendaRepository.countParticipant(id);
+  }
+
   async findAll(data: FindAllAgendaOptions) {
     const agendas = await this._agendaRepository.findAll(data);
 
@@ -125,11 +133,22 @@ export class AgendaServiceImpl implements AgendaService {
         error: new Error('Agenda not found'),
       };
     }
+
     const agendaClass = await this._classRepository.findById(agenda.class_id);
 
     if (!agendaClass) {
       return {
         error: new Error('Class not found'),
+      };
+    }
+
+    const countParticipant = await this._agendaRepository.countParticipant(
+      data.agenda_id
+    );
+
+    if (countParticipant >= agendaClass.slot) {
+      return {
+        error: new Error('Class is full'),
       };
     }
 
