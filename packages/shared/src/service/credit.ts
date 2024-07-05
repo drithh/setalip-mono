@@ -14,6 +14,10 @@ export interface CreditService {
   findById(
     id: SelectCredit['id']
   ): PromiseResult<SelectCredit | undefined, Error>;
+  findByUserPackageId(
+    id: SelectCredit['user_package_id']
+  ): PromiseResult<SelectCredit | undefined, Error>;
+
   findAmountByUserId(
     userId: SelectCredit['user_id']
   ): PromiseResult<SelectAmountCredit[], Error>;

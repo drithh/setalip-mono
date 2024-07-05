@@ -151,17 +151,29 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    for (const creditItem of credit) {
-      if (creditItem.remaining_amount < 1) {
-        return {
-          error: new Error('User does not have enough credit'),
-        };
-      }
-    }
+    const currentCredit = credit.find(
+      (item) => item.class_type_id === agendaClass.class_type_id
+    );
 
+    if (!currentCredit || currentCredit.remaining_amount < 1) {
+      return {
+        error: new Error('User does not have any credit for this class'),
+      };
+    }
     const userAgenda = await this._agendaRepository.findActiveAgendaByUserId(
       user.id
     );
+
+    const creditTransaction = await this._creditRepository.findByUserPackageId(
+      userPackage.id
+    );
+
+    if (!creditTransaction) {
+      return {
+        error: new Error('Credit transaction not found'),
+      };
+    }
+
     // iterate over userAgenda to check if user overlaps with existing agenda
     // const agendaEndTime = addMinutes(agenda.time, agendaClass.duration);
 
@@ -186,7 +198,7 @@ export class AgendaServiceImpl implements AgendaService {
     const inputData: InsertAgendaAndTransaction = {
       ...data,
       status: 'booked',
-      credit_transaction_id: credit.id,
+      credit_transaction_id: creditTransaction.id,
       class_type_id: agendaClass.class_type_id,
       type: 'credit',
       amount: 1,

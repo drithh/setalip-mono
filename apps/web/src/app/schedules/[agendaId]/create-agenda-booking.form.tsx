@@ -47,7 +47,7 @@ const TOAST_MESSAGES = {
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Booking berhasil dibuat, silahkan melakukan pembayaran',
+    title: 'Booking berhasil dibuat',
   },
 };
 

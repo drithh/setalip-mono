@@ -52,6 +52,20 @@ export class CreditServiceImpl implements CreditService {
     };
   }
 
+  async findByUserPackageId(id: SelectCredit['user_package_id']) {
+    const credit = await this._creditRepository.findByUserPackageId(id);
+
+    if (!credit) {
+      return {
+        error: new Error('Credit not found'),
+      };
+    }
+
+    return {
+      result: credit,
+    };
+  }
+
   async findAmountByUserId(userId: SelectCredit['user_id']) {
     const credit = await this._creditRepository.findAmountByUserId(userId);
 

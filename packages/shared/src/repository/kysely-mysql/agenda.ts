@@ -477,6 +477,8 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         const credit = await trx
           .insertInto('credit_transactions')
           .values({
+            credit_transaction_id: data.credit_transaction_id,
+            agenda_booking_id: data.agenda_booking_id,
             user_id: data.user_id,
             type: data.type,
             amount: data.amount,

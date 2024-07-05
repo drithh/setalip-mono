@@ -40,6 +40,16 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
       .execute();
   }
 
+  async findByUserPackageId(
+    id: SelectCredit['user_package_id']
+  ): Promise<SelectCredit | undefined> {
+    return this._db
+      .selectFrom('credit_transactions')
+      .selectAll()
+      .where('credit_transactions.user_package_id', '=', id)
+      .executeTakeFirst();
+  }
+
   async findAmountByUserId(
     userId: SelectUser['id']
   ): Promise<SelectAmountCredit[]> {

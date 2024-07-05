@@ -40,6 +40,9 @@ export interface CreditRepository {
 
   findAll(): Promise<SelectCredit[]>;
   findById(id: SelectCredit['id']): Promise<SelectCredit | undefined>;
+  findByUserPackageId(
+    id: SelectCredit['user_package_id']
+  ): Promise<SelectCredit | undefined>;
   findAmountByUserId(
     userId: SelectCredit['user_id']
   ): Promise<SelectAmountCredit[]>;
