@@ -214,7 +214,7 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     return query.value;
   }
 
-  async findAllCarousels() {
+  async findAllCarousel() {
     const query = await this._db.selectFrom('carousels').selectAll().execute();
 
     return query;

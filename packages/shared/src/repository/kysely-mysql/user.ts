@@ -36,7 +36,6 @@ export class KyselyMySqlUserRepository implements UserRepository {
   }
 
   async findAll(data: FindAllUserOptions) {
-    console.log('findAll', data);
     const { page = 1, perPage = 10, sort, name, roles } = data || {};
 
     const offset = (page - 1) * perPage;
@@ -154,7 +153,6 @@ export class KyselyMySqlUserRepository implements UserRepository {
         return new Error('Failed to update user');
       }
 
-      console.log('query', query);
       return;
     } catch (error) {
       console.error('Error updating user:', error);

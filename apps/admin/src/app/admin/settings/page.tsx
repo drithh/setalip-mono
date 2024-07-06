@@ -17,6 +17,7 @@ import FaqTable from './_components/faq-table';
 import { findAllDepositReviewFaqSchema } from '@repo/shared/api/schema';
 import DepositAccountTable from './_components/deposit-account-table';
 import EditWebSettingForm from './edit-web-settings.form';
+import CarouselTable from './_components/carousel-table';
 
 interface IndexPageProps {
   searchParams: Record<string, any>;
@@ -108,6 +109,15 @@ export default async function Page({ searchParams }: IndexPageProps) {
               />
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Carousel</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CarouselTable />
         </CardContent>
       </Card>
 

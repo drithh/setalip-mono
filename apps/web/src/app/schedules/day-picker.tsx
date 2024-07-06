@@ -54,8 +54,6 @@ export default function DayPicker({
       newDate = addDays(selectedDate, 1);
     }
 
-    console.log(newDate, currentDate, selectedDate);
-
     if (isBefore(newDate, currentDate)) {
       toast.error('Cannot go back to past dates');
       return;

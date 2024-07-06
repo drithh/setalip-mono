@@ -108,8 +108,8 @@ export class WebSettingServiceImpl implements WebSettingService {
     };
   }
 
-  async findAllCarousels() {
-    const carousels = await this._webSettingRepository.findAllCarousels();
+  async findAllCarousel() {
+    const carousels = await this._webSettingRepository.findAllCarousel();
 
     return {
       result: carousels,

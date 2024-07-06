@@ -27,7 +27,6 @@ export default function ListPackage({ packages, classTypes }: PackageProps) {
 
   const onFilter = (packageType: SelectClassType) => {
     setSelectedPackageType(packageType);
-    console.log(packageType);
     if (packageType.id === 0) {
       setFilteredPackages(packages);
       return;

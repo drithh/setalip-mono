@@ -39,8 +39,6 @@ export default function Header({ auth }: HeaderProps) {
     return menu?.label || '';
   };
 
-  console.log(getActive());
-
   return (
     <header className="sticky top-0 z-30 flex h-14 w-full place-content-between  place-items-center gap-4 border-b bg-background px-4 sm:static  sm:border-0  sm:px-6">
       <h2 className="text-2xl font-semibold">{getActive()}</h2>

@@ -58,7 +58,7 @@ export async function editWebSetting(
     logo: fileUpload[0]?.url ?? '',
   };
 
-  console.log(parsedData);
+  parsedData;
 
   const parsedDataWithKeys = Object.keys(parsedData).map((key) => {
     const keyAs = key as keyof typeof parsedData; // Ensure 'key' is a valid key of parsedData

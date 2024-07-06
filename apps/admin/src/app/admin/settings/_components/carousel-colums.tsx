@@ -35,7 +35,7 @@ export function getColumns({}: getColumnsProps): ColumnDef<SelectCarousel>[] {
     {
       accessorKey: 'image_url',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Bank Name" />
+        <DataTableColumnHeader column={column} title="Image URL" />
       ),
       cell: ({ row }) => <div>{row.original.image_url}</div>,
       enableSorting: false,

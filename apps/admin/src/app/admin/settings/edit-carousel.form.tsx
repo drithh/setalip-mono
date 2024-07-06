@@ -86,7 +86,8 @@ export default function EditCarouselForm({
     form: {
       id: data.id,
       title: data.title,
-      image_url: data.image_url,
+      file: null,
+      image_url: data.image_url !== '' ? data.image_url : undefined,
     } as FormSchema,
   });
 
@@ -138,19 +139,21 @@ export default function EditCarouselForm({
 
   function handleOnDrop(acceptedFiles: FileList | null) {
     if (!acceptedFiles || acceptedFiles.length === 0) {
-      form.setError("file", { message: "File tidak valid" });
+      form.setError('file', { message: 'File tidak valid' });
       return;
     }
     const file = acceptedFiles[0];
 
     if (!file) {
-      form.setError("file", { message: "File tidak valid" });
+      form.setError('file', { message: 'File tidak valid' });
       return;
     }
 
-    form.setValue("file", file);
-    form.clearErrors("file");
+    form.setValue('file', file);
+    form.clearErrors('file');
   }
+
+  data;
 
   return (
     <Sheet
@@ -188,6 +191,24 @@ export default function EditCarouselForm({
                     </FormItem>
                   )}
                 />
+                {data.image_url !== '' && (
+                  <FormField
+                    control={form.control}
+                    name="image_url"
+                    render={({ field }) => (
+                      <FormItem className="grid w-full gap-2">
+                        <FormControl>
+                          <Input
+                            type="hidden"
+                            {...field}
+                            value={data.image_url}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <FormField
                   control={form.control}

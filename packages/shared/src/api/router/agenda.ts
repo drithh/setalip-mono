@@ -95,8 +95,6 @@ export const agendaRouter = {
         input.location_name?.split('.').map((location) => parseInt(location)) ??
         [];
 
-      console.log('input', input);
-
       const classTypes =
         input.class_type_name
           ?.split('.')
@@ -110,8 +108,6 @@ export const agendaRouter = {
           error: new Error('User not found'),
         };
       }
-
-      console.log('input', classTypes);
 
       const agendaService = ctx.container.get<AgendaService>(
         TYPES.AgendaService

@@ -109,7 +109,7 @@ export default function CreateLocationForm({}: CreateLocationFormProps) {
   };
 
   const formRef = useRef<HTMLFormElement>(null);
-  console.log('formState', form.formState.errors);
+
   return (
     <Sheet open={openSheet} onOpenChange={setOpenSheet}>
       <SheetTrigger asChild>

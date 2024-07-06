@@ -7,46 +7,37 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
-import { getColumns } from './deposit-account-colums';
-import { SelectClassType, SelectDepositAccount } from '@repo/shared/repository';
+import { getColumns } from './carousel-colums';
+import { SelectClassType, SelectCarousel } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
-import { findAllDepositAccountSchema } from '@repo/shared/api/schema';
-import CreateDepositAccountForm from '../create-deposit-account.form';
+import CreateCarouselForm from '../create-carousel.form';
 
-interface DepositAccountTableProps {
-  search: z.infer<typeof findAllDepositAccountSchema>;
-}
+interface CarouselTableProps {}
 
-export default function DepositAccountTable({
-  search,
-}: DepositAccountTableProps) {
-  const [{ result, error }] =
-    api.webSetting.findAllDepositAccount.useSuspenseQuery(
-      {
-        ...search,
-        per_page: 100,
-      },
-      {},
-    );
+export default function CarouselTable({}: CarouselTableProps) {
+  const [{ result, error }] = api.webSetting.findAllCarousel.useSuspenseQuery(
+    void {},
+    {},
+  );
   if (error) {
     throw new Error('Error fetching data', error);
   }
 
   const columns = React.useMemo(() => getColumns({}), []);
 
-  const filterFields: DataTableFilterField<SelectDepositAccount>[] = [
-    {
-      label: 'Name',
-      value: 'name',
-      placeholder: 'Filter nama...',
-    },
+  const filterFields: DataTableFilterField<SelectCarousel>[] = [
+    // {
+    //   label: 'Name',
+    //   value: 'name',
+    //   placeholder: 'Filter nama...',
+    // },
   ];
 
   const { table } = useDataTable({
-    data: result?.data ?? [],
+    data: result ?? [],
     columns,
-    pageCount: result?.pageCount,
+    pageCount: -1,
     filterFields,
     defaultPerPage: 10,
     defaultSort: 'created_at.asc',
@@ -56,7 +47,7 @@ export default function DepositAccountTable({
   return (
     <DataTable table={table} pagination={false}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <CreateDepositAccountForm />
+        <CreateCarouselForm />
       </DataTableToolbar>
     </DataTable>
   );

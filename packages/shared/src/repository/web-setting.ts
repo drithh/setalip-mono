@@ -99,7 +99,7 @@ export interface WebSettingRepository {
   findAllReview(data: findAllReviewOption): Promise<SelectAllReview>;
   findTermsAndConditions(): Promise<string | undefined>;
   findPrivacyPolicy(): Promise<string | undefined>;
-  findAllCarousels(): Promise<SelectCarousel[]>;
+  findAllCarousel(): Promise<SelectCarousel[]>;
 
   createDepositAccount(
     data: InsertDepositAccount

@@ -29,7 +29,6 @@ export default function ListClass({ classes, classTypes }: ClassProps) {
 
   const onFilter = (classType: SelectClassType) => {
     setSelectedClassType(classType);
-    console.log(classType);
     if (classType.id === 0) {
       setFilteredClasses(classes);
       return;

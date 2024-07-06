@@ -16,6 +16,16 @@ import { WebSettings } from '#dep/db/schema';
 import { WebSettingService } from '#dep/service/web-setting';
 
 export const webSettingRouter = {
+  findAllCarousel: adminProcedure.query(async ({ ctx }) => {
+    const webSettingService = ctx.container.get<WebSettingService>(
+      TYPES.WebSettingService
+    );
+
+    const carousels = webSettingService.findAllCarousel();
+
+    return carousels;
+  }),
+
   findAllFrequentlyAskedQuestion: adminProcedure
     .input(findAllFrequentlyAskedQuestionSchema)
     .query(async ({ ctx, input }) => {

@@ -101,7 +101,6 @@ export default function EditOperationalHourForm({
   });
 
   useEffect(() => {
-    console.log('formState', formState);
     toast.dismiss();
     if (formState.status === 'field-errors') {
       for (const fieldName in formState.errors) {
@@ -131,7 +130,6 @@ export default function EditOperationalHourForm({
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('formState', form.getValues('operationalHour'));
     form.handleSubmit(() => {
       toast.loading(TOAST_MESSAGES.loading.title, {
         description: TOAST_MESSAGES.loading.description,

@@ -17,7 +17,6 @@ export interface IndexPageProps {
 
 export default async function Packages({ searchParams }: IndexPageProps) {
   const search = findAllPackageSchema.parse(searchParams);
-  console.log('search', search);
   const classService = container.get<ClassService>(TYPES.ClassService);
   const classes = await classService.findAll({});
 

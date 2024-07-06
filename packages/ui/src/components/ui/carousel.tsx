@@ -69,6 +69,7 @@ const Carousel = forwardRef<
   ) => {
     const [emblaMainRef, emblaMainApi] = useEmblaCarousel(
       {
+        loop: true,
         ...carouselOptions,
         axis: orientation === 'vertical' ? 'y' : 'x',
         direction: carouselOptions?.direction ?? (dir as DirectionOption),
@@ -354,7 +355,6 @@ const CarouselPrevious = forwardRef<
     orientation,
     direction,
   } = useCarousel();
-
   const scroll = direction === 'rtl' ? scrollNext : scrollPrev;
   const canScroll = direction === 'rtl' ? canScrollNext : canScrollPrev;
   return (
@@ -363,7 +363,7 @@ const CarouselPrevious = forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        'absolute h-6 w-6 rounded-full z-10',
+        'absolute w-12 h-12 md:h-24 md:w-24 rounded-full z-10',
         orientation === 'vertical'
           ? '-top-2 left-1/2 -translate-x-1/2 rotate-90'
           : '-left-2 top-1/2 -translate-y-1/2',
@@ -373,11 +373,12 @@ const CarouselPrevious = forwardRef<
       disabled={!canScroll}
       {...props}
     >
-      <ChevronLeftIcon className="h-4 w-4" />
+      <ChevronLeftIcon className="w-12 h-12 md:h-24 md:w-24 text-primary-foreground/50 hover:text-primary-foreground" />
       <span className="sr-only">Previous slide</span>
     </Button>
   );
 });
+
 CarouselPrevious.displayName = 'CarouselPrevious';
 
 const CarouselNext = forwardRef<
@@ -400,7 +401,7 @@ const CarouselNext = forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        'absolute h-6 w-6 rounded-full z-10',
+        'absolute w-12 md:h-24 h-12 md:w-24 rounded-full z-10',
         orientation === 'vertical'
           ? '-bottom-2 left-1/2 -translate-x-1/2 rotate-90'
           : '-right-2 top-1/2 -translate-y-1/2',
@@ -410,7 +411,7 @@ const CarouselNext = forwardRef<
       disabled={!canScroll}
       {...props}
     >
-      <ChevronRightIcon className="h-4 w-4" />
+      <ChevronRightIcon className="w-12 md:h-24 h-12 md:w-24 text-primary-foreground/50 hover:text-primary-foreground" />
       <span className="sr-only">Next slide</span>
     </Button>
   );

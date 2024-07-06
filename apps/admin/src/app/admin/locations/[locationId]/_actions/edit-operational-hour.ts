@@ -49,7 +49,6 @@ export async function editOperationalHour(
   const formData = convertFormData(data);
 
   const transformedData = transformData(formData);
-  console.log('transformedData', transformedData);
 
   const newFormData = {
     ...formData,

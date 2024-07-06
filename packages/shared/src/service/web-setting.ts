@@ -37,7 +37,7 @@ export interface WebSettingService {
   ): PromiseResult<SelectAllReview, Error>;
   findTermsAndConditions(): PromiseResult<string, Error>;
   findPrivacyPolicy(): PromiseResult<string, Error>;
-  findAllCarousels(): PromiseResult<SelectCarousel[], Error>;
+  findAllCarousel(): PromiseResult<SelectCarousel[], Error>;
 
   createDepositAccount(
     data: InsertDepositAccount

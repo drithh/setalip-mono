@@ -238,7 +238,7 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
       );
 
       if (data.amount > creditSum) {
-        console.log('Insufficient credit:', data.amount, creditSum);
+        console.error('Insufficient credit:', data.amount, creditSum);
         return new Error('Insufficient credit');
       }
 

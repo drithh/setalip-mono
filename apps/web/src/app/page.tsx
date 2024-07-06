@@ -1,6 +1,6 @@
 'use server';
 import { TYPES, container } from '@repo/shared/inversify';
-import { LocationService } from '@repo/shared/service';
+import { LocationService, WebSettingService } from '@repo/shared/service';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   Carousel,
@@ -17,23 +17,32 @@ import { Review } from './_components/review';
 import Link from 'next/link';
 import { Card } from '@repo/ui/components/ui/card';
 
-// image
-const images = [
-  'http://localhost:3000/uploads/1.webp',
-  'http://localhost:3000/uploads/2.webp',
-  'http://localhost:3000/uploads/3.webp',
-];
-
 export default async function Home() {
   const locationService = container.get<LocationService>(TYPES.LocationService);
   const locations = await locationService.findAll();
+
+  const webSettingService = container.get<WebSettingService>(
+    TYPES.WebSettingService,
+  );
+
+  const carousels = await webSettingService.findAllCarousel();
+
   return (
     <main className="relative z-0 mx-auto w-full">
       <div className="sticky top-[72px] z-0">
-        <Carousel className=" m-0 w-full">
-          <div className="relative w-full">
+        <Carousel className="relative m-0 w-full">
+          <CarouselPrevious
+            variant={'ghost'}
+            className="border-0 bg-transparent hover:bg-transparent"
+          />
+          <CarouselNext
+            variant={'ghost'}
+            className="border-0 bg-transparent hover:bg-transparent"
+          />
+
+          <div className="relative z-0 w-full">
             <CarouselMainContainer className="">
-              {images.map((src, index) => (
+              {carousels.result?.map((carousel, index) => (
                 <SliderMainItem
                   key={index}
                   className="relative h-[calc(100vh-72px)] w-full bg-transparent p-0"
@@ -41,15 +50,26 @@ export default async function Home() {
                   <Image
                     fill
                     className="absolute object-cover"
-                    alt={'image ' + index}
-                    src={src}
+                    alt={carousel.title}
+                    src={carousel.image_url}
                   />
+                  <div className="absolute left-1/2 top-1/2 flex max-w-xl -translate-x-1/2 -translate-y-1/2 flex-col gap-4 text-center text-primary-foreground/70 md:left-[8rem] md:-translate-x-0 md:text-left ">
+                    <h1 className="text-3xl font-medium sm:text-5xl md:text-7xl">
+                      {carousel.title}
+                    </h1>
+                    <Button
+                      className="h-12 w-40 text-xl shadow-md"
+                      variant={'default'}
+                    >
+                      Book Now
+                    </Button>
+                  </div>
                 </SliderMainItem>
               ))}
             </CarouselMainContainer>
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
               <CarouselThumbsContainer className="gap-x-1 ">
-                {images.map((_, index) => (
+                {carousels.result?.map((_, index) => (
                   <CarouselIndicator key={index} index={index} />
                 ))}
               </CarouselThumbsContainer>

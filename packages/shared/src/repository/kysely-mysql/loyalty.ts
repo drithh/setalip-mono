@@ -180,7 +180,7 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
       );
 
       if (data.amount > loyaltySum) {
-        console.log('Insufficient loyalty:', data.amount, loyaltySum);
+        console.error('Insufficient loyalty:', data.amount, loyaltySum);
         return new Error('Insufficient loyalty');
       }
 

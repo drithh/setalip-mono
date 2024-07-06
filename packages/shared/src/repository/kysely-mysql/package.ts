@@ -248,7 +248,6 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       ])
       .execute();
 
-    console.log('query', query, packageSession);
 
     const combined = query.map((userPackage) => {
       const packageTransaction = packageSession.find(

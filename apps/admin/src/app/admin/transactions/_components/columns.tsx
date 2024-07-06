@@ -91,7 +91,7 @@ export function getColumns({
         <DataTableColumnHeader column={column} title="Deposit Account" />
       ),
       cell: ({ row }) => {
-        return <span>{row.original.deposit_account_bank} days</span>;
+        return <span>{row.original.deposit_account_bank}</span>;
       },
     },
     {
