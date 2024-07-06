@@ -39,7 +39,6 @@ export async function editAgenda(
 
   const result = await agendaService.update({
     id: parsed.data.id,
-    slot: parsed.data.slot,
     time: parsed.data.time,
     class_id: parsed.data.class_id,
     coach_id: parsed.data.coach_id,

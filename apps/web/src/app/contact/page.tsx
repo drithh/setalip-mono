@@ -47,7 +47,7 @@ export default async function Contacts() {
                 >
                   <InstagramLogoIcon className="h-6 w-6" />
                   <span className="sr-only">Instagram</span>
-                  <p>{contact.result?.instagram}</p>
+                  <p>{contact.result?.instagram_handle}</p>
                 </Link>
                 <Link
                   href="#"
@@ -56,7 +56,7 @@ export default async function Contacts() {
                 >
                   <TiktokSvg className="h-6 w-6 fill-current" />
                   <span className="sr-only">TikTok</span>
-                  <p>{contact.result?.tiktok}</p>
+                  <p>{contact.result?.tiktok_handle}</p>
                 </Link>
               </div>
             </div>

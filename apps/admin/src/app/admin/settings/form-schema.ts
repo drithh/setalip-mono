@@ -16,8 +16,8 @@ export const editWebSettingSchema = z.object({
     (data) => data === null || data instanceof File,
     'Data is not an instance of a File',
   ),
-  terms_and_conditions: z.string().min(3).max(255),
-  privacy_policy: z.string().min(3).max(255),
+  terms_and_conditions: z.string().min(3).max(2048),
+  privacy_policy: z.string().min(3).max(2048),
   url: z.string().url().optional(),
   // .refine((data) => {
   //   return data === undefined || data?.startsWith('http');

@@ -33,6 +33,7 @@ import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
 import FileCard from '../locations/[locationId]/_components/file-card';
+import RichTextEditor from '@repo/ui/components/rich-text/text-editor';
 
 interface EditWebSettingFormProps {
   webSetting: EditWebSettingSchema;
@@ -106,8 +107,8 @@ export default function EditWebSettingForm({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
-      router.refresh();
       setOpenSheet(false);
+      router.refresh();
     }
   }, [formState]);
 
@@ -144,7 +145,7 @@ export default function EditWebSettingForm({
       <SheetTrigger asChild>
         <Button variant={'outline'}>Edit</Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="overflow-scroll sm:max-w-[52rem]">
         <SheetHeader>
           <SheetTitle className="text-left">Edit Detail Lokasi</SheetTitle>
           <SheetDescription className="text-left">
@@ -270,9 +271,17 @@ export default function EditWebSettingForm({
                 name="privacy_policy"
                 render={({ field }) => (
                   <FormItem className="grid w-full gap-2">
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Privacy Policy</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <>
+                        <Input type="hidden" {...field} />
+                        <RichTextEditor
+                          value={field.value}
+                          onChange={(value) =>
+                            form.setValue('privacy_policy', value)
+                          }
+                        />
+                      </>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -283,9 +292,17 @@ export default function EditWebSettingForm({
                 name="terms_and_conditions"
                 render={({ field }) => (
                   <FormItem className="grid w-full gap-2">
-                    <FormLabel>Google Maps URL</FormLabel>
+                    <FormLabel>Terms and Conditions</FormLabel>
                     <FormControl>
-                      <Input type="text" {...field} />
+                      <>
+                        <Input type="hidden" {...field} />
+                        <RichTextEditor
+                          value={field.value}
+                          onChange={(value) =>
+                            form.setValue('terms_and_conditions', value)
+                          }
+                        />
+                      </>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

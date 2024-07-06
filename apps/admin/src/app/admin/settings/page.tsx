@@ -18,7 +18,7 @@ import { findAllDepositReviewFaqSchema } from '@repo/shared/api/schema';
 import DepositAccountTable from './_components/deposit-account-table';
 import EditWebSettingForm from './edit-web-settings.form';
 import CarouselTable from './_components/carousel-table';
-
+import RichTextViewer from '@repo/ui/components/rich-text/viewer';
 interface IndexPageProps {
   searchParams: Record<string, any>;
 }
@@ -93,20 +93,12 @@ export default async function Page({ searchParams }: IndexPageProps) {
 
             <div className="grid gap-3">
               <Label htmlFor="address">Terms and Conditions</Label>
-              <Textarea
-                readOnly
-                className="w-full"
-                defaultValue={termsAndConditions.result}
-              />
+              <RichTextViewer value={termsAndConditions.result ?? ''} />
             </div>
 
             <div className="grid gap-3">
               <Label htmlFor="phone">Privacy Policy</Label>
-              <Textarea
-                readOnly
-                className="w-full"
-                defaultValue={privacyPolicy.result}
-              />
+              <RichTextViewer value={privacyPolicy.result ?? ''} />
             </div>
           </div>
         </CardContent>
