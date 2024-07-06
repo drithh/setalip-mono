@@ -1,5 +1,10 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import { NotificationService, SendNotification } from '#dep/notification/index';
+import {
+  NotificationPayload,
+  NotificationService,
+  NotificationType,
+  SendNotification,
+} from '#dep/notification/index';
 import { env } from '#dep/env';
 import { injectable } from 'inversify';
 
@@ -21,9 +26,67 @@ interface ErrorResponse {
   message: 'Invalid Parameters!';
   data: false;
 }
+
+const HEADER_MESSAGE = 'Pilates Reform Indonesia\n';
+const FOOTER_MESSAGE = '\n\nPowered by Pilates Reform Indonesia';
+
+const parseNotification = (payload: NotificationPayload) => {
+  switch (payload.type) {
+    case NotificationType.OtpSent:
+      return (
+        `${HEADER_MESSAGE}` +
+        `Kode OTP Anda adalah ${payload.otp}. Jangan memberitahukan kode ini kepada siapapun.` +
+        `Jika Anda tidak meminta kode ini, abaikan pesan ini.` +
+        `${FOOTER_MESSAGE}`
+      );
+    case NotificationType.UserResetPassword:
+      return (
+        `${HEADER_MESSAGE}` +
+        `Silahkan klik link berikut untuk mereset password Anda: ${payload.resetPasswordLink}` +
+        `${FOOTER_MESSAGE}`
+      );
+    case NotificationType.UserBookedAgenda:
+      return (
+        `${HEADER_MESSAGE}` +
+        `Anda telah berhasil melakukan booking kelas pada tanggal ${payload.date}, ` +
+        `kelas ${payload.class} dengan durasi ${payload.duration} menit` +
+        `di lokasi ${payload.location} pada ruangan ${payload.facility} ` +
+        `${FOOTER_MESSAGE}`
+      );
+    case NotificationType.AdminCancelledUserAgenda:
+      return (
+        `${HEADER_MESSAGE}` +
+        `Admin telah membatalkan booking kelas Anda pada tanggal ${payload.date}, ` +
+        `kelas ${payload.class}` +
+        `di lokasi ${payload.location} pada ruangan ${payload.facility} ` +
+        `${FOOTER_MESSAGE}`
+      );
+    case NotificationType.UserBoughtPackage:
+      return (
+        `${HEADER_MESSAGE}` +
+        `Anda telah berhasil melakukan pembelian paket ${payload.package} ` +
+        `Silahkan melakukan pembayaran ke ${payload.deposit_account_bank_name} atas nama ${payload.deposit_account_name}` +
+        `dengan nomor rekening ${payload.deposit_account_account_number}` +
+        `${FOOTER_MESSAGE}`
+      );
+    case NotificationType.AdminConfirmedUserPackage:
+      return (
+        `${HEADER_MESSAGE}` +
+        `Admin telah mengkonfirmasi pembelian paket ${payload.package} ` +
+        `dengan tipe kelas ${payload.class_type} sebesar ${payload.credit} kredit` +
+        `status pembelian: ${payload.status} ` +
+        `expired at: ${payload.expired_at}` +
+        `${FOOTER_MESSAGE}`
+      );
+    default:
+      return 'Unknown notification!';
+  }
+};
+
 @injectable()
 export class WhatsappNotificationService implements NotificationService {
-  async sendNotification({ message, recipient }: SendNotification) {
+  async sendNotification({ payload, recipient }: SendNotification) {
+    const message = parseNotification(payload);
     try {
       const result = await this.sendWhatsappMessage({
         secret: env.WHAPIFY_SECRET,

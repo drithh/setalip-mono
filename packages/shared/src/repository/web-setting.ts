@@ -88,6 +88,9 @@ export interface WebSettingRepository {
   findAllDepositAccount(
     data: findAllDepositAccountOption
   ): Promise<SelectAllDepositAccount>;
+  findDepositAccountById(
+    id: SelectDepositAccount['id']
+  ): Promise<SelectDepositAccount | undefined>;
   findAllReview(data: findAllReviewOption): Promise<SelectAllReview>;
   findTermsAndConditions(): Promise<string | undefined>;
   findPrivacyPolicy(): Promise<string | undefined>;

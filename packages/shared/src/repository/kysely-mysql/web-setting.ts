@@ -137,6 +137,16 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     };
   }
 
+  async findDepositAccountById(id: SelectDepositAccount['id']) {
+    const query = await this._db
+      .selectFrom('deposit_accounts')
+      .where('deposit_accounts.id', '=', id)
+      .selectAll()
+      .executeTakeFirst();
+
+    return query;
+  }
+
   async findAllReview(data: findAllReviewOption) {
     const { page = 1, perPage = 10, sort, email } = data;
 

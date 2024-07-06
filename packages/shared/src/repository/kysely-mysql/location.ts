@@ -11,6 +11,7 @@ import {
   SelectLocation,
   SelectLocationAsset,
   SelectLocationWithAsset,
+  SelectLocationWithFacility,
   UpdateFacility,
   UpdateLocation,
   UpdateOperationalHours,
@@ -118,6 +119,25 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
       .execute();
 
     return facilities;
+  }
+
+  async findLocationByFacilityId(
+    id: SelectFacility['id']
+  ): Promise<SelectLocationWithFacility | undefined> {
+    const location = await this._db
+      .selectFrom('locations')
+      .innerJoin(
+        'location_facilities',
+        'location_facilities.location_id',
+        'locations.id'
+      )
+      .selectAll('locations')
+      .select(['location_facilities.name as facility_name'])
+      .where('location_facilities.id', '=', id)
+      .where('locations.deleted_at', 'is', null)
+      .executeTakeFirst();
+
+    return location;
   }
 
   create(data: InsertLocation): Promise<SelectLocation> {

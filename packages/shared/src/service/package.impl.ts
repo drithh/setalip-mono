@@ -1,6 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
 import type {
+  ClassTypeRepository,
   FindAllPackageOptions,
   FindAllUserPackageOption,
   FindAllUserPackageTransactionOption,
@@ -12,17 +13,32 @@ import type {
   SelectPackageTransaction,
   UpdatePackage,
   UpdatePackageTransaction,
+  UserRepository,
+  WebSettingRepository,
 } from '../repository';
 import { PackageService } from './package';
+import { NotificationType, type NotificationService } from '../notification';
 
 @injectable()
 export class PackageServiceImpl implements PackageService {
   private _packageRepository: PackageRepository;
+  private _notificationService: NotificationService;
+  private _userRepository: UserRepository;
+  private _webSettingRepository: WebSettingRepository;
+  private _classTypeRepository: ClassTypeRepository;
 
   constructor(
-    @inject(TYPES.PackageRepository) packageRepository: PackageRepository
+    @inject(TYPES.PackageRepository) packageRepository: PackageRepository,
+    @inject(TYPES.NotificationService) notificationService: NotificationService,
+    @inject(TYPES.UserRepository) userRepository: UserRepository,
+    @inject(TYPES.WebSettingRepository) websRepository: WebSettingRepository,
+    @inject(TYPES.ClassTypeRepository) classTypeRepository: ClassTypeRepository
   ) {
     this._packageRepository = packageRepository;
+    this._notificationService = notificationService;
+    this._userRepository = userRepository;
+    this._webSettingRepository = websRepository;
+    this._classTypeRepository = classTypeRepository;
   }
 
   async findAll(data: FindAllPackageOptions) {
@@ -127,11 +143,55 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async createPackageTransaction(data: InsertPackageTransaction) {
+    const user = await this._userRepository.findById(data.user_id);
+
+    if (!user) {
+      return {
+        error: new Error('User not found'),
+      };
+    }
+
+    const packageData = await this._packageRepository.findById(data.package_id);
+
+    if (!packageData) {
+      return {
+        error: new Error('Package not found'),
+      };
+    }
+
+    const depositAccount =
+      await this._webSettingRepository.findDepositAccountById(
+        data.deposit_account_id
+      );
+
+    if (!depositAccount) {
+      return {
+        error: new Error('Deposit account not found'),
+      };
+    }
+
     const result = await this._packageRepository.createPackageTransaction(data);
 
     if (result instanceof Error) {
       return {
         error: result,
+      };
+    }
+
+    const notification = await this._notificationService.sendNotification({
+      payload: {
+        type: NotificationType.UserBoughtPackage,
+        package: packageData.name,
+        deposit_account_account_number: depositAccount.account_number,
+        deposit_account_name: depositAccount.name,
+        deposit_account_bank_name: depositAccount.bank_name,
+      },
+      recipient: user.phone_number,
+    });
+
+    if (notification.error) {
+      return {
+        error: notification.error,
       };
     }
 
@@ -156,6 +216,61 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async updatePackageTransaction(data: UpdatePackageTransaction) {
+    const packageTransaction =
+      await this._packageRepository.findPackageTransactionById(data.id);
+
+    if (!packageTransaction || !packageTransaction.deposit_account_id) {
+      return {
+        result: undefined,
+        error: new Error('Package transaction not found'),
+      };
+    }
+
+    const user = await this._userRepository.findById(
+      packageTransaction.user_id
+    );
+
+    if (!user) {
+      return {
+        result: undefined,
+        error: new Error('User not found'),
+      };
+    }
+
+    const packageData = await this._packageRepository.findById(
+      packageTransaction.package_id
+    );
+
+    if (!packageData) {
+      return {
+        result: undefined,
+        error: new Error('Package not found'),
+      };
+    }
+
+    const classTypes = await this._classTypeRepository.findById(
+      packageData.class_type_id
+    );
+
+    if (!classTypes) {
+      return {
+        result: undefined,
+        error: new Error('Class type not found'),
+      };
+    }
+
+    const depositAccount =
+      await this._webSettingRepository.findDepositAccountById(
+        packageTransaction.deposit_account_id
+      );
+
+    if (!depositAccount) {
+      return {
+        result: undefined,
+        error: new Error('Deposit account not found'),
+      };
+    }
+
     const result = await this._packageRepository.updatePackageTransaction(data);
 
     if (result instanceof Error) {
@@ -165,8 +280,29 @@ export class PackageServiceImpl implements PackageService {
       };
     }
 
+    if (result.status === 'completed') {
+      const notification = await this._notificationService.sendNotification({
+        payload: {
+          type: NotificationType.AdminConfirmedUserPackage,
+          package: packageData.name,
+          credit: result.credit,
+          status: result.status,
+          expired_at: result.expired_at,
+          class_type: classTypes.type,
+        },
+        recipient: user.phone_number,
+      });
+
+      if (notification.error) {
+        return {
+          result: undefined,
+          error: notification.error,
+        };
+      }
+    }
+
     return {
-      result: result,
+      result: undefined,
     };
   }
 

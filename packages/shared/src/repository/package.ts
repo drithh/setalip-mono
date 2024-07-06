@@ -8,7 +8,13 @@ import {
   UserPackages,
   Users,
 } from '../db';
-import { DefaultPagination, OptionalToRequired, SelectClassType } from '.';
+import {
+  DefaultPagination,
+  OptionalToRequired,
+  SelectClassType,
+  SelectCredit,
+  SelectDepositAccount,
+} from '.';
 
 export interface FindAllPackageOptions extends DefaultPagination {
   name?: string;
@@ -34,7 +40,7 @@ export interface InsertPackageTransaction {
   user_id: SelectPackageTransaction['user_id'];
   package_id: SelectPackage['id'];
   discount: SelectPackageTransaction['discount'];
-  deposit_account_id: SelectPackageTransaction['deposit_account_id'];
+  deposit_account_id: SelectDepositAccount['id'];
   unique_code: SelectPackageTransaction['unique_code'];
 }
 
@@ -94,6 +100,12 @@ export interface SelectAllActivePackage extends Selectable<UserPackages> {
   class_type: ClassTypes['type'];
 }
 
+export interface UpdatePackageTransactionResult {
+  status: SelectPackageTransaction['status'];
+  credit: SelectCredit['amount'];
+  expired_at: SelectCredit['expired_at'];
+}
+
 export interface PackageRepository {
   count(): Promise<number>;
 
@@ -102,6 +114,9 @@ export interface PackageRepository {
   findAllPackageTransaction(
     data: FindAllUserPackageTransactionOption
   ): Promise<SelectAllPackageTransactionWithUser>;
+  findPackageTransactionById(
+    id: SelectPackageTransaction['id']
+  ): Promise<SelectPackageTransactionWithPackage | undefined>;
   findAllPackageTransactionByUserId(
     data: FindAllUserPackageOption
   ): Promise<SelectAllPackageTransaction>;
@@ -125,7 +140,7 @@ export interface PackageRepository {
   update(data: UpdatePackage): Promise<undefined | Error>;
   updatePackageTransaction(
     data: UpdatePackageTransaction
-  ): Promise<undefined | Error>;
+  ): Promise<UpdatePackageTransactionResult | Error>;
 
   delete(id: SelectPackage['id']): Promise<undefined | Error>;
 }

@@ -1,7 +1,7 @@
 import type { OtpRepository } from '#dep/repository/otp';
 import { Users } from '../db';
 import { TYPES } from '../inversify';
-import type { NotificationService } from '../notification';
+import { NotificationType, type NotificationService } from '../notification';
 import type { SelectUser, UserRepository } from '../repository';
 import { OtpService, SendOtp, VerifyOtp } from './otp';
 import { inject, injectable } from 'inversify';
@@ -50,7 +50,10 @@ export class OtpServiceImpl implements OtpService {
     }
 
     const notification = await this._notificationService.sendNotification({
-      message: `Your otp is ${otp}`,
+      payload: {
+        type: NotificationType.OtpSent,
+        otp,
+      },
       recipient: user.phone_number,
     });
 

@@ -183,6 +183,25 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     };
   }
 
+  findPackageTransactionById(id: SelectPackageTransaction['id']) {
+    return this._db
+      .selectFrom('package_transactions')
+      .innerJoin('packages', 'package_transactions.package_id', 'packages.id')
+      .leftJoin(
+        'credit_transactions',
+        'package_transactions.user_package_id',
+        'credit_transactions.user_package_id'
+      )
+      .selectAll('package_transactions')
+      .select([
+        'packages.name as package_name',
+        'packages.credit',
+        'credit_transactions.expired_at as package_expired_at',
+      ])
+      .where('package_transactions.id', '=', id)
+      .executeTakeFirst();
+  }
+
   async findAllActivePackageByUserId(
     user_id: SelectPackageTransaction['user_id']
   ) {
@@ -447,7 +466,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
   async updatePackageTransaction(data: UpdatePackageTransaction) {
     try {
-      await this._db.transaction().execute(async (trx) => {
+      const trx = await this._db.transaction().execute(async (trx) => {
         const packageTransaction = await trx
           .selectFrom('package_transactions')
           .selectAll()
@@ -535,9 +554,15 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
           console.error('Failed to update package transaction', query);
           return new Error('Failed to update package transaction');
         }
+
+        return {
+          credit: singlePackage.credit,
+          status: data.status,
+          expired_at: expiredAt,
+        };
       });
 
-      return;
+      return trx;
     } catch (error) {
       console.error('Error updating package transaction:', error);
       return new Error('Failed to update package transaction');

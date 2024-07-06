@@ -5,7 +5,7 @@ import { ResetPasswordService, VerifyResetPassword } from './reset-password';
 import type { ResetPasswordRepository } from '#dep/repository/reset-password';
 import { TYPES } from '../inversify';
 import { UserValidationError } from './auth';
-import type { NotificationService } from '../notification';
+import { NotificationType, type NotificationService } from '../notification';
 import type { SelectUser, UserRepository } from '../repository';
 import { generateIdFromEntropySize } from 'lucia';
 import { env } from '#dep/env';
@@ -54,7 +54,10 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
     const resetPasswordLink = `http://${host}/reset-password/${token}`;
 
     const notification = await this._notificationService.sendNotification({
-      message: `Your reset password link is ${resetPasswordLink}`,
+      payload: {
+        type: NotificationType.UserResetPassword,
+        resetPasswordLink,
+      },
       recipient: user.phone_number,
     });
 

@@ -15,9 +15,11 @@ import type {
   PackageRepository,
   CreditRepository,
   InsertAgendaAndTransaction,
+  LocationRepository,
 } from '../repository';
 import { AgendaService } from './agenda';
 import { addMinutes, isAfter, isBefore, isEqual } from 'date-fns';
+import { NotificationType, type NotificationService } from '../notification';
 
 @injectable()
 export class AgendaServiceImpl implements AgendaService {
@@ -26,19 +28,25 @@ export class AgendaServiceImpl implements AgendaService {
   private _classRepository: ClassRepository;
   private _packageRepository: PackageRepository;
   private _creditRepository: CreditRepository;
+  private _notificationService: NotificationService;
+  private _locationRepository: LocationRepository;
 
   constructor(
     @inject(TYPES.AgendaRepository) agendaRepository: AgendaRepository,
     @inject(TYPES.UserRepository) userRepository: UserRepository,
     @inject(TYPES.ClassRepository) classRepository: ClassRepository,
     @inject(TYPES.PackageRepository) packageRepository: PackageRepository,
-    @inject(TYPES.CreditRepository) creditRepository: CreditRepository
+    @inject(TYPES.CreditRepository) creditRepository: CreditRepository,
+    @inject(TYPES.NotificationService) notificationService: NotificationService,
+    @inject(TYPES.LocationRepository) locationRepository: LocationRepository
   ) {
     this._agendaRepository = agendaRepository;
     this._userRepository = userRepository;
     this._classRepository = classRepository;
     this._packageRepository = packageRepository;
     this._creditRepository = creditRepository;
+    this._notificationService = notificationService;
+    this._locationRepository = locationRepository;
   }
 
   async count() {
@@ -142,6 +150,17 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
+    const agendaLocation =
+      await this._locationRepository.findLocationByFacilityId(
+        agenda.location_facility_id
+      );
+
+    if (!agendaLocation) {
+      return {
+        error: new Error('Location not found'),
+      };
+    }
+
     const countParticipant = await this._agendaRepository.countParticipant(
       data.agenda_id
     );
@@ -229,6 +248,24 @@ export class AgendaServiceImpl implements AgendaService {
     if (result instanceof Error) {
       return {
         error: result,
+      };
+    }
+
+    const notification = await this._notificationService.sendNotification({
+      payload: {
+        type: NotificationType.UserBookedAgenda,
+        date: agenda.time,
+        class: agendaClass.name,
+        duration: agendaClass.duration,
+        location: agendaLocation.name,
+        facility: agendaLocation.facility_name,
+      },
+      recipient: user.phone_number,
+    });
+
+    if (notification.error) {
+      return {
+        error: notification.error,
       };
     }
 
