@@ -7,6 +7,7 @@ import {
   Home,
   LineChart,
   MapPin,
+  MessageCircleHeart,
   Package,
   Package2,
   Settings,
@@ -55,6 +56,11 @@ export const menus: Menu[] = [
     icon: <SquarePercent className="h-5 w-5" />,
     label: 'Voucher & Flash Sale',
     path: '/admin/discounts',
+  },
+  {
+    icon: <MessageCircleHeart className="h-5 w-5" />,
+    label: 'Reviews',
+    path: '/admin/reviews',
   },
   {
     icon: <Settings className="h-5 w-5" />,

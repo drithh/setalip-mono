@@ -8,16 +8,22 @@ import {
 import { MultiSelect } from '@repo/ui/components/multi-select';
 import AgendaTable from './agenda';
 import { findAllScheduleSchema } from '@repo/shared/api/schema';
+import { validateRequest } from '@/lib/auth';
 
 export default async function Schedules({
   searchParams,
 }: {
   searchParams: any;
 }) {
+  const auth = await validateRequest();
+
   const search = findAllScheduleSchema.parse(searchParams);
-  if (search.location_name) {
-    console.log('search.location_name', search.location_name);
-  }
+
+  const defaultLocationSearch =
+    auth?.user?.locationId && !search.location_name
+      ? { location_name: auth.user.locationId.toString() }
+      : {};
+
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,
   );
@@ -42,7 +48,10 @@ export default async function Schedules({
           coaches={coaches.result || []}
           classTypes={classTypes.result || []}
           classes={classes.result?.data || []}
-          search={search}
+          search={{
+            ...search,
+            ...defaultLocationSearch,
+          }}
         />
       </div>
     </div>

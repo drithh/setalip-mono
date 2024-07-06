@@ -25,8 +25,9 @@ export const lucia = new Lucia(adapter, {
       email: attributes.email,
       verifiedAt: attributes.verified_at,
       phoneNumber: attributes.phone_number,
-      role: attributes.role,
       createdAt: attributes.created_at,
+      locationId: attributes.location_id,
+      role: attributes.role,
     };
   },
   sessionExpiresIn: new TimeSpan(2, 'w'), // 2 weeks
@@ -47,6 +48,7 @@ declare module 'lucia' {
     phone_number: SelectUser['phone_number'];
     verified_at: SelectUser['verified_at'];
     created_at: SelectUser['created_at'];
+    location_id: SelectUser['location_id'];
     role: SelectUser['role'];
   }
 }

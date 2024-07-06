@@ -15,7 +15,6 @@ import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import FaqTable from './_components/faq-table';
 import { findAllDepositReviewFaqSchema } from '@repo/shared/api/schema';
-import ReviewTable from './_components/review-table';
 import DepositAccountTable from './_components/deposit-account-table';
 import EditWebSettingForm from './edit-web-settings.form';
 
@@ -33,9 +32,6 @@ export default async function Page({ searchParams }: IndexPageProps) {
   const logo = await webSettingService.findLogo();
   const termsAndConditions = await webSettingService.findTermsAndConditions();
   const privacyPolicy = await webSettingService.findPrivacyPolicy();
-
-  const userService = container.get<UserService>(TYPES.UserService);
-  const users = await userService.findAllUserName();
 
   return (
     <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
@@ -121,18 +117,6 @@ export default async function Page({ searchParams }: IndexPageProps) {
         </CardHeader>
         <CardContent>
           <DepositAccountTable search={{ name: search.name }} />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Review</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ReviewTable
-            users={users.result ?? []}
-            search={{ email: search.email }}
-          />
         </CardContent>
       </Card>
 

@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { editReview } from './_actions/edit-review';
+import { createReview } from './_actions/create-review';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { EditReviewSchema, editReviewSchema } from './form-schema';
+import { CreateReviewSchema, createReviewSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Switch } from '@repo/ui/components/ui/switch';
@@ -26,7 +26,6 @@ import {
   SelectAllUserName,
   SelectClassType,
   SelectDetailLocation,
-  SelectReviewWithUser,
 } from '@repo/shared/repository';
 import {
   Sheet,
@@ -47,49 +46,41 @@ import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { Textarea } from '@repo/ui/components/ui/textarea';
 
-interface EditReviewProps {
-  data: SelectReviewWithUser;
+interface CreateReviewProps {
   users: SelectAllUserName;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
 }
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal memperbarui review',
+    title: 'Gagal membuat review',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Memperbarui review',
+    title: 'Membuat review',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Review berhasil diperbarui',
+    title: 'Review berhasil dibuat',
   },
 };
 
-export default function EditReviewForm({
-  data,
-  users,
-  open,
-  onOpenChange,
-}: EditReviewProps) {
-  const trpcUtils = api.useUtils();
-  const router = useRouter();
-  type FormSchema = EditReviewSchema;
+export default function CreateReviewForm({ users }: CreateReviewProps) {
+  const [openSheet, setOpenSheet] = useState(false);
 
-  const [formState, formAction] = useFormState(editReview, {
+  const trpcUtils = api.useUtils();
+  type FormSchema = CreateReviewSchema;
+
+  const [formState, formAction] = useFormState(createReview, {
     status: 'default',
     form: {
-      id: data.id,
-      user_id: data.user_id,
-      review: data.review,
-      rating: data.rating,
+      user_id: 0,
+      review: '',
+      rating: 0,
     } as FormSchema,
   });
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(editReviewSchema),
+    resolver: zodResolver(createReviewSchema),
     defaultValues: formState.form,
   });
 
@@ -116,11 +107,11 @@ export default function EditReviewForm({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
-      router.refresh();
+      form.reset();
       trpcUtils.invalidate();
-      onOpenChange(false);
+      setOpenSheet(false);
     }
-  }, [formState]);
+  }, [formState.form]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -135,22 +126,16 @@ export default function EditReviewForm({
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <Sheet
-      open={open}
-      onOpenChange={(ev) => {
-        form.reset();
-        onOpenChange(ev);
-      }}
-    >
+    <Sheet open={openSheet} onOpenChange={setOpenSheet}>
+      <SheetTrigger asChild>
+        <Button variant={'outline'}>Tambah</Button>
+      </SheetTrigger>
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">
-              Edit Frequently Asked Question
-            </SheetTitle>
+            <SheetTitle className="text-left">Buat Review</SheetTitle>
             <SheetDescription className="text-left">
-              Edit Frequently Asked Question. Pastikan klik simpan ketika
-              selesai.
+              Buat Review baru. Pastikan klik simpan ketika selesai.
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -161,19 +146,6 @@ export default function EditReviewForm({
                 action={formAction}
                 onSubmit={onFormSubmit}
               >
-                <FormField
-                  control={form.control}
-                  name="id"
-                  render={({ field }) => (
-                    <FormItem className="grid w-full gap-2">
-                      <FormControl>
-                        <Input type="hidden" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <FormField
                   control={form.control}
                   name="user_id"
@@ -231,6 +203,28 @@ export default function EditReviewForm({
                       <FormLabel>Rating</FormLabel>
                       <FormControl>
                         <Textarea id="rating" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="is_show"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Show Review</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(e) => {
+                              field.onChange(e ? 1 : 0);
+                            }}
+                          />
+                        </>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
