@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { Button } from '@repo/ui/components/ui/button';
-import { Input } from '@repo/ui/components/ui/input';
-import { PhoneInput } from '@repo/ui/components/phone-input';
-import { PasswordInput } from '@repo/ui/components/password-input';
-import { verifyUser } from './_actions/verify-user';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Value as PhoneNumberValue } from 'react-phone-number-input';
+import { Button } from "@repo/ui/components/ui/button";
+import { Input } from "@repo/ui/components/ui/input";
+import { PhoneInput } from "@repo/ui/components/phone-input";
+import { PasswordInput } from "@repo/ui/components/password-input";
+import { verifyUser } from "./_actions/verify-user";
+import { useFormState } from "react-dom";
+import { useEffect, useRef } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Value as PhoneNumberValue } from "react-phone-number-input";
 
 import {
   Form,
@@ -20,16 +20,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@repo/ui/components/ui/form';
-import Link from 'next/link';
-import { VerifyOtpSchema, verifyOtpSchema } from './form-schema';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+} from "@repo/ui/components/ui/form";
+import Link from "next/link";
+import { VerifyOtpSchema, verifyOtpSchema } from "./form-schema";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from '@repo/ui/components/ui/input-otp';
+} from "@repo/ui/components/ui/input-otp";
 
 interface VerifyUserFormProps {
   userId: number;
@@ -37,16 +37,16 @@ interface VerifyUserFormProps {
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal verifikasi user',
-    description: 'Silahkan coba lagi',
+    title: "Gagal verifikasi user",
+    description: "Silahkan coba lagi",
   },
   loading: {
-    title: 'Verifikasi user...',
-    description: 'Mohon tunggu',
+    title: "Verifikasi user...",
+    description: "Mohon tunggu",
   },
   success: {
-    title: 'Verifikasi user berhasil',
-    description: 'Selamat datang',
+    title: "Verifikasi user berhasil",
+    description: "Selamat datang",
   },
 };
 
@@ -54,9 +54,9 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
   const router = useRouter();
 
   const [formState, formAction] = useFormState(verifyUser, {
-    status: 'default',
+    status: "default",
     form: {
-      otp: '',
+      otp: "",
       userId: userId,
     },
   });
@@ -70,7 +70,7 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
 
   useEffect(() => {
     toast.dismiss();
-    if (formState.status === 'field-errors') {
+    if (formState.status === "field-errors") {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
           const typedFieldName = fieldName as keyof FormSchema;
@@ -80,19 +80,19 @@ export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
           }
         }
       }
-    } else if (formState.status === 'error') {
+    } else if (formState.status === "error") {
       toast.error(TOAST_MESSAGES.error.title, {
         description: formState.errors,
       });
-      form.setError('root', { message: formState.errors });
+      form.setError("root", { message: formState.errors });
     }
-    if (formState.status === 'success') {
+    if (formState.status === "success") {
       toast.success(TOAST_MESSAGES.success.title, {
         description: TOAST_MESSAGES.success.description,
       });
-      router.push('/');
+      router.push("/");
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

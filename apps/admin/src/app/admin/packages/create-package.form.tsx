@@ -110,7 +110,7 @@ export default function CreatePackageForm({ classTypes }: CreatePackageProps) {
       trpcUtils.invalidate();
       setOpenSheet(false);
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

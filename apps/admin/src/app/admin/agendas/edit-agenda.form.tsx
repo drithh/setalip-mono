@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { Button } from '@repo/ui/components/ui/button';
-import { Input } from '@repo/ui/components/ui/input';
-import { editAgenda } from './_actions/edit-agenda';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from "@repo/ui/components/ui/button";
+import { Input } from "@repo/ui/components/ui/input";
+import { editAgenda } from "./_actions/edit-agenda";
+import { useFormState } from "react-dom";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -15,13 +15,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@repo/ui/components/ui/form';
-import { EditAgendaSchema, editAgendaSchema } from './form-schema';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { Switch } from '@repo/ui/components/ui/switch';
-import { DatetimePicker } from '@repo/ui/components/datetime-picker';
-import { AddonInput } from '@repo/ui/components/addon-input';
+} from "@repo/ui/components/ui/form";
+import { EditAgendaSchema, editAgendaSchema } from "./form-schema";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Switch } from "@repo/ui/components/ui/switch";
+import { DatetimePicker } from "@repo/ui/components/datetime-picker";
+import { AddonInput } from "@repo/ui/components/addon-input";
 import {
   SelectAgenda,
   SelectClass,
@@ -32,7 +32,7 @@ import {
   SelectDetailLocation,
   SelectLocation,
   SelectLocationAgenda,
-} from '@repo/shared/repository';
+} from "@repo/shared/repository";
 import {
   Sheet,
   SheetTrigger,
@@ -40,16 +40,16 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-} from '@repo/ui/components/ui/sheet';
+} from "@repo/ui/components/ui/sheet";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@repo/ui/components/ui/select';
-import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
-import { api } from '@/trpc/react';
+} from "@repo/ui/components/ui/select";
+import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
+import { api } from "@/trpc/react";
 
 interface EditAgendaProps {
   locations: SelectLocation[];
@@ -62,14 +62,14 @@ interface EditAgendaProps {
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal memperbaru agenda',
+    title: "Gagal memperbaru agenda",
   },
   loading: {
-    title: 'Memperbaru agenda...',
-    description: 'Mohon tunggu',
+    title: "Memperbaru agenda...",
+    description: "Mohon tunggu",
   },
   success: {
-    title: 'Agenda berhasil diperbarui',
+    title: "Agenda berhasil diperbarui",
   },
 };
 
@@ -87,7 +87,7 @@ export default function EditAgendaForm({
   type FormSchema = EditAgendaSchema;
 
   const [formState, formAction] = useFormState(editAgenda, {
-    status: 'default',
+    status: "default",
     form: {
       id: agenda.id,
       time: agenda.time,
@@ -113,7 +113,7 @@ export default function EditAgendaForm({
 
   useEffect(() => {
     toast.dismiss();
-    if (formState.status === 'field-errors') {
+    if (formState.status === "field-errors") {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
           const typedFieldName = fieldName as keyof FormSchema;
@@ -123,22 +123,22 @@ export default function EditAgendaForm({
           }
         }
       }
-    } else if (formState.status === 'error') {
+    } else if (formState.status === "error") {
       toast.error(TOAST_MESSAGES.error.title, {
         description: formState.errors,
       });
-      form.setError('root', { message: formState.errors });
+      form.setError("root", { message: formState.errors });
     } else {
       form.clearErrors();
     }
 
-    if (formState.status === 'success') {
+    if (formState.status === "success") {
       toast.success(TOAST_MESSAGES.success.title);
       form.reset();
       trpcUtils.invalidate();
       onOpenChange(false);
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -248,9 +248,9 @@ export default function EditAgendaForm({
                         `${
                           classes.find(
                             (singleClass) =>
-                              singleClass.id === form.getValues('class_id'),
+                              singleClass.id === form.getValues("class_id"),
                           )?.duration
-                        } menit` ?? ''
+                        } menit` ?? ""
                       }
                     />
                   </FormControl>
@@ -316,10 +316,10 @@ export default function EditAgendaForm({
                       );
                       if (location) {
                         setSelectedLocation(location);
-                        form.setValue('location_facility_id', 0);
+                        form.setValue("location_facility_id", 0);
                       }
                     }}
-                    defaultValue={selectedLocation?.id.toString() ?? ''}
+                    defaultValue={selectedLocation?.id.toString() ?? ""}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Pilih fasilitas" />

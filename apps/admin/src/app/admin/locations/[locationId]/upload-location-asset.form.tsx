@@ -88,7 +88,7 @@ export default function UploadLocationAsset({
       form.reset({ files: [] });
       router.refresh();
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

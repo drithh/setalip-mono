@@ -112,7 +112,7 @@ export default function CreateDepositAccountForm({}: CreateDepositAccountProps) 
       trpcUtils.invalidate();
       setOpenSheet(false);
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

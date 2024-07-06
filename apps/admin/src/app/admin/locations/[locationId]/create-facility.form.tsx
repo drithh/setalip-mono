@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { Button } from '@repo/ui/components/ui/button';
-import { Input } from '@repo/ui/components/ui/input';
-import { createFacility } from './_actions/create-facility';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from "@repo/ui/components/ui/button";
+import { Input } from "@repo/ui/components/ui/input";
+import { createFacility } from "./_actions/create-facility";
+import { useFormState } from "react-dom";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -14,14 +14,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@repo/ui/components/ui/form';
-import { CreateFacilitySchema, createFacilitySchema } from './form-schema';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { Dropzone } from '@repo/ui/components/dropzone';
-import { PhotoProvider } from 'react-photo-view';
-import FileCard from './_components/file-card';
-import { SelectDetailLocation } from '@repo/shared/repository';
+} from "@repo/ui/components/ui/form";
+import { CreateFacilitySchema, createFacilitySchema } from "./form-schema";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Dropzone } from "@repo/ui/components/dropzone";
+import { PhotoProvider } from "react-photo-view";
+import FileCard from "./_components/file-card";
+import { SelectDetailLocation } from "@repo/shared/repository";
 import {
   Sheet,
   SheetTrigger,
@@ -29,25 +29,25 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-} from '@repo/ui/components/ui/sheet';
+} from "@repo/ui/components/ui/sheet";
 
 type FileWithPreview = File & { preview: string };
 
 interface CreateFacilityProps {
-  locationId: SelectDetailLocation['id'];
+  locationId: SelectDetailLocation["id"];
 }
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal membuat fasilitas',
-    description: 'Silahkan coba lagi',
+    title: "Gagal membuat fasilitas",
+    description: "Silahkan coba lagi",
   },
   loading: {
-    title: 'Membuat fasilitas...',
-    description: 'Mohon tunggu',
+    title: "Membuat fasilitas...",
+    description: "Mohon tunggu",
   },
   success: {
-    title: 'Fasilitas berhasil dibuat',
+    title: "Fasilitas berhasil dibuat",
   },
 };
 
@@ -60,10 +60,10 @@ export default function CreateFacilityForm({
   type FormSchema = CreateFacilitySchema;
 
   const [formState, formAction] = useFormState(createFacility, {
-    status: 'default',
+    status: "default",
     form: {
       locationId: locationId,
-      name: '',
+      name: "",
       capacity: 0,
       file: null,
     } as FormSchema,
@@ -76,7 +76,7 @@ export default function CreateFacilityForm({
 
   useEffect(() => {
     toast.dismiss();
-    if (formState.status === 'field-errors') {
+    if (formState.status === "field-errors") {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
           const typedFieldName = fieldName as keyof FormSchema;
@@ -86,21 +86,21 @@ export default function CreateFacilityForm({
           }
         }
       }
-    } else if (formState.status === 'error') {
+    } else if (formState.status === "error") {
       toast.error(TOAST_MESSAGES.error.title, {
         description: formState.errors,
       });
-      form.setError('root', { message: formState.errors });
+      form.setError("root", { message: formState.errors });
     } else {
       form.clearErrors();
     }
 
-    if (formState.status === 'success') {
+    if (formState.status === "success") {
       toast.success(TOAST_MESSAGES.success.title);
       setOpenSheet(false);
       router.refresh();
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -114,18 +114,18 @@ export default function CreateFacilityForm({
 
   function handleOnDrop(acceptedFiles: FileList | null) {
     if (!acceptedFiles || acceptedFiles.length === 0) {
-      form.setError('file', { message: 'File tidak valid' });
+      form.setError("file", { message: "File tidak valid" });
       return;
     }
     const file = acceptedFiles[0];
 
     if (!file) {
-      form.setError('file', { message: 'File tidak valid' });
+      form.setError("file", { message: "File tidak valid" });
       return;
     }
 
-    form.setValue('file', file);
-    form.clearErrors('file');
+    form.setValue("file", file);
+    form.clearErrors("file");
   }
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -133,7 +133,7 @@ export default function CreateFacilityForm({
   return (
     <Sheet open={openSheet} onOpenChange={setOpenSheet}>
       <SheetTrigger asChild>
-        <Button variant={'outline'}>Tambah</Button>
+        <Button variant={"outline"}>Tambah</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
@@ -214,7 +214,7 @@ export default function CreateFacilityForm({
                                   preview: URL.createObjectURL(field.value),
                                 }}
                                 onDelete={() => {
-                                  form.setValue('file', null);
+                                  form.setValue("file", null);
                                 }}
                               />
                             </div>

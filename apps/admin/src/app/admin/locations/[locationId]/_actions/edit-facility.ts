@@ -39,7 +39,7 @@ export async function editFacility(
   const fileUpload =
     parsed.data.file?.size && parsed.data.file?.size > 0
       ? await api.file.upload({ files: parsed.data.file })
-      : [{ url: '', name: '' }];
+      : [{ url: parsed.data.image_url ?? '', name: 'logo' }];
 
   if (fileUpload.length === 0) {
     return {
@@ -57,7 +57,7 @@ export async function editFacility(
   const locationService = container.get<LocationService>(TYPES.LocationService);
 
   const facility = await locationService.updateFacility({
-    id: state.form?.facilityId ?? 0,
+    id: parsed.data.facilityId ?? 0,
     name: parsed.data.name,
     capacity: parsed.data.capacity,
     image_url: fileUpload[0]?.url ?? null,

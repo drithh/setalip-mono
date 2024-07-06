@@ -65,6 +65,7 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
       // level: facility.level,
       capacity: facility.capacity,
       file: null,
+      image_url: facility.image_url ? facility.image_url : undefined,
     },
   });
 
@@ -101,7 +102,7 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
       setOpenSheet(false);
       router.refresh();
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -152,6 +153,13 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
               action={formAction}
               onSubmit={onFormSubmit}
             >
+              {facility.image_url && !imageRemoved && (
+                <Input
+                  type="hidden"
+                  {...form.register('image_url')}
+                  value={facility.image_url ?? undefined}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="facilityId"

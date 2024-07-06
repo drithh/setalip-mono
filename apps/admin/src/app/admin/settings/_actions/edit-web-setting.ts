@@ -31,8 +31,6 @@ export async function editWebSetting(
     };
   }
 
-  console.log(parsed.data);
-
   const webSettingService = container.get<WebSettingService>(
     TYPES.WebSettingService,
   );

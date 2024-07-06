@@ -99,7 +99,7 @@ export default function LoginUserForm() {
       });
       router.push("/");
     }
-  }, [formState.form]);
+  }, [formState]);
 
   const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

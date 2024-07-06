@@ -37,6 +37,7 @@ export const editFacilitySchema = z.object({
   file: z.custom<File | null>((data) => {
     return data === null || data instanceof File;
   }, 'Data is not an instance of a File'),
+  image_url: z.string().url().optional(),
 });
 
 export type EditFacilitySchema = z.infer<typeof editFacilitySchema>;
