@@ -71,6 +71,20 @@ export class LocationServiceImpl implements LocationService {
     };
   }
 
+  async create(data: InsertLocation) {
+    const result = await this._locationRepository.create(data);
+
+    if (result instanceof Error) {
+      return {
+        error: new Error('Failed to create location'),
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
   async createAsset(data: InsertLocationAsset[]) {
     const result = await this._locationRepository.createAsset(data);
 

@@ -1,5 +1,6 @@
 import {
   InsertFacility,
+  InsertLocation,
   InsertLocationAsset,
   SelectDetailLocation,
   SelectFacility,
@@ -21,6 +22,7 @@ export interface LocationService {
     id: SelectLocation['id']
   ): PromiseResult<SelectFacility[], Error>;
 
+  create(data: InsertLocation): PromiseResult<SelectLocation, Error>;
   createFacility(data: InsertFacility): PromiseResult<SelectFacility, Error>;
   createAsset(
     data: InsertLocationAsset[]

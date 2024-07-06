@@ -141,7 +141,25 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
   }
 
   create(data: InsertLocation): Promise<SelectLocation> {
-    throw new Error('Method not implemented.');
+    try {
+      const query = this._db
+        .insertInto('locations')
+        .values(data)
+        .returningAll()
+        .compile();
+
+      return this._db.executeQuery(query).then((result) => {
+        if (result.rows[0] === undefined) {
+          console.error('Error creating location:', result);
+          throw new Error('Failed to create location');
+        }
+
+        return result.rows[0];
+      });
+    } catch (error) {
+      console.error('Error creating location:', error);
+      return Promise.reject(new Error('Failed to create location'));
+    }
   }
 
   async createAsset(data: InsertLocationAsset[]) {
