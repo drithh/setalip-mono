@@ -1,10 +1,12 @@
 import { FormState } from '@repo/shared/form';
 import {
+  InsertCarousel,
   InsertDepositAccount,
   InsertFrequentlyAskedQuestion,
   InsertReview,
   UpdateWebSetting,
 } from '@repo/shared/repository';
+import { url } from 'inspector';
 import { ZodType, z } from 'zod';
 
 export const editWebSettingSchema = z.object({
@@ -24,6 +26,25 @@ export const editWebSettingSchema = z.object({
 
 export type EditWebSettingSchema = z.infer<typeof editWebSettingSchema>;
 export type FormEditWebSetting = FormState<EditWebSettingSchema>;
+
+export const createCarouselSchema = z.object({
+  file: z.custom<File | null>(
+    (data) => data === null || data instanceof File,
+    'Data is not an instance of a File',
+  ),
+  title: z.string().min(3).max(255),
+  image_url: z.string().url().optional(),
+});
+
+export type CreateCarouselSchema = z.infer<typeof createCarouselSchema>;
+export type FormCreateCarousel = FormState<CreateCarouselSchema>;
+
+export const editCarouselSchema = createCarouselSchema.extend({
+  id: z.coerce.number(),
+});
+
+export type EditCarouselSchema = z.infer<typeof editCarouselSchema>;
+export type FormEditCarousel = FormState<EditCarouselSchema>;
 
 export const createDepositAccountSchema = z.object({
   name: z.string().min(3).max(255),

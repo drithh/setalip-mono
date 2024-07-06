@@ -25,6 +25,15 @@ export interface Agendas {
   updated_by: Generated<number>;
 }
 
+export interface Carousels {
+  created_at: Generated<Date>;
+  id: Generated<number>;
+  image_url: string;
+  title: string;
+  updated_at: Generated<Date>;
+  updated_by: Generated<number>;
+}
+
 export interface ClassAssets {
   class_id: number;
   created_at: Generated<Date>;
@@ -303,6 +312,7 @@ export interface WebSettings {
 export interface DB {
   agenda_bookings: AgendaBookings;
   agendas: Agendas;
+  carousels: Carousels;
   class_assets: ClassAssets;
   class_locations: ClassLocations;
   class_types: ClassTypes;

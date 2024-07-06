@@ -1,5 +1,6 @@
 import { Insertable, Selectable, Updateable } from 'kysely';
 import {
+  Carousels,
   DepositAccounts,
   FrequentlyAskedQuestions,
   Reviews,
@@ -79,6 +80,10 @@ export interface SelectAllDepositAccount {
   pageCount: number;
 }
 
+export type SelectCarousel = Selectable<Carousels>;
+export type InsertCarousel = Insertable<Carousels>;
+export type UpdateCarousel = OptionalToRequired<Updateable<Carousels>, 'id'>;
+
 export interface WebSettingRepository {
   findContact(): Promise<SelectContact | undefined>;
   findLogo(): Promise<SelectLogo | undefined>;
@@ -94,6 +99,7 @@ export interface WebSettingRepository {
   findAllReview(data: findAllReviewOption): Promise<SelectAllReview>;
   findTermsAndConditions(): Promise<string | undefined>;
   findPrivacyPolicy(): Promise<string | undefined>;
+  findAllCarousels(): Promise<SelectCarousel[]>;
 
   createDepositAccount(
     data: InsertDepositAccount
@@ -102,6 +108,7 @@ export interface WebSettingRepository {
   createFrequentlyAskedQuestion(
     data: InsertFrequentlyAskedQuestion
   ): Promise<SelectFrequentlyAskedQuestion | Error>;
+  createCarousel(data: InsertCarousel): Promise<SelectCarousel | Error>;
 
   update(data: UpdateWebSetting[]): Promise<undefined | Error>;
   updateDepositAccount(data: UpdateDepositAccount): Promise<undefined | Error>;
@@ -109,6 +116,7 @@ export interface WebSettingRepository {
   updateFrequentlyAskedQuestion(
     data: UpdateFrequentlyAskedQuestion
   ): Promise<undefined | Error>;
+  updateCarousel(data: UpdateCarousel): Promise<undefined | Error>;
 
   deleteDepositAccount(
     id: SelectDepositAccount['id']
@@ -117,4 +125,5 @@ export interface WebSettingRepository {
   deleteFrequentlyAskedQuestion(
     id: SelectFrequentlyAskedQuestion['id']
   ): Promise<undefined | Error>;
+  deleteCarousel(id: SelectCarousel['id']): Promise<undefined | Error>;
 }

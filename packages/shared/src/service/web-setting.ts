@@ -1,15 +1,18 @@
 import {
+  InsertCarousel,
   InsertDepositAccount,
   InsertFrequentlyAskedQuestion,
   InsertReview,
   SelectAllDepositAccount,
   SelectAllFrequentlyAskedQuestion,
   SelectAllReview,
+  SelectCarousel,
   SelectContact,
   SelectDepositAccount,
   SelectFrequentlyAskedQuestion,
   SelectLogo,
   SelectReview,
+  UpdateCarousel,
   UpdateDepositAccount,
   UpdateFrequentlyAskedQuestion,
   UpdateReview,
@@ -34,6 +37,7 @@ export interface WebSettingService {
   ): PromiseResult<SelectAllReview, Error>;
   findTermsAndConditions(): PromiseResult<string, Error>;
   findPrivacyPolicy(): PromiseResult<string, Error>;
+  findAllCarousels(): PromiseResult<SelectCarousel[], Error>;
 
   createDepositAccount(
     data: InsertDepositAccount
@@ -42,6 +46,7 @@ export interface WebSettingService {
   createFrequentlyAskedQuestion(
     data: InsertFrequentlyAskedQuestion
   ): PromiseResult<SelectFrequentlyAskedQuestion, Error>;
+  createCarousel(data: InsertCarousel): PromiseResult<SelectCarousel, Error>;
 
   update(data: UpdateWebSetting[]): PromiseResult<undefined, Error>;
   updateDepositAccount(
@@ -51,6 +56,7 @@ export interface WebSettingService {
   updateFrequentlyAskedQuestion(
     data: UpdateFrequentlyAskedQuestion
   ): PromiseResult<undefined, Error>;
+  updateCarousel(data: UpdateCarousel): PromiseResult<undefined, Error>;
 
   deleteDepositAccount(
     id: SelectDepositAccount['id']
@@ -59,4 +65,5 @@ export interface WebSettingService {
   deleteFrequentlyAskedQuestion(
     id: SelectFrequentlyAskedQuestion['id']
   ): PromiseResult<undefined, Error>;
+  deleteCarousel(id: SelectCarousel['id']): PromiseResult<undefined, Error>;
 }

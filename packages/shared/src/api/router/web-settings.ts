@@ -4,6 +4,7 @@ import { TYPES } from '#dep/inversify/types';
 import { TRPCRouterRecord } from '@trpc/server';
 import { adminProcedure, protectedProcedure } from '../trpc';
 import {
+  deleteCarouselSchema,
   deleteDepositAccountSchema,
   deleteFrequentlyAskedQuestionSchema,
   deleteReviewSchema,
@@ -64,6 +65,16 @@ export const webSettingRouter = {
       });
 
       return depositAccounts;
+    }),
+
+  deleteCarousel: adminProcedure
+    .input(deleteCarouselSchema)
+    .mutation(async ({ ctx, input }) => {
+      const webSettingService = ctx.container.get<WebSettingService>(
+        TYPES.WebSettingService
+      );
+
+      await webSettingService.deleteCarousel(input.id);
     }),
 
   deleteDepositAccount: adminProcedure

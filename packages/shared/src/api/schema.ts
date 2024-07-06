@@ -112,6 +112,10 @@ export const findAllDepositAccountSchema = defaultPaginationSchema.extend({
   name: z.string().optional(),
 });
 
+export const deleteCarouselSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});
+
 export const deleteDepositAccountSchema = z.object({
   id: z.coerce.number().refine((data) => data > 0),
 });

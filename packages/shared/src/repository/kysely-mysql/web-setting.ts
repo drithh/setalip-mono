@@ -3,14 +3,17 @@ import { Database, db } from '#dep/db/index';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
 import {
+  InsertCarousel,
   InsertDepositAccount,
   InsertFrequentlyAskedQuestion,
   InsertReview,
+  SelectCarousel,
   SelectContact,
   SelectDepositAccount,
   SelectFrequentlyAskedQuestion,
   SelectLogo,
   SelectReview,
+  UpdateCarousel,
   UpdateDepositAccount,
   UpdateFrequentlyAskedQuestion,
   UpdateReview,
@@ -211,6 +214,12 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     return query.value;
   }
 
+  async findAllCarousels() {
+    const query = await this._db.selectFrom('carousels').selectAll().execute();
+
+    return query;
+  }
+
   async createDepositAccount(data: InsertDepositAccount) {
     try {
       const query = this._db
@@ -274,6 +283,28 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     } catch (error) {
       console.error('Error creating FAQ:', error);
       return new Error('Failed to create FAQ');
+    }
+  }
+
+  async createCarousel(data: InsertCarousel) {
+    try {
+      const query = this._db
+        .insertInto('carousels')
+        .values(data)
+        .returningAll()
+        .compile();
+
+      const result = await this._db.executeQuery(query);
+
+      if (result.rows[0] === undefined) {
+        console.error('Failed to create carousel', result);
+        return new Error('Failed to create carousel');
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating carousel:', error);
+      return new Error('Failed to create carousel');
     }
   }
 
@@ -370,6 +401,26 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     }
   }
 
+  async updateCarousel(data: UpdateCarousel): Promise<Error | undefined> {
+    try {
+      const query = await this._db
+        .updateTable('carousels')
+        .set(data)
+        .where('carousels.id', '=', data.id)
+        .executeTakeFirst();
+
+      if (query.numUpdatedRows === undefined) {
+        console.error('Failed to update carousel', query);
+        return new Error('Failed to update carousel');
+      }
+
+      return;
+    } catch (error) {
+      console.error('Error updating carousel:', error);
+      return new Error('Failed to update carousel');
+    }
+  }
+
   async deleteDepositAccount(id: SelectDepositAccount['id']) {
     try {
       const query = this._db
@@ -433,6 +484,28 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     } catch (error) {
       console.error('Error deleting FAQ:', error);
       return new Error('Failed to delete FAQ');
+    }
+  }
+
+  async deleteCarousel(id: SelectCarousel['id']) {
+    try {
+      const query = this._db
+        .deleteFrom('carousels')
+        .where('carousels.id', '=', id)
+        .returningAll()
+        .compile();
+
+      const result = await this._db.executeQuery(query);
+
+      if (result.rows[0] === undefined) {
+        console.error('Failed to delete carousel', result);
+        return new Error('Failed to delete carousel');
+      }
+
+      return;
+    } catch (error) {
+      console.error('Error deleting carousel:', error);
+      return new Error('Failed to delete carousel');
     }
   }
 }

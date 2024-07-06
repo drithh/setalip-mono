@@ -1,12 +1,15 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
 import type {
+  InsertCarousel,
   InsertDepositAccount,
   InsertFrequentlyAskedQuestion,
   InsertReview,
+  SelectCarousel,
   SelectDepositAccount,
   SelectFrequentlyAskedQuestion,
   SelectReview,
+  UpdateCarousel,
   UpdateDepositAccount,
   UpdateFrequentlyAskedQuestion,
   UpdateReview,
@@ -105,6 +108,15 @@ export class WebSettingServiceImpl implements WebSettingService {
     };
   }
 
+  async findAllCarousels() {
+    const carousels = await this._webSettingRepository.findAllCarousels();
+
+    return {
+      result: carousels,
+      error: undefined,
+    };
+  }
+
   async createDepositAccount(data: InsertDepositAccount) {
     const depositAccount =
       await this._webSettingRepository.createDepositAccount(data);
@@ -149,7 +161,21 @@ export class WebSettingServiceImpl implements WebSettingService {
     };
   }
 
-  async update(data: UpdateWebSetting) {
+  async createCarousel(data: InsertCarousel) {
+    const carousel = await this._webSettingRepository.createCarousel(data);
+
+    if (carousel instanceof Error) {
+      return {
+        error: carousel,
+      };
+    }
+
+    return {
+      result: carousel,
+    };
+  }
+
+  async update(data: UpdateWebSetting[]) {
     const result = await this._webSettingRepository.update(data);
 
     if (result instanceof Error) {
@@ -210,6 +236,21 @@ export class WebSettingServiceImpl implements WebSettingService {
     };
   }
 
+  async updateCarousel(data: UpdateCarousel) {
+    const result = await this._webSettingRepository.updateCarousel(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
   async deleteDepositAccount(id: SelectDepositAccount['id']) {
     const result = await this._webSettingRepository.deleteDepositAccount(id);
 
@@ -243,6 +284,21 @@ export class WebSettingServiceImpl implements WebSettingService {
   async deleteFrequentlyAskedQuestion(id: SelectFrequentlyAskedQuestion['id']) {
     const result =
       await this._webSettingRepository.deleteFrequentlyAskedQuestion(id);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
+  async deleteCarousel(id: SelectCarousel['id']) {
+    const result = await this._webSettingRepository.deleteCarousel(id);
 
     if (result instanceof Error) {
       return {

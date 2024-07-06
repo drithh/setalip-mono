@@ -40,6 +40,14 @@ export async function up(db: Kysely<any>): Promise<void> {
         .execute();
 
       await trx.schema
+        .createTable('carousels')
+        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('image_url', 'text', (col) => col.notNull())
+        .addColumn('title', 'text', (col) => col.notNull())
+        .$call(addDefaultColumns)
+        .execute();
+
+      await trx.schema
         .createTable('locations')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('email', 'text', (col) => col.notNull().unique())
