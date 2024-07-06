@@ -5,6 +5,7 @@ import { Bold, Strikethrough, Italic, List, ListOrdered } from 'lucide-react';
 import { Toggle } from '#dep/components/ui/toggle';
 import { Separator } from '#dep/components/ui/separator';
 import { cn } from '#dep/lib/utils';
+import TextStyle from '@tiptap/extension-text-style';
 
 const RichTextViewer = ({
   value,
@@ -17,11 +18,12 @@ const RichTextViewer = ({
     editorProps: {
       attributes: {
         class: cn(
-          'min-h-[150px] max-h-[150px] w-full rounded-md rounded-br-none rounded-bl-none border border-input bg-transparent px-3 py-2  text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 overflow-auto',
+          'min-h-[150px] text-xl max-h-[150px] w-full rounded-md rounded-br-none rounded-bl-none border border-input bg-transparent px-3 py-2  ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 overflow-auto',
           className
         ),
       },
     },
+
     extensions: [
       StarterKit.configure({
         orderedList: {
@@ -35,6 +37,7 @@ const RichTextViewer = ({
           },
         },
       }),
+      TextStyle,
     ],
     content: value, // Set the initial content with the provided value
     onUpdate: ({ editor }) => {},
