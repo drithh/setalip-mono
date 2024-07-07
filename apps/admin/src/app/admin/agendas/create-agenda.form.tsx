@@ -312,7 +312,7 @@ export default function CreateAgendaForm({
                     defaultValue={selectedLocation?.id.toString() ?? ''}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih fasilitas" />
+                      <SelectValue placeholder="Pilih lokasi" />
                     </SelectTrigger>
                     <SelectContent>
                       {locations.map((location) => (

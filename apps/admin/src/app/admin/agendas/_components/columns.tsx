@@ -102,8 +102,7 @@ export function getColumns({
       cell: ({ row }) => {
         return (
           <p className="">
-            {format(new Date(row.original.time), 'MMM dd - HH:mm')}(
-            {row.original.class_duration} menit)
+            {`${format(new Date(row.original.time), 'MMM dd - HH:mm')} (${row.original.class_duration} menit)`}
           </p>
         );
       },

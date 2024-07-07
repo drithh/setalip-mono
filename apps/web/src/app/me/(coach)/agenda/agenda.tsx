@@ -34,14 +34,12 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 interface AgendaTableProps {
   locations: SelectLocation[];
-  coaches: SelectCoachWithUser[];
   classTypes: SelectClassType[];
   search: z.infer<typeof findAllCoachAgendaSchema>;
 }
 
 export default function AgendaTable({
   locations,
-  coaches,
   classTypes,
   search,
 }: AgendaTableProps) {
