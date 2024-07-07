@@ -8,8 +8,10 @@ import {
   findAllCoachAgendaSchema,
   findAllScheduleSchema,
   findAllUserAgendaSchema,
+  updateAgendaBookingSchema,
 } from '../schema';
 import { parse } from 'date-fns';
+import { SelectAgendaBooking } from '#dep/repository/agenda';
 
 export const agendaRouter = {
   findAll: protectedProcedure
@@ -165,5 +167,22 @@ export const agendaRouter = {
       });
 
       return agendas;
+    }),
+
+  updateAgendaBooking: protectedProcedure
+    .input(updateAgendaBookingSchema)
+    .mutation(async ({ ctx, input }) => {
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+
+      const status = input.status as SelectAgendaBooking['status'];
+
+      const result = await agendaService.updateAgendaBookingById({
+        id: input.id,
+        status,
+      });
+
+      return result;
     }),
 } satisfies TRPCRouterRecord;

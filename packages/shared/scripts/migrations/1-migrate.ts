@@ -73,7 +73,7 @@ export async function up(db: Kysely<any>): Promise<void> {
           (col) => col.notNull()
         )
         .addColumn('location_id', 'bigint', (col) =>
-          col.notNull().references('locations.id')
+          col.references('locations.id')
         )
         .addColumn('verified_at', 'timestamp')
         .$call(addDefaultColumns)

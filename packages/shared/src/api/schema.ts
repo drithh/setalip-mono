@@ -149,3 +149,8 @@ export const findAllDepositReviewFaqSchema = z.object({
   email: z.string().optional(),
   question: z.string().optional(),
 });
+
+export const updateAgendaBookingSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+  status: z.string(),
+});

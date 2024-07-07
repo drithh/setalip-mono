@@ -270,7 +270,7 @@ export interface Users {
   email: string;
   hashed_password: string;
   id: Generated<number>;
-  location_id: number;
+  location_id: Generated<number | null>;
   name: string;
   phone_number: string;
   role: "admin" | "coach" | "owner" | "user";

@@ -13,6 +13,7 @@ import {
   DefaultPagination,
   InsertCredit,
   OptionalToRequired,
+  SelectCoach,
   SelectLocation,
   SelectUser,
 } from '.';
@@ -139,9 +140,21 @@ type UpdateAgendaBookingData = OptionalToRequired<
   Updateable<AgendaBookings>,
   'user_id'
 >;
+
+export type UpdateAgendaBookingById = OptionalToRequired<
+  Updateable<AgendaBookings>,
+  'id'
+>;
+
 export interface UpdateAgendaBooking {
   agenda_id: SelectAgenda['id'];
   agendaBookings: UpdateAgendaBookingData[];
+}
+
+export interface SelectBookingParticipant {
+  id: SelectAgendaBooking['id'];
+  status: SelectAgendaBooking['status'];
+  name: SelectUser['name'];
 }
 export interface AgendaRepository {
   count(): Promise<number>;
@@ -149,6 +162,12 @@ export interface AgendaRepository {
 
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;
+  findAllParticipantByAgendaId(
+    id: SelectAgenda['id']
+  ): Promise<SelectBookingParticipant[]>;
+  findTodayScheduleByCoachId(
+    coachUserId: SelectCoach['user_id']
+  ): Promise<SelectScheduleByDate[]>;
   findAllByCoachId(
     data: FindAllAgendaByCoachOptions
   ): Promise<SelectAllSchedule>;
@@ -174,6 +193,9 @@ export interface AgendaRepository {
   // ): Promise<SelectAgendaBooking | Error>;
 
   update(data: UpdateAgenda): Promise<undefined | Error>;
+  updateAgendaBookingById(
+    data: UpdateAgendaBookingById
+  ): Promise<undefined | Error>;
   updateAgendaBooking(data: UpdateAgendaBooking): Promise<undefined | Error>;
 
   delete(id: SelectAgenda['id']): Promise<undefined | Error>;

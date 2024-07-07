@@ -15,11 +15,15 @@ import {
   SelectAllAgendaByUser,
   InsertAgendaAndTransaction,
   FindAllAgendaByCoachOptions,
+  SelectScheduleByDate,
+  UpdateAgendaBookingById,
 } from '../agenda';
 import { Database, Users } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/mysql';
 import { Selectable, sql } from 'kysely';
+import { SelectCoach } from '../coach';
+import { addDays } from 'date-fns';
 
 @injectable()
 export class KyselyMySqlAgendaRepository implements AgendaRepository {
@@ -148,6 +152,62 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .selectAll()
       .where('agendas.id', '=', id)
       .executeTakeFirst();
+  }
+
+  findAllParticipantByAgendaId(id: SelectAgenda['id']) {
+    return this._db
+      .selectFrom('agenda_bookings')
+      .innerJoin('users', 'agenda_bookings.user_id', 'users.id')
+      .select(['agenda_bookings.status', 'name', 'agenda_bookings.id'])
+      .where('agenda_id', '=', id)
+      .execute();
+  }
+
+  async findTodayScheduleByCoachId(coachUserId: SelectCoach['user_id']) {
+    const query = (await this._db
+      .selectFrom('agendas')
+      .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
+      .innerJoin('users', 'coaches.user_id', 'users.id')
+      .innerJoin('classes', 'agendas.class_id', 'classes.id')
+      .innerJoin(
+        'location_facilities',
+        'agendas.location_facility_id',
+        'location_facilities.id'
+      )
+      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id')
+      .select((eb) => [
+        'agendas.class_id',
+        'agendas.id',
+        'agendas.time',
+        'agendas.location_facility_id',
+        'classes.slot',
+        'users.name as coach_name',
+        'coaches.id as coach_id',
+        'classes.id as class_id',
+        'classes.name as class_name',
+        'classes.duration as class_duration',
+        'class_types.id as class_type_id',
+        'class_types.type as class_type_name',
+        'locations.name as location_name',
+        'locations.id as location_id',
+        'locations.link_maps as location_link_maps',
+        'locations.address as location_address',
+        'location_facilities.name as location_facility_name',
+        eb
+          .selectFrom('users')
+          .innerJoin('agenda_bookings', 'agenda_bookings.user_id', 'users.id')
+          .select(sql<number>`count(agenda_bookings.id)`.as('participant'))
+          .where('agenda_bookings.status', '=', 'booked')
+          .whereRef('agenda_bookings.agenda_id', '=', 'agendas.id')
+          .as('participant'),
+      ])
+      .where('coaches.user_id', '=', coachUserId)
+      .where('agendas.time', '>=', new Date())
+      .where('agendas.time', '<', addDays(new Date(), 1))
+      .execute()) satisfies SelectScheduleByDate[];
+
+    return query;
   }
 
   async findAllByCoachId(
@@ -699,6 +759,26 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     } catch (error) {
       console.error('Error updating participant:', error);
       return new Error('Error updating participant');
+    }
+  }
+
+  async updateAgendaBookingById(data: UpdateAgendaBookingById) {
+    try {
+      const query = await this._db
+        .updateTable('agenda_bookings')
+        .set(data)
+        .where('id', '=', data.id)
+        .executeTakeFirst();
+
+      if (query.numUpdatedRows === undefined) {
+        console.error('Failed to update agenda booking', query.numUpdatedRows);
+        return new Error('Failed to update agenda booking');
+      }
+
+      return;
+    } catch (error) {
+      console.error('Error updating agenda booking:', error);
+      return new Error('Error updating agenda booking');
     }
   }
 

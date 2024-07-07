@@ -7,6 +7,7 @@ import {
   Sparkles,
   FileClock,
   LogOut,
+  CalendarClock,
 } from 'lucide-react';
 
 interface Menu {
@@ -46,7 +47,7 @@ export const menus: Menu[] = [
     path: '/me/loyalty',
   },
   {
-    icon: <FileClock className="h-5 w-5" />,
+    icon: <CalendarClock className="h-5 w-5" />,
     label: 'My Agenda',
     path: '/me/agenda',
     role: 'coach',

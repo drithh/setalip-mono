@@ -230,7 +230,7 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
 
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value.toString()}
+                    defaultValue={field.value?.toString()}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Pilih kelas" />

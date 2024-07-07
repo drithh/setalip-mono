@@ -17,6 +17,8 @@ import type {
   InsertAgendaAndTransaction,
   LocationRepository,
   FindAllAgendaByCoachOptions,
+  SelectCoach,
+  UpdateAgendaBookingById,
 } from '../repository';
 import { AgendaService } from './agenda';
 import { addMinutes, isAfter, isBefore, isEqual } from 'date-fns';
@@ -78,6 +80,26 @@ export class AgendaServiceImpl implements AgendaService {
 
     return {
       result: singleAgenda,
+    };
+  }
+
+  async findAllParticipantByAgendaId(id: SelectAgenda['id']) {
+    const participants =
+      await this._agendaRepository.findAllParticipantByAgendaId(id);
+
+    return {
+      result: participants,
+      error: undefined,
+    };
+  }
+
+  async findTodayScheduleByCoachId(coachUserId: SelectCoach['user_id']) {
+    const schedules =
+      await this._agendaRepository.findTodayScheduleByCoachId(coachUserId);
+
+    return {
+      result: schedules,
+      error: undefined,
     };
   }
 
@@ -301,6 +323,21 @@ export class AgendaServiceImpl implements AgendaService {
 
   async updateAgendaBooking(data: UpdateAgendaBooking) {
     const result = await this._agendaRepository.updateAgendaBooking(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result: result,
+    };
+  }
+
+  async updateAgendaBookingById(data: UpdateAgendaBookingById) {
+    const result = await this._agendaRepository.updateAgendaBookingById(data);
 
     if (result instanceof Error) {
       return {
