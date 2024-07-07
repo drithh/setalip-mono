@@ -4,6 +4,7 @@ import { WebSettingService } from '@repo/shared/service';
 import Marquee from '@repo/ui/components/marquee';
 import { StarHalfIcon, StarIcon } from 'lucide-react';
 import { dateFormatter } from '@repo/shared/util';
+import { format } from 'date-fns';
 
 const ReviewCard = ({ review }: { review: SelectReviewWithUser }) => {
   return (
@@ -14,7 +15,7 @@ const ReviewCard = ({ review }: { review: SelectReviewWithUser }) => {
             {review.name}
           </figcaption>
           <p className="text-xs font-medium dark:text-white/40">
-            Joined since {dateFormatter().format(review.joined_at)}
+            Joined since {format(new Date(review.joined_at), 'MMM dd yyyy')}
           </p>
         </div>
       </div>

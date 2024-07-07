@@ -16,6 +16,7 @@ import { dateFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { SelectAllAgendaByUser } from '@repo/shared/repository';
 import { Badge } from '@repo/ui/components/ui/badge';
+import { format } from 'date-fns';
 
 export function getColumns(): ColumnDef<SelectAllAgendaByUser['data'][0]>[] {
   return [
@@ -35,13 +36,10 @@ export function getColumns(): ColumnDef<SelectAllAgendaByUser['data'][0]>[] {
               Tanggal Book:&ensp;
             </span>
             <p className="font-semibold">
-              {dateFormatter({
-                year: undefined,
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-              }).format(row.original.agenda_booking_updated_at)}
+              {format(
+                new Date(row.original.agenda_booking_updated_at),
+                'MMM dd - HH:mm',
+              )}
             </p>
           </div>
         );
@@ -60,13 +58,7 @@ export function getColumns(): ColumnDef<SelectAllAgendaByUser['data'][0]>[] {
         return (
           <div className="-ml-5 flex flex-col place-items-center">
             <p className="font-semibold">
-              {dateFormatter({
-                year: undefined,
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-              }).format(row.original.time)}
+              {format(new Date(row.original.time), 'MMM dd - HH:mm')}
             </p>
             <p>({row.original.class_duration} menit)</p>
           </div>

@@ -136,7 +136,7 @@ export default async function AgendaDetail({
                     </p>
                     <p>
                       Expired At:{' '}
-                      {dateFormatter().format(singlePackage.result?.expired_at)}
+                      {format(singlePackage.result?.expired_at, 'dd MMM yyyy')}
                     </p>
                   </CardContent>
                 </Card>

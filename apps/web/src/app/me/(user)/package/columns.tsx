@@ -8,6 +8,7 @@ import { dateFormatter, moneyFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { SelectAllPackageTransaction } from '@repo/shared/repository';
 import { Badge } from '@repo/ui/components/ui/badge';
+import { format } from 'date-fns';
 
 export function getColumns(): ColumnDef<
   SelectAllPackageTransaction['data'][0]
@@ -74,13 +75,10 @@ export function getColumns(): ColumnDef<
             </span>
             <p className="font-semibold">
               {row.original.package_expired_at
-                ? dateFormatter({
-                    year: undefined,
-                    month: 'short',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                  }).format(row.original.package_expired_at)
+                ? format(
+                    new Date(row.original.package_expired_at),
+                    'MMM dd - HH:mm',
+                  )
                 : '-'}
             </p>
           </div>

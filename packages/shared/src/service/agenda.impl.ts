@@ -16,6 +16,7 @@ import type {
   CreditRepository,
   InsertAgendaAndTransaction,
   LocationRepository,
+  FindAllAgendaByCoachOptions,
 } from '../repository';
 import { AgendaService } from './agenda';
 import { addMinutes, isAfter, isBefore, isEqual } from 'date-fns';
@@ -77,6 +78,15 @@ export class AgendaServiceImpl implements AgendaService {
 
     return {
       result: singleAgenda,
+    };
+  }
+
+  async findAllByCoachId(data: FindAllAgendaByCoachOptions) {
+    const schedules = await this._agendaRepository.findAllByCoachId(data);
+
+    return {
+      result: schedules,
+      error: undefined,
     };
   }
 

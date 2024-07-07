@@ -27,6 +27,7 @@ import EditUserForm from '../edit-user.form';
 import { dateFormatter } from '@repo/shared/util';
 import CreateCreditForm from '../create-credit.form';
 import DeleteCreditForm from '../delete-credit.form';
+import { format } from 'date-fns';
 
 interface getColumnsProps {
   locations: SelectLocation[];
@@ -92,7 +93,10 @@ export function getColumns({
         return (
           <span className="capitalize">
             {row.original.verified_at
-              ? dateFormatter().format(row.original.verified_at)
+              ? format(
+                  new Date(row.original.verified_at),
+                  'MMM dd, yyyy - HH:mm',
+                )
               : '-'}
           </span>
         );
@@ -107,7 +111,7 @@ export function getColumns({
         return (
           <span>
             {row.original.updated_at
-              ? dateFormatter().format(row.original.updated_at)
+              ? format(new Date(row.original.updated_at), 'MMM dd, yyyy')
               : '-'}
           </span>
         );

@@ -27,6 +27,7 @@ import {
 import { Button } from '@repo/ui/components/ui/button';
 import EditParticipantForm from '../edit-participant.form';
 import EditAgendaForm from '../edit-agenda.form';
+import { format } from 'date-fns';
 
 interface getColumnsProps {
   locations: SelectLocation[];
@@ -101,14 +102,8 @@ export function getColumns({
       cell: ({ row }) => {
         return (
           <p className="">
-            {dateFormatter({
-              year: undefined,
-              month: 'short',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: 'numeric',
-            }).format(row.original.time)}{' '}
-            ({row.original.class_duration} menit)
+            {format(new Date(row.original.time), 'MMM dd - HH:mm')}(
+            {row.original.class_duration} menit)
           </p>
         );
       },

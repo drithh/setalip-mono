@@ -19,6 +19,7 @@ import {
 } from '@repo/ui/components/ui/card';
 import { validateUser } from '@/lib/auth';
 import { dateFormatter } from '@repo/shared/util';
+import { format } from 'date-fns';
 
 export default async function Package({ searchParams }: { searchParams: any }) {
   const auth = await validateUser();
@@ -50,7 +51,8 @@ export default async function Package({ searchParams }: { searchParams: any }) {
                 {singlePackage?.credit - (singlePackage?.credit_used ?? 0)}
               </p>
               <p>
-                Expired At: {dateFormatter().format(singlePackage?.expired_at)}
+                Expired At:{' '}
+                {format(new Date(singlePackage?.expired_at), 'dd MMM yyyy')}
               </p>
             </CardContent>
           </Card>

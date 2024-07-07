@@ -18,6 +18,7 @@ import { SelectAllSchedule } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import { Badge } from '@repo/ui/components/ui/badge';
 import Link from 'next/link';
+import { format } from 'date-fns';
 
 export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
   return [
@@ -34,13 +35,7 @@ export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
         return (
           <div className="-ml-5 flex flex-col place-items-center">
             <p className="font-semibold">
-              {dateFormatter({
-                year: undefined,
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-              }).format(row.original.time)}
+              {format(new Date(row.original.time), 'MMM dd - HH:mm')}
             </p>
             <p>({row.original.class_duration} menit)</p>
           </div>

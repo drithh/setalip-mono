@@ -20,6 +20,7 @@ import {
   SelectClass,
   SelectAllClass,
   SelectAllAgendaByUser,
+  SelectAllSchedule,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
@@ -64,37 +65,27 @@ export default function AgendaTable({
     router.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
-  const filterFields: DataTableFilterField<SelectAllAgendaByUser['data'][0]>[] =
-    [
-      {
-        label: 'Lokasi',
-        value: 'location_name',
-        options: locations.map((location) => ({
-          label: location.name,
-          value: location.id.toString(),
-          withCount: true,
-        })),
-      },
+  const filterFields: DataTableFilterField<SelectAllSchedule['data'][0]>[] = [
+    {
+      label: 'Lokasi',
+      value: 'location_name',
+      options: locations.map((location) => ({
+        label: location.name,
+        value: location.id.toString(),
+        withCount: true,
+      })),
+    },
 
-      {
-        label: 'Kelas',
-        value: 'class_type_name',
-        options: classTypes.map((classType) => ({
-          label: classType.type,
-          value: classType.id.toString(),
-          withCount: true,
-        })),
-      },
-      {
-        label: 'Instruktur',
-        value: 'coach_name',
-        options: coaches.map((coach) => ({
-          label: coach.name,
-          value: coach.id.toString(),
-          withCount: true,
-        })),
-      },
-    ];
+    {
+      label: 'Kelas',
+      value: 'class_type_name',
+      options: classTypes.map((classType) => ({
+        label: classType.type,
+        value: classType.id.toString(),
+        withCount: true,
+      })),
+    },
+  ];
 
   const { table } = useDataTable({
     data: result?.data ?? [],

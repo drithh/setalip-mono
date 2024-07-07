@@ -17,6 +17,7 @@ import {
 import { dateFormatter } from '@repo/shared/util';
 import { Users } from '@repo/shared/db';
 import { menus } from '../menu';
+import { format } from 'date-fns';
 
 export default async function Layout({
   children,
@@ -36,7 +37,8 @@ export default async function Layout({
             <div className="flex flex-col place-items-center gap-2">
               <p className="text-xl font-semibold">{auth.user.name}</p>
               <p className="">
-                Joined Since {dateFormatter().format(auth.user.createdAt)}
+                Joined Since{' '}
+                {format(new Date(auth.user.createdAt), 'MMM dd yyyy')}
               </p>
             </div>
           </div>

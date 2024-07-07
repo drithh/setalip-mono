@@ -23,6 +23,9 @@ export interface AgendaService {
   findById(
     id: SelectAgenda['id']
   ): PromiseResult<SelectAgenda | undefined, Error>;
+  findAllByCoachId(
+    data: FindAllAgendaOptions
+  ): PromiseResult<SelectAllSchedule, Error>;
   findScheduleByDate(
     data: FindScheduleByDateOptions
   ): PromiseResult<SelectAllSchedule, Error>;

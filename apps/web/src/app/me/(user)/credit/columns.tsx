@@ -8,6 +8,7 @@ import { dateFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { SelectAllCredit } from '@repo/shared/repository';
 import { Badge } from '@repo/ui/components/ui/badge';
+import { format } from 'date-fns';
 
 export function getColumns(): ColumnDef<SelectAllCredit['data'][0]>[] {
   return [
@@ -27,13 +28,7 @@ export function getColumns(): ColumnDef<SelectAllCredit['data'][0]>[] {
               Tanggal Transaksi:&ensp;
             </span>
             <p className="font-semibold">
-              {dateFormatter({
-                year: undefined,
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-              }).format(row.original.updated_at)}
+              {format(new Date(row.original.updated_at), 'MMM dd - HH:mm')}
             </p>
           </div>
         );

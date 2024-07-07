@@ -8,6 +8,7 @@ import { dateFormatter } from '../../../../../packages/shared/src/util/local';
 import { Button } from '@repo/ui/components/ui/button';
 import EditUserForm from './edit-user.form';
 import { validateUser } from '@/lib/auth';
+import { format } from 'date-fns';
 
 export default async function Page() {
   const auth = await validateUser();
@@ -62,13 +63,7 @@ export default async function Page() {
             readOnly
             value={
               user.result?.verified_at
-                ? dateFormatter({
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    second: 'numeric',
-                  })
-                    .format(user.result?.verified_at)
-                    .toString()
+                ? format(user.result?.verified_at, 'dd MMM yyyy')
                 : 'Not Verified'
             }
           />
