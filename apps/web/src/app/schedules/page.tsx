@@ -19,11 +19,6 @@ export default async function Schedules({
 
   const search = findAllScheduleSchema.parse(searchParams);
 
-  const defaultLocationSearch =
-    auth?.user?.locationId && !search.location_name
-      ? { location_name: auth.user.locationId.toString() }
-      : {};
-
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,
   );
@@ -50,7 +45,6 @@ export default async function Schedules({
           classes={classes.result?.data || []}
           search={{
             ...search,
-            ...defaultLocationSearch,
           }}
         />
       </div>

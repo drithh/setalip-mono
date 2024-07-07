@@ -7,6 +7,7 @@ import {
 } from '#dep/notification/index';
 import { env } from '#dep/env';
 import { injectable } from 'inversify';
+import { addMinutes, format } from 'date-fns';
 
 interface PostBody {
   secret: string;
@@ -27,15 +28,16 @@ interface ErrorResponse {
   data: false;
 }
 
-const HEADER_MESSAGE = 'Pilates Reform Indonesia\n';
-const FOOTER_MESSAGE = '\n\nPowered by Pilates Reform Indonesia';
+const HEADER_MESSAGE = 'Pilates Reform Indonesia\n\n';
+const FOOTER_MESSAGE =
+  '\n\nJika Anda memiliki pertanyaan, silahkan hubungi admin\n\nPowered by Pilates Reform Indonesia';
 
 const parseNotification = (payload: NotificationPayload) => {
   switch (payload.type) {
     case NotificationType.OtpSent:
       return (
         `${HEADER_MESSAGE}` +
-        `Kode OTP Anda adalah ${payload.otp}. Jangan memberitahukan kode ini kepada siapapun.` +
+        `Kode OTP Anda adalah ${payload.otp}\n\nJangan memberitahukan kode ini kepada siapapun. ` +
         `Jika Anda tidak meminta kode ini, abaikan pesan ini.` +
         `${FOOTER_MESSAGE}`
       );
@@ -46,36 +48,45 @@ const parseNotification = (payload: NotificationPayload) => {
         `${FOOTER_MESSAGE}`
       );
     case NotificationType.UserBookedAgenda:
+      const startTime = format(new Date(payload.date), 'HH:mm');
+      const endDate = addMinutes(payload.date, payload.duration);
+      const endTime = format(endDate, 'HH:mm');
       return (
         `${HEADER_MESSAGE}` +
-        `Anda telah berhasil melakukan booking kelas pada tanggal ${payload.date}, ` +
-        `kelas ${payload.class} dengan durasi ${payload.duration} menit` +
-        `di lokasi ${payload.location} pada ruangan ${payload.facility} ` +
+        `Booking kelas berhasil, Detail:\n` +
+        `Kelas: ${payload.class}\n` +
+        `Tanggal: ${format(new Date(payload.date), 'eeee, dd/MM/yyyy')}\n` +
+        `Waktu: ${startTime} - ${endTime}\n` +
+        `Lokasi: ${payload.location} - ${payload.facility}` +
         `${FOOTER_MESSAGE}`
       );
     case NotificationType.AdminCancelledUserAgenda:
       return (
         `${HEADER_MESSAGE}` +
-        `Admin telah membatalkan booking kelas Anda pada tanggal ${payload.date}, ` +
-        `kelas ${payload.class}` +
-        `di lokasi ${payload.location} pada ruangan ${payload.facility} ` +
+        `Booking kelas dibatalkan, Detail:\n` +
+        `Kelas: ${payload.class}\n` +
+        `Tanggal: ${format(new Date(payload.date), 'eeee, dd/MM/yyyy')}\n` +
+        `Lokasi: ${payload.location} - ${payload.facility}` +
         `${FOOTER_MESSAGE}`
       );
     case NotificationType.UserBoughtPackage:
       return (
         `${HEADER_MESSAGE}` +
-        `Anda telah berhasil melakukan pembelian paket ${payload.package} ` +
-        `Silahkan melakukan pembayaran ke ${payload.deposit_account_bank_name} atas nama ${payload.deposit_account_name}` +
-        `dengan nomor rekening ${payload.deposit_account_account_number}` +
+        `Transaksi pembelian paket ${payload.package} berhasil dibuat\n` +
+        `Silahkan melakukan pembayaran pada:\n` +
+        `Bank: ${payload.deposit_account_bank_name}\n` +
+        `Atas Nama: ${payload.deposit_account_name}\n` +
+        `Nomor Rekening: ${payload.deposit_account_account_number}\n` +
         `${FOOTER_MESSAGE}`
       );
     case NotificationType.AdminConfirmedUserPackage:
       return (
         `${HEADER_MESSAGE}` +
-        `Admin telah mengkonfirmasi pembelian paket ${payload.package} ` +
-        `dengan tipe kelas ${payload.class_type} sebesar ${payload.credit} kredit` +
-        `status pembelian: ${payload.status} ` +
-        `expired at: ${payload.expired_at}` +
+        `Pembelian paket telah dikonfirmasi, detail:\n ` +
+        `Status transaksi: ${payload.status} ` +
+        `Paket: ${payload.package} - ${payload.class_type}\n` +
+        `Jumlah Session ${payload.credit} sesi\n` +
+        `Paket kadaluarsa: ${payload.expired_at ? format(new Date(payload.expired_at), 'eeee, dd/MM/yyyy') : 'Tidak terbatas'}` +
         `${FOOTER_MESSAGE}`
       );
     default:

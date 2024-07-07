@@ -12,6 +12,7 @@ export const registerUserSchema = z
       message: 'Invalid phone number',
     }),
     address: z.string(),
+    location_id: z.coerce.number(),
   })
   .refine(
     (data) => {

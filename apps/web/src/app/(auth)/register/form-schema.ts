@@ -11,6 +11,7 @@ export const registerUserSchema = z
     phoneNumber: z.string().refine((data) => isPossiblePhoneNumber(data), {
       message: 'Invalid phone number',
     }),
+    location_id: z.coerce.number(),
     address: z.string(),
   })
   .refine(

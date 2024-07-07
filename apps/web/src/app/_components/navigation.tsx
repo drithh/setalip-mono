@@ -55,7 +55,9 @@ export default async function Navigation() {
                 Classes
               </Button>
             </Link>
-            <Link href="/schedules">
+            <Link
+              href={`/schedules${auth?.user?.locationId !== undefined ? `?location_name=${auth?.user?.locationId}` : ''}`}
+            >
               <Button
                 variant="link"
                 size="default"

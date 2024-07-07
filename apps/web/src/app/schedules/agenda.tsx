@@ -36,6 +36,7 @@ interface AgendaTableProps {
   classTypes: SelectClassType[];
   classes: SelectAllClass['data'];
   search: z.infer<typeof findAllScheduleSchema>;
+  defaultLocation?: number;
 }
 
 export default function AgendaTable({
@@ -57,7 +58,6 @@ export default function AgendaTable({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
   const convertDate = (date: string) => parse(date, 'yyyy-MM-dd', new Date());
   const defaultDate = search.date ? convertDate(search.date) : new Date();
   const [date, setDate] = React.useState<Date>(defaultDate);

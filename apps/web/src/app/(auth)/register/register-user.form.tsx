@@ -25,6 +25,14 @@ import { RegisterUserSchema, registerUserSchema } from './form-schema';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { api } from '@/trpc/react';
+import { SelectLocation } from '@repo/shared/repository';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@repo/ui/components/ui/select';
 
 const TOAST_MESSAGES = {
   error: {
@@ -41,7 +49,11 @@ const TOAST_MESSAGES = {
   },
 };
 
-export default function RegisterUserForm() {
+interface RegisterUserFormProps {
+  locations: SelectLocation[];
+}
+
+export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
   const router = useRouter();
 
   const auth = api.auth.getSession.useQuery(void {}, {
@@ -66,6 +78,7 @@ export default function RegisterUserForm() {
       password: '',
       passwordConfirmation: '',
       phoneNumber: '',
+      location_id: 1,
     },
   });
 
@@ -100,6 +113,7 @@ export default function RegisterUserForm() {
       toast.success(TOAST_MESSAGES.success.title, {
         description: TOAST_MESSAGES.success.description,
       });
+      router.push('/verification');
     }
   }, [formState]);
 
@@ -204,6 +218,53 @@ export default function RegisterUserForm() {
           )}
         />
 
+        <FormField
+          control={form.control}
+          name="location_id"
+          render={({ field }) => (
+            <FormItem className="grid w-full gap-2">
+              <FormLabel>Lokasi Cabang</FormLabel>
+              <FormControl>
+                <>
+                  <Input type="hidden" {...field} />
+
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value.toString()}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih kelas" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {locations.map((location) => (
+                        <SelectItem
+                          key={location.id}
+                          value={location.id.toString()}
+                        >
+                          {location.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="my-4">
+          <p className="text-justify text-sm">
+            By creating an account, you agree to our{' '}
+            <Link href="/legal" className="text-balance underline">
+              Terms of Service
+            </Link>{' '}
+            and have read and acknowledge our{' '}
+            <Link href="/legal" className="text-balance underline">
+              Privacy Policy.
+            </Link>
+          </p>
+        </div>
         <Button type="submit" className="w-full">
           Register
         </Button>

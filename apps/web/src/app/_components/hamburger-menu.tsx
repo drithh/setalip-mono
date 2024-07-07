@@ -122,7 +122,7 @@ export default function HamburgerMenu({ user }: MenuProps) {
             Classes
           </Link>
           <Link
-            href="/schedules"
+            href={`/schedules${user?.locationId !== undefined ? `?location_name=${user?.locationId}` : ''}`}
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <CalendarClock className="h-5 w-5" />

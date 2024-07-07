@@ -71,7 +71,7 @@ export class AuthServiceImpl implements AuthService {
       address: data.address,
       role: 'user',
       hashed_password,
-      location_id: 1,
+      location_id: data.location_id,
     });
 
     if (user instanceof Error) {

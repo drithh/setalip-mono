@@ -21,6 +21,7 @@ import {
   SelectPackageTransaction,
 } from '@repo/shared/repository';
 import { moneyFormatter } from '@repo/shared/util';
+import Link from 'next/link';
 
 interface CreateTransactionProps {
   time: string;
@@ -48,6 +49,19 @@ export default function CreateTransactionDialog({
         <div className="grid grid-cols-2">
           <p>Waktu:</p>
           <p className="font-semibold">{time}</p>
+
+          <div className="col-span-2 mb-4 mt-8">
+            <p className="text-justify text-sm">
+              By booking this class, you agree to our{' '}
+              <Link href="/legal" className="text-balance underline">
+                Terms of Service
+              </Link>{' '}
+              and have read and acknowledge our{' '}
+              <Link href="/legal" className="text-balance underline">
+                Privacy Policy.
+              </Link>
+            </p>
+          </div>
         </div>
         <AlertDialogFooter>
           <AlertDialogCancel>Batal</AlertDialogCancel>
