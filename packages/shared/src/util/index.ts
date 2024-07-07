@@ -42,3 +42,23 @@ export function convertFormData<T = RecordFormData>(data: FormData) {
   }
   return formData as T;
 }
+
+export function transformData<T = number | string | Date | boolean>(
+  data: Record<string, T>,
+  regex: RegExp
+) {
+  const parsedData: Record<string, T>[] = [];
+
+  for (const key in data) {
+    const match = key.match(regex);
+    if (match) {
+      const [, index, field] = match as any;
+      if (!parsedData[index]) {
+        parsedData[index] = {};
+      }
+      (parsedData[index] as any)[field] = data[key];
+    }
+  }
+
+  return parsedData;
+}

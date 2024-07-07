@@ -17,30 +17,11 @@ import {
   convertErrorsToZod,
   convertFormData,
   convertZodErrorsToFieldErrors,
+  transformData,
 } from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { FieldError } from 'react-hook-form';
 import { api } from '@/trpc/server';
-
-function transformData<T = number | string | Date | boolean>(
-  data: Record<string, T>,
-) {
-  const operationalHours: Record<string, T>[] = [];
-  const operationalHourRegex = /^operationalHour\.(\d+)\.(\w+)$/;
-
-  for (const key in data) {
-    const match = key.match(operationalHourRegex);
-    if (match) {
-      const [, index, field] = match as any;
-      if (!operationalHours[index]) {
-        operationalHours[index] = {};
-      }
-      (operationalHours[index] as any)[field] = data[key];
-    }
-  }
-
-  return operationalHours;
-}
 
 export async function editOperationalHour(
   state: FormEditOperationalHour,
@@ -48,7 +29,8 @@ export async function editOperationalHour(
 ): Promise<FormEditOperationalHour> {
   const formData = convertFormData(data);
 
-  const transformedData = transformData(formData);
+  const operationalHourRegex = /^operationalHour\.(\d+)\.(\w+)$/;
+  const transformedData = transformData(formData, operationalHourRegex);
 
   const newFormData = {
     ...formData,

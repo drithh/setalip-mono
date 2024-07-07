@@ -42,6 +42,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .selectFrom('agenda_bookings')
       .select(({ fn }) => [fn.count<number>('agenda_bookings.id').as('count')])
       .where('agenda_id', '=', id)
+      .where('status', '=', 'booked')
       .executeTakeFirst();
 
     return query?.count ?? 0;
@@ -114,7 +115,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
           .select(
             sql<
               SelectParticipant[]
-            >`coalesce(json_arrayagg(json_object('agenda_booking_id', 'agenda_bookings.id', 'name', users.name,'user_id', users.id)), '[]')`.as(
+            >`coalesce(json_arrayagg(json_object('agenda_booking_id', agenda_bookings.id, 'name', users.name,'user_id', users.id)), '[]')`.as(
               'participants'
             )
           )
@@ -602,19 +603,27 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         .selectFrom('agenda_bookings')
         .selectAll()
         .where('agenda_bookings.agenda_id', '=', data.agenda_id)
+        .where('agenda_bookings.status', '!=', 'cancelled')
         .execute();
 
+      // Create a Set of IDs from data.agendaBookings
+      const newBookingIds = new Set(
+        data.agendaBookings.map((newBooking) => newBooking.id)
+      );
+
+      console.log('curentAgendaBookings', curentAgendaBookings);
+      console.log('newBookingIds', newBookingIds, data);
+
+      // Filter currentAgendaBookings based on whether the ID is not in the Set
       const toDelete = curentAgendaBookings.filter(
-        (booking) =>
-          !data.agendaBookings.some(
-            (newBooking) => newBooking.id === booking.id
-          )
+        (booking) => !newBookingIds.has(booking.id)
       );
 
       const toInsert = data.agendaBookings.filter(
-        (newBooking) =>
-          !curentAgendaBookings.some((booking) => newBooking.id === booking.id)
-      ) as InsertAgendaBooking[];
+        (booking) => booking.id === undefined
+      );
+
+      console.log('toDelete', toDelete, 'toInsert', toInsert);
 
       await this._db.transaction().execute(async (trx) => {
         await Promise.all(

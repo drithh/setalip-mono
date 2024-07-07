@@ -128,10 +128,13 @@ export type InsertAgendaAndTransaction = Insertable<AgendaBookings> &
   InsertCredit;
 
 export type UpdateAgenda = OptionalToRequired<Updateable<Agendas>, 'id'>;
-
+type UpdateAgendaBookingData = OptionalToRequired<
+  Updateable<AgendaBookings>,
+  'user_id'
+>;
 export interface UpdateAgendaBooking {
   agenda_id: SelectAgenda['id'];
-  agendaBookings: Updateable<AgendaBookings>[];
+  agendaBookings: UpdateAgendaBookingData[];
 }
 export interface AgendaRepository {
   count(): Promise<number>;

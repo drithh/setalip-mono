@@ -29,7 +29,7 @@ export const agendaRouter = {
         page: input.page,
         perPage: input.per_page,
         sort: input.sort,
-        className: input.className,
+        className: input.class_name,
         locations: locations,
         coaches: coaches,
         dateStart: input.dateStart,

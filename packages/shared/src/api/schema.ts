@@ -41,7 +41,7 @@ export const defaultPaginationSchema = z.object({
     .refine((data) => data > 0)
     .default(10)
     .optional(),
-  sort: z.string().default('created_at.asc').optional(),
+  sort: z.string().default('created_at.desc').optional(),
 });
 
 export const findAllPackageSchema = defaultPaginationSchema.extend({
@@ -50,7 +50,7 @@ export const findAllPackageSchema = defaultPaginationSchema.extend({
 });
 
 export const findAllPackageTransactionSchema = defaultPaginationSchema.extend({
-  name: z.string().optional(),
+  user_name: z.string().optional(),
   status: z.string().optional(),
 });
 
@@ -68,7 +68,7 @@ export const findCreditsByUserIdSchema = z.object({
 });
 
 export const findAllAgendaSchema = defaultPaginationSchema.extend({
-  className: z.string().optional(),
+  class_name: z.string().optional(),
   coach_name: z.string().optional(),
   location_name: z.string().optional(),
   dateStart: z.date().optional(),

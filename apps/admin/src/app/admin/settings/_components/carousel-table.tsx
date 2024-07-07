@@ -40,7 +40,7 @@ export default function CarouselTable({}: CarouselTableProps) {
     pageCount: -1,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: 'created_at.asc',
+    defaultSort: 'created_at.desc',
     visibleColumns: {},
   });
 

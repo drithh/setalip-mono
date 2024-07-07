@@ -1,6 +1,6 @@
-import { findAllPackageSchema } from '@repo/shared/api/schema';
+import { findAllAgendaSchema } from '@repo/shared/api/schema';
 import { TYPES, container } from '@repo/shared/inversify';
-import { FindAllPackageOptions } from '@repo/shared/repository';
+import { FindAllAgendaOptions } from '@repo/shared/repository';
 import {
   ClassService,
   CoachService,
@@ -9,14 +9,14 @@ import {
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import React from 'react';
 import QueryResetBoundary from '../../../lib/query-reset-boundary';
-import PackageTable from './_components/agenda-table';
+import AgendaTable from './_components/agenda-table';
 
 export interface IndexPageProps {
-  searchParams: FindAllPackageOptions;
+  searchParams: FindAllAgendaOptions;
 }
 
-export default async function Packages({ searchParams }: IndexPageProps) {
-  const search = findAllPackageSchema.parse(searchParams);
+export default async function Agendas({ searchParams }: IndexPageProps) {
+  const search = findAllAgendaSchema.parse(searchParams);
   const classService = container.get<ClassService>(TYPES.ClassService);
   const classes = await classService.findAll({});
 
@@ -40,7 +40,7 @@ export default async function Packages({ searchParams }: IndexPageProps) {
             />
           }
         >
-          <PackageTable
+          <AgendaTable
             locations={locations?.result ?? []}
             coaches={coaches?.result ?? []}
             classes={classes?.result?.data ?? []}

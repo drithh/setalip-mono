@@ -21,8 +21,8 @@ const db = new Kysely<any>({
   }),
   log(event) {
     if (event.level === 'query') {
-      console.log(event.query.sql);
-      console.log(event.query.parameters);
+      console.info(event.query.sql);
+      console.info(event.query.parameters);
     }
   },
 });

@@ -72,7 +72,7 @@ const parseNotification = (payload: NotificationPayload) => {
     case NotificationType.UserBoughtPackage:
       return (
         `${HEADER_MESSAGE}` +
-        `Transaksi pembelian paket ${payload.package} berhasil dibuat\n` +
+        `Transaksi pembelian paket ${payload.package} berhasil dibuat.\n\n` +
         `Silahkan melakukan pembayaran pada:\n` +
         `Bank: ${payload.deposit_account_bank_name}\n` +
         `Atas Nama: ${payload.deposit_account_name}\n` +
@@ -82,9 +82,9 @@ const parseNotification = (payload: NotificationPayload) => {
     case NotificationType.AdminConfirmedUserPackage:
       return (
         `${HEADER_MESSAGE}` +
-        `Pembelian paket telah dikonfirmasi, detail:\n ` +
-        `Status transaksi: ${payload.status} ` +
-        `Paket: ${payload.package} - ${payload.class_type}\n` +
+        `Pembelian paket telah dikonfirmasi\n ` +
+        `Status transaksi: ${payload.status}\n ` +
+        `Paket: ${payload.package} (${payload.class_type})\n` +
         `Jumlah Session ${payload.credit} sesi\n` +
         `Paket kadaluarsa: ${payload.expired_at ? format(new Date(payload.expired_at), 'eeee, dd/MM/yyyy') : 'Tidak terbatas'}` +
         `${FOOTER_MESSAGE}`

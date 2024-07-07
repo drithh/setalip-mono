@@ -18,7 +18,7 @@ module.exports = {
     node: true,
     browser: true,
   },
-  plugins: ['only-warn', { 'unused-imports': unusedImports }],
+  // plugins: ['only-warn', { 'unused-imports': unusedImports }],
   settings: {
     'import/resolver': {
       typescript: {

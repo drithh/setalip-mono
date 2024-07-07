@@ -81,6 +81,7 @@ export default function EditParticipantForm({
 
   const [selectedParticipants, setSelectedParticipants] =
     useState<SelectParticipant[]>(participants);
+
   const [selectedParticipant, setSelectedParticipant] =
     useState<SelectParticipant>();
 
@@ -143,6 +144,15 @@ export default function EditParticipantForm({
 
   const formRef = useRef<HTMLFormElement>(null);
 
+  // console.log(
+  //   'form',
+  //   form.getValues('participants'),
+  //   selectedParticipants,
+  //   participants,
+  // );
+
+  console.log('error', form.formState.errors, form.getValues('participants'));
+
   return (
     <Sheet
       open={open}
@@ -154,9 +164,9 @@ export default function EditParticipantForm({
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">Edit Paket</SheetTitle>
+            <SheetTitle className="text-left">Edit Participant</SheetTitle>
             <SheetDescription className="text-left">
-              Edit paket. Pastikan klik simpan ketika selesai.
+              Edit participant. Pastikan klik simpan ketika selesai.
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -171,46 +181,51 @@ export default function EditParticipantForm({
                   control={form.control}
                   name="agenda_id"
                   render={({ field }) => (
-                    <Input hidden {...field} value={agendaId} />
+                    <Input type="hidden" {...field} value={agendaId} />
                   )}
                 />
-                {selectedParticipants.map((participant, index) => (
-                  <div key={participant.user_id}>
-                    <FormField
-                      control={form.control}
-                      name={`participants.${index}.user_id`}
-                      key={index}
-                      render={({ field }) => (
-                        <FormItem className="grid w-full gap-2">
-                          <FormLabel>Peserta</FormLabel>
-                          <FormControl>
-                            <>
-                              <Input hidden {...field} />
-                              <div className="flex">
-                                <Input readOnly value={participant.name} />
-                                <DeleteParticipantDialog
-                                  participant={participant}
-                                  onDelete={() => {
-                                    setSelectedParticipants((prev) =>
-                                      prev.filter((_, i) => i !== index),
-                                    );
-                                  }}
-                                />
-                              </div>
-                            </>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                <FormLabel>Peserta</FormLabel>
+                <div className="flex w-full flex-col">
+                  {selectedParticipants.map((participant, index) => (
+                    <div key={participant.user_id}>
+                      <FormField
+                        control={form.control}
+                        name={`participants.${index}.user_id`}
+                        render={({ field }) => (
+                          <FormItem className="grid w-full gap-2">
+                            <FormControl>
+                              <Input
+                                type="hidden"
+                                {...field}
+                                value={participant.user_id}
+                              />
+                              {/* <div className="flex gap-2">
+                                  <Input readOnly value={participant.name} />
+                                  <DeleteParticipantDialog
+                                    participant={participant}
+                                    onDelete={() => {
+                                      setSelectedParticipants((prev) =>
+                                        prev.filter((_, i) => i !== index),
+                                      );
+                                    }}
+                                  />
+                                </div> */}
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {participant.agenda_booking_id && (
+                        <FormField
+                          control={form.control}
+                          name={`participants.${index}.agenda_booking_id`}
+                          render={({ field }) => <Input {...field} />}
+                        />
                       )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`participants.${index}.agenda_booking_id`}
-                      key={index}
-                      render={({ field }) => <Input hidden {...field} />}
-                    />
-                  </div>
-                ))}
+                    </div>
+                  ))}
+                </div>
 
                 <Button type="submit" className="w-full">
                   Simpan
@@ -218,7 +233,7 @@ export default function EditParticipantForm({
               </form>
             </Form>
 
-            <FormLabel>Tambah Peserta</FormLabel>
+            <p>Tambah Peserta</p>
             <Select
               onValueChange={(value) => {
                 const member = members.data?.result?.find(

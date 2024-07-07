@@ -51,7 +51,7 @@ export default function ReviewTable({ search, users }: ReviewTableProps) {
     pageCount: result?.pageCount,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: 'created_at.asc',
+    defaultSort: 'created_at.desc',
     visibleColumns: {},
   });
 

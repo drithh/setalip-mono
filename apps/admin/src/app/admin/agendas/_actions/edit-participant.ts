@@ -10,6 +10,7 @@ import {
   convertErrorsToZod,
   convertFormData,
   convertZodErrorsToFieldErrors,
+  transformData,
 } from '@repo/shared/util';
 
 export async function editParticipant(
@@ -17,7 +18,16 @@ export async function editParticipant(
   data: FormData,
 ): Promise<FormEditParticipant> {
   const formData = convertFormData(data);
-  const parsed = editParticipantSchema.safeParse(formData);
+
+  const participantRegex = /^participants\.(\d+)\.(\w+)$/;
+  const transformedData = transformData(formData, participantRegex);
+
+  const newFormData = {
+    ...formData,
+    participants: transformedData,
+  };
+
+  const parsed = editParticipantSchema.safeParse(newFormData);
 
   if (!parsed.success) {
     return {
@@ -34,7 +44,7 @@ export async function editParticipant(
   const result = await agendaService.updateAgendaBooking({
     agenda_id: parsed.data.agenda_id,
     agendaBookings: parsed.data.participants.map((participant) => ({
-      agenda_booking_id: participant.agenda_booking_id,
+      id: participant.agenda_booking_id,
       user_id: participant.user_id,
     })),
   });

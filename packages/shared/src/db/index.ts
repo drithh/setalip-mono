@@ -20,8 +20,8 @@ export const db = new Database({
   plugins: [new ParseJSONResultsPlugin()],
   log(event) {
     if (event.level === 'query') {
-      console.log(event.query.sql);
-      console.log(event.query.parameters);
+      // console.info(event.query.sql);
+      console.info(event.query.parameters);
     }
   },
 });

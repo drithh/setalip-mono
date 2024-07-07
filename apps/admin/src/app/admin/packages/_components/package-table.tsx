@@ -56,7 +56,7 @@ export default function PackageTable({
     pageCount: result?.pageCount,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: 'created_at.asc',
+    defaultSort: 'created_at.desc',
     visibleColumns: {
       updated_at: false,
       updated_by: false,

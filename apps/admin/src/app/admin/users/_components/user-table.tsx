@@ -62,7 +62,7 @@ export default function UserTable({
     pageCount: result?.pageCount,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: 'created_at.asc',
+    defaultSort: 'created_at.desc',
     visibleColumns: {
       verified_at: false,
       updated_at: false,

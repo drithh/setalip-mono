@@ -50,7 +50,7 @@ export const packageRouter = {
         perPage: input.per_page,
         sort: input.sort,
         status: statuses,
-        user_name: input.name,
+        user_name: input.user_name,
       });
 
       return packages;

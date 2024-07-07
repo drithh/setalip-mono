@@ -23,7 +23,7 @@ export const editParticipantSchema = z.object({
   agenda_id: z.coerce.number(),
   participants: z.array(
     z.object({
-      agenda_booking_id: z.coerce.number(),
+      agenda_booking_id: z.number().optional(),
       user_id: z.coerce.number(),
     }),
   ),

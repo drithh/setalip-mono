@@ -21,6 +21,7 @@ import {
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import EditPackageTransactionForm from '../edit-package-transactions.form';
+import { format } from 'date-fns';
 //
 interface getColumnsProps {
   statuses: SelectPackageTransaction['status'][];
@@ -32,12 +33,24 @@ export function getColumns({
 }: getColumnsProps): ColumnDef<SelectPackageTransactionWithUser>[] {
   return [
     {
-      accessorKey: 'packageTransaction_name',
+      accessorKey: 'created_at',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Validity" />
+        <DataTableColumnHeader column={column} title="Created At" />
+      ),
+
+      cell: ({ row }) => {
+        return (
+          <p className="">{format(row.original.created_at, 'dd/MM/yyyy')}</p>
+        );
+      },
+    },
+    {
+      accessorKey: 'package_name',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Package Name" />
       ),
       cell: ({ row }) => {
-        return <span>{row.original.package_name} days</span>;
+        return <span>{row.original.package_name}</span>;
       },
     },
     {
@@ -58,20 +71,7 @@ export function getColumns({
         return <span>{moneyFormatter.format(row.original.amount_paid)}</span>;
       },
     },
-    {
-      accessorKey: 'unique_code',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          className="justify-center"
-          column={column}
-          title="Unique Code"
-        />
-      ),
 
-      cell: ({ row }) => {
-        return <p className="-ml-5 text-center">{row.original.unique_code}</p>;
-      },
-    },
     {
       accessorKey: 'status',
       header: ({ column }) => (

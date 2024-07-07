@@ -45,19 +45,19 @@ export default async function Footer() {
               PILATES
             </div>
             <Link
-              href="http://"
+              href="/classes"
               className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
             >
               Classes
             </Link>
             <Link
-              href="http://"
+              href="/schedules"
               className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
             >
               Schedule
             </Link>
             <Link
-              href="http://"
+              href="/packages"
               className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
             >
               Package
@@ -68,7 +68,7 @@ export default async function Footer() {
               HELP
             </div>
             <Link
-              href="http://"
+              href="/legal"
               className="text-sm text-primary-foreground no-underline opacity-70 hover:underline"
             >
               Privacy Policy

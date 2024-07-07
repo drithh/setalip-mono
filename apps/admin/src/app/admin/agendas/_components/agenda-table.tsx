@@ -80,7 +80,7 @@ export default function AgendaTable({
     pageCount: result?.pageCount,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: 'created_at.asc',
+    defaultSort: 'created_at.desc',
     visibleColumns: {
       coach_id: false,
       created_at: false,

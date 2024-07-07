@@ -1,3 +1,5 @@
+import '@repo/ui/global.css';
+
 export default function Layout({
   children,
 }: Readonly<{
