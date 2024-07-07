@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Avatar from '../_components/avatar';
 import { validateUser } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
-import NavigationLink from './navigation-link';
+import NavigationLink from './_components/navigation-link';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   CalendarCheck,
@@ -15,6 +15,83 @@ import {
   User2,
 } from 'lucide-react';
 import { dateFormatter } from '@repo/shared/util';
+import { Users } from '@repo/shared/db';
+
+interface Menu {
+  children: React.ReactNode;
+  path: string;
+  role?: Users['role'];
+}
+
+const menus: Menu[] = [
+  {
+    children: (
+      <div className="flex place-items-center gap-2 px-2">
+        <User2 className="h-5 w-5" />
+        My Profile
+      </div>
+    ),
+    path: '/me',
+  },
+  {
+    children: (
+      <div className="flex place-items-center gap-2 px-2">
+        <CalendarCheck className="h-5 w-5" />
+        My Booking
+      </div>
+    ),
+    path: '/me/booking',
+    role: 'user',
+  },
+  {
+    children: (
+      <div className="flex place-items-center gap-2 px-2">
+        <CreditCard className="h-5 w-5" />
+        My Credit
+      </div>
+    ),
+    path: '/me/credit',
+    role: 'user',
+  },
+  {
+    children: (
+      <div className="flex place-items-center gap-2 px-2">
+        <HandHeart className="h-5 w-5" />
+        My Package
+      </div>
+    ),
+    path: '/me/package',
+    role: 'user',
+  },
+  {
+    children: (
+      <div className="flex place-items-center gap-2 px-2">
+        <Sparkles className="h-5 w-5" />
+        My Loyalty
+      </div>
+    ),
+    path: '/me/loyalty',
+  },
+  {
+    children: (
+      <div className="flex place-items-center gap-2 px-2">
+        <CalendarCheck className="h-5 w-5" />
+        My Agenda
+      </div>
+    ),
+    path: '/me/agenda',
+    role: 'coach',
+  },
+  {
+    children: (
+      <div className="flex place-items-center gap-2 px-2">
+        <LogOut className="h-5 w-5" />
+        Logout
+      </div>
+    ),
+    path: '/logout',
+  },
+];
 
 export default async function Layout({
   children,
@@ -22,63 +99,6 @@ export default async function Layout({
   children: React.ReactNode;
 }>) {
   const auth = await validateUser();
-
-  const menus = [
-    {
-      children: (
-        <div className="flex place-items-center gap-2 px-2">
-          <User2 className="h-5 w-5" />
-          My Profile
-        </div>
-      ),
-      path: '/me',
-    },
-    {
-      children: (
-        <div className="flex place-items-center gap-2 px-2">
-          <CalendarCheck className="h-5 w-5" />
-          My Booking
-        </div>
-      ),
-      path: '/me/booking',
-    },
-    {
-      children: (
-        <div className="flex place-items-center gap-2 px-2">
-          <CreditCard className="h-5 w-5" />
-          My Credit
-        </div>
-      ),
-      path: '/me/credit',
-    },
-    {
-      children: (
-        <div className="flex place-items-center gap-2 px-2">
-          <HandHeart className="h-5 w-5" />
-          My Package
-        </div>
-      ),
-      path: '/me/package',
-    },
-    {
-      children: (
-        <div className="flex place-items-center gap-2 px-2">
-          <Sparkles className="h-5 w-5" />
-          My Loyalty
-        </div>
-      ),
-      path: '/me/loyalty',
-    },
-    {
-      children: (
-        <div className="flex place-items-center gap-2 px-2">
-          <LogOut className="h-5 w-5" />
-          Logout
-        </div>
-      ),
-      path: '/logout',
-    },
-  ];
 
   return (
     <div className="mx-auto flex w-full max-w-[90vw] flex-row pb-32 pt-16 md:max-w-screen-xl">
