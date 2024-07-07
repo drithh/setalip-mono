@@ -16,6 +16,7 @@ import { validateRequest } from '@/lib/auth';
 import { container, TYPES } from '@repo/shared/inversify';
 import { WebSettingService } from '@repo/shared/service';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
+import { menus } from '../menu';
 
 export default async function Navigation() {
   const auth = await validateRequest();
@@ -99,34 +100,16 @@ export default async function Navigation() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link className="cursor-pointer" href="/me">
-                      Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link className="cursor-pointer" href="/me/booking">
-                      Booking
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link className="cursor-pointer" href="/me/loyalty">
-                      Loyalty
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link className="cursor-pointer" href="/me/package">
-                      Package
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link className="cursor-pointer" href="/logout">
-                      Logout
-                    </Link>
-                  </DropdownMenuItem>
+                  {menus.map((menu) =>
+                    menu?.role === auth?.user?.role ||
+                    menu.role === undefined ? (
+                      <DropdownMenuItem key={menu.path} asChild>
+                        <Link className="cursor-pointer" href={menu.path}>
+                          <span>{menu.label}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    ) : null,
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (

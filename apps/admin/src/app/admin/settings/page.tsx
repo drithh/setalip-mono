@@ -93,12 +93,18 @@ export default async function Page({ searchParams }: IndexPageProps) {
 
             <div className="grid gap-3">
               <Label htmlFor="address">Terms and Conditions</Label>
-              <RichTextViewer value={termsAndConditions.result ?? ''} />
+              <RichTextViewer
+                value={termsAndConditions.result ?? ''}
+                className="text-sm"
+              />
             </div>
 
             <div className="grid gap-3">
               <Label htmlFor="phone">Privacy Policy</Label>
-              <RichTextViewer value={privacyPolicy.result ?? ''} />
+              <RichTextViewer
+                value={privacyPolicy.result ?? ''}
+                className="text-sm"
+              />
             </div>
           </div>
         </CardContent>

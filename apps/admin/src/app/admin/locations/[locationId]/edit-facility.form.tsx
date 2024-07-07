@@ -227,7 +227,7 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
                         <FormLabel>Foto</FormLabel>
                         {field.value && field.value.size !== 0 ? (
                           <PhotoProvider>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid h-40 w-full gap-2">
                               <FileCard
                                 file={{
                                   ...field.value,
@@ -243,7 +243,7 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
                           facility.image_url &&
                           !imageRemoved && (
                             <PhotoProvider>
-                              <div className="grid grid-cols-2 gap-2">
+                              <div className="grid h-40 w-full gap-2">
                                 <FileCard
                                   file={
                                     {

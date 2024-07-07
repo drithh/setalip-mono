@@ -33,6 +33,14 @@ export interface FindScheduleByDateOptions extends DefaultPagination {
   date?: Date;
 }
 
+export interface FindAllAgendaByCoachOptions extends DefaultPagination {
+  locations: number[];
+  classTypes?: number[];
+  classNames?: number[];
+  date?: Date;
+  coachUserId: Selectable<Coaches>['user_id'];
+}
+
 export interface FindAgendaByUserOptions extends DefaultPagination {
   coaches?: number[];
   locations: number[];
@@ -142,6 +150,9 @@ export interface AgendaRepository {
 
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;
+  findAllByCoachId(
+    data: FindAllAgendaByCoachOptions
+  ): Promise<SelectAllSchedule>;
   findScheduleById(
     id: SelectAgenda['id']
   ): Promise<SelectScheduleByDate | undefined>;

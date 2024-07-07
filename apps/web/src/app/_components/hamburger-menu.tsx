@@ -34,6 +34,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import Avatar from './avatar';
 import { User } from 'lucia';
 import { Separator } from '@repo/ui/components/ui/separator';
+import { menus } from '../menu';
 
 interface MenuProps {
   user: User | null;
@@ -68,48 +69,18 @@ export default function HamburgerMenu({ user }: MenuProps) {
                 </Button>
                 <p>{user.name}</p>
               </Link>
-              <Link
-                href="/me"
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-              >
-                <User2 className="h-5 w-5" />
-                My Profile
-              </Link>
-              <Link
-                href="/me/booking"
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-              >
-                <CalendarCheck className="h-5 w-5" />
-                My Booking
-              </Link>
-              <Link
-                href="/me/credit"
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-              >
-                <CreditCard className="h-5 w-5" />
-                My Credit
-              </Link>
-              <Link
-                href="/me/package"
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-              >
-                <HandHeart className="h-5 w-5" />
-                My Package
-              </Link>
-              <Link
-                href="/me/loyalty"
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-              >
-                <Sparkles className="h-5 w-5" />
-                My Loyalty
-              </Link>
-              <Link
-                href="/logout"
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-              >
-                <LogOut className="h-5 w-5" />
-                Logout
-              </Link>
+              {menus.map((menu) =>
+                menu?.role === user.role || menu.role === undefined ? (
+                  <Link
+                    key={menu.path}
+                    href={menu.path}
+                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                  >
+                    {menu.icon}
+                    {menu.label}
+                  </Link>
+                ) : null,
+              )}
               <Separator />
             </>
           )}

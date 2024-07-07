@@ -26,12 +26,11 @@ interface AssetCardProps {
 
 export default function FileCard({ file, onDelete, progress }: AssetCardProps) {
   return (
-    <div className="group relative cursor-pointer overflow-hidden">
+    <div className="group relative h-40 cursor-pointer overflow-hidden">
       <PhotoView src={file.preview}>
         <ImageWithFallback
-          className="aspect-square w-full rounded-md object-cover "
-          height="84"
-          width="84"
+          className="aspect-square rounded-md object-contain"
+          fill
           src={file.preview}
           alt={file.name || 'Image'}
         />

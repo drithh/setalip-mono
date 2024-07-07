@@ -14,6 +14,7 @@ import {
   FindAgendaByUserOptions,
   SelectAllAgendaByUser,
   InsertAgendaAndTransaction,
+  FindAllAgendaByCoachOptions,
 } from '../agenda';
 import { Database, Users } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
@@ -147,6 +148,100 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .selectAll()
       .where('agendas.id', '=', id)
       .executeTakeFirst();
+  }
+
+  async findAllByCoachId(
+    data: FindAllAgendaByCoachOptions
+  ): Promise<SelectAllSchedule> {
+    const {
+      page = 1,
+      perPage = 10,
+      sort,
+      classTypes,
+      locations,
+      date,
+      coachUserId,
+    } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['agendas.time', 'desc']
+    ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
+
+    let query = this._db
+      .selectFrom('agendas')
+      .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
+      .innerJoin('users', 'coaches.user_id', 'users.id')
+      .innerJoin('classes', 'agendas.class_id', 'classes.id')
+      .innerJoin(
+        'location_facilities',
+        'agendas.location_facility_id',
+        'location_facilities.id'
+      )
+      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id')
+      .where('coaches.user_id', '=', coachUserId);
+
+    if (classTypes?.length && classTypes.length > 0) {
+      query = query.where('class_types.id', 'in', classTypes);
+    }
+
+    if (locations?.length && locations.length > 0) {
+      query = query.where('locations.id', 'in', locations);
+    }
+
+    if (date) {
+      const dateTomorrow = new Date(date);
+      dateTomorrow.setDate(dateTomorrow.getDate() + 1);
+
+      query = query
+        .where('agendas.time', '>=', date)
+        .where('agendas.time', '<=', dateTomorrow);
+    }
+
+    const queryData = await query
+      .select((eb) => [
+        'agendas.class_id',
+        'agendas.id',
+        'agendas.time',
+        'agendas.location_facility_id',
+        'classes.slot',
+        'users.name as coach_name',
+        'coaches.id as coach_id',
+        'classes.id as class_id',
+        'classes.name as class_name',
+        'classes.duration as class_duration',
+        'class_types.id as class_type_id',
+        'class_types.type as class_type_name',
+        'locations.name as location_name',
+        'locations.id as location_id',
+        'locations.link_maps as location_link_maps',
+        'locations.address as location_address',
+        'location_facilities.name as location_facility_name',
+        eb
+          .selectFrom('users')
+          .innerJoin('agenda_bookings', 'agenda_bookings.user_id', 'users.id')
+          .select(sql<number>`count(agenda_bookings.id)`.as('participant'))
+          .where('agenda_bookings.status', '=', 'booked')
+          .whereRef('agenda_bookings.agenda_id', '=', 'agendas.id')
+          .as('participant'),
+      ])
+
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
+      .execute();
+
+    const queryCount = await query
+      .select(({ fn }) => [fn.count<number>('agendas.id').as('count')])
+      .executeTakeFirst();
+
+    const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
+
+    return {
+      data: queryData satisfies SelectAllSchedule['data'],
+      pageCount: pageCount,
+    };
   }
 
   async findScheduleByDate(data: FindScheduleByDateOptions) {
@@ -531,51 +626,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       return new Error('Error creating agenda booking');
     }
   }
-
-  //       return result;
-  //     });
-
-  //     const query = this._db
-  //       .insertInto('agenda_bookings')
-  //       .values(data)
-  //       .returningAll()
-  //       .compile();
-
-  //     const result = await this._db.executeQuery(query);
-
-  //     if (result.rows[0] === undefined) {
-  //       console.error('Failed to create participant', result);
-  //       return new Error('Failed to create participant');
-  //     }
-
-  //     return result.rows[0];
-  //   } catch (error) {
-  //     console.error('Error creating participant:', error);
-  //     return new Error('Error creating participant');
-  //   }
-  // }
-
-  // async createParticipant(data: InsertAgendaBooking) {
-  //   try {
-  //     const query = this._db
-  //       .insertInto('agenda_bookings')
-  //       .values(data)
-  //       .returningAll()
-  //       .compile();
-
-  //     const result = await this._db.executeQuery(query);
-
-  //     if (result.rows[0] === undefined) {
-  //       console.error('Failed to create participant', result);
-  //       return new Error('Failed to create participant');
-  //     }
-
-  //     return result.rows[0];
-  //   } catch (error) {
-  //     console.error('Error creating participant:', error);
-  //     return new Error('Error creating participant');
-  //   }
-  // }
 
   async update(data: UpdateAgenda) {
     try {

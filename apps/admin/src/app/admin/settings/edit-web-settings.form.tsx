@@ -147,9 +147,9 @@ export default function EditWebSettingForm({
       </SheetTrigger>
       <SheetContent className="overflow-scroll sm:max-w-[52rem]">
         <SheetHeader>
-          <SheetTitle className="text-left">Edit Detail Lokasi</SheetTitle>
+          <SheetTitle className="text-left">Edit Setting Web</SheetTitle>
           <SheetDescription className="text-left">
-            Buat perubahan pada detail lokasi, pastikan klik simpan ketika
+            Buat perubahan pada setting web, pastikan klik simpan ketika
             selesai.
           </SheetDescription>
         </SheetHeader>
@@ -220,7 +220,7 @@ export default function EditWebSettingForm({
                         <FormLabel>Foto</FormLabel>
                         {field.value && field.value.size !== 0 ? (
                           <PhotoProvider>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid h-40 w-full gap-2">
                               <FileCard
                                 file={{
                                   ...field.value,
@@ -236,7 +236,7 @@ export default function EditWebSettingForm({
                           webSetting.url &&
                           !imageRemoved && (
                             <PhotoProvider>
-                              <div className="grid grid-cols-2 gap-2">
+                              <div className="grid h-40 w-full gap-2">
                                 <FileCard
                                   file={
                                     {

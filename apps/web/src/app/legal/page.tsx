@@ -23,7 +23,7 @@ export default async function Page() {
           <div className="mt-4 space-y-4 text-muted-foreground">
             <RichTextViewer
               value={termsAndConditions.result ?? ''}
-              className="border-0"
+              className="border-0 text-xl"
             />
           </div>
         </div>

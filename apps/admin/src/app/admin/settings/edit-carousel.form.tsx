@@ -234,7 +234,7 @@ export default function EditCarouselForm({
                           <FormLabel>Foto</FormLabel>
                           {field.value && field.value.size !== 0 ? (
                             <PhotoProvider>
-                              <div className="grid grid-cols-2 gap-2">
+                              <div className="grid h-40 w-full gap-2">
                                 <FileCard
                                   file={{
                                     ...field.value,
@@ -251,7 +251,7 @@ export default function EditCarouselForm({
                           ) : (
                             data.image_url && (
                               <PhotoProvider>
-                                <div className="grid grid-cols-2 gap-2">
+                                <div className="grid h-40 w-full gap-2">
                                   <FileCard
                                     file={
                                       {

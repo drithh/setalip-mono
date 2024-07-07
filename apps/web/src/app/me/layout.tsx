@@ -16,82 +16,7 @@ import {
 } from 'lucide-react';
 import { dateFormatter } from '@repo/shared/util';
 import { Users } from '@repo/shared/db';
-
-interface Menu {
-  children: React.ReactNode;
-  path: string;
-  role?: Users['role'];
-}
-
-const menus: Menu[] = [
-  {
-    children: (
-      <div className="flex place-items-center gap-2 px-2">
-        <User2 className="h-5 w-5" />
-        My Profile
-      </div>
-    ),
-    path: '/me',
-  },
-  {
-    children: (
-      <div className="flex place-items-center gap-2 px-2">
-        <CalendarCheck className="h-5 w-5" />
-        My Booking
-      </div>
-    ),
-    path: '/me/booking',
-    role: 'user',
-  },
-  {
-    children: (
-      <div className="flex place-items-center gap-2 px-2">
-        <CreditCard className="h-5 w-5" />
-        My Credit
-      </div>
-    ),
-    path: '/me/credit',
-    role: 'user',
-  },
-  {
-    children: (
-      <div className="flex place-items-center gap-2 px-2">
-        <HandHeart className="h-5 w-5" />
-        My Package
-      </div>
-    ),
-    path: '/me/package',
-    role: 'user',
-  },
-  {
-    children: (
-      <div className="flex place-items-center gap-2 px-2">
-        <Sparkles className="h-5 w-5" />
-        My Loyalty
-      </div>
-    ),
-    path: '/me/loyalty',
-  },
-  {
-    children: (
-      <div className="flex place-items-center gap-2 px-2">
-        <CalendarCheck className="h-5 w-5" />
-        My Agenda
-      </div>
-    ),
-    path: '/me/agenda',
-    role: 'coach',
-  },
-  {
-    children: (
-      <div className="flex place-items-center gap-2 px-2">
-        <LogOut className="h-5 w-5" />
-        Logout
-      </div>
-    ),
-    path: '/logout',
-  },
-];
+import { menus } from '../menu';
 
 export default async function Layout({
   children,
@@ -116,11 +41,16 @@ export default async function Layout({
             </div>
           </div>
           <div className="flex flex-col gap-4 ">
-            {menus.map((menu) => (
-              <NavigationLink key={menu.path} path={menu.path}>
-                {menu.children}
-              </NavigationLink>
-            ))}
+            {menus.map((menu) =>
+              menu?.role === auth.user.role || menu.role === undefined ? (
+                <NavigationLink key={menu.path} path={menu.path}>
+                  <div className="flex place-items-center gap-2 px-2">
+                    {menu.icon}
+                    <span>{menu.label}</span>
+                  </div>
+                </NavigationLink>
+              ) : null,
+            )}
           </div>
         </div>
       </div>
