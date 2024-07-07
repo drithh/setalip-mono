@@ -135,6 +135,25 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     };
   }
 
+  async findAllPackageByUserId(user_id: SelectPackageTransaction['user_id']) {
+    const query = await this._db
+      .selectFrom('user_packages')
+      .innerJoin('packages', 'user_packages.package_id', 'packages.id')
+      .innerJoin('class_types', 'packages.class_type_id', 'class_types.id')
+      .where('user_packages.user_id', '=', user_id)
+      .where('user_packages.expired_at', '>', new Date())
+      .selectAll('user_packages')
+      .select([
+        'packages.name as package_name',
+        'class_types.type as class_type',
+        'user_packages.credit as credit',
+        sql<number>`0`.as('credit_used'),
+      ])
+      .execute();
+
+    return query;
+  }
+
   async findAllPackageTransactionByUserId(data: FindAllUserPackageOption) {
     const { page = 1, perPage = 10, sort, user_id, status } = data;
 
@@ -247,7 +266,6 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
         'class_types.type as class_type',
       ])
       .execute();
-
 
     const combined = query.map((userPackage) => {
       const packageTransaction = packageSession.find(
@@ -537,6 +555,28 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
               resultCreditTransaction
             );
             return new Error('Failed to create credit transaction');
+          }
+
+          const loyaltyTransaction = await trx
+            .insertInto('loyalty_transactions')
+            .values({
+              note: `Loyalty from package ${singlePackage.name}`,
+              user_id: packageTransaction.user_id,
+              amount: singlePackage.loyalty_points,
+              type: 'debit',
+            })
+            .returningAll()
+            .compile();
+
+          const resultLoyaltyTransaction =
+            await trx.executeQuery(loyaltyTransaction);
+
+          if (resultLoyaltyTransaction.rows[0] === undefined) {
+            console.error(
+              'Failed to create loyalty transaction',
+              resultLoyaltyTransaction
+            );
+            return new Error('Failed to create loyalty transaction');
           }
         }
 

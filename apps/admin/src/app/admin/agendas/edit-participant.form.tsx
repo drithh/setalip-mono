@@ -144,15 +144,6 @@ export default function EditParticipantForm({
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  // console.log(
-  //   'form',
-  //   form.getValues('participants'),
-  //   selectedParticipants,
-  //   participants,
-  // );
-
-  console.log('error', form.formState.errors, form.getValues('participants'));
-
   return (
     <Sheet
       open={open}
@@ -194,12 +185,13 @@ export default function EditParticipantForm({
                         render={({ field }) => (
                           <FormItem className="grid w-full gap-2">
                             <FormControl>
-                              <Input
-                                type="hidden"
-                                {...field}
-                                value={participant.user_id}
-                              />
-                              {/* <div className="flex gap-2">
+                              <>
+                                <Input
+                                  type="hidden"
+                                  {...field}
+                                  value={participant.user_id}
+                                />
+                                <div className="flex gap-2">
                                   <Input readOnly value={participant.name} />
                                   <DeleteParticipantDialog
                                     participant={participant}
@@ -209,7 +201,8 @@ export default function EditParticipantForm({
                                       );
                                     }}
                                   />
-                                </div> */}
+                                </div>
+                              </>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -220,7 +213,9 @@ export default function EditParticipantForm({
                         <FormField
                           control={form.control}
                           name={`participants.${index}.agenda_booking_id`}
-                          render={({ field }) => <Input {...field} />}
+                          render={({ field }) => (
+                            <Input type="hidden" {...field} />
+                          )}
                         />
                       )}
                     </div>
@@ -244,6 +239,13 @@ export default function EditParticipantForm({
                     user_id: member.id,
                     name: member.name,
                   });
+                  form.setValue('participants', [
+                    ...selectedParticipants,
+                    {
+                      user_id: member.id,
+                      name: member.name,
+                    },
+                  ]);
                 }
               }}
               defaultValue={selectedParticipant?.user_id.toString()}

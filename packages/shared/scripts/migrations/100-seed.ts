@@ -246,7 +246,6 @@ export async function up(db: Kysely<DB>): Promise<void> {
             .split('T')[1]
             ?.split('.')[0] ?? '18:00:00';
 
-        // console.log(openingTime, closingTime);
         locations_operational_hours.push({
           id: index + 1,
           location_id: locationId,
@@ -558,7 +557,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
         .execute();
     });
 
-    console.log('Migration 100-seed completed');
+    console.info('Migration 100-seed completed');
   } catch (error) {
     console.error('Migration 100-seed failed', error);
   }
@@ -602,7 +601,7 @@ export async function down(db: Kysely<any>): Promise<void> {
       await trx.deleteFrom('class_types').execute();
     });
 
-    console.log('Migration 100-seed reverted');
+    console.info('Migration 100-seed reverted');
   } catch (error) {
     console.error('Migration 100-seed revert failed', error);
   }

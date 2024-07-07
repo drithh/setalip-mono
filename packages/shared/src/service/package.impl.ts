@@ -159,6 +159,21 @@ export class PackageServiceImpl implements PackageService {
       };
     }
 
+    if (packageData.one_time_only) {
+      const userPackage = await this._packageRepository.findAllPackageByUserId(
+        data.user_id
+      );
+
+      // iterate through userPackage to check if user already have the same package
+      for (const userPackageData of userPackage) {
+        if (userPackageData.package_id === data.package_id) {
+          return {
+            error: new Error('User already have the same package'),
+          };
+        }
+      }
+    }
+
     const depositAccount =
       await this._webSettingRepository.findDepositAccountById(
         data.deposit_account_id

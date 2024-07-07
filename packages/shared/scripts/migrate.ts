@@ -43,10 +43,10 @@ run(db, migrator, migrationFolder);
 function showResults({ error, results }: MigrationResultSet) {
   if (results) {
     results.forEach((it) =>
-      console.log(`> ${it.status}: ${it.migrationName} (${it.direction})`)
+      console.info(`> ${it.status}: ${it.migrationName} (${it.direction})`)
     );
     if (results.length === 0) {
-      console.log('> No pending migrations to execute');
+      console.info('> No pending migrations to execute');
     }
   }
   if (error) {
@@ -64,7 +64,7 @@ export function run(
     .command('up')
     .description('Run a pending migration if any')
     .action(async () => {
-      console.log('Running single migration');
+      console.info('Running single migration');
       const results = await migrator.migrateUp();
       showResults(results);
     });
@@ -73,7 +73,7 @@ export function run(
     .command('down')
     .description('Revert the latest migration with a down file')
     .action(async () => {
-      console.log('Reverting migrations');
+      console.info('Reverting migrations');
       const results = await migrator.migrateDown();
       showResults(results);
     });
@@ -82,10 +82,10 @@ export function run(
     .command('redo')
     .description('Down and Up')
     .action(async () => {
-      console.log('Reverting migrations');
+      console.info('Reverting migrations');
       let results = await migrator.migrateDown();
       showResults(results);
-      console.log('Running single migration');
+      console.info('Running single migration');
       results = await migrator.migrateUp();
       showResults(results);
     });
@@ -94,7 +94,7 @@ export function run(
     .command('latest')
     .description('Run all pending migrations')
     .action(async () => {
-      console.log('Running migrations');
+      console.info('Running migrations');
       const results = await migrator.migrateToLatest();
       showResults(results);
     });
@@ -109,10 +109,10 @@ export function run(
       let results: MigrationResultSet;
 
       if (name === 'NO_MIGRATIONS') {
-        console.log(`Migrating all the way down`);
+        console.info(`Migrating all the way down`);
         results = await migrator.migrateTo(NO_MIGRATIONS);
       } else {
-        console.log(`Migrating down to ${name}`);
+        console.info(`Migrating down to ${name}`);
         results = await migrator.migrateTo(name);
       }
       showResults(results);
@@ -147,7 +147,7 @@ export function run(
         fs.mkdirSync(path);
       }
       fs.writeFileSync(fileName, migrationTemplate, 'utf8');
-      console.log('Created Migration:', fileName);
+      console.info('Created Migration:', fileName);
     });
 
   program.parseAsync().then(() => db.destroy());

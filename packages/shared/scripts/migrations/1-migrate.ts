@@ -459,7 +459,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       //   .addColumn('expired_at', 'timestamp', (col) => col.notNull());
     });
 
-    console.log('Tables created successfully');
+    console.info('Tables created successfully');
   } catch (error) {
     console.error('Error creating tables:', error);
   }
@@ -516,7 +516,7 @@ export async function down(db: Kysely<any>): Promise<void> {
       await trx.schema.dropTable('deposit_accounts').ifExists().execute();
     });
 
-    console.log('Tables dropped successfully');
+    console.info('Tables dropped successfully');
   } catch (error) {
     console.error('Error dropping tables:', error);
   }

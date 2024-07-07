@@ -611,9 +611,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         data.agendaBookings.map((newBooking) => newBooking.id)
       );
 
-      console.log('curentAgendaBookings', curentAgendaBookings);
-      console.log('newBookingIds', newBookingIds, data);
-
       // Filter currentAgendaBookings based on whether the ID is not in the Set
       const toDelete = curentAgendaBookings.filter(
         (booking) => !newBookingIds.has(booking.id)
@@ -622,8 +619,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       const toInsert = data.agendaBookings.filter(
         (booking) => booking.id === undefined
       );
-
-      console.log('toDelete', toDelete, 'toInsert', toInsert);
 
       await this._db.transaction().execute(async (trx) => {
         await Promise.all(

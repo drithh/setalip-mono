@@ -117,6 +117,9 @@ export interface PackageRepository {
   findPackageTransactionById(
     id: SelectPackageTransaction['id']
   ): Promise<SelectPackageTransactionWithPackage | undefined>;
+  findAllPackageByUserId(
+    user_id: SelectPackageTransaction['user_id']
+  ): Promise<SelectAllActivePackage[]>;
   findAllPackageTransactionByUserId(
     data: FindAllUserPackageOption
   ): Promise<SelectAllPackageTransaction>;
