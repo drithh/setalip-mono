@@ -24,7 +24,10 @@ import {
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
-import { findAllUserAgendaSchema } from '@repo/shared/api/schema';
+import {
+  findAllCoachAgendaSchema,
+  findAllUserAgendaSchema,
+} from '@repo/shared/api/schema';
 import { Form } from '@repo/ui/components/ui/form';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 // import CreateAgendaForm from './create-agenda.form';
@@ -33,7 +36,7 @@ interface AgendaTableProps {
   locations: SelectLocation[];
   coaches: SelectCoachWithUser[];
   classTypes: SelectClassType[];
-  search: z.infer<typeof findAllUserAgendaSchema>;
+  search: z.infer<typeof findAllCoachAgendaSchema>;
 }
 
 export default function AgendaTable({
@@ -42,7 +45,7 @@ export default function AgendaTable({
   classTypes,
   search,
 }: AgendaTableProps) {
-  const [{ result, error }] = api.agenda.findAllUserAgenda.useSuspenseQuery(
+  const [{ result, error }] = api.agenda.findAllCoachAgenda.useSuspenseQuery(
     search,
     {},
   );
@@ -93,7 +96,7 @@ export default function AgendaTable({
     pageCount: result?.pageCount,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: 'agenda_booking_updated_at.desc',
+    defaultSort: 'time.desc',
     visibleColumns: {
       coach_id: false,
       location_id: false,

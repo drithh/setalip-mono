@@ -142,16 +142,57 @@ export class KyselyMySqlUserRepository implements UserRepository {
 
   async update(data: UpdateUser) {
     try {
-      const query = await this._db
-        .updateTable('users')
-        .set(data)
-        .where('users.id', '=', data.id)
-        .executeTakeFirst();
+      const transaction = await this._db.transaction().execute(async (trx) => {
+        const currentUser = await trx
+          .selectFrom('users')
+          .selectAll()
+          .where('users.id', '=', data.id)
+          .executeTakeFirst();
 
-      if (query.numUpdatedRows === undefined) {
-        console.error('Error updating user:', query);
-        return new Error('Failed to update user');
-      }
+        const query = await trx
+          .updateTable('users')
+          .set(data)
+          .where('users.id', '=', data.id)
+          .executeTakeFirst();
+
+        if (query.numUpdatedRows === undefined) {
+          console.error('Error updating user:', query);
+          return new Error('Failed to update user');
+        }
+
+        if (currentUser?.role !== data.role) {
+          // from user to coach
+          if (currentUser?.role === 'user' && data.role === 'coach') {
+            const query = trx
+              .insertInto('coaches')
+              .values({ user_id: data.id })
+              .compile();
+
+            const result = await trx.executeQuery(query);
+
+            if (result.rows[0] === undefined) {
+              console.error('Failed to create coach', result);
+              return new Error('Failed to create coach');
+            }
+
+            return;
+          } else if (currentUser?.role === 'coach' && data.role === 'user') {
+            const query = await trx
+              .deleteFrom('coaches')
+              .where('coaches.user_id', '=', data.id)
+              .executeTakeFirst();
+
+            if (query.numDeletedRows === undefined) {
+              console.error('Failed to delete coach', query);
+              return new Error('Failed to delete coach');
+            }
+
+            return;
+          }
+        }
+
+        return;
+      });
 
       return;
     } catch (error) {

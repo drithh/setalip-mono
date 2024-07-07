@@ -5,6 +5,7 @@ import { protectedProcedure, publicProcedure } from '../trpc';
 import {
   deleteParticipantSchema,
   findAllAgendaSchema,
+  findAllCoachAgendaSchema,
   findAllScheduleSchema,
   findAllUserAgendaSchema,
 } from '../schema';
@@ -85,6 +86,46 @@ export const agendaRouter = {
 
       return schedules;
     }),
+  findAllCoachAgenda: protectedProcedure
+    .input(findAllCoachAgendaSchema)
+    .query(async ({ ctx, input }) => {
+      const coaches =
+        input.coach_name?.split('.').map((coach) => parseInt(coach)) ?? [];
+
+      const locations =
+        input.location_name?.split('.').map((location) => parseInt(location)) ??
+        [];
+
+      const classTypes =
+        input.class_type_name
+          ?.split('.')
+          .map((classType) => parseInt(classType)) ?? [];
+
+      const user = ctx.session.user;
+
+      if (!user) {
+        return {
+          result: undefined,
+          error: new Error('User not found'),
+        };
+      }
+
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+
+      const agendas = await agendaService.findAllByCoachId({
+        page: input.page,
+        perPage: input.per_page,
+        sort: input.sort,
+        locations: locations,
+        classTypes: classTypes,
+        coachUserId: user.id,
+      });
+
+      return agendas;
+    }),
+
   findAllUserAgenda: protectedProcedure
     .input(findAllUserAgendaSchema)
     .query(async ({ ctx, input }) => {

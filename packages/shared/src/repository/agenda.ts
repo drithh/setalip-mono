@@ -36,7 +36,6 @@ export interface FindScheduleByDateOptions extends DefaultPagination {
 export interface FindAllAgendaByCoachOptions extends DefaultPagination {
   locations: number[];
   classTypes?: number[];
-  classNames?: number[];
   date?: Date;
   coachUserId: Selectable<Coaches>['user_id'];
 }

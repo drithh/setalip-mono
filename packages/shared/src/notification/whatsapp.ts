@@ -28,9 +28,9 @@ interface ErrorResponse {
   data: false;
 }
 
-const HEADER_MESSAGE = 'Pilates Reform Indonesia\n\n';
+const HEADER_MESSAGE = '';
 const FOOTER_MESSAGE =
-  '\n\nJika Anda memiliki pertanyaan, silahkan hubungi admin\n\nPowered by Pilates Reform Indonesia';
+  '\n\nJika Anda memiliki pertanyaan, silahkan hubungi admin\n\nPilates Reform Indonesia';
 
 const parseNotification = (payload: NotificationPayload) => {
   switch (payload.type) {

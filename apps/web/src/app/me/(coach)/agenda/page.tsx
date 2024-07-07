@@ -7,6 +7,7 @@ import {
 import { MultiSelect } from '@repo/ui/components/multi-select';
 import AgendaTable from './agenda';
 import {
+  findAllCoachAgendaSchema,
   findAllScheduleSchema,
   findAllUserAgendaSchema,
 } from '@repo/shared/api/schema';
@@ -22,7 +23,7 @@ export default async function Schedules({
   if (auth.user.role !== 'coach') {
   }
 
-  const search = findAllUserAgendaSchema.parse(searchParams);
+  const search = findAllCoachAgendaSchema.parse(searchParams);
 
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,
