@@ -29,7 +29,7 @@ export function getColumns({}: getColumnsProps): ColumnDef<SelectFrequentlyAsked
     {
       accessorKey: 'question',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="question" />
+        <DataTableColumnHeader column={column} title="Question" />
       ),
       cell: ({ row }) => <div>{row.original.question}</div>,
       enableSorting: false,

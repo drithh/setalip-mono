@@ -15,6 +15,7 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import {
+  SelectAllUserName,
   SelectClassType,
   SelectLocation,
   SelectPackage,
@@ -28,15 +29,19 @@ import { dateFormatter } from '@repo/shared/util';
 import CreateCreditForm from '../create-credit.form';
 import DeleteCreditForm from '../delete-credit.form';
 import { format } from 'date-fns';
+import CreateLoyaltyForm from '../create-loyalty.form';
+import DeleteLoyaltyForm from '../delete-loyalty.form';
 
 interface getColumnsProps {
   locations: SelectLocation[];
   classTypes: SelectClassType[];
+  users: SelectAllUserName;
 }
 
 export function getColumns({
   locations,
   classTypes,
+  users,
 }: getColumnsProps): ColumnDef<SelectUserWithCredits>[] {
   return [
     {
@@ -134,6 +139,10 @@ export function getColumns({
           React.useState(false);
         const [showDeleteCreditSheet, setShowDeleteCreditSheet] =
           React.useState(false);
+        const [showCreateLoyaltySheet, setShowCreateLoyaltySheet] =
+          React.useState(false);
+        const [showDeleteLoyaltySheet, setShowDeleteLoyaltySheet] =
+          React.useState(false);
 
         return (
           <>
@@ -154,6 +163,16 @@ export function getColumns({
               onOpenChange={setShowDeleteCreditSheet}
               user={row.original}
               classTypes={classTypes}
+            />
+            <CreateLoyaltyForm
+              open={showCreateLoyaltySheet}
+              onOpenChange={setShowCreateLoyaltySheet}
+              users={users}
+            />
+            <DeleteLoyaltyForm
+              open={showDeleteLoyaltySheet}
+              onOpenChange={setShowDeleteLoyaltySheet}
+              users={users}
             />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -179,6 +198,17 @@ export function getColumns({
                   onSelect={() => setShowDeleteCreditSheet(true)}
                 >
                   Reduce Credit
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onSelect={() => setShowCreateLoyaltySheet(true)}
+                >
+                  Add Loyalty
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={() => setShowDeleteLoyaltySheet(true)}
+                >
+                  Reduce Loyalty
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

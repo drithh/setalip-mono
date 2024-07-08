@@ -5,7 +5,11 @@ import QueryResetBoundary from '../../../lib/query-reset-boundary';
 import React from 'react';
 import UserTable from './_components/user-table';
 import { TYPES, container } from '@repo/shared/inversify';
-import { ClassTypeService, LocationService } from '@repo/shared/service';
+import {
+  ClassTypeService,
+  LocationService,
+  UserService,
+} from '@repo/shared/service';
 import { validateAdmin } from '@/lib/auth';
 
 export interface IndexPageProps {
