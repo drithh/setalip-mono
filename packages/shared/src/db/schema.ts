@@ -230,6 +230,7 @@ export interface PackageTransactions {
   updated_by: Generated<number>;
   user_id: number;
   user_package_id: Generated<number | null>;
+  voucher_id: Generated<number | null>;
 }
 
 export interface ResetPassword {

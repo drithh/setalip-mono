@@ -7,24 +7,23 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
-import { getColumns } from './review-columns';
+import { getColumns } from './voucher-columns';
 import {
   SelectAllUserName,
-  SelectClassType,
-  SelectReviewWithUser,
+  SelectVoucherWithUser,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
-import { findAllReviewSchema } from '@repo/shared/api/schema';
-import CreateReviewForm from '../create-review.form';
+import { findAllVoucherSchema } from '@repo/shared/api/schema';
+import CreateVoucherForm from '../create-voucher.form';
 
-interface ReviewTableProps {
-  search: z.infer<typeof findAllReviewSchema>;
+interface VoucherTableProps {
+  search: z.infer<typeof findAllVoucherSchema>;
   users: SelectAllUserName;
 }
 
-export default function ReviewTable({ search, users }: ReviewTableProps) {
-  const [{ result, error }] = api.webSetting.findAllReview.useSuspenseQuery(
+export default function VoucherTable({ search, users }: VoucherTableProps) {
+  const [{ result, error }] = api.voucher.findAll.useSuspenseQuery(
     {
       ...search,
       per_page: 100,
@@ -37,11 +36,16 @@ export default function ReviewTable({ search, users }: ReviewTableProps) {
 
   const columns = React.useMemo(() => getColumns({ users: users }), []);
 
-  const filterFields: DataTableFilterField<SelectReviewWithUser>[] = [
+  const filterFields: DataTableFilterField<SelectVoucherWithUser>[] = [
     {
-      label: 'Email',
-      value: 'email',
-      placeholder: 'Filter email...',
+      label: 'Name',
+      value: 'name',
+      placeholder: 'Filter name...',
+    },
+    {
+      label: 'Code',
+      value: 'code',
+      placeholder: 'Filter code...',
     },
   ];
 
@@ -58,7 +62,7 @@ export default function ReviewTable({ search, users }: ReviewTableProps) {
   return (
     <DataTable table={table} pagination={false}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <CreateReviewForm users={users} />
+        <CreateVoucherForm users={users} />
       </DataTableToolbar>
     </DataTable>
   );

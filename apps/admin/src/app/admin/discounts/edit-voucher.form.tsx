@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { createReview } from './_actions/create-review';
+import { editVoucher } from './_actions/edit-voucher';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { CreateReviewSchema, createReviewSchema } from './form-schema';
+import { EditVoucherSchema, editVoucherSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Switch } from '@repo/ui/components/ui/switch';
@@ -26,6 +26,8 @@ import {
   SelectAllUserName,
   SelectClassType,
   SelectDetailLocation,
+  SelectVoucher,
+  SelectVoucherWithUser,
 } from '@repo/shared/repository';
 import {
   Sheet,
@@ -45,42 +47,59 @@ import {
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { Textarea } from '@repo/ui/components/ui/textarea';
+import { DatetimePicker } from '@repo/ui/components/datetime-picker';
+import { isBefore, subDays } from 'date-fns';
 
-interface CreateReviewProps {
+interface EditVoucherProps {
+  data: SelectVoucherWithUser;
   users: SelectAllUserName;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal membuat review',
+    title: 'Gagal memperbarui voucher',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Membuat review',
+    title: 'Memperbarui voucher',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Review berhasil dibuat',
+    title: 'Voucher berhasil diperbarui',
   },
 };
 
-export default function CreateReviewForm({ users }: CreateReviewProps) {
-  const [openSheet, setOpenSheet] = useState(false);
+export default function EditVoucherForm({
+  data,
+  users,
+  open,
+  onOpenChange,
+}: EditVoucherProps) {
+  const [isAllUser, setIsAllUser] = useState(false);
 
   const trpcUtils = api.useUtils();
-  type FormSchema = CreateReviewSchema;
+  const router = useRouter();
 
-  const [formState, formAction] = useFormState(createReview, {
+  type FormSchema = EditVoucherSchema;
+
+  const types = ['percentage', 'fixed'] satisfies SelectVoucher['type'][];
+
+  const [formState, formAction] = useFormState(editVoucher, {
     status: 'default',
     form: {
-      user_id: 0,
-      review: '',
-      rating: 0,
+      id: data.id,
+      code: '',
+      type: 'fixed',
+      discount: 0,
+      expired_at: new Date(),
+      user_id: undefined,
     } as FormSchema,
   });
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(createReviewSchema),
+    resolver: zodResolver(editVoucherSchema),
     defaultValues: formState.form,
   });
 
@@ -107,9 +126,9 @@ export default function CreateReviewForm({ users }: CreateReviewProps) {
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
-      form.reset();
+      router.refresh();
       trpcUtils.invalidate();
-      setOpenSheet(false);
+      onOpenChange(false);
     }
   }, [formState]);
 
@@ -126,16 +145,22 @@ export default function CreateReviewForm({ users }: CreateReviewProps) {
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <Sheet open={openSheet} onOpenChange={setOpenSheet}>
-      <SheetTrigger asChild>
-        <Button variant={'outline'}>Tambah</Button>
-      </SheetTrigger>
+    <Sheet
+      open={open}
+      onOpenChange={(ev) => {
+        form.reset();
+        onOpenChange(ev);
+      }}
+    >
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">Buat Review</SheetTitle>
+            <SheetTitle className="text-left">
+              Edit Frequently Asked Question
+            </SheetTitle>
             <SheetDescription className="text-left">
-              Buat Review baru. Pastikan klik simpan ketika selesai.
+              Edit Frequently Asked Question. Pastikan klik simpan ketika
+              selesai.
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -146,12 +171,70 @@ export default function CreateReviewForm({ users }: CreateReviewProps) {
                 action={formAction}
                 onSubmit={onFormSubmit}
               >
+                <p>Set voucher untuk semua user</p>
+                <Switch
+                  checked={isAllUser}
+                  onCheckedChange={(e) => {
+                    setIsAllUser(e);
+                  }}
+                />
+                {!isAllUser && (
+                  <FormField
+                    control={form.control}
+                    name="user_id"
+                    render={({ field }) => (
+                      <FormItem className="grid w-full gap-2">
+                        <FormLabel>User</FormLabel>
+                        <FormControl>
+                          <>
+                            <Input type="hidden" {...field} />
+
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value?.toString()}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Pilih user" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {users.map((user) => (
+                                  <SelectItem
+                                    key={user.id}
+                                    value={user.id.toString()}
+                                  >
+                                    {user.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
                 <FormField
                   control={form.control}
-                  name="user_id"
+                  name="code"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>User</FormLabel>
+                      <FormLabel>Code</FormLabel>
+                      <FormControl>
+                        <Input id="code" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Type</FormLabel>
                       <FormControl>
                         <>
                           <Input type="hidden" {...field} />
@@ -161,15 +244,12 @@ export default function CreateReviewForm({ users }: CreateReviewProps) {
                             defaultValue={field.value.toString()}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Pilih user" />
+                              <SelectValue placeholder="Pilih kelas" />
                             </SelectTrigger>
                             <SelectContent>
-                              {users.map((user) => (
-                                <SelectItem
-                                  key={user.id}
-                                  value={user.id.toString()}
-                                >
-                                  {user.name}
+                              {types.map((type) => (
+                                <SelectItem key={type} value={type}>
+                                  {type}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -183,12 +263,12 @@ export default function CreateReviewForm({ users }: CreateReviewProps) {
 
                 <FormField
                   control={form.control}
-                  name="review"
+                  name="discount"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Review</FormLabel>
+                      <FormLabel>Discount</FormLabel>
                       <FormControl>
-                        <Textarea id="review" {...field} />
+                        <Input type="number" id="discount" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -197,34 +277,20 @@ export default function CreateReviewForm({ users }: CreateReviewProps) {
 
                 <FormField
                   control={form.control}
-                  name="rating"
+                  name="expired_at"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Rating</FormLabel>
+                      <FormLabel>Discount</FormLabel>
                       <FormControl>
-                        <Textarea id="rating" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="is_show"
-                  render={({ field }) => (
-                    <FormItem className="grid w-full gap-2">
-                      <FormLabel>Show Review</FormLabel>
-                      <FormControl>
-                        <>
-                          <Input type="hidden" {...field} />
-                          <Switch
-                            checked={field.value === 1}
-                            onCheckedChange={(e) => {
-                              field.onChange(e ? 1 : 0);
-                            }}
-                          />
-                        </>
+                        <DatetimePicker
+                          value={field.value}
+                          onChange={(value) => {
+                            field.onChange(value);
+                          }}
+                          disabled={(date) =>
+                            isBefore(date, subDays(new Date(), 1))
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

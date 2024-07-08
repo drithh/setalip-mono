@@ -5,20 +5,20 @@ import { toast } from 'sonner';
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal menghapus review',
+    title: 'Gagal menghapus voucher',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Menghapus review',
+    title: 'Menghapus voucher',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Review berhasil dihapus',
+    title: 'Voucher berhasil dihapus',
   },
 };
 
 export const useDeleteMutation = () =>
-  api.webSetting.deleteReview.useMutation({
+  api.voucher.delete.useMutation({
     onMutate: () => {
       toast.loading(TOAST_MESSAGES.loading.title, {
         description: TOAST_MESSAGES.loading.description,

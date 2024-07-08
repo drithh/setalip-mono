@@ -10,7 +10,7 @@ import { ClassTypeService, UserService } from '@repo/shared/service';
 import { findAllVoucherSchema } from '@repo/shared/api/schema';
 import QueryResetBoundary from '@/lib/query-reset-boundary';
 import React from 'react';
-import ReviewTable from './_components/review-table';
+import VoucherTable from './_components/voucher-table';
 
 export interface IndexPageProps {
   searchParams: FindAllVoucherOptions;
@@ -36,7 +36,7 @@ export default async function Vouchers({ searchParams }: IndexPageProps) {
             />
           }
         >
-          <ReviewTable users={users.result ?? []} search={search} />
+          <VoucherTable users={users.result ?? []} search={search} />
         </React.Suspense>
       </QueryResetBoundary>
     </main>

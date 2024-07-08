@@ -17,12 +17,14 @@ import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-hea
 import {
   SelectAllUserName,
   SelectClassType,
-  SelectReview,
-  SelectReviewWithUser,
+  SelectVoucher,
+  SelectVoucherWithUser,
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
-import EditReviewForm from '../edit-review.form';
-import DeleteReviewDialog from '../delete-review.dialog';
+import EditVoucherForm from '../edit-voucher.form';
+import DeleteVoucherDialog from '../delete-voucher.dialog';
+import { Badge } from '@repo/ui/components/ui/badge';
+import { format } from 'date-fns';
 
 interface getColumnsProps {
   users: SelectAllUserName;
@@ -30,43 +32,62 @@ interface getColumnsProps {
 
 export function getColumns({
   users,
-}: getColumnsProps): ColumnDef<SelectReviewWithUser>[] {
+}: getColumnsProps): ColumnDef<SelectVoucherWithUser>[] {
   return [
     {
       accessorKey: 'name',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Name" />
       ),
-      cell: ({ row }) => <div>{row.original.name}</div>,
-      enableSorting: false,
-      enableHiding: false,
+      cell: ({ row }) => <div>{row.original.name ?? 'Semua'}</div>,
     },
     {
-      accessorKey: 'email',
+      accessorKey: 'code',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Email" />
+        <DataTableColumnHeader column={column} title="Code" />
       ),
-      cell: ({ row }) => <div>{row.original.email}</div>,
-      enableSorting: false,
-      enableHiding: false,
+      cell: ({ row }) => <div>{row.original.code}</div>,
     },
     {
-      accessorKey: 'review',
+      accessorKey: 'type',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Review" />
+        <DataTableColumnHeader
+          className="justify-center"
+          column={column}
+          title="Type"
+        />
       ),
-      cell: ({ row }) => <div>{row.original.review}</div>,
-      enableSorting: false,
-      enableHiding: false,
+      cell: ({ row }) => (
+        <div className="-ml-5 text-center">
+          <Badge>{row.original.type}</Badge>,
+        </div>
+      ),
     },
     {
-      accessorKey: 'rating',
+      accessorKey: 'discount',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Rating" />
+        <DataTableColumnHeader
+          className="justify-center"
+          column={column}
+          title="Discount"
+        />
       ),
-      cell: ({ row }) => <div>{row.original.rating}</div>,
-      enableSorting: false,
-      enableHiding: false,
+      cell: ({ row }) => (
+        <div className="-ml-5 text-center">
+          {row.original.type === 'percentage'
+            ? `${row.original.discount}%`
+            : moneyFormatter.format(row.original.discount)}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'expired_at',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Expired At" />
+      ),
+      cell: ({ row }) => (
+        <div>{format(row.original.expired_at, 'dd/MM/yyyy')}</div>
+      ),
     },
     {
       id: 'actions',
@@ -78,13 +99,13 @@ export function getColumns({
 
         return (
           <>
-            <EditReviewForm
+            <EditVoucherForm
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}
               users={users}
               data={row.original}
             />
-            <DeleteReviewDialog
+            <DeleteVoucherDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
               data={row.original}

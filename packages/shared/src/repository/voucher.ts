@@ -4,7 +4,7 @@ import { DefaultPagination, OptionalToRequired, SelectUser } from '.';
 
 export type SelectVoucher = Selectable<Vouchers>;
 export type SelectVoucherWithUser = SelectVoucher & {
-  name: SelectUser['name'];
+  name: SelectUser['name'] | null;
 };
 
 export interface SelectAllVoucher {

@@ -1,20 +1,25 @@
 import { FormState } from '@repo/shared/form';
-import { InsertPackage, InsertReview } from '@repo/shared/repository';
+import { InsertPackage, InsertVoucher } from '@repo/shared/repository';
 import { ZodType, z } from 'zod';
 
-export const createReviewSchema = z.object({
-  rating: z.coerce.number(),
-  review: z.string().min(3).max(255),
-  user_id: z.coerce.number(),
-  is_show: z.coerce.number().refine((v) => v === 0 || v === 1),
-}) satisfies ZodType<InsertReview>;
+// code: string;
+// type: 'fixed' | 'percentage';
+// discount: number;
+// expired_at: Date;
+export const createVoucherSchema = z.object({
+  code: z.string(),
+  type: z.enum(['fixed', 'percentage']),
+  discount: z.number().positive(),
+  expired_at: z.date(),
+  user_id: z.number().optional(),
+}) satisfies ZodType<InsertVoucher>;
 
-export type CreateReviewSchema = z.infer<typeof createReviewSchema>;
-export type FormCreateReview = FormState<CreateReviewSchema>;
+export type CreateVoucherSchema = z.infer<typeof createVoucherSchema>;
+export type FormCreateVoucher = FormState<CreateVoucherSchema>;
 
-export const editReviewSchema = createReviewSchema.extend({
+export const editVoucherSchema = createVoucherSchema.extend({
   id: z.coerce.number(),
 });
 
-export type EditReviewSchema = z.infer<typeof editReviewSchema>;
-export type FormEditReview = FormState<EditReviewSchema>;
+export type EditVoucherSchema = z.infer<typeof editVoucherSchema>;
+export type FormEditVoucher = FormState<EditVoucherSchema>;

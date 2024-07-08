@@ -278,6 +278,9 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
         )
+        .addColumn('voucher_id', 'bigint', (col) =>
+          col.references('vouchers.id').onDelete('set null')
+        )
         .addColumn('user_package_id', 'bigint', (col) =>
           col.references('user_packages.id')
         )
@@ -443,20 +446,19 @@ export async function up(db: Kysely<any>): Promise<void> {
           queryId: 'set_timezone',
         });
 
-      // await trx.schema
-      //   .createTable('flash_sales')
-      //   .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
-      //   .addColumn('name', 'text', (col) => col.notNull())
-      //   .addColumn('description', 'text', (col) => col.notNull())
-      //   .addColumn('discount', 'int4', (col) => col.notNull())
-      //   .addColumn('type', sql`ENUM('percentage', 'fixed')`, (col) =>
-      //     col.notNull()
-      //   )
-      //   .addCheckConstraint(
-      //     'discount_percentage_max',
-      //     sql`type = 'percentage' AND discount <= 100`
-      //   )
-      //   .addColumn('expired_at', 'timestamp', (col) => col.notNull());
+      await trx.schema
+        .createTable('flash_sales')
+        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('name', 'text', (col) => col.notNull())
+        .addColumn('discount', 'int4', (col) => col.notNull())
+        .addColumn('type', sql`ENUM('percentage', 'fixed')`, (col) =>
+          col.notNull()
+        )
+        .addCheckConstraint(
+          'discount_percentage_max',
+          sql`type = 'percentage' AND discount <= 100 OR type = 'fixed'`
+        )
+        .addColumn('expired_at', 'timestamp', (col) => col.notNull());
     });
 
     console.info('Tables created successfully');

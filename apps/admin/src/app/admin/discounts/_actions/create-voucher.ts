@@ -1,11 +1,11 @@
 'use server';
 import { cookies } from 'next/headers';
-import { WebSettingService } from '@repo/shared/service';
+import { VoucherService } from '@repo/shared/service';
 import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
 import { FormState } from '@repo/shared/form';
 import { z } from 'zod';
-import { editReviewSchema, FormEditReview } from '../form-schema';
+import { createVoucherSchema, FormCreateVoucher } from '../form-schema';
 import {
   convertErrorsToZod,
   convertFormData,
@@ -13,12 +13,12 @@ import {
 } from '@repo/shared/util';
 import { api } from '@/trpc/server';
 
-export async function editReview(
-  state: FormEditReview,
+export async function createVoucher(
+  state: FormCreateVoucher,
   data: FormData,
-): Promise<FormEditReview> {
+): Promise<FormCreateVoucher> {
   const formData = convertFormData(data);
-  const parsed = editReviewSchema.safeParse(formData);
+  const parsed = createVoucherSchema.safeParse(formData);
 
   if (!parsed.success) {
     return {
@@ -30,11 +30,9 @@ export async function editReview(
     };
   }
 
-  const webSettingService = container.get<WebSettingService>(
-    TYPES.WebSettingService,
-  );
+  const voucherService = container.get<VoucherService>(TYPES.VoucherService);
 
-  const result = await webSettingService.updateReview({
+  const result = await voucherService.create({
     ...parsed.data,
   });
 

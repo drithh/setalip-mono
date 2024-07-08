@@ -37,7 +37,7 @@ export class KyselyMySqlVoucherRepository implements VoucherRepository {
 
     let query = this._db
       .selectFrom('vouchers')
-      .innerJoin('users', 'vouchers.user_id', 'users.id');
+      .leftJoin('users', 'vouchers.user_id', 'users.id');
 
     if (name) {
       query = query.where('users.name', 'like', `%${name}%`);
