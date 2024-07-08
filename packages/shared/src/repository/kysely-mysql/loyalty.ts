@@ -5,10 +5,11 @@ import { TYPES } from '#dep/inversify/types';
 import {
   LoyaltyRepository,
   DeleteLoyalty,
-  FindAllLoyaltyOptions,
+  FindAllLoyaltyByUserIdOptions,
   InsertLoyalty,
   SelectLoyalty,
   UpdateLoyalty,
+  FindAllLoyaltyOptions,
 } from '../loyalty';
 import { sql } from 'kysely';
 import { SelectUser } from '../user';
@@ -30,11 +31,44 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
     return query?.count ?? 0;
   }
 
-  async findAll() {
-    return this._db
+  async findAll(data: FindAllLoyaltyOptions) {
+    const { page = 1, perPage = 10, sort, types, user_name } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+    ).join(' ') as `${keyof SelectLoyalty} ${'asc' | 'desc'}`;
+
+    let query = this._db
       .selectFrom('loyalty_transactions')
-      .selectAll('loyalty_transactions')
+      .innerJoin('users', 'loyalty_transactions.user_id', 'users.id');
+
+    if (user_name) {
+      query = query.where('users.name', 'like', `%${user_name}%`);
+    }
+
+    if (types) {
+      query = query.where('loyalty_transactions.type', 'in', types);
+    }
+
+    const queryData = await query
+      .selectAll(['loyalty_transactions'])
+      .select(['users.name as user_name', 'users.email as user_email'])
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
       .execute();
+
+    const queryCount = await query
+      .select(({ fn }) => [
+        fn.count<number>('loyalty_transactions.id').as('count'),
+      ])
+      .executeTakeFirst();
+
+    return {
+      data: queryData,
+      pageCount: Math.ceil((queryCount?.count ?? 0) / perPage),
+    };
   }
 
   findById(id: SelectLoyalty['id']) {
@@ -64,7 +98,7 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
     return query;
   }
 
-  async findAllByUserId(data: FindAllLoyaltyOptions) {
+  async findAllByUserId(data: FindAllLoyaltyByUserIdOptions) {
     const { page = 1, perPage = 10, sort, types } = data;
 
     const offset = (page - 1) * perPage;
@@ -103,7 +137,10 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
     try {
       const query = this._db
         .insertInto('loyalty_transactions')
-        .values(data)
+        .values({
+          ...data,
+          type: 'debit' as const,
+        })
         .returningAll()
         .compile();
 
@@ -143,82 +180,70 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
 
   async delete(data: DeleteLoyalty) {
     try {
-      const loyaltys = await this._db
-        .with('transactions', (q) =>
-          q
-            .selectFrom('loyalty_transactions')
-            .select([
-              'user_id',
-              'type',
-              sql<number>`SUM(CASE WHEN type = 'credit' THEN amount ELSE 0 END)`.as(
-                'total_credit'
-              ),
-              sql<number>`SUM(CASE WHEN type = 'debit' THEN amount ELSE 0 END)`.as(
-                'total_debit'
-              ),
-            ])
-            .where('loyalty_transactions.user_id', '=', data.user_id)
-            .groupBy(['user_id', 'type'])
-        )
-        .with('summary', (q) =>
-          q
-            .selectFrom('transactions')
-            .select([
-              'user_id',
-              sql<number>`MAX(total_debit)`.as('amount'),
-              sql<number>`MAX(total_credit)`.as('amount_used'),
-            ])
-            .groupBy('transactions.user_id')
-        )
-        .selectFrom('summary')
-        .selectAll()
-        .execute();
+      const transactions = await this._db.transaction().execute(async (trx) => {
+        const loyaltys = await trx
+          .with('transactions', (q) =>
+            q
+              .selectFrom('loyalty_transactions')
+              .select([
+                'user_id',
+                'type',
+                sql<number>`SUM(CASE WHEN type = 'credit' THEN amount ELSE 0 END)`.as(
+                  'total_credit'
+                ),
+                sql<number>`SUM(CASE WHEN type = 'debit' THEN amount ELSE 0 END)`.as(
+                  'total_debit'
+                ),
+              ])
+              .where('loyalty_transactions.user_id', '=', data.user_id)
+              .groupBy(['user_id', 'type'])
+          )
+          .with('summary', (q) =>
+            q
+              .selectFrom('transactions')
+              .select([
+                'user_id',
+                sql<number>`MAX(total_debit)`.as('amount'),
+                sql<number>`MAX(total_credit)`.as('amount_used'),
+              ])
+              .groupBy('transactions.user_id')
+          )
+          .selectFrom('summary')
+          .selectAll()
+          .execute();
 
-      const loyaltySum = loyaltys.reduce(
-        (acc, curr) => acc + (curr.amount - curr.amount_used),
-        0
-      );
+        const loyaltySum = loyaltys.reduce(
+          (acc, curr) => acc + (curr.amount - curr.amount_used),
+          0
+        );
 
-      if (data.amount > loyaltySum) {
-        console.error('Insufficient loyalty:', data.amount, loyaltySum);
-        return new Error('Insufficient loyalty');
-      }
-
-      let currentAmount = data.amount;
-      await this._db.transaction().execute(async (trx) => {
-        for (const loyalty of loyaltys) {
-          if (currentAmount <= 0) {
-            continue;
-          }
-
-          const reducedAmount = Math.min(
-            currentAmount,
-            loyalty.amount - loyalty.amount_used
-          );
-
-          const query = trx
-            .insertInto('loyalty_transactions')
-            .values({
-              user_id: data.user_id,
-              amount: reducedAmount,
-              type: 'credit' as const,
-              note: data.note,
-            })
-            .returningAll()
-            .compile();
-
-          const result = await trx.executeQuery(query);
-
-          if (result.rows[0] === undefined) {
-            console.error('Error deleting loyalty:', query);
-            return new Error('Failed to delete loyalty');
-          }
-
-          currentAmount -= reducedAmount;
+        if (data.amount > loyaltySum) {
+          console.error('Insufficient loyalty:', data.amount, loyaltySum);
+          return new Error(`Insufficient loyalty, user has ${loyaltySum}`);
         }
+
+        const query = trx
+          .insertInto('loyalty_transactions')
+          .values({
+            user_id: data.user_id,
+            amount: data.amount,
+            type: 'credit' as const,
+            note: data.note,
+          })
+          .returningAll()
+          .compile();
+
+        const result = await trx.executeQuery(query);
+
+        if (result.rows[0] === undefined) {
+          console.error('Failed to create loyalty', result);
+          return new Error('Failed to create loyalty');
+        }
+
+        return;
       });
 
-      return;
+      return transactions;
     } catch (error) {
       console.error('Error deleting loyalty:', error);
       return new Error('Failed to delete loyalty');

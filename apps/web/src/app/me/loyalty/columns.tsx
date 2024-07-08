@@ -6,11 +6,11 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 import { dateFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
-import { SelectAllLoyalty } from '@repo/shared/repository';
+import { SelectAllLoyaltyByUserId } from '@repo/shared/repository';
 import { Badge } from '@repo/ui/components/ui/badge';
 import { format } from 'date-fns';
 
-export function getColumns(): ColumnDef<SelectAllLoyalty['data'][0]>[] {
+export function getColumns(): ColumnDef<SelectAllLoyaltyByUserId['data'][0]>[] {
   return [
     {
       accessorKey: 'updated_at',

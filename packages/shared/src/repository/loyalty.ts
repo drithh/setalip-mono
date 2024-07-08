@@ -14,6 +14,11 @@ export type UpdateLoyalty = OptionalToRequired<
   'id'
 >;
 
+interface SelectLoyaltyWithUser extends SelectLoyalty {
+  user_name: SelectUser['name'];
+  user_email: SelectUser['email'];
+}
+
 export interface SelectAmountLoyalty {
   user_id: SelectLoyalty['user_id'];
   total_credit: number;
@@ -26,30 +31,38 @@ export interface DeleteLoyalty {
   note: SelectLoyalty['note'];
 }
 
-export interface FindAllLoyaltyOptions extends DefaultPagination {
+export interface FindAllLoyaltyByUserIdOptions extends DefaultPagination {
   types?: SelectLoyalty['type'][];
   user_id: SelectUser['id'];
 }
 
-// export interface SelectLoyaltys extends SelectLoyalty {
-//   class_type: ClassTypes['type'];
-// }
+export interface FindAllLoyaltyOptions extends DefaultPagination {
+  types?: SelectLoyalty['type'][];
+  user_name?: SelectUser['name'];
+}
+
+export interface SelectAllLoyaltyByUserId {
+  data: SelectLoyalty[];
+  pageCount: number;
+}
 
 export interface SelectAllLoyalty {
-  data: SelectLoyalty[];
+  data: SelectLoyaltyWithUser[];
   pageCount: number;
 }
 
 export interface LoyaltyRepository {
   count(): Promise<number>;
 
-  findAll(): Promise<SelectLoyalty[]>;
+  findAll(data: FindAllLoyaltyOptions): Promise<SelectAllLoyalty>;
   findById(id: SelectLoyalty['id']): Promise<SelectLoyalty | undefined>;
 
   findAmountByUserId(
     userId: SelectUser['id']
   ): Promise<SelectAmountLoyalty | undefined>;
-  findAllByUserId(data: FindAllLoyaltyOptions): Promise<SelectAllLoyalty>;
+  findAllByUserId(
+    data: FindAllLoyaltyByUserIdOptions
+  ): Promise<SelectAllLoyaltyByUserId>;
 
   create(data: InsertLoyalty): Promise<SelectLoyalty | Error>;
 

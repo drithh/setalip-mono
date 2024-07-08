@@ -12,7 +12,7 @@ import {
   SelectClassType,
   SelectLocation,
   SelectCoachWithUser,
-  SelectAllLoyalty,
+  SelectAllLoyaltyByUserId,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
@@ -45,9 +45,11 @@ export default function LoyaltyTransactionTable({
   const loyaltyTypes = [
     'credit',
     'debit',
-  ] satisfies SelectAllLoyalty['data'][0]['type'][];
+  ] satisfies SelectAllLoyaltyByUserId['data'][0]['type'][];
 
-  const filterFields: DataTableFilterField<SelectAllLoyalty['data'][0]>[] = [
+  const filterFields: DataTableFilterField<
+    SelectAllLoyaltyByUserId['data'][0]
+  >[] = [
     {
       label: 'Type',
       value: 'type',

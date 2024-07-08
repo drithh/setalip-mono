@@ -8,6 +8,7 @@ import type {
   UpdateLoyalty,
   DeleteLoyalty,
   UserRepository,
+  FindAllLoyaltyByUserIdOptions,
   FindAllLoyaltyOptions,
 } from '../repository';
 import { LoyaltyService } from './loyalty';
@@ -25,8 +26,8 @@ export class LoyaltyServiceImpl implements LoyaltyService {
     this._userRepository = userRepository;
   }
 
-  async findAll() {
-    const loyaltyes = await this._loyaltyRepository.findAll();
+  async findAll(data: FindAllLoyaltyOptions) {
+    const loyaltyes = await this._loyaltyRepository.findAll(data);
 
     return {
       result: loyaltyes,
@@ -62,7 +63,7 @@ export class LoyaltyServiceImpl implements LoyaltyService {
     };
   }
 
-  async findAllByUserId(data: FindAllLoyaltyOptions) {
+  async findAllByUserId(data: FindAllLoyaltyByUserIdOptions) {
     const loyalty = await this._loyaltyRepository.findAllByUserId(data);
 
     if (!loyalty) {
