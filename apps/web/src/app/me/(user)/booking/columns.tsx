@@ -26,7 +26,7 @@ export function getColumns(): ColumnDef<SelectAllAgendaByUser['data'][0]>[] {
         <DataTableColumnHeader
           className="justify-center"
           column={column}
-          title="Tanggal Booking"
+          title="Tanggal Book"
         />
       ),
       cell: ({ row }) => {

@@ -5,10 +5,10 @@ export async function up(db: Kysely<any>): Promise<void> {
     builder: CreateTableBuilder<T, C>
   ) => {
     return builder
-      .addColumn('created_at', 'datetime', (col) =>
+      .addColumn('created_at', 'timestamp', (col) =>
         col.notNull().defaultTo(sql`now()`)
       )
-      .addColumn('updated_at', 'datetime', (col) =>
+      .addColumn('updated_at', 'timestamp', (col) =>
         col.notNull().defaultTo(sql`now()`)
       )
       .addColumn('updated_by', 'bigint', (col) =>
@@ -516,6 +516,7 @@ export async function down(db: Kysely<any>): Promise<void> {
 
       await trx.schema.dropTable('class_types').ifExists().execute();
       await trx.schema.dropTable('deposit_accounts').ifExists().execute();
+      await trx.schema.dropTable('carousels').ifExists().execute();
     });
 
     console.info('Tables dropped successfully');

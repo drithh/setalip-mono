@@ -82,8 +82,8 @@ const parseNotification = (payload: NotificationPayload) => {
     case NotificationType.AdminConfirmedUserPackage:
       return (
         `${HEADER_MESSAGE}` +
-        `Pembelian paket telah dikonfirmasi\n ` +
-        `Status transaksi: ${payload.status}\n ` +
+        `Pembelian paket telah dikonfirmasi\n` +
+        `Status transaksi: ${payload.status}\n` +
         `Paket: ${payload.package} (${payload.class_type})\n` +
         `Jumlah Session ${payload.credit} sesi\n` +
         `Paket kadaluarsa: ${payload.expired_at ? format(new Date(payload.expired_at), 'eeee, dd/MM/yyyy') : 'Tidak terbatas'}` +

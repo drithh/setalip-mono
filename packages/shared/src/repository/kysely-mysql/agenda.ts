@@ -478,7 +478,8 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'location_facilities.id'
       )
       .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
-      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id');
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id')
+      .where('agenda_bookings.user_id', '=', userId);
 
     if (classTypes?.length && classTypes.length > 0) {
       query = query.where('class_types.id', 'in', classTypes);
@@ -589,6 +590,8 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       const endTime = new Date(data.time);
       endTime.setMinutes(endTime.getMinutes() + duration.duration);
 
+      console.log('startTime', startTime, 'endTime', endTime);
+
       const coachAvailability = await this._db
         .selectFrom('agendas')
         .select(['agendas.id'])
@@ -596,19 +599,22 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         .where('coach_id', '=', data.coach_id)
         .where((eb) =>
           // if there are start agenda time between the new agenda time
-          eb('agendas.time', '>=', startTime).and('agendas.time', '<=', endTime)
-        )
-        .where((eb) =>
-          // if there are end agenda time between the new agenda time
-          eb(
-            sql`ADDTIME(agendas.time, SEC_TO_TIME(classses.duration * 60))`,
-            '>=',
-            startTime
-          ).and(
-            sql`ADDTIME(agendas.time, SEC_TO_TIME(classses.duration * 60))`,
-            '<=',
-            endTime
-          )
+          eb.or([
+            eb('agendas.time', '>=', startTime).and(
+              'agendas.time',
+              '<=',
+              endTime
+            ),
+            eb(
+              sql`ADDTIME(agendas.time, SEC_TO_TIME(classes.duration * 60))`,
+              '>=',
+              startTime
+            ).and(
+              sql`ADDTIME(agendas.time, SEC_TO_TIME(classes.duration * 60))`,
+              '<=',
+              endTime
+            ),
+          ])
         )
         .executeTakeFirst();
 

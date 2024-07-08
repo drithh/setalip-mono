@@ -209,18 +209,25 @@ export default function CreateAgendaForm({
                     <FormItem className="grid w-full gap-2">
                       <FormLabel>Waktu Agenda</FormLabel>
                       <FormControl>
-                        <DatetimePicker
-                          value={field.value}
-                          onChange={(value) => {
-                            field.onChange(value);
-                          }}
-                          disabled={(date) =>
-                            date <
-                            new Date(
-                              new Date().setDate(new Date().getDate() - 1),
-                            )
-                          }
-                        />
+                        <>
+                          <Input
+                            type="hidden"
+                            {...field}
+                            value={field.value.toString()}
+                          />
+                          <DatetimePicker
+                            value={field.value}
+                            onChange={(value) => {
+                              field.onChange(value);
+                            }}
+                            disabled={(date) =>
+                              date <
+                              new Date(
+                                new Date().setDate(new Date().getDate() - 1),
+                              )
+                            }
+                          />
+                        </>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
