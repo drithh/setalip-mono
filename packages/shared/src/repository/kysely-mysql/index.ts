@@ -10,3 +10,4 @@ export * from '#dep/repository/kysely-mysql/coach';
 export * from '#dep/repository/kysely-mysql/credit';
 export * from '#dep/repository/kysely-mysql/loyalty';
 export * from '#dep/repository/kysely-mysql/web-setting';
+export * from '#dep/repository/kysely-mysql/voucher';

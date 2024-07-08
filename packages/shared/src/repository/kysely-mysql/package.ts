@@ -51,7 +51,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     if (name) {
       query = query.where('name', 'like', `%${name}%`);
     }
-    if (types) {
+    if (types && types.length > 0) {
       query = query.where('class_type_id', 'in', types);
     }
     const queryData = await query

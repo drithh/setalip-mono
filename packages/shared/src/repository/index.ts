@@ -10,6 +10,7 @@ export * from '#dep/repository/coach';
 export * from '#dep/repository/credit';
 export * from '#dep/repository/loyalty';
 export * from '#dep/repository/web-setting';
+export * from '#dep/repository/voucher';
 
 export type DefaultPagination = {
   page?: number;

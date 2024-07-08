@@ -159,3 +159,13 @@ export const updateAgendaBookingSchema = z.object({
   id: z.coerce.number().refine((data) => data > 0),
   status: z.string(),
 });
+
+export const findAllVoucherSchema = defaultPaginationSchema.extend({
+  name: z.string().optional(),
+  code: z.string().optional(),
+  types: z.string().optional(),
+});
+
+export const deleteVoucherSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});

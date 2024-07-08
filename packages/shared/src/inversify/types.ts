@@ -29,6 +29,8 @@ const TYPES = {
   WebSettingRepository: Symbol.for('WebSettingRepository'),
   WebSettingService: Symbol.for('WebSettingService'),
   DashboardService: Symbol.for('DashboardService'),
+  VoucherRepository: Symbol.for('VoucherRepository'),
+  VoucherService: Symbol.for('VoucherService'),
 };
 
 export { TYPES };

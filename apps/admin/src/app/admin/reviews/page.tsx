@@ -3,21 +3,21 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { FindAllPackageOptions, SelectPackage } from '@repo/shared/repository';
+import { findAllReviewOption, SelectReview } from '@repo/shared/repository';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import { TYPES, container } from '@repo/shared/inversify';
 import { ClassTypeService, UserService } from '@repo/shared/service';
-import { findAllPackageSchema } from '@repo/shared/api/schema';
+import { findAllReviewSchema } from '@repo/shared/api/schema';
 import QueryResetBoundary from '@/lib/query-reset-boundary';
 import React from 'react';
 import ReviewTable from './_components/review-table';
 
 export interface IndexPageProps {
-  searchParams: FindAllPackageOptions;
+  searchParams: findAllReviewOption;
 }
 
-export default async function Packages({ searchParams }: IndexPageProps) {
-  const search = findAllPackageSchema.parse(searchParams);
+export default async function Reviews({ searchParams }: IndexPageProps) {
+  const search = findAllReviewSchema.parse(searchParams);
 
   const userService = container.get<UserService>(TYPES.UserService);
   const users = await userService.findAllUserName();

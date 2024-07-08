@@ -15,6 +15,7 @@ import {
   CreditRepository,
   LoyaltyRepository,
   WebSettingRepository,
+  VoucherRepository,
 } from '#dep/repository/index';
 import {
   KyselyMySqlUserRepository,
@@ -29,6 +30,7 @@ import {
   KyselyMySqlCreditRepository,
   KyselyMySqlLoyaltyRepository,
   KyselyMySqlWebSettingRepository,
+  KyselyMySqlVoucherRepository,
 } from '#dep/repository/kysely-mysql/index';
 import {
   NotificationService,
@@ -49,6 +51,7 @@ import {
   LoyaltyServiceImpl,
   WebSettingServiceImpl,
   DashboardServiceImpl,
+  VoucherServiceImpl,
 } from '#dep/service/index.impl';
 import {
   AuthService,
@@ -65,6 +68,7 @@ import {
   LoyaltyService,
   WebSettingService,
   DashboardService,
+  VoucherService,
 } from '#dep/service/index';
 
 const container = new Container();
@@ -129,6 +133,10 @@ container
 container
   .bind<DashboardService>(TYPES.DashboardService)
   .to(DashboardServiceImpl);
+container
+  .bind<VoucherRepository>(TYPES.VoucherRepository)
+  .to(KyselyMySqlVoucherRepository);
+container.bind<VoucherService>(TYPES.VoucherService).to(VoucherServiceImpl);
 
 export { container };
 
