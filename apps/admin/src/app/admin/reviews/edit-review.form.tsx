@@ -230,7 +230,7 @@ export default function EditReviewForm({
                     <FormItem className="grid w-full gap-2">
                       <FormLabel>Rating</FormLabel>
                       <FormControl>
-                        <Input id="rating" {...field} />
+                        <Input type="number" id="rating" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

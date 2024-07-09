@@ -282,15 +282,22 @@ export default function EditVoucherForm({
                     <FormItem className="grid w-full gap-2">
                       <FormLabel>Discount</FormLabel>
                       <FormControl>
-                        <DatetimePicker
-                          value={field.value}
-                          onChange={(value) => {
-                            field.onChange(value);
-                          }}
-                          disabled={(date) =>
-                            isBefore(date, subDays(new Date(), 1))
-                          }
-                        />
+                        <>
+                          <Input
+                            type="hidden"
+                            {...field}
+                            value={field.value.toString()}
+                          />
+                          <DatetimePicker
+                            value={field.value}
+                            onChange={(value) => {
+                              field.onChange(value);
+                            }}
+                            disabled={(date) =>
+                              isBefore(date, subDays(new Date(), 1))
+                            }
+                          />
+                        </>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

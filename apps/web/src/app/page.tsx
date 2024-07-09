@@ -173,6 +173,14 @@ export default async function Home() {
             </p>
           </div>
           <Review />
+          <div className="flex flex-col items-center justify-center">
+            <p className="max-w-[900px] text-center text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              Want to share your experience with us? Leave a review!
+            </p>
+            <Link href="/reviews" passHref>
+              <Button className="my-4">Leave a Review</Button>
+            </Link>
+          </div>
         </section>
         <section className="bg-background" id="locations">
           <div className="mx-auto flex max-w-[90vw] flex-col gap-24 pb-12 pt-32 md:max-w-screen-xl">
