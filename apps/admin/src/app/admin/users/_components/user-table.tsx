@@ -35,10 +35,11 @@ export default function UserTable({
     throw new Error('Error fetching data', error);
   }
 
-  const users = result?.data.map((user) => ({
-    id: user.id,
-    name: user.name,
-  }));
+  const users =
+    result?.data.map((user) => ({
+      id: user.id,
+      name: user.name,
+    })) ?? [];
 
   const columns = React.useMemo(
     () =>
