@@ -5,6 +5,7 @@ import {
   SelectVoucherWithUser,
   SelectAllVoucher,
   FindAllVoucherOptions,
+  FindVoucherByCode,
   // FindAllVoucherOptions,
   // SelectAllVoucher,
 } from '../repository';
@@ -17,6 +18,9 @@ export interface VoucherService {
   ): PromiseResult<SelectVoucher | undefined, Error>;
   findByUserId(
     userId: SelectVoucher['user_id']
+  ): PromiseResult<SelectVoucher | undefined, Error>;
+  findByCodeAndUser(
+    data: FindVoucherByCode
   ): PromiseResult<SelectVoucher | undefined, Error>;
 
   create(data: InsertVoucher): PromiseResult<SelectVoucher, Error>;

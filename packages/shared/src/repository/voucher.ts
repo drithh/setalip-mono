@@ -21,11 +21,19 @@ export interface FindAllVoucherOptions extends DefaultPagination {
   types?: SelectVoucher['type'][];
 }
 
+export interface FindVoucherByCode {
+  code: SelectVoucher['code'];
+  user_id: SelectVoucher['user_id'];
+}
+
 export interface VoucherRepository {
   count(): Promise<number>;
 
   findAll(data: FindAllVoucherOptions): Promise<SelectAllVoucher>;
   findById(id: SelectVoucher['id']): Promise<SelectVoucher | undefined>;
+  findByCodeAndUser(
+    data: FindVoucherByCode
+  ): Promise<SelectVoucher | undefined>;
   findByUserId(
     userId: SelectVoucher['user_id']
   ): Promise<SelectVoucher | undefined>;

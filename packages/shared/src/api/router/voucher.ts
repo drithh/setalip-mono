@@ -4,7 +4,11 @@ import { TYPES } from '#dep/inversify/types';
 import { VoucherService } from '#dep/service/voucher';
 import { TRPCRouterRecord } from '@trpc/server';
 import { adminProcedure, protectedProcedure } from '../trpc';
-import { deleteVoucherSchema, findAllVoucherSchema } from '../schema';
+import {
+  deleteVoucherSchema,
+  findAllVoucherSchema,
+  findVoucherByCodeSchema,
+} from '../schema';
 import { SelectVoucher } from '#dep/repository/voucher';
 
 export const voucherRouter = {
@@ -30,6 +34,24 @@ export const voucherRouter = {
 
       return vouchers;
     }),
+  findByCode: protectedProcedure
+    .input(findVoucherByCodeSchema)
+    .mutation(async ({ ctx, input }) => {
+      console.log('input', input);
+      const voucherService = ctx.container.get<VoucherService>(
+        TYPES.VoucherService
+      );
+
+      const voucher = await voucherService.findByCodeAndUser({
+        code: input.code,
+        user_id: ctx.session.userId,
+      });
+
+      console.log('voucher', voucher);
+
+      return voucher;
+    }),
+
   delete: protectedProcedure
     .input(deleteVoucherSchema)
     .mutation(async ({ ctx, input }) => {

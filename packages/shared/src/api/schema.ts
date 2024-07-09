@@ -166,6 +166,10 @@ export const findAllVoucherSchema = defaultPaginationSchema.extend({
   types: z.string().optional(),
 });
 
+export const findVoucherByCodeSchema = z.object({
+  code: z.string(),
+});
+
 export const deleteVoucherSchema = z.object({
   id: z.coerce.number().refine((data) => data > 0),
 });

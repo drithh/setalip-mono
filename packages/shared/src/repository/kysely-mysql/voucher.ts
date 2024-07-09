@@ -8,6 +8,7 @@ import {
   SelectVoucher,
   UpdateVoucher,
   FindAllVoucherOptions,
+  FindVoucherByCode,
 } from '../voucher';
 
 @injectable()
@@ -85,6 +86,29 @@ export class KyselyMySqlVoucherRepository implements VoucherRepository {
       .selectAll()
       .where('vouchers.id', '=', id)
       .executeTakeFirst();
+  }
+
+  findByCodeAndUser(data: FindVoucherByCode) {
+    return (
+      this._db
+        .selectFrom('vouchers')
+        .selectAll()
+        .where('vouchers.code', '=', data.code)
+        .where((eb) =>
+          eb.or([
+            eb('vouchers.user_id', '=', null),
+            eb('vouchers.user_id', '=', data.user_id),
+          ])
+        )
+        // .where((eb) =>
+        //   eb.or([
+        //     eb('vouchers.user_id', '=', null),
+        //     eb('vouchers.user_id', '=', data.user_id),
+        //   ])
+        // )
+        .where('vouchers.expired_at', '>', new Date())
+        .executeTakeFirst()
+    );
   }
 
   async create(data: InsertVoucher) {

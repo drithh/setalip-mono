@@ -7,6 +7,7 @@ import type {
   SelectVoucher,
   UpdateVoucher,
   FindAllVoucherOptions,
+  FindVoucherByCode,
 } from '../repository';
 import { VoucherService } from './voucher';
 
@@ -31,6 +32,20 @@ export class VoucherServiceImpl implements VoucherService {
 
   async findById(id: SelectVoucher['id']) {
     const voucher = await this._voucherRepository.findById(id);
+
+    if (!voucher) {
+      return {
+        error: new Error('Voucher not found'),
+      };
+    }
+
+    return {
+      result: voucher,
+    };
+  }
+
+  async findByCodeAndUser(data: FindVoucherByCode) {
+    const voucher = await this._voucherRepository.findByCodeAndUser(data);
 
     if (!voucher) {
       return {

@@ -52,6 +52,7 @@ import {
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { Checkbox } from '@repo/ui/components/ui/checkbox';
 import CreateTransaction from './create-transaction.form';
+import FindVoucher from './find-voucher.form';
 
 export default async function PackageDetail({
   params,
@@ -229,23 +230,7 @@ export default async function PackageDetail({
               </Card>
 
               {/* voucher code use */}
-              <Card className="row-span-2 mt-6 flex  flex-col gap-2 space-y-4">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl">
-                    Voucher Code
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-2">
-                  <div className="flex place-content-between gap-3">
-                    <Input
-                      type="text"
-                      placeholder="Enter Voucher Code"
-                      className="w-full rounded-lg border p-2"
-                    />
-                    <Button className="w-1/4">Use</Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <FindVoucher />
             </div>
           </div>
         </section>
