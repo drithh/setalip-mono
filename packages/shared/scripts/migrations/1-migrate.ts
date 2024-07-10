@@ -84,6 +84,15 @@ export async function up(db: Kysely<any>): Promise<void> {
         .execute();
 
       await trx.schema
+        .createTable('statistics')
+        .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
+        .addColumn('name', 'text', (col) => col.notNull())
+        .addColumn('point', 'int4', (col) => col.notNull())
+        .addColumn('role', sql`ENUM('user', 'coach')`, (col) => col.notNull())
+        .$call(addDefaultColumns)
+        .execute();
+
+      await trx.schema
         .createTable('reviews')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('rating', 'int4', (col) => col.notNull())
@@ -415,13 +424,8 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.notNull())
-        .addColumn('purchasable', 'boolean', (col) => col.notNull())
         .addColumn('price', 'int4', (col) => col.unsigned())
         .addColumn('image_url', 'text')
-        .addCheckConstraint(
-          'loyalty_unpurchasable_item',
-          sql`purchasable = false AND price IS NULL OR purchasable = true AND price IS NOT NULL`
-        )
         .$call(addDefaultColumns)
         .execute();
 
@@ -443,13 +447,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .$call(addDefaultColumns)
         .execute();
 
-      // set timezone
-      trx
-        .getExecutor()
-        .executeQuery(sql`SET time_zone='Asia/Jakarta'`.compile(trx), {
-          queryId: 'set_timezone',
-        });
-
       await trx.schema
         .createTable('flash_sales')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
@@ -462,7 +459,9 @@ export async function up(db: Kysely<any>): Promise<void> {
           'discount_percentage_max',
           sql`type = 'percentage' AND discount <= 100 OR type = 'fixed'`
         )
-        .addColumn('expired_at', 'timestamp', (col) => col.notNull());
+        .addColumn('expired_at', 'timestamp', (col) => col.notNull())
+        .$call(addDefaultColumns)
+        .execute();
     });
 
     console.info('Tables created successfully');
@@ -474,6 +473,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 export async function down(db: Kysely<any>): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
+      await trx.schema.dropTable('statistics').ifExists().execute();
       await trx.schema.dropTable('flash_sales').ifExists().execute();
       await trx.schema.dropTable('loyalty_transactions').ifExists().execute();
       await trx.schema.dropTable('package_transactions').ifExists().execute();

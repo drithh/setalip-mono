@@ -105,6 +105,17 @@ export interface DepositAccounts {
   updated_by: Generated<number>;
 }
 
+export interface FlashSales {
+  created_at: Generated<Date>;
+  discount: number;
+  expired_at: Date;
+  id: Generated<number>;
+  name: string;
+  type: "fixed" | "percentage";
+  updated_at: Generated<Date>;
+  updated_by: Generated<number>;
+}
+
 export interface FrequentlyAskedQuestions {
   answer: string;
   created_at: Generated<Date>;
@@ -174,7 +185,6 @@ export interface LoyaltyShops {
   image_url: Generated<string | null>;
   name: string;
   price: Generated<number | null>;
-  purchasable: number;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
 }
@@ -254,6 +264,16 @@ export interface Reviews {
   user_id: number;
 }
 
+export interface Statistics {
+  created_at: Generated<Date>;
+  id: Generated<number>;
+  name: string;
+  point: number;
+  role: "coach" | "user";
+  updated_at: Generated<Date>;
+  updated_by: Generated<number>;
+}
+
 export interface UserPackages {
   created_at: Generated<Date>;
   credit: number;
@@ -268,12 +288,14 @@ export interface UserPackages {
 export interface Users {
   address: string;
   created_at: Generated<Date>;
+  date_of_birth: Date;
   email: string;
   hashed_password: string;
   id: Generated<number>;
   location_id: Generated<number | null>;
   name: string;
   phone_number: string;
+  referral_id: Generated<number | null>;
   role: "admin" | "coach" | "owner" | "user";
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
@@ -321,6 +343,7 @@ export interface DB {
   coaches: Coaches;
   credit_transactions: CreditTransactions;
   deposit_accounts: DepositAccounts;
+  flash_sales: FlashSales;
   frequently_asked_questions: FrequentlyAskedQuestions;
   location_assets: LocationAssets;
   location_facilities: LocationFacilities;
@@ -334,6 +357,7 @@ export interface DB {
   packages: Packages;
   reset_password: ResetPassword;
   reviews: Reviews;
+  statistics: Statistics;
   user_packages: UserPackages;
   user_sessions: UserSessions;
   users: Users;

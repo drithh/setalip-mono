@@ -33,40 +33,10 @@ import { hash } from '@node-rs/argon2';
 export async function up(db: Kysely<DB>): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
-      const class_names = ['private', 'semi', 'group'];
-      const class_types: Insertable<ClassTypes>[] = Array.from({
-        length: 3,
-      }).map((_, index) => ({
-        id: index + 1,
-        type: class_names[index] ?? 'private',
-      }));
-
-      await trx.insertInto('class_types').values(class_types).execute();
-
-      const web_settings: Insertable<WebSettings>[] = [
-        {
-          key: 'terms_and_conditions',
-          value: faker.lorem.paragraph(),
-        },
-        {
-          key: 'privacy_policy',
-          value: faker.lorem.paragraph(),
-        },
-        {
-          key: 'instagram_handle',
-          value: faker.internet.userName(),
-        },
-        {
-          key: 'tiktok_handle',
-          value: faker.internet.userName(),
-        },
-        {
-          key: 'logo',
-          value: 'http://localhost:3000/uploads/logo.webp',
-        },
-      ];
-
-      await trx.insertInto('web_settings').values(web_settings).execute();
+      const class_types = await trx
+        .selectFrom('class_types')
+        .selectAll()
+        .execute();
 
       const frequently_asked_questions: Insertable<FrequentlyAskedQuestions>[] =
         Array.from({
@@ -139,6 +109,11 @@ export async function up(db: Kysely<DB>): Promise<void> {
           phone_number: faker.phone.number(),
           address: faker.location.streetAddress(),
           role: 'user' as const,
+          verified_at: faker.date.between({
+            from: faker.date.past(),
+            to: faker.date.recent(),
+          }),
+          date_of_birth: faker.date.past(),
           location_id:
             locations[Math.floor(Math.random() * locations.length)]?.id ?? 1,
         })
@@ -407,16 +382,10 @@ export async function up(db: Kysely<DB>): Promise<void> {
 
       await trx.insertInto('agenda_bookings').values(agendaBookings).execute();
 
-      const loyaltyRewards: Insertable<LoyaltyRewards>[] = Array.from({
-        length: 10,
-      }).map((_, index) => ({
-        id: index + 1,
-        name: faker.commerce.productName(),
-        credit: faker.number.int({ min: 1, max: 10 }),
-        description: faker.lorem.sentence(),
-      }));
-
-      await trx.insertInto('loyalty_rewards').values(loyaltyRewards).execute();
+      const loyaltyRewards = await trx
+        .selectFrom('loyalty_rewards')
+        .selectAll()
+        .execute();
 
       const loyaltyShops: Insertable<LoyaltyShops>[] = Array.from({
         length: 10,
