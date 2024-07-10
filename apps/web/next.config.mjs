@@ -1,4 +1,4 @@
-const withPWAInit = require('next-pwa');
+import withPWAInit from 'next-pwa';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
