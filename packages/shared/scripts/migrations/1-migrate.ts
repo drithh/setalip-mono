@@ -66,6 +66,10 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('email', 'text', (col) => col.notNull().unique())
         .addColumn('hashed_password', 'text', (col) => col.notNull())
         .addColumn('phone_number', 'text', (col) => col.notNull().unique())
+        .addColumn('date_of_birth', 'date', (col) => col.notNull())
+        .addColumn('referral_id', 'bigint', (col) =>
+          col.references('users.id').onDelete('set null')
+        )
         .addColumn('address', 'text', (col) => col.notNull())
         .addColumn(
           'role',

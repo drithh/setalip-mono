@@ -22,6 +22,17 @@ import {
 } from '@repo/shared/repository';
 import { moneyFormatter } from '@repo/shared/util';
 import Link from 'next/link';
+import {
+  Credenza,
+  CredenzaBody,
+  CredenzaClose,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaTrigger,
+} from '@repo/ui/components/credenza';
 
 interface CreateTransactionProps {
   time: string;
@@ -39,14 +50,14 @@ export default function CreateTransactionDialog({
   onCreate,
 }: CreateTransactionProps) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            Booking kelas <span className="font-semibold">{class_name}</span>
-          </AlertDialogTitle>
-        </AlertDialogHeader>
-        <div className="grid grid-cols-2">
+    <Credenza open={open} onOpenChange={onOpenChange}>
+      <CredenzaContent>
+        <CredenzaHeader>
+          <CredenzaTitle>
+            Booking Kelas <span className="font-semibold">{class_name}</span>
+          </CredenzaTitle>
+        </CredenzaHeader>
+        <CredenzaBody className="grid grid-cols-2 pt-8 md:pt-4">
           <p>Waktu:</p>
           <p className="font-semibold">{time}</p>
 
@@ -62,14 +73,29 @@ export default function CreateTransactionDialog({
               </Link>
             </p>
           </div>
-        </div>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Batal</AlertDialogCancel>
-          <AlertDialogAction asChild>
+        </CredenzaBody>
+        <CredenzaFooter>
+          <CredenzaClose asChild>
             <Button onClick={onCreate}>Konfirmasi</Button>
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+            {/* <button>Close</button> */}
+          </CredenzaClose>
+        </CredenzaFooter>
+      </CredenzaContent>
+    </Credenza>
+    // <AlertDialog open={open} onOpenChange={onOpenChange}>
+    //   <AlertDialogContent>
+    //     <AlertDialogHeader>
+    //       <AlertDialogTitle>
+    //         Booking kelas <span className="font-semibold">{class_name}</span>
+    //       </AlertDialogTitle>
+    //     </AlertDialogHeader>
+
+    //     <AlertDialogFooter>
+    //       <AlertDialogCancel>Batal</AlertDialogCancel>
+    //       <AlertDialogAction asChild>
+    //       </AlertDialogAction>
+    //     </AlertDialogFooter>
+    //   </AlertDialogContent>
+    // </AlertDialog>
   );
 }

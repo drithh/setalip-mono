@@ -26,7 +26,16 @@ import {
   CardTitle,
 } from '@repo/ui/components/ui/card';
 import { Separator } from '@repo/ui/components/ui/separator';
-import { MapPin, Mail, Phone, User2, CalendarClock, Clock } from 'lucide-react';
+import {
+  MapPin,
+  Mail,
+  Phone,
+  User2,
+  CalendarClock,
+  Clock,
+  Building2,
+  Building,
+} from 'lucide-react';
 import { addMinutes, format } from 'date-fns';
 import { validateUser } from '@/lib/auth';
 import { dateFormatter } from '@repo/shared/util';
@@ -148,6 +157,13 @@ export default async function AgendaDetail({
               </h1>
               <div className="flex flex-col gap-2">
                 <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-3">
+                    <Building className="h-6 w-6 text-muted-foreground" />
+                    <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
+                      {singleAgenda.result.location_name},{' '}
+                      {singleAgenda.result.location_facility_name}
+                    </p>
+                  </div>
                   <div className="flex items-center gap-3">
                     <MapPin className="h-6 w-6 text-muted-foreground" />
                     <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
