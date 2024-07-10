@@ -1,3 +1,4 @@
+'use client';
 import {
   SheetContent,
   SheetTrigger,
@@ -35,14 +36,16 @@ import Avatar from './avatar';
 import { User } from 'lucia';
 import { Separator } from '@repo/ui/components/ui/separator';
 import { menus } from '../menu';
+import { useState } from 'react';
 
 interface MenuProps {
   user: User | null;
 }
 
 export default function HamburgerMenu({ user }: MenuProps) {
+  const [open, setOpen] = useState(false);
   return (
-    <SheetWrapper>
+    <SheetWrapper open={open} onOpenChange={setOpen}>
       <div className="ml-8 justify-start md:hidden">
         <SheetTrigger asChild>
           <Button
@@ -61,6 +64,7 @@ export default function HamburgerMenu({ user }: MenuProps) {
             <>
               <Link className="flex place-items-center gap-4" href="/profile">
                 <Button
+                  onClick={() => setOpen(false)}
                   variant="outline"
                   size="icon"
                   className="overflow-hidden rounded-full"
@@ -72,6 +76,7 @@ export default function HamburgerMenu({ user }: MenuProps) {
               {menus.map((menu) =>
                 menu?.role === user.role || menu.role === undefined ? (
                   <Link
+                    onClick={() => setOpen(false)}
                     key={menu.path}
                     href={menu.path}
                     className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
@@ -87,12 +92,14 @@ export default function HamburgerMenu({ user }: MenuProps) {
 
           <Link
             href="/classes"
+            onClick={() => setOpen(false)}
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <PilatesSvg className="h-5 w-5 fill-current" />
             Classes
           </Link>
           <Link
+            onClick={() => setOpen(false)}
             href={`/schedules${user?.locationId !== undefined ? `?location_name=${user?.locationId}` : ''}`}
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
@@ -101,6 +108,7 @@ export default function HamburgerMenu({ user }: MenuProps) {
           </Link>
           <Link
             href="/packages"
+            onClick={() => setOpen(false)}
             className="flex items-center gap-4 px-2.5 text-foreground"
           >
             <Tag className="h-5 w-5" />
@@ -108,6 +116,7 @@ export default function HamburgerMenu({ user }: MenuProps) {
           </Link>
           <Link
             href="/contact"
+            onClick={() => setOpen(false)}
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <Phone className="h-5 w-5" />
