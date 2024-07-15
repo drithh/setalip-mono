@@ -6,6 +6,7 @@ import {
   HandHeart,
   LogOut,
   Sparkles,
+  Trophy,
   User2,
 } from 'lucide-react';
 
@@ -21,6 +22,11 @@ export const menus: Menu[] = [
     icon: <User2 className="h-5 w-5" />,
     label: 'My Profile',
     path: '/me',
+  },
+  {
+    icon: <Trophy className="h-5 w-5" />,
+    label: 'My Statistic',
+    path: '/me/statistic',
   },
   {
     icon: <CalendarCheck className="h-5 w-5" />,
@@ -44,6 +50,7 @@ export const menus: Menu[] = [
     icon: <Sparkles className="h-5 w-5" />,
     label: 'My Loyalty',
     path: '/me/loyalty',
+    role: 'user',
   },
   {
     icon: <CalendarClock className="h-5 w-5" />,

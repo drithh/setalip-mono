@@ -11,6 +11,7 @@ export * from '#dep/repository/credit';
 export * from '#dep/repository/loyalty';
 export * from '#dep/repository/web-setting';
 export * from '#dep/repository/voucher';
+export * from '#dep/repository/statistic';
 
 export type DefaultPagination = {
   page?: number;

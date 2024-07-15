@@ -31,6 +31,8 @@ const TYPES = {
   DashboardService: Symbol.for('DashboardService'),
   VoucherRepository: Symbol.for('VoucherRepository'),
   VoucherService: Symbol.for('VoucherService'),
+  StatisticRepository: Symbol.for('StatisticRepository'),
+  StatisticService: Symbol.for('StatisticService'),
 };
 
 export { TYPES };

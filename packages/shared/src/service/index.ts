@@ -13,3 +13,4 @@ export * from '#dep/service/loyalty';
 export * from '#dep/service/web-setting';
 export * from '#dep/service/dashboard';
 export * from '#dep/service/voucher';
+export * from '#dep/service/statistic';
