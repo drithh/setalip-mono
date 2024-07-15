@@ -10,7 +10,7 @@ export default async function Register() {
   const locations = await locationService.findAll();
 
   return (
-    <div className="mx-auto grid w-[350px] gap-6">
+    <div className="mx-auto grid w-[360px] gap-6 py-8">
       <div className="grid gap-2 text-center">
         <h1 className="text-3xl font-bold">Register</h1>
         <p className="text-balance text-muted-foreground">
@@ -18,7 +18,7 @@ export default async function Register() {
         </p>
       </div>
       <RegisterUserForm locations={locations.result ?? []} />
-      <div className="mt-4 text-center text-sm">
+      <div className="text-center text-sm">
         Sudah punya akun?{' '}
         <Link href="/login" className="underline">
           Login

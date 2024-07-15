@@ -94,11 +94,6 @@ export async function up(db: Kysely<DB>): Promise<void> {
       );
 
       await trx.insertInto('users').values(users).execute();
-      1;
-      2;
-      3;
-      4;
-      5;
 
       const loyalty_rewards = [
         {
@@ -142,39 +137,11 @@ export async function up(db: Kysely<DB>): Promise<void> {
 export async function down(db: Kysely<any>): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
-      await trx.deleteFrom('loyalty_transactions').execute();
-      await trx.deleteFrom('package_transactions').execute();
-      await trx
-        .deleteFrom('credit_transactions')
-        .where('type', '=', 'credit')
-        .execute();
-      await trx
-        .deleteFrom('credit_transactions')
-        .where('type', '=', 'debit')
-        .execute();
-      await trx.deleteFrom('user_packages').execute();
-      await trx.deleteFrom('agenda_bookings').execute();
-      await trx.deleteFrom('agendas').execute();
-      await trx.deleteFrom('loyalty_shops').execute();
-      await trx.deleteFrom('loyalty_rewards').execute();
-      await trx.deleteFrom('class_assets').execute();
-      await trx.deleteFrom('class_locations').execute();
-      await trx.deleteFrom('classes').execute();
-      // await trx.deleteFrom('facility_equipments').execute();
-      await trx.deleteFrom('location_assets').execute();
-      await trx.deleteFrom('location_facilities').execute();
-      await trx.deleteFrom('location_operational_hours').execute();
-      await trx.deleteFrom('vouchers').execute();
-
-      await trx.deleteFrom('user_sessions').execute();
-      await trx.deleteFrom('reset_password').execute();
-
-      await trx.deleteFrom('coaches').execute();
-      await trx.deleteFrom('users').execute();
-      await trx.deleteFrom('packages').execute();
-      await trx.deleteFrom('locations').execute();
-      await trx.deleteFrom('deposit_accounts').execute();
+      await trx.deleteFrom('frequently_asked_questions').execute();
       await trx.deleteFrom('class_types').execute();
+      await trx.deleteFrom('web_settings').execute();
+      await trx.deleteFrom('users').execute();
+      await trx.deleteFrom('loyalty_rewards').execute();
     });
 
     console.info('Migration 99-default reverted');

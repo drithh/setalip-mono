@@ -42,7 +42,7 @@ export function FormDatePicker(props: DatePickerProps) {
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
-          captionLayout="dropdown"
+          captionLayout="dropdown-buttons"
           fromYear={1970}
           toYear={2025}
           mode="single"

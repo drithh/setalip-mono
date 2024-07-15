@@ -79,7 +79,7 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
       password: '',
       passwordConfirmation: '',
       phoneNumber: '',
-      location_id: 1,
+      location_id: undefined,
       dateOfBirth: new Date(),
     },
   });
@@ -255,10 +255,7 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
                 <>
                   <Input type="hidden" {...field} />
 
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value?.toString()}
-                  >
+                  <Select onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue placeholder="Pilih kelas" />
                     </SelectTrigger>
@@ -282,11 +279,11 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
 
         <div className="my-4">
           <p className="text-justify text-sm">
-            By creating an account, you agree to our{' '}
+            Dengan membuat akun, Anda setuju dengan{' '}
             <Link href="/legal" className="text-balance underline">
               Terms of Service
             </Link>{' '}
-            and have read and acknowledge our{' '}
+            dan telah membaca serta menyetujui{' '}
             <Link href="/legal" className="text-balance underline">
               Privacy Policy.
             </Link>

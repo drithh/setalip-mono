@@ -102,7 +102,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
 
       const users: Insertable<Users>[] = Array.from({ length: 10 }).map(
         (_, index) => ({
-          id: index + 1,
+          id: index + 2,
           email: faker.internet.email(),
           hashed_password: hashed_password,
           name: faker.person.fullName(),
@@ -110,10 +110,10 @@ export async function up(db: Kysely<DB>): Promise<void> {
           address: faker.location.streetAddress(),
           role: 'user' as const,
           verified_at: faker.date.between({
-            from: faker.date.past(),
+            from: faker.date.past({ years: 1 }),
             to: faker.date.recent(),
           }),
-          date_of_birth: faker.date.past(),
+          date_of_birth: faker.date.past({ years: 20 }),
           location_id:
             locations[Math.floor(Math.random() * locations.length)]?.id ?? 1,
         })
@@ -390,16 +390,12 @@ export async function up(db: Kysely<DB>): Promise<void> {
       const loyaltyShops: Insertable<LoyaltyShops>[] = Array.from({
         length: 10,
       }).map((_, index) => {
-        const isPurchasable = faker.number.int({ min: 0, max: 1 });
         return {
           id: index + 1,
           name: faker.commerce.productName(),
           description: faker.lorem.sentence(),
           image_url: faker.image.urlPlaceholder(),
-          price: isPurchasable
-            ? faker.number.int({ min: 10000, max: 100000 })
-            : null,
-          purchasable: isPurchasable,
+          price: faker.number.int({ min: 10000, max: 100000 }),
         };
       });
 
@@ -417,7 +413,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
             amount: faker.number.int({ min: 3, max: 8 }),
             note: faker.lorem.sentence(),
             expired_at: faker.date.between({
-              from: faker.date.past(2),
+              from: faker.date.past({ years: 1 }),
               to: faker.date.future(),
             }),
             class_type_id: class_types[Math.floor(Math.random() * 3)]?.id ?? 1,
@@ -508,7 +504,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
           amount: faker.number.int({ min: 1, max: 8 }),
           note: faker.lorem.sentence(),
           loyalty_reward_id: !isDebit
-            ? loyaltyRewards[Math.floor(Math.random() * 10)]?.id ?? 1
+            ? loyaltyRewards[Math.floor(Math.random() * 5)]?.id ?? 1
             : null,
           loyalty_shop_id: isDebit
             ? loyaltyShops[Math.floor(Math.random() * 10)]?.id ?? 1
@@ -549,7 +545,6 @@ export async function down(db: Kysely<any>): Promise<void> {
       await trx.deleteFrom('agenda_bookings').execute();
       await trx.deleteFrom('agendas').execute();
       await trx.deleteFrom('loyalty_shops').execute();
-      await trx.deleteFrom('loyalty_rewards').execute();
       await trx.deleteFrom('class_assets').execute();
       await trx.deleteFrom('class_locations').execute();
       await trx.deleteFrom('classes').execute();
@@ -563,11 +558,10 @@ export async function down(db: Kysely<any>): Promise<void> {
       await trx.deleteFrom('reset_password').execute();
 
       await trx.deleteFrom('coaches').execute();
-      await trx.deleteFrom('users').execute();
+      await trx.deleteFrom('users').where('id', '>', 1).execute();
       await trx.deleteFrom('packages').execute();
       await trx.deleteFrom('locations').execute();
       await trx.deleteFrom('deposit_accounts').execute();
-      await trx.deleteFrom('class_types').execute();
     });
 
     console.info('Migration 100-seed reverted');

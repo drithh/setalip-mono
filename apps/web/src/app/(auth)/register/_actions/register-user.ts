@@ -38,6 +38,10 @@ export async function registerUser(
   const AuthService = container.get<AuthService>(TYPES.AuthService);
   const registerUser = await AuthService.register({
     ...parsed.data,
+    location_id:
+      parsed.data.location_id && parsed.data.location_id !== 0
+        ? parsed.data.location_id
+        : null,
     phoneNumber: formattedPhoneNumber,
   });
 

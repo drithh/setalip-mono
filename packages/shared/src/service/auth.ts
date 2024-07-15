@@ -7,7 +7,7 @@ export interface RegisterUser {
   name: string;
   email: string;
   address: string;
-  location_id?: number;
+  location_id: number | null;
   dateOfBirth: Date;
 }
 
