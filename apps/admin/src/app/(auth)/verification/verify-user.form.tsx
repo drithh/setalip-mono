@@ -2,26 +2,20 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { PhoneInput } from '@repo/ui/components/phone-input';
-import { PasswordInput } from '@repo/ui/components/password-input';
 import { verifyUser } from './_actions/verify-user';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Value as PhoneNumberValue } from 'react-phone-number-input';
 
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import Link from 'next/link';
 import { VerifyOtpSchema, verifyOtpSchema } from './form-schema';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';

@@ -5,35 +5,21 @@ import { Button } from '@repo/ui/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
-import Link from 'next/link';
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import { LocationService } from '@repo/shared/service';
-import { ChevronLeft, Phone, User2 } from 'lucide-react';
-import { redirect, useRouter } from 'next/navigation';
+import { ChevronLeft } from 'lucide-react';
+import { redirect } from 'next/navigation';
 import { Label } from '@repo/ui/components/ui/label';
 import { Input } from '@repo/ui/components/ui/input';
-import ImageCard from './_components/file-card';
-import { ImageWithFallback } from '@/lib/image-with-fallback';
-import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
 import 'react-photo-view/dist/react-photo-view.css';
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from '@repo/ui/components/ui/sheet';
-import FileCard from './_components/file-card';
-import { PhotoProvider, PhotoSlider } from 'react-photo-view';
+
+
 import UploadLocationAsset from './upload-location-asset.form';
 import LocationAssets from './_components/location-assets';
-import { validateAdmin, validateUser } from '@/lib/auth';
+import { validateAdmin } from '@/lib/auth';
 import FacilityCard from './_components/facility-card';
 import EditDetailLocationForm from './edit-detail-location.form';
 import CreateFacilityForm from './create-facility.form';

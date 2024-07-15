@@ -1,5 +1,5 @@
 import { FormState } from '@repo/shared/form';
-import { InsertPackage, InsertReview } from '@repo/shared/repository';
+import { InsertReview } from '@repo/shared/repository';
 import { ZodType, z } from 'zod';
 
 export const createReviewSchema = z.object({

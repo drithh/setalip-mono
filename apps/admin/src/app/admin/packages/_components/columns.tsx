@@ -4,7 +4,6 @@ import * as React from 'react';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { type ColumnDef } from '@tanstack/react-table';
 
-import { Checkbox } from '@repo/ui/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,

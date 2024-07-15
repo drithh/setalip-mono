@@ -8,9 +8,8 @@ import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './carousel-colums';
-import { SelectClassType, SelectCarousel } from '@repo/shared/repository';
+import { SelectCarousel } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
-import { z } from 'zod';
 import CreateCarouselForm from '../create-carousel.form';
 
 interface CarouselTableProps {}

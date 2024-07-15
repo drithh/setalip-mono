@@ -5,13 +5,10 @@ import {
   CalendarClock,
   Gift,
   Home,
-  LineChart,
   MapPin,
   MessageCircleHeart,
   Package,
-  Package2,
   Settings,
-  ShoppingCart,
   SquarePercent,
   Users2,
 } from 'lucide-react';

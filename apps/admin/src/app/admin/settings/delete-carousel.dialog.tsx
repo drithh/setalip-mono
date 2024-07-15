@@ -1,7 +1,6 @@
 'use client';
 import {
   AlertDialog,
-  AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -11,7 +10,6 @@ import {
   AlertDialogAction,
 } from '@repo/ui/components/ui/alert-dialog';
 import { Button } from '@repo/ui/components/ui/button';
-import { useRouter } from 'next/navigation';
 import { useDeleteMutation } from './_functions/delete-carousel';
 import { api } from '@/trpc/react';
 import { SelectCarousel } from '@repo/shared/repository';

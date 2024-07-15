@@ -1,21 +1,13 @@
 'use server';
-import { cookies } from 'next/headers';
 import {
-  ClassTypeService,
   CreditService,
-  UserService,
 } from '@repo/shared/service';
-import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
-import { FormState } from '@repo/shared/form';
-import { z } from 'zod';
 import { deleteCreditSchema, FormDeleteCredit } from '../form-schema';
 import {
-  convertErrorsToZod,
   convertFormData,
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
-import { parse } from 'path';
 import { InsertCredit } from '@repo/shared/repository';
 
 export async function deleteCredit(

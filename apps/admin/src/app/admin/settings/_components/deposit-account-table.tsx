@@ -8,7 +8,7 @@ import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './deposit-account-colums';
-import { SelectClassType, SelectDepositAccount } from '@repo/shared/repository';
+import { SelectDepositAccount } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllDepositAccountSchema } from '@repo/shared/api/schema';

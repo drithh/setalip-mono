@@ -6,13 +6,11 @@ import {
   CardTitle,
 } from '@repo/ui/components/ui/card';
 import { ChevronLeft } from 'lucide-react';
-import DeleteLocation from '../locations/[locationId]/delete-location.dialog';
 import { Label } from '@repo/ui/components/ui/label';
 import { Input } from '@repo/ui/components/ui/input';
 import { container, TYPES } from '@repo/shared/inversify';
-import { UserService, WebSettingService } from '@repo/shared/service';
+import { WebSettingService } from '@repo/shared/service';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
-import { Textarea } from '@repo/ui/components/ui/textarea';
 import FaqTable from './_components/faq-table';
 import { findAllDepositReviewFaqSchema } from '@repo/shared/api/schema';
 import DepositAccountTable from './_components/deposit-account-table';

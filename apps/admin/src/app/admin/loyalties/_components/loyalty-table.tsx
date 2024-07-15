@@ -11,14 +11,11 @@ import { getColumns } from './columns';
 import {
   SelectAllLoyalty,
   SelectAllUserName,
-  SelectClassType,
   SelectLoyalty,
-  SelectPackage,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllLoyaltySchema } from '@repo/shared/api/schema';
-import CreatePackageForm from '../create-loyalty.form';
 import CreateLoyaltyForm from '../create-loyalty.form';
 import DeleteLoyaltyForm from '../delete-loyalty.form';
 

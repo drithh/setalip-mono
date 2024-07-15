@@ -4,31 +4,27 @@ import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createCredit } from './_actions/create-credit';
 import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { CreateCreditSchema, createCreditSchema, roles } from './form-schema';
+import { CreateCreditSchema, createCreditSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { FormDatePicker } from '@repo/ui/components/form-date-picker';
 import {
   SelectClassType,
-  SelectDetailLocation,
-  SelectLocation,
   SelectUser,
 } from '@repo/shared/repository';
 import {
   Sheet,
-  SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -44,8 +40,6 @@ import {
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { Textarea } from '@repo/ui/components/ui/textarea';
-import { PhoneInput } from '@repo/ui/components/phone-input';
-import { Value as PhoneNumberValue } from 'react-phone-number-input';
 
 interface CreateCreditProps {
   user: SelectUser;

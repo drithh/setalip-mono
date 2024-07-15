@@ -3,9 +3,7 @@
 import * as React from 'react';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { type ColumnDef } from '@tanstack/react-table';
-import { toast } from 'sonner';
 
-import { Checkbox } from '@repo/ui/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,14 +16,11 @@ import {
   SelectAllUserName,
   SelectClassType,
   SelectLocation,
-  SelectPackage,
-  SelectUser,
   SelectUserWithCredits,
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 // import DeletePackageDialog from './delete-package.dialog';
 import EditUserForm from '../edit-user.form';
-import { dateFormatter } from '@repo/shared/util';
 import CreateCreditForm from '../create-credit.form';
 import DeleteCreditForm from '../delete-credit.form';
 import { format } from 'date-fns';

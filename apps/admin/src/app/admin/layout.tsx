@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import '@repo/ui/global.css';
 import Navigation from './_components/navigation';
 

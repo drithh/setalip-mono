@@ -1,19 +1,14 @@
 'use server';
 
 import {
-  AuthService,
   ResetPasswordService,
-  UserValidationError,
 } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
-import { FormState } from '@repo/shared/form';
 import {
   forgotPasswordSchema,
-  ForgotPasswordSchema,
   FormForgotPassword,
 } from '../form-schema';
 import {
-  convertErrorsToZod,
   convertFormData,
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';

@@ -9,8 +9,6 @@ module.exports = {
     'prettier',
     require.resolve('@vercel/style-guide/eslint/next'),
     'eslint:recommended',
-    'plugin:import/recommended',
-    'plugin:import/warnings',
   ],
   globals: {
     React: true,
@@ -27,14 +25,7 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    'unused-imports',
-    'import',
-    'react',
-    'react-hooks',
-    'jsx-a11y',
-    'only-warn',
-  ],
+  plugins: ['unused-imports', 'only-warn'],
   rules: {
     'no-unused-vars': 'off', // or "@typescript-eslint/no-unused-vars": "off",
     'unused-imports/no-unused-imports': 'error',

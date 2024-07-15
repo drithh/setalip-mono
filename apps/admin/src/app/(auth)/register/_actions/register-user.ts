@@ -2,8 +2,6 @@
 import { cookies } from 'next/headers';
 import { AuthService, UserValidationError } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
-import { FormState } from '@repo/shared/form';
-import { z } from 'zod';
 import {
   FormRegisterUser,
   RegisterUserSchema,
@@ -15,8 +13,6 @@ import {
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { validateRequest } from '@/lib/auth';
-import { lucia } from '@repo/shared/auth';
 
 export async function registerUser(
   state: FormRegisterUser,

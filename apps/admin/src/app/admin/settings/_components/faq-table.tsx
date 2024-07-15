@@ -9,7 +9,6 @@ import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './faq-columns';
 import {
-  SelectClassType,
   SelectFrequentlyAskedQuestion,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';

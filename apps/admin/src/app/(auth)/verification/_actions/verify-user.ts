@@ -1,14 +1,10 @@
 'use server';
 import { OtpService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
-import { FormState } from '@repo/shared/form';
-import { z } from 'zod';
 import {
   FormVerifyOtp,
-  VerifyOtpSchema,
   verifyOtpSchema,
 } from '../form-schema';
-import { UserRepository } from '@repo/shared/repository';
 import {
   convertFormData,
   convertZodErrorsToFieldErrors,

@@ -1,18 +1,10 @@
 'use server';
-import { cookies } from 'next/headers';
 import {
-  AuthService,
-  ClassTypeService,
   LoyaltyService,
-  UserValidationError,
 } from '@repo/shared/service';
-import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
-import { FormState } from '@repo/shared/form';
-import { z } from 'zod';
 import { createLoyaltySchema, FormCreateLoyalty } from '../form-schema';
 import {
-  convertErrorsToZod,
   convertFormData,
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';

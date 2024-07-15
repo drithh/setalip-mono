@@ -7,7 +7,6 @@ import { PasswordInput } from '@repo/ui/components/password-input';
 import { registerUser } from './_actions/register-user';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';

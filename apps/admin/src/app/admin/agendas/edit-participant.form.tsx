@@ -10,7 +10,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,18 +18,12 @@ import {
 import { EditParticipantSchema, editParticipantSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { Switch } from '@repo/ui/components/ui/switch';
-import { MoneyInput } from '@repo/ui/components/money-input';
-import { AddonInput } from '@repo/ui/components/addon-input';
 import {
   SelectAgendaBooking,
-  SelectClassType,
-  SelectDetailLocation,
   SelectParticipant,
 } from '@repo/shared/repository';
 import {
   Sheet,
-  SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -45,7 +38,6 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
-import { Trash } from 'lucide-react';
 import DeleteParticipantDialog from './delete-participant.dialog';
 
 interface EditParticipantProps {

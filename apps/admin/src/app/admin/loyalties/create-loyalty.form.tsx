@@ -18,14 +18,8 @@ import {
 } from '@repo/ui/components/ui/form';
 import { CreateLoyaltySchema, createLoyaltySchema } from './form-schema';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { Switch } from '@repo/ui/components/ui/switch';
-import { MoneyInput } from '@repo/ui/components/money-input';
-import { AddonInput } from '@repo/ui/components/addon-input';
 import {
   SelectAllUserName,
-  SelectClassType,
-  SelectDetailLocation,
 } from '@repo/shared/repository';
 import {
   Sheet,

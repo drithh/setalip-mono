@@ -1,9 +1,7 @@
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 
 import { appRouter, createTRPCContext } from '@repo/shared/api';
-import { lucia } from '@repo/shared/auth';
 import { NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
 import { validateRequest } from '@/lib/auth';
 /**
  * Configure basic CORS headers

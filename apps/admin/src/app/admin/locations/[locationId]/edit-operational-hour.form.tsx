@@ -19,8 +19,6 @@ import { EditOperationalHourSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { SelectDetailLocation } from '@repo/shared/repository';
-import { Value as PhoneNumberValue } from 'react-phone-number-input';
-import { SelectLocation } from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,
@@ -31,7 +29,6 @@ import {
 } from '@repo/ui/components/ui/sheet';
 import { editOperationalHourSchema } from './form-schema';
 import { editOperationalHour } from './_actions/edit-operational-hour';
-import { PhoneInput } from '@repo/ui/components/phone-input';
 import { TimePickerInput } from '@repo/ui/components/time-picker-input';
 
 interface EditOperationalHourFormProps {

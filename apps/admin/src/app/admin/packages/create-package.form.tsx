@@ -18,11 +18,10 @@ import {
 } from '@repo/ui/components/ui/form';
 import { CreatePackageSchema, createPackageSchema } from './form-schema';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 import { Switch } from '@repo/ui/components/ui/switch';
 import { MoneyInput } from '@repo/ui/components/money-input';
 import { AddonInput } from '@repo/ui/components/addon-input';
-import { SelectClassType, SelectDetailLocation } from '@repo/shared/repository';
+import { SelectClassType } from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,

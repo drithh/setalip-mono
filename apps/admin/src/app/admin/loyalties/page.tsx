@@ -1,13 +1,10 @@
-import {
-  ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import { FindAllLoyaltyOptions, SelectLoyalty } from '@repo/shared/repository';
+
+
+import { FindAllLoyaltyOptions } from '@repo/shared/repository';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import LoyaltyTable from './_components/loyalty-table';
 import { TYPES, container } from '@repo/shared/inversify';
-import { ClassTypeService, UserService } from '@repo/shared/service';
+import { UserService } from '@repo/shared/service';
 import { findAllLoyaltySchema } from '@repo/shared/api/schema';
 import QueryResetBoundary from '@/lib/query-reset-boundary';
 import React from 'react';
@@ -17,7 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
-import DepositAccountTable from '../settings/_components/deposit-account-table';
 
 export interface IndexPageProps {
   searchParams: FindAllLoyaltyOptions;

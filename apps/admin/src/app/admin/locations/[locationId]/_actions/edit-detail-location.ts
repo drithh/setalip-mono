@@ -1,26 +1,17 @@
 'use server';
-import { cookies } from 'next/headers';
 import {
-  AuthService,
   LocationService,
-  UserValidationError,
 } from '@repo/shared/service';
-import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
-import { FormState } from '@repo/shared/form';
-import { z } from 'zod';
 import {
   editDetailLocationSchema,
   FormEditDetailLocation,
 } from '../form-schema';
 import {
-  convertErrorsToZod,
   convertFormData,
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { FieldError } from 'react-hook-form';
-import { api } from '@/trpc/server';
 
 export async function editDetailLocation(
   state: FormEditDetailLocation,

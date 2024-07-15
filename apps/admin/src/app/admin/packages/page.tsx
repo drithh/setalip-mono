@@ -1,9 +1,6 @@
-import {
-  ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import { FindAllPackageOptions, SelectPackage } from '@repo/shared/repository';
+
+
+import { FindAllPackageOptions } from '@repo/shared/repository';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import PackageTable from './_components/package-table';
 import { TYPES, container } from '@repo/shared/inversify';

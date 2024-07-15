@@ -1,6 +1,6 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
+import { useEffect, useRef } from 'react';
+import { PhotoProvider } from 'react-photo-view';
 import FileCard from './_components/file-card';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,10 +17,8 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { Button } from '@repo/ui/components/ui/button';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { Input } from '@repo/ui/components/ui/input';
 

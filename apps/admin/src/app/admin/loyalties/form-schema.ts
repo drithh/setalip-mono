@@ -1,6 +1,5 @@
 import { FormState } from '@repo/shared/form';
-import { InsertLoyalty } from '@repo/shared/repository';
-import { ZodType, z } from 'zod';
+import { z } from 'zod';
 
 export const createLoyaltySchema = z.object({
   amount: z.coerce.number(),

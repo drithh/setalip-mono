@@ -4,7 +4,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createLoyalty } from './_actions/create-loyalty';
 import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -18,18 +18,11 @@ import {
 } from '@repo/ui/components/ui/form';
 import { CreateLoyaltySchema, createLoyaltySchema } from './form-schema';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { Switch } from '@repo/ui/components/ui/switch';
-import { MoneyInput } from '@repo/ui/components/money-input';
-import { AddonInput } from '@repo/ui/components/addon-input';
 import {
   SelectAllUserName,
-  SelectClassType,
-  SelectDetailLocation,
 } from '@repo/shared/repository';
 import {
   Sheet,
-  SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,

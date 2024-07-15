@@ -2,10 +2,8 @@
 
 import { SelectDetailLocation } from '@repo/shared/repository';
 import { Input } from '@repo/ui/components/ui/input';
-import { Label } from '@repo/ui/components/ui/label';
 import { Separator } from '@repo/ui/components/ui/separator';
 import { useRef } from 'react';
-import { TimePickerInput } from '@repo/ui/components/time-picker-input';
 interface OperationalHourProps {
   operationalHours: SelectDetailLocation['operational_hours'];
 }

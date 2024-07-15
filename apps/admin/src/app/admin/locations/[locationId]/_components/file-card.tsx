@@ -2,7 +2,7 @@
 import { PhotoView } from 'react-photo-view';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { Button } from '@repo/ui/components/ui/button';
-import { LoaderCircle, LoaderIcon, Trash, Upload } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -14,7 +14,6 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@repo/ui/components/ui/alert-dialog';
-import UploadLocationAsset from '../upload-location-asset.form';
 
 type FileWithPreview = File & { preview: string };
 

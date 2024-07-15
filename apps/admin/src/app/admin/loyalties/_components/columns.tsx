@@ -1,27 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { type ColumnDef } from '@tanstack/react-table';
 
-import { Checkbox } from '@repo/ui/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@repo/ui/components/ui/dropdown-menu';
-import { moneyFormatter } from '@repo/shared/util';
+
+
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import {
   SelectAllLoyalty,
   SelectAllUserName,
-  SelectClassType,
 } from '@repo/shared/repository';
-import { Button } from '@repo/ui/components/ui/button';
-import EditLoyaltyForm from '../delete-loyalty.form';
-import DeleteLoyaltyForm from '../delete-loyalty.form';
 import { Badge } from '@repo/ui/components/ui/badge';
 
 interface getColumnsProps {

@@ -10,7 +10,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,14 +17,9 @@ import {
 } from '@repo/ui/components/ui/form';
 import { CreateVoucherSchema, createVoucherSchema } from './form-schema';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 import { Switch } from '@repo/ui/components/ui/switch';
-import { MoneyInput } from '@repo/ui/components/money-input';
-import { AddonInput } from '@repo/ui/components/addon-input';
 import {
   SelectAllUserName,
-  SelectClassType,
-  SelectDetailLocation,
   SelectVoucher,
 } from '@repo/shared/repository';
 import {
@@ -45,7 +39,6 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
-import { Textarea } from '@repo/ui/components/ui/textarea';
 import { isBefore, subDays } from 'date-fns';
 import { DatetimePicker } from '@repo/ui/components/datetime-picker';
 

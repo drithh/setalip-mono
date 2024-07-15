@@ -10,7 +10,6 @@ import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 import { getColumns } from './review-columns';
 import {
   SelectAllUserName,
-  SelectClassType,
   SelectReviewWithUser,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';

@@ -1,12 +1,8 @@
 import { FormState } from '@repo/shared/form';
 import {
-  InsertCarousel,
   InsertDepositAccount,
   InsertFrequentlyAskedQuestion,
-  InsertReview,
-  UpdateWebSetting,
 } from '@repo/shared/repository';
-import { url } from 'inspector';
 import { ZodType, z } from 'zod';
 
 export const editWebSettingSchema = z.object({

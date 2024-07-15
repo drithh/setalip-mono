@@ -4,7 +4,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editPackage } from './_actions/edit-package';
 import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -24,12 +24,10 @@ import { MoneyInput } from '@repo/ui/components/money-input';
 import { AddonInput } from '@repo/ui/components/addon-input';
 import {
   SelectClassType,
-  SelectDetailLocation,
   SelectPackage,
 } from '@repo/shared/repository';
 import {
   Sheet,
-  SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,

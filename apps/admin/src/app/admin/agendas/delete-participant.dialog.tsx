@@ -11,7 +11,6 @@ import {
   AlertDialogAction,
 } from '@repo/ui/components/ui/alert-dialog';
 import { Button } from '@repo/ui/components/ui/button';
-import { useRouter } from 'next/navigation';
 import { api } from '@/trpc/react';
 import { SelectParticipant } from '@repo/shared/repository';
 import { Trash2 } from 'lucide-react';

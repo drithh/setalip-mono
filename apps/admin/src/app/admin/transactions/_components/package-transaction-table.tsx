@@ -9,8 +9,6 @@ import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './columns';
 import {
-  SelectClassType,
-  SelectPackage,
   SelectPackageTransaction,
   SelectPackageTransactionWithUser,
 } from '@repo/shared/repository';

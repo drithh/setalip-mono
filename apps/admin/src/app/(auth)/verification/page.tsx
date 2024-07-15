@@ -1,6 +1,5 @@
 import VerifyUserForm from './verify-user.form';
 import { validateUser } from '@/lib/auth';
-import { redirect } from 'next/navigation';
 import ResendOtpForm from './resend-otp.form';
 
 export default async function UserVerification() {

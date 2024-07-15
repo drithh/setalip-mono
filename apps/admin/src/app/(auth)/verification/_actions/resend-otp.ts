@@ -1,7 +1,6 @@
 'use server';
 
-import { FormResendOtp, ResendOtpSchema } from './../form-schema';
-import { FormState } from '@repo/shared/form';
+import { FormResendOtp } from './../form-schema';
 import { container, TYPES } from '@repo/shared/inversify';
 import { OtpService } from '@repo/shared/service';
 

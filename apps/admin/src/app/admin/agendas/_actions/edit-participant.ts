@@ -1,13 +1,8 @@
 'use server';
-import { cookies } from 'next/headers';
-import { AgendaService, UserValidationError } from '@repo/shared/service';
-import { redirect } from 'next/navigation';
+import { AgendaService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
-import { FormState } from '@repo/shared/form';
-import { z } from 'zod';
 import { editParticipantSchema, FormEditParticipant } from '../form-schema';
 import {
-  convertErrorsToZod,
   convertFormData,
   convertZodErrorsToFieldErrors,
   transformData,

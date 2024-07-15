@@ -16,20 +16,15 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { DeleteCreditSchema, deleteCreditSchema, roles } from './form-schema';
+import { DeleteCreditSchema, deleteCreditSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import {
-  SelectAmountCredit,
   SelectClassType,
-  SelectDetailLocation,
-  SelectLocation,
-  SelectUser,
   SelectUserWithCredits,
 } from '@repo/shared/repository';
 import {
   Sheet,
-  SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -45,8 +40,6 @@ import {
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { Textarea } from '@repo/ui/components/ui/textarea';
-import { PhoneInput } from '@repo/ui/components/phone-input';
-import { Value as PhoneNumberValue } from 'react-phone-number-input';
 
 interface DeleteCreditProps {
   user: SelectUserWithCredits;

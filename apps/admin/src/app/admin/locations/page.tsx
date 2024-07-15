@@ -3,13 +3,11 @@ import { Button } from '@repo/ui/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
 import { LocationService } from '@repo/shared/service';
-import Image from 'next/image';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { MapPin, Phone } from 'lucide-react';

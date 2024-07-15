@@ -1,5 +1,5 @@
 import { FormState } from '@repo/shared/form';
-import { InsertPackage, InsertVoucher } from '@repo/shared/repository';
+import { InsertVoucher } from '@repo/shared/repository';
 import { ZodType, z } from 'zod';
 
 // code: string;

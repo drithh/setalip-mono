@@ -9,16 +9,10 @@ import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './columns';
 import {
-  SelectClassType,
-  SelectAgenda,
   SelectAgendaWithCoachAndClass,
-  SelectLocationAgenda,
-  SelectCoachAgenda,
   SelectLocation,
-  SelectCoach,
   SelectCoachWithUser,
   SelectClass,
-  SelectAllClass,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';

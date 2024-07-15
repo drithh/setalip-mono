@@ -11,7 +11,6 @@ import {
   CardFooter,
 } from '@repo/ui/components/ui/card';
 
-import Link from 'next/link';
 import { User2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import EditFacilityForm from '../edit-facility.form';

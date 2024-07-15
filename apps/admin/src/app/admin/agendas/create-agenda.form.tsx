@@ -10,7 +10,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,19 +17,11 @@ import {
 } from '@repo/ui/components/ui/form';
 import { CreateAgendaSchema, createAgendaSchema } from './form-schema';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { Switch } from '@repo/ui/components/ui/switch';
 import { DatetimePicker } from '@repo/ui/components/datetime-picker';
-import { AddonInput } from '@repo/ui/components/addon-input';
 import {
   SelectClass,
-  SelectClassAgenda,
-  SelectClassType,
-  SelectCoachAgenda,
   SelectCoachWithUser,
-  SelectDetailLocation,
   SelectLocation,
-  SelectLocationAgenda,
 } from '@repo/shared/repository';
 import {
   Sheet,

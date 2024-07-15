@@ -17,8 +17,6 @@ import {
 import { EditWebSettingSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { Value as PhoneNumberValue } from 'react-phone-number-input';
-import { SelectWebSetting } from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,
@@ -29,7 +27,6 @@ import {
 } from '@repo/ui/components/ui/sheet';
 import { editWebSettingSchema } from './form-schema';
 import { editWebSetting } from './_actions/edit-web-setting';
-import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
 import FileCard from '../locations/[locationId]/_components/file-card';

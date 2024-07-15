@@ -19,15 +19,8 @@ import {
 import { DeleteLoyaltySchema, deleteLoyaltySchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { Switch } from '@repo/ui/components/ui/switch';
-import { MoneyInput } from '@repo/ui/components/money-input';
-import { AddonInput } from '@repo/ui/components/addon-input';
 import {
-  SelectAllLoyalty,
   SelectAllUserName,
-  SelectClassType,
-  SelectDetailLocation,
-  SelectPackage,
 } from '@repo/shared/repository';
 import {
   Sheet,

@@ -1,10 +1,7 @@
 'use server';
 import { cookies } from 'next/headers';
 import { AuthService, UserValidationError } from '@repo/shared/service';
-import { redirect } from 'next/navigation';
 import { container, TYPES } from '@repo/shared/inversify';
-import { FormState } from '@repo/shared/form';
-import { z } from 'zod';
 import {
   FormLoginUser,
   loginUserSchema,
@@ -16,7 +13,6 @@ import {
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
-import { validateRequest } from '@/lib/auth';
 import { lucia } from '@repo/shared/auth';
 
 export async function loginUser(

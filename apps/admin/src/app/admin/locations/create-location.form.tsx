@@ -17,9 +17,7 @@ import {
 import { CreateLocationSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { SelectDetailLocation } from '@repo/shared/repository';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
-import { SelectLocation } from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,

@@ -1,6 +1,6 @@
 import { FormState } from '@repo/shared/form';
 import { isPossiblePhoneNumber } from 'libphonenumber-js';
-import { date, z } from 'zod';
+import { z } from 'zod';
 
 export const registerUserSchema = z
   .object({
