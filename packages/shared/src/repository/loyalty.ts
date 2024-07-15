@@ -1,5 +1,5 @@
 import { Insertable, Selectable, Updateable } from 'kysely';
-import { LoyaltyTransactions } from '../db';
+import { LoyaltyRewards, LoyaltyShops, LoyaltyTransactions } from '../db';
 import {
   DefaultPagination,
   OptionalToRequired,
@@ -51,22 +51,70 @@ export interface SelectAllLoyalty {
   pageCount: number;
 }
 
+export type SelectLoyaltyReward = Selectable<LoyaltyRewards>;
+export type InsertLoyaltyReward = Insertable<LoyaltyRewards>;
+export type UpdateLoyaltyReward = OptionalToRequired<
+  Updateable<LoyaltyRewards>,
+  'id'
+>;
+
+export interface FindAllLoyaltyRewardOptions extends DefaultPagination {
+  name?: SelectLoyaltyReward['name'];
+}
+
+export interface SelectAllLoyaltyReward {
+  data: SelectLoyaltyReward[];
+  pageCount: number;
+}
+
+export type SelectLoyaltyShop = Selectable<LoyaltyShops>;
+export type InsertLoyaltyShop = Insertable<LoyaltyShops>;
+export type UpdateLoyaltyShop = OptionalToRequired<
+  Updateable<LoyaltyShops>,
+  'id'
+>;
+
+export interface FindAllLoyaltyShopOptions extends DefaultPagination {
+  name?: SelectLoyaltyShop['name'];
+}
+
+export interface SelectAllLoyaltyShop {
+  data: SelectLoyaltyShop[];
+  pageCount: number;
+}
+
 export interface LoyaltyRepository {
   count(): Promise<number>;
 
   findAll(data: FindAllLoyaltyOptions): Promise<SelectAllLoyalty>;
-  findById(id: SelectLoyalty['id']): Promise<SelectLoyalty | undefined>;
-
-  findAmountByUserId(
-    userId: SelectUser['id']
-  ): Promise<SelectAmountLoyalty | undefined>;
+  findAllReward(
+    data: FindAllLoyaltyRewardOptions
+  ): Promise<SelectAllLoyaltyReward>;
+  findAllShop(data: FindAllLoyaltyShopOptions): Promise<SelectAllLoyaltyShop>;
   findAllByUserId(
     data: FindAllLoyaltyByUserIdOptions
   ): Promise<SelectAllLoyaltyByUserId>;
 
+  findById(id: SelectLoyalty['id']): Promise<SelectLoyalty | undefined>;
+  findRewardByName(
+    name: SelectLoyaltyReward['name']
+  ): Promise<SelectLoyaltyReward | undefined>;
+  findShopByName(
+    name: SelectLoyaltyShop['name']
+  ): Promise<SelectLoyaltyShop | undefined>;
+  findAmountByUserId(
+    userId: SelectUser['id']
+  ): Promise<SelectAmountLoyalty | undefined>;
+
   create(data: InsertLoyalty): Promise<SelectLoyalty | Error>;
+  createReward(data: InsertLoyaltyReward): Promise<SelectLoyaltyReward | Error>;
+  createShop(data: InsertLoyaltyShop): Promise<SelectLoyaltyShop | Error>;
 
   update(data: UpdateLoyalty): Promise<undefined | Error>;
+  updateReward(data: UpdateLoyaltyReward): Promise<undefined | Error>;
+  updateShop(data: UpdateLoyaltyShop): Promise<undefined | Error>;
 
   delete(id: DeleteLoyalty): Promise<undefined | Error>;
+  deleteReward(id: SelectLoyaltyReward['id']): Promise<undefined | Error>;
+  deleteShop(id: SelectLoyaltyShop['id']): Promise<undefined | Error>;
 }
