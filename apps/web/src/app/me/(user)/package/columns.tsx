@@ -29,7 +29,9 @@ export function getColumns(): ColumnDef<
           <span className="inline-block font-semibold sm:hidden">
             Harga Beli:&ensp;
           </span>
-          {moneyFormatter.format(row.original.amount_paid)}
+          {moneyFormatter.format(
+            row.original.amount_paid - (row.original.discount ?? 0),
+          )}
         </p>
       ),
     },

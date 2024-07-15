@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 
-
 import { Button } from '@repo/ui/components/ui/button';
 import {
   Card,
@@ -21,9 +20,6 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import { Input } from '@repo/ui/components/ui/input';
-
-
-
 
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import { useRouter } from 'next/navigation';
@@ -164,15 +160,12 @@ export default function CreateReviewForm({}: CreateReviewProps) {
               />
 
               <Button type="submit" className="w-full">
-                Simpan
+                Buat Review
               </Button>
             </form>
           </Form>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end">
-        <Button type="submit">Submit Review</Button>
-      </CardFooter>
     </Card>
   );
 }

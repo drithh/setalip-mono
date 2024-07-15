@@ -44,7 +44,7 @@ export default async function Layout({
               <Avatar user={auth.user} />
             </div>
             <div className="flex flex-col place-items-center gap-2">
-              <p className="text-xl font-semibold">{auth.user.name}</p>
+              <p className="text-xl text-center font-semibold">{auth.user.name}</p>
               <p className="">
                 Joined Since{' '}
                 {format(new Date(auth.user.createdAt), 'MMM dd yyyy')}

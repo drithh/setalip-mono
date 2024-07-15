@@ -9,7 +9,7 @@ import {
   SelectAllPackageTransaction,
   SelectPackageTransaction,
   SelectClassType,
-  SelectUniqueCode,
+  SelectPackageTransactionByUser,
   InsertPackageTransaction,
   UpdatePackageTransaction,
   FindAllUserPackageTransactionOption,
@@ -36,10 +36,10 @@ export interface PackageService {
     user_id: SelectPackageTransaction['user_id'],
     class_type: SelectClassType['id']
   ): PromiseResult<SelectAllActivePackage | undefined, Error>;
-  findPackageTransactionUniqueCode(
+  findPackageTransactionByUserIdAndPackageId(
     user_id: SelectPackageTransaction['user_id'],
     package_id: SelectPackage['id']
-  ): PromiseResult<SelectUniqueCode, Error>;
+  ): PromiseResult<SelectPackageTransactionByUser, Error>;
 
   create(data: InsertPackage): PromiseResult<SelectPackage, Error>;
   createPackageTransaction(

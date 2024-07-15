@@ -27,7 +27,7 @@ export default function Layout({
   const randomImage = images[Math.floor(Math.random() * images.length)];
   const randomWhyUs = whyUs[Math.floor(Math.random() * whyUs.length)];
   return (
-    <div className="min-h-[calc(100vh-82px)] w-full lg:grid lg:grid-cols-2 ">
+    <div className="min-h-screen w-full lg:grid lg:grid-cols-2 ">
       <div className="flex items-center justify-center">{children}</div>
       <div className="sticky top-[82px]  hidden max-h-[calc(100vh-82px)] lg:block">
         <div className="absolute -top-[24rem] bottom-0 left-0 right-0">

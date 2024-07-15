@@ -1,7 +1,5 @@
 'use client';
-import {
-  SelectClass,
-} from '@repo/shared/repository';
+import { SelectClass } from '@repo/shared/repository';
 import {
   Credenza,
   CredenzaBody,
@@ -11,7 +9,6 @@ import {
   CredenzaHeader,
   CredenzaTitle,
 } from '@repo/ui/components/credenza';
-
 
 import { Button } from '@repo/ui/components/ui/button';
 import Link from 'next/link';
@@ -47,11 +44,11 @@ export default function CreateTransactionDialog({
 
           <div className="col-span-2 mb-4 mt-8">
             <p className="text-justify text-sm">
-              By booking this class, you agree to our{' '}
+              Dengan memesan kelas ini, Anda setuju dengan{' '}
               <Link href="/legal" className="text-balance underline">
                 Terms of Service
               </Link>{' '}
-              and have read and acknowledge our{' '}
+              dan telah membaca serta menyetujui{' '}
               <Link href="/legal" className="text-balance underline">
                 Privacy Policy.
               </Link>

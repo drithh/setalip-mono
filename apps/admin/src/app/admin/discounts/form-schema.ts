@@ -9,9 +9,9 @@ import { ZodType, z } from 'zod';
 export const createVoucherSchema = z.object({
   code: z.string(),
   type: z.enum(['fixed', 'percentage']),
-  discount: z.number().positive(),
+  discount: z.coerce.number().positive(),
   expired_at: z.date(),
-  user_id: z.number().optional(),
+  user_id: z.coerce.number().optional(),
 }) satisfies ZodType<InsertVoucher>;
 
 export type CreateVoucherSchema = z.infer<typeof createVoucherSchema>;

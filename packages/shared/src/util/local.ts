@@ -1,14 +1,14 @@
+import { format as FormateDate } from 'date-fns-tz';
+
+export const format = (date: string) => {
+  return FormateDate(new Date(date), 'dd MMM yyyy', {
+    timeZone: 'Asia/Jakarta',
+  });
+};
+
 export const moneyFormatter = Intl.NumberFormat('id-ID', {
   currency: 'IDR',
   currencyDisplay: 'symbol',
   currencySign: 'standard',
   style: 'currency',
 });
-
-export const dateFormatter = (props?: Intl.DateTimeFormatOptions) =>
-  new Intl.DateTimeFormat('id-ID', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    ...props,
-  });

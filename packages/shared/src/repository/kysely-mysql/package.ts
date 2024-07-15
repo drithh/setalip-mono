@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { id, inject, injectable } from 'inversify';
 import {
   FindAllPackageOptions,
   FindAllUserPackageOption,
@@ -221,6 +221,18 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       .executeTakeFirst();
   }
 
+  findPackageTransactionByVoucherIdAndUserId(
+    voucher_id: SelectPackageTransaction['voucher_id'],
+    user_id: SelectPackageTransaction['user_id']
+  ) {
+    return this._db
+      .selectFrom('package_transactions')
+      .selectAll()
+      .where('package_transactions.voucher_id', '=', voucher_id)
+      .where('package_transactions.user_id', '=', user_id)
+      .executeTakeFirst();
+  }
+
   async findAllActivePackageByUserId(
     user_id: SelectPackageTransaction['user_id']
   ) {
@@ -348,13 +360,13 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     return combined;
   }
 
-  async findPackageTransactionUniqueCode(
+  async findPackageTransactionByUserIdAndPackageId(
     user_id: SelectPackageTransaction['user_id'],
     package_id: SelectPackage['id']
   ) {
     const lastUniqueCode = await this._db
       .selectFrom('package_transactions')
-      .select(['unique_code', 'deposit_account_id', 'package_transactions.id'])
+      .selectAll()
       .where('package_transactions.user_id', '=', user_id)
       .where('package_transactions.package_id', '=', package_id)
       .where('status', '=', 'pending')
@@ -362,9 +374,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
     if (lastUniqueCode) {
       return {
-        unique_code: lastUniqueCode.unique_code,
-        deposit_account_id: lastUniqueCode.deposit_account_id,
-        id: lastUniqueCode.id,
+        ...lastUniqueCode,
         is_new: false,
       };
     }
@@ -386,10 +396,16 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     } while (uniqueCodes.has(newUniqueCode));
 
     return {
-      unique_code: newUniqueCode,
-      deposit_account_id: null,
-      id: -1,
+      user_id,
+      package_id,
       is_new: true,
+      unique_code: newUniqueCode,
+
+      id: null,
+      deposit_account_id: null,
+      discount: null,
+      user_package_id: null,
+      voucher_id: null,
     };
   }
 
@@ -437,6 +453,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
             user_id: data.user_id,
             package_id: queryPackage.id,
             discount: data.discount,
+            voucher_id: data.voucher_id,
             deposit_account_id: data.deposit_account_id,
             unique_code: data.unique_code,
             status: 'pending',
@@ -512,7 +529,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
         if (data.status === 'completed') {
           // insert user package
-          const userPackage = await trx
+          const userPackage = trx
             .insertInto('user_packages')
             .values({
               user_id: packageTransaction.user_id,
@@ -583,7 +600,13 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
         const query = await trx
           .updateTable('package_transactions')
           .set({
-            ...data,
+            id: data.id,
+            status: data.status,
+            deposit_account_id: data.deposit_account_id,
+
+            discount: data.discount,
+            voucher_id: data.voucher_id,
+
             user_package_id: userPackageId,
           })
           .where('package_transactions.id', '=', data.id)

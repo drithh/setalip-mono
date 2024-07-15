@@ -10,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -42,6 +43,8 @@ import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { DatetimePicker } from '@repo/ui/components/datetime-picker';
 import { isBefore, subDays } from 'date-fns';
+import { AddonInput } from '@repo/ui/components/addon-input';
+import { MoneyInput } from '@repo/ui/components/money-input';
 
 interface EditVoucherProps {
   data: SelectVoucherWithUser;
@@ -70,7 +73,9 @@ export default function EditVoucherForm({
   open,
   onOpenChange,
 }: EditVoucherProps) {
-  const [isAllUser, setIsAllUser] = useState(false);
+  const [isAllUser, setIsAllUser] = useState(
+    data.user_id === null ? true : false,
+  );
 
   const trpcUtils = api.useUtils();
   const router = useRouter();
@@ -83,11 +88,11 @@ export default function EditVoucherForm({
     status: 'default',
     form: {
       id: data.id,
-      code: '',
-      type: 'fixed',
-      discount: 0,
-      expired_at: new Date(),
-      user_id: undefined,
+      code: data.code,
+      type: data.type,
+      discount: data.discount,
+      expired_at: data.expired_at,
+      user_id: data.user_id,
     } as FormSchema,
   });
 
@@ -148,12 +153,9 @@ export default function EditVoucherForm({
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">
-              Edit Frequently Asked Question
-            </SheetTitle>
+            <SheetTitle className="text-left">Edit Voucher</SheetTitle>
             <SheetDescription className="text-left">
-              Edit Frequently Asked Question. Pastikan klik simpan ketika
-              selesai.
+              Edit Voucher. Pastikan klik simpan ketika selesai.
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -164,13 +166,36 @@ export default function EditVoucherForm({
                 action={formAction}
                 onSubmit={onFormSubmit}
               >
-                <p>Set voucher untuk semua user</p>
-                <Switch
-                  checked={isAllUser}
-                  onCheckedChange={(e) => {
-                    setIsAllUser(e);
-                  }}
+                <FormField
+                  control={form.control}
+                  name="id"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormControl>
+                        <Input
+                          type="hidden"
+                          {...field}
+                          value={data.id.toString()}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
+
+                <FormItem className="grid w-full gap-2">
+                  <FormLabel>Set voucher untuk semua user</FormLabel>
+                  <FormControl>
+                    <Switch
+                      checked={isAllUser}
+                      onCheckedChange={(e) => {
+                        setIsAllUser(e);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+
                 {!isAllUser && (
                   <FormField
                     control={form.control}
@@ -228,6 +253,10 @@ export default function EditVoucherForm({
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
                       <FormLabel>Type</FormLabel>
+                      <FormDescription>
+                        Pilih jenis diskon yang akan diberikan. (diskon persen /
+                        rupiah)
+                      </FormDescription>
                       <FormControl>
                         <>
                           <Input type="hidden" {...field} />
@@ -261,7 +290,17 @@ export default function EditVoucherForm({
                     <FormItem className="grid w-full gap-2">
                       <FormLabel>Discount</FormLabel>
                       <FormControl>
-                        <Input type="number" id="discount" {...field} />
+                        {form.getValues('type') === 'fixed' ? (
+                          <MoneyInput {...field} className="w-full" />
+                        ) : (
+                          <AddonInput
+                            type="number"
+                            min={0}
+                            max={100}
+                            {...field}
+                            endAdornment="%"
+                          />
+                        )}
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -273,7 +312,7 @@ export default function EditVoucherForm({
                   name="expired_at"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Discount</FormLabel>
+                      <FormLabel>Expired At</FormLabel>
                       <FormControl>
                         <>
                           <Input

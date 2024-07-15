@@ -1,6 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["DATABASE_URL", "WHAPIFY_ACCOUNT", "WHAPIFY_SECRET", "HOST"],
+  "globalEnv": [
+    "DATABASE_URL",
+    "WHAPIFY_ACCOUNT",
+    "WHAPIFY_SECRET",
+    "HOST",
+    "TZ"
+  ],
   "globalDependencies": ["**/.env.*local"],
   "tasks": {
     "build": {

@@ -1,7 +1,5 @@
 import { format } from 'date-fns';
 
-
-
 import { validateUser } from '@/lib/auth';
 
 import Avatar from '../_components/avatar';
@@ -24,7 +22,9 @@ export default async function Layout({
               <Avatar user={auth.user} />
             </div>
             <div className="flex flex-col place-items-center gap-2">
-              <p className="text-xl font-semibold">{auth.user.name}</p>
+              <p className="text-center text-xl font-semibold">
+                {auth.user.name}
+              </p>
               <p className="">
                 Joined Since{' '}
                 {format(new Date(auth.user.createdAt), 'MMM dd yyyy')}

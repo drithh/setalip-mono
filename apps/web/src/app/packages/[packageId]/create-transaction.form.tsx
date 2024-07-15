@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   SelectAllDepositAccount,
   SelectPackageTransaction,
+  SelectPackageTransactionByUser,
+  SelectVoucher,
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import { Card, CardContent } from '@repo/ui/components/ui/card';
@@ -22,7 +24,6 @@ import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-
 import { createTransaction } from './_actions/create-transaction';
 import CreateTransactionDialog from './confirmation.dialog';
 import {
@@ -31,11 +32,11 @@ import {
 } from './form-schema';
 
 interface CreateTransactionProps {
-  id: SelectPackageTransaction['id'];
+  packageTransaction: SelectPackageTransactionByUser;
   packageId: SelectPackageTransaction['package_id'];
   depositAccounts: SelectAllDepositAccount['data'];
   price: SelectPackageTransaction['amount_paid'];
-  uniqueCode: SelectPackageTransaction['unique_code'];
+  voucherCode: SelectVoucher['code'];
 }
 
 const TOAST_MESSAGES = {
@@ -53,11 +54,11 @@ const TOAST_MESSAGES = {
 };
 
 export default function CreateTransaction({
-  id,
+  packageTransaction,
   packageId,
   depositAccounts,
   price,
-  uniqueCode,
+  voucherCode,
 }: CreateTransactionProps) {
   const router = useRouter();
   type FormSchema = CreateTransactionSchema;
@@ -134,19 +135,23 @@ export default function CreateTransaction({
         onSubmit={onFormSubmit}
         className="flex flex-col gap-4"
       >
-        <section className="flex flex-col gap-4">
-          <h1 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl">
+        <section className="flex flex-col ">
+          <h1 className="mb-6 text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl">
             Select Payment Method
           </h1>
 
-          {id && id > 0 && (
+          {packageTransaction.id !== null && (
             <FormField
               control={form.control}
               name="id"
               render={({ field }) => (
                 <FormItem className="grid w-full gap-2">
                   <FormControl>
-                    <Input type="hidden" {...field} value={id} />
+                    <Input
+                      type="hidden"
+                      {...field}
+                      value={packageTransaction?.id ?? 0}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -167,13 +172,32 @@ export default function CreateTransaction({
             )}
           />
 
+          {voucherCode.length > 0 && (
+            <FormField
+              control={form.control}
+              name="voucher_code"
+              render={({ field }) => (
+                <FormItem className="grid w-full gap-2">
+                  <FormControl>
+                    <Input type="hidden" {...field} value={voucherCode} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
           <FormField
             control={form.control}
             name="unique_code"
             render={({ field }) => (
               <FormItem className="grid w-full gap-2">
                 <FormControl>
-                  <Input type="hidden" {...field} value={uniqueCode} />
+                  <Input
+                    type="hidden"
+                    {...field}
+                    value={packageTransaction.unique_code}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

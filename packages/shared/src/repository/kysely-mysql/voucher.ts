@@ -89,26 +89,18 @@ export class KyselyMySqlVoucherRepository implements VoucherRepository {
   }
 
   findByCodeAndUser(data: FindVoucherByCode) {
-    return (
-      this._db
-        .selectFrom('vouchers')
-        .selectAll()
-        .where('vouchers.code', '=', data.code)
-        .where((eb) =>
-          eb.or([
-            eb('vouchers.user_id', '=', null),
-            eb('vouchers.user_id', '=', data.user_id),
-          ])
-        )
-        // .where((eb) =>
-        //   eb.or([
-        //     eb('vouchers.user_id', '=', null),
-        //     eb('vouchers.user_id', '=', data.user_id),
-        //   ])
-        // )
-        .where('vouchers.expired_at', '>', new Date())
-        .executeTakeFirst()
-    );
+    return this._db
+      .selectFrom('vouchers')
+      .selectAll()
+      .where('vouchers.code', '=', data.code)
+      .where((eb) =>
+        eb.or([
+          eb('vouchers.user_id', 'is', null),
+          eb('vouchers.user_id', '=', data.user_id),
+        ])
+      )
+      .where('vouchers.expired_at', '>', new Date())
+      .executeTakeFirst();
   }
 
   async create(data: InsertVoucher) {

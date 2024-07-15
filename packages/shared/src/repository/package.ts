@@ -14,6 +14,7 @@ import {
   SelectClassType,
   SelectCredit,
   SelectDepositAccount,
+  SelectVoucher,
 } from '.';
 
 export interface FindAllPackageOptions extends DefaultPagination {
@@ -39,15 +40,22 @@ export type SelectPackageTransaction = Selectable<PackageTransactions>;
 export interface InsertPackageTransaction {
   user_id: SelectPackageTransaction['user_id'];
   package_id: SelectPackage['id'];
-  discount: SelectPackageTransaction['discount'];
   deposit_account_id: SelectDepositAccount['id'];
   unique_code: SelectPackageTransaction['unique_code'];
+
+  discount: SelectPackageTransaction['discount'];
+  voucher_id: SelectVoucher['id'] | null;
+  voucher_code: SelectVoucher['code'] | null;
 }
 
 export interface UpdatePackageTransaction {
   id: SelectPackageTransaction['id'];
   status: SelectPackageTransaction['status'];
   deposit_account_id?: SelectPackageTransaction['deposit_account_id'];
+
+  discount: SelectPackageTransaction['discount'];
+  voucher_id: SelectVoucher['id'] | null;
+  voucher_code: SelectVoucher['code'] | null;
 }
 
 export interface SelectPackageTransactionWithUser
@@ -78,11 +86,17 @@ export interface FindAllUserPackageOption extends DefaultPagination {
   user_id: SelectPackageTransaction['user_id'];
 }
 
-export interface SelectUniqueCode {
-  unique_code: SelectPackageTransaction['unique_code'];
-  deposit_account_id: SelectPackageTransaction['deposit_account_id'];
-  id: SelectPackageTransaction['id'];
+export interface SelectPackageTransactionByUser {
+  package_id: number;
+  unique_code: number;
+  user_id: number;
   is_new: boolean;
+
+  id: number | null;
+  deposit_account_id: number | null;
+  discount: number | null;
+  user_package_id: number | null;
+  voucher_id: number | null;
 }
 
 export interface SelectAllPackageTransactionWithUser {
@@ -123,6 +137,10 @@ export interface PackageRepository {
   findAllPackageTransactionByUserId(
     data: FindAllUserPackageOption
   ): Promise<SelectAllPackageTransaction>;
+  findPackageTransactionByVoucherIdAndUserId(
+    voucher_id: SelectPackageTransaction['voucher_id'],
+    user_id: SelectPackageTransaction['user_id']
+  ): Promise<SelectPackageTransaction | undefined>;
   findAllActivePackageByUserId(
     user_id: SelectPackageTransaction['user_id']
   ): Promise<SelectAllActivePackage[]>;
@@ -130,10 +148,10 @@ export interface PackageRepository {
     user_id: SelectPackageTransaction['user_id'],
     class_type: SelectClassType['id']
   ): Promise<SelectAllActivePackage | undefined>;
-  findPackageTransactionUniqueCode(
+  findPackageTransactionByUserIdAndPackageId(
     user_id: SelectPackageTransaction['user_id'],
     package_id: SelectPackage['id']
-  ): Promise<SelectUniqueCode>;
+  ): Promise<SelectPackageTransactionByUser>;
 
   create(data: InsertPackage): Promise<SelectPackage | Error>;
   createPackageTransaction(

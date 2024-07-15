@@ -47,7 +47,7 @@ export const voucherRouter = {
         user_id: ctx.session.userId,
       });
 
-      console.log('voucher', voucher);
+      console.log('voucher', ctx);
 
       return voucher;
     }),

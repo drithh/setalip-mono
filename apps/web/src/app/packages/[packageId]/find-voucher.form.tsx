@@ -14,14 +14,15 @@ import { useRef } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '@/trpc/react';
+import { SelectVoucher } from '@repo/shared/repository';
 
-
-interface FindVoucherProps {}
+interface FindVoucherProps {
+  setVoucher: (voucher: SelectVoucher | undefined) => void;
+}
 
 const TOAST_MESSAGES = {
   error: {
     title: 'Voucher tidak ditemukan',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mencari voucher',
@@ -47,7 +48,7 @@ const useVoucherMutation = () =>
     },
   });
 
-export default function FindVoucher({}: FindVoucherProps) {
+export default function FindVoucher({ setVoucher }: FindVoucherProps) {
   const router = useRouter();
   const ref = useRef<HTMLInputElement>(null);
   const voucherMutation = useVoucherMutation();
@@ -66,9 +67,10 @@ export default function FindVoucher({}: FindVoucherProps) {
             toast.dismiss();
             if (data.error) {
               toast.error(TOAST_MESSAGES.error.title, {
-                description: TOAST_MESSAGES.error.description,
+                description: data.error.message,
               });
             } else {
+              setVoucher(data.result);
               toast.success(TOAST_MESSAGES.success.title, {});
             }
           },

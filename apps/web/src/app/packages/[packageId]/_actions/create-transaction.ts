@@ -31,11 +31,12 @@ export async function createTransaction(
 
   const packageService = container.get<PackageService>(TYPES.PackageService);
 
-  const voucher = 0;
-
   if (parsed.data.id) {
     const result = await packageService.updatePackageTransaction({
       id: parsed.data.id,
+      discount: 0,
+      voucher_code: parsed.data.voucher_code ?? null,
+      voucher_id: null,
       status: 'pending',
       deposit_account_id: parsed.data.deposit_account_id,
     });
@@ -52,6 +53,8 @@ export async function createTransaction(
       user_id: auth.user.id,
       package_id: parsed.data.package_id,
       discount: 0,
+      voucher_code: parsed.data.voucher_code ?? null,
+      voucher_id: null,
       deposit_account_id: parsed.data.deposit_account_id,
       unique_code: parsed.data.unique_code,
     });
