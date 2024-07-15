@@ -2,7 +2,7 @@
   "name": "setalip-mono",
   "private": true,
   "scripts": {
-    "build": "dotenv --debug -- turbo build",
+    "build": "dotenv -- turbo build",
     "dev": "dotenv -- turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
