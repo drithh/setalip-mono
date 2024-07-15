@@ -60,9 +60,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  for (const key in process.env) {
-    console.log(`${key}: ${process.env[key]}`);
-  }
   return (
     <html lang="en" className={`${monserrat.variable} `}>
       <head>

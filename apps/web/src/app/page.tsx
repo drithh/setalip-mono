@@ -1,5 +1,5 @@
 'use server';
-import { container,TYPES } from '@repo/shared/inversify';
+import { container, TYPES } from '@repo/shared/inversify';
 import { LocationService, WebSettingService } from '@repo/shared/service';
 import { Button } from '@repo/ui/components/ui/button';
 import { Card } from '@repo/ui/components/ui/card';
@@ -17,6 +17,35 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Review } from './_components/review';
+import { env } from '@repo/shared/env';
+
+const ImageUrl = {
+  whyUs: `${env.HOST}/static/why-us.webp`,
+  story: `${env.HOST}/static/story.webp`,
+};
+
+const whyUs = [
+  {
+    title: 'Welcoming Community Atmosphere',
+    description:
+      'Join our welcoming community at Pilates Reform, where clients of all backgrounds find encouragement and motivation to achieve their fitness goals.',
+  },
+  {
+    title: 'Flexible Scheduling and Convenience',
+    description:
+      'Enjoy convenient class times and personalized private sessions across multiple Pilates Reform locations, designed to fit seamlessly into your busy lifestyle.',
+  },
+  {
+    title: 'Expert Guidance and State-of-the-art Equipment',
+    description:
+      'Our expert instructors use quality equipment to deliver personalized Pilates sessions tailored to your goals and fitness level, ensuring effective and innovative workouts.',
+  },
+  {
+    title: 'Proven Results and Client Success Stories',
+    description:
+      'At Pilates Reform, we take pride in our track record of delivering results. Experience significant improvements in strength, flexibility, and overall fitness through our structured programs, supported by inspiring success stories from our community.',
+  },
+];
 
 export default async function Home() {
   const locationService = container.get<LocationService>(TYPES.LocationService);
@@ -86,55 +115,37 @@ export default async function Home() {
                 <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
                   Why Choose Pilates Reform
                 </div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                  Unlock Your Potential
+                <h2 className="max-w-2xl text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Achieve Your Fitness Goals with Pilates Reform
                 </h2>
-                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Discover how our comprehensive suite of services can transform
-                  your health and wellness journey.
-                </p>
               </div>
             </div>
-            <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
+            <div className="mx-auto grid  items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
               <div className="flex flex-col justify-center space-y-4">
-                <ul className="grid gap-6">
-                  <li>
-                    <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">
-                        Comprehensive Services
-                      </h3>
-                      <p className="text-muted-foreground">
-                        Explore a wide range of services that cater to your
-                        unique needs.
-                      </p>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">
-                        Personalized Approach
-                      </h3>
-                      <p className="text-muted-foreground">
-                        Receive tailored guidance from our expert instructors.
-                      </p>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="grid gap-1">
-                      <h3 className="text-xl font-bold">Exceptional Support</h3>
-                      <p className="text-muted-foreground">
-                        Rely on our dedicated team to provide expert guidance
-                        and support.
-                      </p>
-                    </div>
-                  </li>
+                <ul className="grid gap-8">
+                  {whyUs.map((item, index) => (
+                    <li key={index}>
+                      <div className="grid gap-1">
+                        <h3 className="text-xl font-bold">{item.title}</h3>
+                        <p className="text-justify text-muted-foreground">
+                          {item.description}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
               </div>
-              <img
-                src="/placeholder.svg"
-                alt="Why Us"
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
-              />
+              <div className="relative h-full w-full">
+                <div className="absolute inset-0">
+                  <Image
+                    src={ImageUrl.whyUs ?? '/placeholder.svg'}
+                    fill
+                    alt="Why Us"
+                    style={{ filter: 'brightness(90%) saturate(90%)' }}
+                    className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:w-full"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -148,18 +159,37 @@ export default async function Home() {
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                   A Legacy of Excellence
                 </h2>
-                <p className="flex max-w-[600px] flex-row gap-4 overflow-x-auto text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Pilates Reform has been a trusted name in the fitness industry
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Facere necessitatibus ea fugiat consequatur reprehenderit eos,
-                  magnam sapiente corrupti illo dolor.
-                </p>
+                <div className="mt-4 flex flex-col gap-6">
+                  <p className="text-justify md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                    Founded by Miss Rina, a dedicated yoga instructor with over
+                    12 years of experience, our studio began with a simple
+                    belief: that everyone deserves to experience the joy of a
+                    healthy, balanced life through movement.
+                  </p>
+                  <p className="text-justify md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                    Miss Rina and her daughter, who had experienced the profound
+                    benefits of Pilates for her wellness while studying abroad,
+                    shared her love for it and together they envisioned bringing
+                    this joy back to their home country, Jakarta, Indonesia.
+                    With a deep-rooted commitment to wellness and a desire to
+                    foster connections, Pilates Reform was born!{' '}
+                    <span className="text-secondary underline">
+                      <Link href={'/about'}>See More</Link>
+                    </span>
+                  </p>
+                </div>
               </div>
-              <img
-                src="/placeholder.svg"
-                alt="Our Story"
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
-              />
+              <div className="relative h-full w-full">
+                <div className="absolute bottom-0 left-0 right-0 top-auto h-[90%]">
+                  <Image
+                    src={ImageUrl.story ?? '/placeholder.svg'}
+                    fill
+                    style={{ filter: 'brightness(90%) saturate(90%)' }}
+                    alt="Story"
+                    className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:w-full"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </section>

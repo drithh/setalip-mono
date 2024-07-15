@@ -2,6 +2,7 @@
   "name": "@repo/shared",
   "version": "0.0.1",
   "exports": {
+    "./env": "./src/env.ts",
     "./api": "./src/api/index.ts",
     "./api/schema": "./src/api/schema.ts",
     "./schema": "./src/schema/index.ts",
