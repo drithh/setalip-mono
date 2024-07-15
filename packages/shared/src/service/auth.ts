@@ -8,6 +8,7 @@ export interface RegisterUser {
   email: string;
   address: string;
   location_id?: number;
+  dateOfBirth: Date;
 }
 
 export interface LoginUser {

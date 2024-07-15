@@ -178,6 +178,19 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
             </FormItem>
           )}
         />
+        {/* <FormField
+          control={form.control}
+          name="dateOfBirth"
+          render={({ field }) => (
+            <FormItem className="grid w-full gap-2">
+              <FormLabel>Tanggal Lahir</FormLabel>
+              <FormControl>
+                <Input type="date" placeholder="" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        /> */}
         <FormField
           control={form.control}
           name="address"

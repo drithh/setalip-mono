@@ -68,6 +68,7 @@ export class AuthServiceImpl implements AuthService {
       email: data.email,
       name: data.name,
       phone_number: data.phoneNumber,
+      date_of_birth: data.dateOfBirth,
       address: data.address,
       role: 'user',
       hashed_password,

@@ -1,6 +1,6 @@
 import { FormState } from '@repo/shared/form';
 import { isPossiblePhoneNumber } from 'libphonenumber-js';
-import { z } from 'zod';
+import { date, z } from 'zod';
 
 export const registerUserSchema = z
   .object({
@@ -13,6 +13,7 @@ export const registerUserSchema = z
     }),
     address: z.string(),
     location_id: z.coerce.number(),
+    dateOfBirth: z.date(),
   })
   .refine(
     (data) => {
