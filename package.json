@@ -2,8 +2,8 @@
   "name": "setalip-mono",
   "private": true,
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
+    "build": "dotenv --debug -- turbo build",
+    "dev": "dotenv -- turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "ui:add": "pnpm --filter @repo/ui ui:add",
@@ -13,6 +13,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^20.12.11",
+    "dotenv-cli": "^7.4.2",
     "prettier": "^3.2.5",
     "turbo": "latest"
   },

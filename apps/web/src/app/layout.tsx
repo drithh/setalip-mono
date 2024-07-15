@@ -2,7 +2,6 @@ import '@repo/ui/global.css';
 
 import { Toaster } from '@repo/ui/components/ui/sonner';
 
-
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
 
@@ -61,6 +60,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  for (const key in process.env) {
+    console.log(`${key}: ${process.env[key]}`);
+  }
   return (
     <html lang="en" className={`${monserrat.variable} `}>
       <head>

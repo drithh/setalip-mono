@@ -20,7 +20,8 @@
     "**/*.js",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../packages/shared/env.ts"
   ],
   "exclude": ["node_modules"]
 }
