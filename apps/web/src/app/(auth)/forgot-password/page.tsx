@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 import ForgotPasswordForm from './forgot-password.form';
 
 export default function ForgotPassword() {

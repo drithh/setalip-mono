@@ -7,39 +7,27 @@ import {
 import { Badge } from '@repo/ui/components/ui/badge';
 import { Button } from '@repo/ui/components/ui/button';
 import {
-  Carousel,
-  CarouselMainContainer,
-  SliderMainItem,
-  CarouselThumbsContainer,
-  CarouselIndicator,
-} from '@repo/ui/components/ui/carousel';
-import { redirect } from 'next/navigation';
-import Image from 'next/image';
-import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
-import Link from 'next/link';
-import { ImageWithFallback } from '@/lib/image-with-fallback';
-import {
   Card,
-  CardHeader,
   CardContent,
   CardDescription,
+  CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
-import { Separator } from '@repo/ui/components/ui/separator';
-import {
-  MapPin,
-  Mail,
-  Phone,
-  User2,
-  CalendarClock,
-  Clock,
-  Building2,
-  Building,
-} from 'lucide-react';
-import { addMinutes, format } from 'date-fns';
-import { validateUser } from '@/lib/auth';
-import { dateFormatter } from '@repo/shared/util';
+
+
 import { cn } from '@repo/ui/lib/utils';
+import { addMinutes, format } from 'date-fns';
+import {
+  Building,
+  CalendarClock,
+  MapPin,
+  User2,
+} from 'lucide-react';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+import { validateUser } from '@/lib/auth';
+
 import CreateAgendaBooking from './create-agenda-booking.form';
 export default async function AgendaDetail({
   params,

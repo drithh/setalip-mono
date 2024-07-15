@@ -1,35 +1,29 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
-import { Input } from "@repo/ui/components/ui/input";
-import { PhoneInput } from "@repo/ui/components/phone-input";
-import { PasswordInput } from "@repo/ui/components/password-input";
-import { verifyUser } from "./_actions/verify-user";
-import { useFormState } from "react-dom";
-import { useEffect, useRef } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Value as PhoneNumberValue } from "react-phone-number-input";
-
+import { Button } from "@repo/ui/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@repo/ui/components/ui/form";
-import Link from "next/link";
-import { VerifyOtpSchema, verifyOtpSchema } from "./form-schema";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { Input } from "@repo/ui/components/ui/input";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@repo/ui/components/ui/input-otp";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { useFormState } from "react-dom";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import { verifyUser } from "./_actions/verify-user";
+import { VerifyOtpSchema, verifyOtpSchema } from "./form-schema";
 
 interface VerifyUserFormProps {
   userId: number;

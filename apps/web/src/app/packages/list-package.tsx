@@ -1,10 +1,11 @@
 'use client';
 
-import Package from './package';
-import { useEffect, useState } from 'react';
+import { SelectAllPackage, SelectClassType } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import { cn } from '@repo/ui/lib/utils';
-import { SelectAllPackage, SelectClassType } from '@repo/shared/repository';
+import { useState } from 'react';
+
+import Package from './package';
 
 interface PackageProps {
   packages: SelectAllPackage['data'];

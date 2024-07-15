@@ -265,6 +265,11 @@ export default function CreateVoucherForm({ users }: CreateVoucherProps) {
                     <FormItem className="grid w-full gap-2">
                       <FormLabel>Discount</FormLabel>
                       <FormControl>
+                        <Input
+                          type="hidden"
+                          {...field}
+                          value={field.value.toString()}
+                        />
                         <DatetimePicker
                           value={field.value}
                           onChange={(value) => {

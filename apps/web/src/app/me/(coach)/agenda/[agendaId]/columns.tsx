@@ -1,30 +1,15 @@
 'use client';
 
-import * as React from 'react';
-import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { type ColumnDef } from '@tanstack/react-table';
-
-import { Checkbox } from '@repo/ui/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@repo/ui/components/ui/dropdown-menu';
-import { dateFormatter } from '@repo/shared/util';
-import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
-import {
-  SelectAgendaWithCoachAndClass,
-  SelectAllAgendaByUser,
-  SelectAllSchedule,
-  SelectBookingParticipant,
-  SelectParticipant,
-} from '@repo/shared/repository';
-import { Badge } from '@repo/ui/components/ui/badge';
-import { format } from 'date-fns';
-import { Button } from '@repo/ui/components/ui/button';
 import { AgendaBookings } from '@repo/shared/db';
+import {
+  SelectBookingParticipant,
+} from '@repo/shared/repository';
+import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
+
+
+import { type ColumnDef } from '@tanstack/react-table';
+import * as React from 'react';
+
 import Status from './status';
 
 export function getColumns(): ColumnDef<SelectBookingParticipant>[] {

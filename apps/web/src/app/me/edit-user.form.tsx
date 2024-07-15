@@ -1,41 +1,22 @@
 'use client';
 
-import { Button } from '@repo/ui/components/ui/button';
-import { Input } from '@repo/ui/components/ui/input';
-import { editUser } from './_actions/edit-user';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  SelectLocation,
+  SelectUser,
+} from '@repo/shared/repository';
+import { PhoneInput } from '@repo/ui/components/phone-input';
+import { Button } from '@repo/ui/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { EditUserSchema, editUserSchema } from './form-schema';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { Switch } from '@repo/ui/components/ui/switch';
-import { MoneyInput } from '@repo/ui/components/money-input';
-import { AddonInput } from '@repo/ui/components/addon-input';
-import {
-  SelectClassType,
-  SelectDetailLocation,
-  SelectLocation,
-  SelectUser,
-} from '@repo/shared/repository';
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from '@repo/ui/components/ui/sheet';
+import { Input } from '@repo/ui/components/ui/input';
+import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import {
   Select,
   SelectContent,
@@ -43,11 +24,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/ui/components/ui/select';
-import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
-import { api } from '@/trpc/react';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@repo/ui/components/ui/sheet';
 import { Textarea } from '@repo/ui/components/ui/textarea';
-import { PhoneInput } from '@repo/ui/components/phone-input';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useForm } from 'react-hook-form';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
+import { toast } from 'sonner';
+
+import { api } from '@/trpc/react';
+
+import { editUser } from './_actions/edit-user';
+import { EditUserSchema, editUserSchema } from './form-schema';
 
 interface EditUserProps {
   user: SelectUser;

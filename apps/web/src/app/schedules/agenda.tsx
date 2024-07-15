@@ -1,33 +1,27 @@
 'use client';
 
-import * as React from 'react';
-import type { DataTableFilterField } from '@repo/ui/types';
-
-import { useDataTable } from '@/hooks/use-data-table';
+import { findAllScheduleSchema } from '@repo/shared/api/schema';
+import {
+  SelectAllClass,
+  SelectAllSchedule,
+  SelectClassType,
+  SelectCoachWithUser,
+  SelectLocation,
+} from '@repo/shared/repository';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 import { DatePicker } from '@repo/ui/components/date-picker';
-import { getColumns } from './columns';
-import {
-  SelectClassType,
-  SelectAgenda,
-  SelectAgendaWithCoachAndClass,
-  SelectLocationAgenda,
-  SelectCoachAgenda,
-  SelectLocation,
-  SelectCoach,
-  SelectCoachWithUser,
-  SelectClass,
-  SelectAllClass,
-  SelectAllSchedule,
-} from '@repo/shared/repository';
-import { api } from '@/trpc/react';
-import { z } from 'zod';
-import { findAllScheduleSchema } from '@repo/shared/api/schema';
-import { Form } from '@repo/ui/components/ui/form';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import DayPicker from './day-picker';
+import type { DataTableFilterField } from '@repo/ui/types';
 import { parse } from 'date-fns';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import * as React from 'react';
+import { z } from 'zod';
+
+import { useDataTable } from '@/hooks/use-data-table';
+import { api } from '@/trpc/react';
+
+import { getColumns } from './columns';
+import DayPicker from './day-picker';
 // import CreateAgendaForm from './create-agenda.form';
 
 interface AgendaTableProps {

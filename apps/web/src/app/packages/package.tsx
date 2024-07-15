@@ -3,7 +3,6 @@ import { SelectPackages } from '@repo/shared/repository';
 import { moneyFormatter } from '@repo/shared/util';
 import { Button } from '@repo/ui/components/ui/button';
 import { Card } from '@repo/ui/components/ui/card';
-import { Separator } from '@repo/ui/components/ui/separator';
 import Link from 'next/link';
 
 interface Package {

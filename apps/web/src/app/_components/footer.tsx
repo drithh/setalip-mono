@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import Image from 'next/image';
 import { container, TYPES } from '@repo/shared/inversify';
 import { LocationService, WebSettingService } from '@repo/shared/service';
+import Image from 'next/image';
+import Link from 'next/link';
 export default async function Footer() {
   const webSettingService = container.get<WebSettingService>(
     TYPES.WebSettingService,

@@ -1,5 +1,4 @@
 import { FormState } from '@repo/shared/form';
-import { SelectUser } from '@repo/shared/repository';
 import { z } from 'zod';
 
 export const createTransactionSchema = z.object({

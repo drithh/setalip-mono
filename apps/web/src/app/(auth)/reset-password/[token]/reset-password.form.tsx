@@ -1,12 +1,8 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
-import { resetPassword } from "./_actions/reset-password";
-import { useFormState } from "react-dom";
-import { useEffect, useRef } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { PasswordInput } from "@repo/ui/components/password-input";
+import { Button } from "@repo/ui/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,11 +11,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@repo/ui/components/ui/form";
-import { ResetPasswordSchema, resetPasswordSchema } from "./form-schema";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { PasswordInput } from "@repo/ui/components/password-input";
 import { Input } from "@repo/ui/components/ui/input";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { useFormState } from "react-dom";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import { resetPassword } from "./_actions/reset-password";
+import { ResetPasswordSchema, resetPasswordSchema } from "./form-schema";
 
 interface ResetPasswordFormProps {
   token: string;

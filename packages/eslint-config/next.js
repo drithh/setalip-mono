@@ -8,7 +8,9 @@ module.exports = {
     'eslint:recommended',
     'prettier',
     require.resolve('@vercel/style-guide/eslint/next'),
-    'eslint-config-turbo',
+    'eslint:recommended',
+    'plugin:import/recommended',
+    'plugin:import/warnings',
   ],
   globals: {
     React: true,
@@ -18,7 +20,6 @@ module.exports = {
     node: true,
     browser: true,
   },
-  // plugins: ['only-warn', { 'unused-imports': unusedImports }],
   settings: {
     'import/resolver': {
       typescript: {
@@ -26,6 +27,14 @@ module.exports = {
       },
     },
   },
+  plugins: [
+    'unused-imports',
+    'import',
+    'react',
+    'react-hooks',
+    'jsx-a11y',
+    'only-warn',
+  ],
   rules: {
     'no-unused-vars': 'off', // or "@typescript-eslint/no-unused-vars": "off",
     'unused-imports/no-unused-imports': 'error',
@@ -38,6 +47,10 @@ module.exports = {
         argsIgnorePattern: '^_',
       },
     ],
+  },
+  parserOptions: {
+    sourceType: 'module',
+    ecmaVersion: 'latest',
   },
   ignorePatterns: [
     // Ignore dotfiles

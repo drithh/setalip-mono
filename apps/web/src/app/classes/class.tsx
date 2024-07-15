@@ -1,14 +1,12 @@
 'use client';
-import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { SelectClassWithAsset } from '@repo/shared/repository';
-import { moneyFormatter } from '@repo/shared/util';
-import { Button } from '@repo/ui/components/ui/button';
-import { Separator } from '@repo/ui/components/ui/separator';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
-import { Clock } from 'lucide-react';
 import { Badge } from '@repo/ui/components/ui/badge';
-import Link from 'next/link';
+import { Button } from '@repo/ui/components/ui/button';
 import { Card } from '@repo/ui/components/ui/card';
+import Link from 'next/link';
+
+import { ImageWithFallback } from '@/lib/image-with-fallback';
 interface Class {
   singleClass: SelectClassWithAsset;
 }

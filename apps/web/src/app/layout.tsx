@@ -1,29 +1,14 @@
-import type { Metadata } from 'next';
-import { Inter, Montserrat } from 'next/font/google';
-import localFont from 'next/font/local';
 import '@repo/ui/global.css';
 
 import { Toaster } from '@repo/ui/components/ui/sonner';
-import Navigation from './_components/hamburger-menu';
-import { TooltipProvider } from '@repo/ui/components/ui/tooltip';
-import { Button } from '@repo/ui/components/ui/button';
-import { SheetContent, SheetTrigger } from '@repo/ui/components/ui/sheet';
-import {
-  Sheet,
-  PanelLeft,
-  Link,
-  Package2,
-  Home,
-  ShoppingCart,
-  Package,
-  Users2,
-  LineChart,
-} from 'lucide-react';
-import { Dialog } from '@repo/ui/components/ui/dialog';
-import Provider from './provider';
-import MobileNav from './_components/navigation';
-import Header from './_components/navigation';
+
+
+import type { Metadata } from 'next';
+import { Montserrat } from 'next/font/google';
+
 import Footer from './_components/footer';
+import Header from './_components/navigation';
+import Provider from './provider';
 
 const monserrat = Montserrat({
   display: 'swap',

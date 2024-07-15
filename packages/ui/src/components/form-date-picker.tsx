@@ -42,6 +42,9 @@ export function FormDatePicker(props: DatePickerProps) {
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
+          captionLayout="dropdown"
+          fromYear={1970}
+          toYear={2025}
           mode="single"
           selected={props.value}
           onSelect={(date) => props.onChange && date && props.onChange(date)}

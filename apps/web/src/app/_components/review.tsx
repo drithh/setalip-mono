@@ -1,10 +1,9 @@
 import { container, TYPES } from '@repo/shared/inversify';
-import { SelectAllReview, SelectReviewWithUser } from '@repo/shared/repository';
+import { SelectReviewWithUser } from '@repo/shared/repository';
 import { WebSettingService } from '@repo/shared/service';
 import Marquee from '@repo/ui/components/marquee';
-import { StarHalfIcon, StarIcon } from 'lucide-react';
-import { dateFormatter } from '@repo/shared/util';
 import { format } from 'date-fns';
+import { StarHalfIcon, StarIcon } from 'lucide-react';
 
 const ReviewCard = ({ review }: { review: SelectReviewWithUser }) => {
   return (

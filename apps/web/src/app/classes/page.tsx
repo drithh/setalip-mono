@@ -1,11 +1,7 @@
-import { TYPES, container } from '@repo/shared/inversify';
+import { container,TYPES } from '@repo/shared/inversify';
 import { ClassService, ClassTypeService } from '@repo/shared/service';
-import { MultiSelect } from '@repo/ui/components/multi-select';
 // import { findAllClasseschema } from '@repo/shared/api/schema';
-import { moneyFormatter } from '@repo/shared/util';
-import { Separator } from '@repo/ui/components/ui/separator';
-import { Button } from '@repo/ui/components/ui/button';
-import Class from './class';
+
 import ListClass from './list-class';
 
 export default async function Classes({ searchParams }: { searchParams: any }) {

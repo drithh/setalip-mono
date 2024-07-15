@@ -1,13 +1,13 @@
 import { InstagramLogoIcon } from '@radix-ui/react-icons';
 import { container, TYPES } from '@repo/shared/inversify';
 import { LocationService, WebSettingService } from '@repo/shared/service';
-import { ChevronDownIcon, MailIcon, PhoneIcon } from 'lucide-react';
-import Link from 'next/link';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@repo/ui/components/ui/collapsible';
+import { ChevronDownIcon, MailIcon, PhoneIcon } from 'lucide-react';
+import Link from 'next/link';
 export default async function Contacts() {
   const locationService = container.get<LocationService>(TYPES.LocationService);
   const locations = await locationService.findAll();

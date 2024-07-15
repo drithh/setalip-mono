@@ -1,25 +1,20 @@
-import { TYPES, container } from '@repo/shared/inversify';
-import {
-  ClassTypeService,
-  CoachService,
-  PackageService,
-  LocationService,
-} from '@repo/shared/service';
-import { MultiSelect } from '@repo/ui/components/multi-select';
-import PackageTransactionTable from './package-transaction';
 import { findAllPackageTransactionByUserIdSchema } from '@repo/shared/api/schema';
-import { redirect } from 'next/navigation';
+import { container,TYPES } from '@repo/shared/inversify';
+import {
+  PackageService,
+} from '@repo/shared/service';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
-import { validateUser } from '@/lib/auth';
-import { dateFormatter } from '@repo/shared/util';
 import { format } from 'date-fns';
+
+import { validateUser } from '@/lib/auth';
+
+import PackageTransactionTable from './package-transaction';
 
 export default async function Package({ searchParams }: { searchParams: any }) {
   const auth = await validateUser();

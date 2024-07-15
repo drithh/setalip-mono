@@ -1,20 +1,19 @@
 'use server';
-import { cookies } from 'next/headers';
-import { AuthService, UserValidationError } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
-import { FormState } from '@repo/shared/form';
-import { z } from 'zod';
-import {
-  FormRegisterUser,
-  RegisterUserSchema,
-  registerUserSchema,
-} from '../form-schema';
+import { AuthService, UserValidationError } from '@repo/shared/service';
 import {
   convertErrorsToZod,
   convertFormData,
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
+import { cookies } from 'next/headers';
+
+import {
+  FormRegisterUser,
+  RegisterUserSchema,
+  registerUserSchema,
+} from '../form-schema';
 
 export async function registerUser(
   state: FormRegisterUser,

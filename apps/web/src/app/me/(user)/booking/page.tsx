@@ -1,17 +1,16 @@
-import { TYPES, container } from '@repo/shared/inversify';
+import {
+  findAllUserAgendaSchema,
+} from '@repo/shared/api/schema';
+import { container,TYPES } from '@repo/shared/inversify';
 import {
   ClassTypeService,
   CoachService,
   LocationService,
 } from '@repo/shared/service';
-import { MultiSelect } from '@repo/ui/components/multi-select';
-import AgendaTable from './agenda';
-import {
-  findAllScheduleSchema,
-  findAllUserAgendaSchema,
-} from '@repo/shared/api/schema';
-import { redirect } from 'next/navigation';
+
 import { validateUser } from '@/lib/auth';
+
+import AgendaTable from './agenda';
 
 export default async function Schedules({
   searchParams,

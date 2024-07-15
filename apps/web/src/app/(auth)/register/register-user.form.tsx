@@ -1,17 +1,11 @@
 'use client';
 
-import { Button } from '@repo/ui/components/ui/button';
-import { Input } from '@repo/ui/components/ui/input';
-import { PhoneInput } from '@repo/ui/components/phone-input';
-import { PasswordInput } from '@repo/ui/components/password-input';
-import { registerUser } from './_actions/register-user';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Value as PhoneNumberValue } from 'react-phone-number-input';
-
+import { SelectLocation } from '@repo/shared/repository';
+import { FormDatePicker } from '@repo/ui/components/form-date-picker';
+import { PasswordInput } from '@repo/ui/components/password-input';
+import { PhoneInput } from '@repo/ui/components/phone-input';
+import { Button } from '@repo/ui/components/ui/button';
 import {
   Form,
   FormControl,
@@ -20,19 +14,26 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import Link from 'next/link';
-import { RegisterUserSchema, registerUserSchema } from './form-schema';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-import { api } from '@/trpc/react';
-import { SelectLocation } from '@repo/shared/repository';
+import { Input } from '@repo/ui/components/ui/input';
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@repo/ui/components/ui/select';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
+import { useForm } from 'react-hook-form';
+import { Value as PhoneNumberValue } from 'react-phone-number-input';
+import { toast } from 'sonner';
+
+import { api } from '@/trpc/react';
+
+import { registerUser } from './_actions/register-user';
+import { RegisterUserSchema, registerUserSchema } from './form-schema';
 
 const TOAST_MESSAGES = {
   error: {
@@ -79,6 +80,7 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
       passwordConfirmation: '',
       phoneNumber: '',
       location_id: 1,
+      dateOfBirth: new Date(),
     },
   });
 
@@ -88,6 +90,8 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
     resolver: zodResolver(registerUserSchema),
     defaultValues: formState.form,
   });
+
+  console.log(form.formState.errors);
 
   useEffect(() => {
     toast.dismiss();
@@ -178,19 +182,29 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
             </FormItem>
           )}
         />
-        {/* <FormField
+        <FormField
           control={form.control}
           name="dateOfBirth"
           render={({ field }) => (
             <FormItem className="grid w-full gap-2">
               <FormLabel>Tanggal Lahir</FormLabel>
               <FormControl>
-                <Input type="date" placeholder="" {...field} />
+                <>
+                  <Input
+                    type="hidden"
+                    {...field}
+                    value={field.value.toString()}
+                  />
+                  <FormDatePicker
+                    value={field.value}
+                    onChange={(date) => field.onChange(date)}
+                  />
+                </>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
-        /> */}
+        />
         <FormField
           control={form.control}
           name="address"

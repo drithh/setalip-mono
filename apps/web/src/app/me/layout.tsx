@@ -1,23 +1,12 @@
-import { cn } from '@repo/ui/lib/utils';
-import Link from 'next/link';
-import Avatar from '../_components/avatar';
-import { validateUser } from '@/lib/auth';
-import { useRouter } from 'next/navigation';
-import NavigationLink from './_components/navigation-link';
-import { Button } from '@repo/ui/components/ui/button';
-import {
-  CalendarCheck,
-  CreditCard,
-  FileClock,
-  HandHeart,
-  LogOut,
-  Sparkles,
-  User2,
-} from 'lucide-react';
-import { dateFormatter } from '@repo/shared/util';
-import { Users } from '@repo/shared/db';
-import { menus } from '../menu';
 import { format } from 'date-fns';
+
+
+
+import { validateUser } from '@/lib/auth';
+
+import Avatar from '../_components/avatar';
+import { menus } from '../menu';
+import NavigationLink from './_components/navigation-link';
 
 export default async function Layout({
   children,

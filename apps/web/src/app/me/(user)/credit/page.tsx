@@ -1,23 +1,18 @@
-import { TYPES, container } from '@repo/shared/inversify';
-import {
-  ClassTypeService,
-  CoachService,
-  CreditService,
-  LocationService,
-} from '@repo/shared/service';
-import { MultiSelect } from '@repo/ui/components/multi-select';
-import CreditTransactionTable from './credit-transaction';
 import { findAllUserCreditSchema } from '@repo/shared/api/schema';
-import { redirect } from 'next/navigation';
+import { container,TYPES } from '@repo/shared/inversify';
+import {
+  CreditService,
+} from '@repo/shared/service';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
+
 import { validateUser } from '@/lib/auth';
+
+import CreditTransactionTable from './credit-transaction';
 
 export default async function Credit({ searchParams }: { searchParams: any }) {
   const auth = await validateUser();

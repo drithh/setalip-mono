@@ -1,27 +1,11 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   SelectAgenda,
-  SelectAllDepositAccount,
   SelectClass,
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
-import { Card, CardContent } from '@repo/ui/components/ui/card';
-import { cn } from '@repo/ui/lib/utils';
-import { useEffect, useRef, useState } from 'react';
-import CreateAgendaBookingDialog from './confirmation.dialog';
-import { useFormState } from 'react-dom';
-import { api } from '@/trpc/react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-
-import { toast } from 'sonner';
-import { createAgendaBooking } from './_actions/create-agenda-booking';
-import {
-  CreateAgendaBookingSchema,
-  createAgendaBookingSchema,
-} from './form-schema';
 import {
   Form,
   FormControl,
@@ -30,6 +14,19 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import { Input } from '@repo/ui/components/ui/input';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+
+
+import { createAgendaBooking } from './_actions/create-agenda-booking';
+import CreateAgendaBookingDialog from './confirmation.dialog';
+import {
+  CreateAgendaBookingSchema,
+  createAgendaBookingSchema,
+} from './form-schema';
 
 interface CreateAgendaBookingProps {
   id: SelectAgenda['id'];

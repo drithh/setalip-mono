@@ -1,29 +1,16 @@
-import { TYPES, container } from '@repo/shared/inversify';
+
+
+import { container,TYPES } from '@repo/shared/inversify';
 import {
   AgendaService,
-  ClassTypeService,
-  CoachService,
-  LocationService,
 } from '@repo/shared/service';
-import { MultiSelect } from '@repo/ui/components/multi-select';
-import AgendaTable from './attendance';
-import {
-  findAllCoachAgendaSchema,
-  findAllScheduleSchema,
-  findAllUserAgendaSchema,
-} from '@repo/shared/api/schema';
+
+
 import { redirect } from 'next/navigation';
+
 import { validateUser } from '@/lib/auth';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from '@repo/ui/components/ui/card';
-import { addMinutes, format } from 'date-fns';
-import { Badge } from '@repo/ui/components/ui/badge';
-import { Button } from '@repo/ui/components/ui/button';
+
+import AgendaTable from './attendance';
 
 export default async function Attendances({
   params,

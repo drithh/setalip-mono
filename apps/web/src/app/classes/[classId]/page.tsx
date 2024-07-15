@@ -1,18 +1,18 @@
 import { container, TYPES } from '@repo/shared/inversify';
 import { ClassService } from '@repo/shared/service';
+import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
 import { Badge } from '@repo/ui/components/ui/badge';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   Carousel,
-  CarouselMainContainer,
-  SliderMainItem,
-  CarouselThumbsContainer,
   CarouselIndicator,
+  CarouselMainContainer,
+  CarouselThumbsContainer,
+  SliderMainItem,
 } from '@repo/ui/components/ui/carousel';
-import { redirect } from 'next/navigation';
-import Image from 'next/image';
-import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
 import { ImageWithFallback } from '@/lib/image-with-fallback';
 export default async function ClassDetail({
   params,

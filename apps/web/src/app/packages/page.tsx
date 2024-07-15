@@ -1,17 +1,10 @@
-import { TYPES, container } from '@repo/shared/inversify';
+import { findAllPackageSchema } from '@repo/shared/api/schema';
+import { container,TYPES } from '@repo/shared/inversify';
 import {
   ClassTypeService,
-  CoachService,
-  LocationService,
   PackageService,
 } from '@repo/shared/service';
-import { MultiSelect } from '@repo/ui/components/multi-select';
-import { findAllPackageSchema } from '@repo/shared/api/schema';
-import { moneyFormatter } from '@repo/shared/util';
-import { Separator } from '@repo/ui/components/ui/separator';
-import { Button } from '@repo/ui/components/ui/button';
-import Package from './package';
-import ListClass from '../classes/list-class';
+
 import ListPackage from './list-package';
 
 export default async function Schedules({

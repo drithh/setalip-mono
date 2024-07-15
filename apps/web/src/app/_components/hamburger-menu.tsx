@@ -1,42 +1,23 @@
 'use client';
+import { Button } from '@repo/ui/components/ui/button';
+import { Separator } from '@repo/ui/components/ui/separator';
 import {
+  Sheet as SheetWrapper,
   SheetContent,
   SheetTrigger,
-  Sheet as SheetWrapper,
 } from '@repo/ui/components/ui/sheet';
-import Link from 'next/link';
-import {
-  CalendarCheck,
-  CalendarClock,
-  CreditCard,
-  FileClock,
-  Gift,
-  HandHeart,
-  Home,
-  LineChart,
-  LogOut,
-  MapPin,
-  Menu,
-  Package,
-  Package2,
-  PanelLeft,
-  Phone,
-  Settings,
-  ShoppingCart,
-  Sparkle,
-  Sparkles,
-  SquarePercent,
-  Tag,
-  User2,
-  Users2,
-} from 'lucide-react';
-
-import { Button } from '@repo/ui/components/ui/button';
-import Avatar from './avatar';
 import { User } from 'lucia';
-import { Separator } from '@repo/ui/components/ui/separator';
-import { menus } from '../menu';
+import {
+  CalendarClock,
+  Menu,
+  Phone,
+  Tag,
+} from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
+
+import { menus } from '../menu';
+import Avatar from './avatar';
 
 interface MenuProps {
   user: User | null;

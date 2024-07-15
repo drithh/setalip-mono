@@ -1,13 +1,8 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
-import { Input } from "@repo/ui/components/ui/input";
-import { forgotPassword } from "./_actions/forgot-password";
-import { useFormState } from "react-dom";
-import { useEffect, useRef } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { PhoneInput } from "@repo/ui/components/phone-input";
+import { Button } from "@repo/ui/components/ui/button";
 import {
   Form,
   FormControl,
@@ -16,12 +11,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@repo/ui/components/ui/form";
-import Link from "next/link";
-import { ForgotPasswordSchema, forgotPasswordSchema } from "./form-schema";
-import { PhoneInput } from "@repo/ui/components/phone-input";
+import { useEffect, useRef } from "react";
+import { useFormState } from "react-dom";
+import { useForm } from "react-hook-form";
 import { Value as PhoneNumberValue } from "react-phone-number-input";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+
+import { forgotPassword } from "./_actions/forgot-password";
+import { ForgotPasswordSchema, forgotPasswordSchema } from "./form-schema";
 
 const TOAST_MESSAGES = {
   error: {

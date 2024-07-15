@@ -1,15 +1,7 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
-import { useForm } from "react-hook-form";
-import { resendOtp } from "./_actions/resend-otp";
-import { ResendOtpSchema, resendOtpSchema } from "./form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import router from "next/router";
-import { useEffect, useRef } from "react";
-import { toast } from "sonner";
-import { z } from "zod";
-import { useFormState } from "react-dom";
+import { Button } from "@repo/ui/components/ui/button";
 import {
   Form,
   FormControl,
@@ -18,6 +10,13 @@ import {
   FormMessage,
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
+import { useEffect, useRef } from "react";
+import { useFormState } from "react-dom";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import { resendOtp } from "./_actions/resend-otp";
+import { ResendOtpSchema, resendOtpSchema } from "./form-schema";
 
 interface ResendOtpFormProps {
   userId: number;

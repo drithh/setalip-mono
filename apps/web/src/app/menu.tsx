@@ -1,13 +1,12 @@
 import { Users } from '@repo/shared/db';
 import {
-  User2,
   CalendarCheck,
+  CalendarClock,
   CreditCard,
   HandHeart,
-  Sparkles,
-  FileClock,
   LogOut,
-  CalendarClock,
+  Sparkles,
+  User2,
 } from 'lucide-react';
 
 interface Menu {

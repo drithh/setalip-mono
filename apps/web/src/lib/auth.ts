@@ -1,9 +1,8 @@
 'use server';
 import { lucia } from '@repo/shared/auth';
-import { cookies } from 'next/headers';
+import { cookies , headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
-import { headers } from 'next/headers';
 
 export const logout = async () => {
   const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;

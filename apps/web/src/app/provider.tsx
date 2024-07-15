@@ -1,10 +1,10 @@
 'use client';
 
-import { TRPCReactProvider } from '@/trpc/react';
 import { TooltipProvider } from '@repo/ui/components/ui/tooltip';
-
 import { setDefaultOptions } from 'date-fns';
 import { id } from 'date-fns/locale';
+
+import { TRPCReactProvider } from '@/trpc/react';
 
 setDefaultOptions({ locale: id });
 

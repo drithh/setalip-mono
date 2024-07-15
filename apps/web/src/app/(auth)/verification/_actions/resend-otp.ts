@@ -1,9 +1,9 @@
 'use server';
 
-import { FormResendOtp, ResendOtpSchema } from './../form-schema';
-import { FormState } from '@repo/shared/form';
 import { container, TYPES } from '@repo/shared/inversify';
 import { OtpService } from '@repo/shared/service';
+
+import { FormResendOtp } from './../form-schema';
 
 export async function resendOtp(
   state: FormResendOtp,

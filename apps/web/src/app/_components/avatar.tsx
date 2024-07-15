@@ -1,10 +1,10 @@
 'use client';
 
-import { User } from 'lucia';
-import { useMemo } from 'react';
-import { createAvatar } from '@dicebear/core';
 import { initials } from '@dicebear/collection';
+import { createAvatar } from '@dicebear/core';
+import { User } from 'lucia';
 import Image from 'next/image';
+import { useMemo } from 'react';
 interface AvatarImageProps {
   user: User;
 }

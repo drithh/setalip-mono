@@ -1,22 +1,20 @@
-import Avatar from './avatar';
-
+import { container, TYPES } from '@repo/shared/inversify';
+import { WebSettingService } from '@repo/shared/service';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@repo/ui/components/ui/dropdown-menu';
-import Link from 'next/link';
-import Menu from './hamburger-menu';
 import Image from 'next/image';
+import Link from 'next/link';
+
 import { validateRequest } from '@/lib/auth';
-import { container, TYPES } from '@repo/shared/inversify';
-import { WebSettingService } from '@repo/shared/service';
-import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
+
 import { menus } from '../menu';
+import Avatar from './avatar';
+import Menu from './hamburger-menu';
 
 export default async function Navigation() {
   const auth = await validateRequest();

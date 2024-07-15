@@ -2,13 +2,13 @@ import { container, TYPES } from '@repo/shared/inversify';
 import { LocationService, UserService } from '@repo/shared/service';
 import { Input } from '@repo/ui/components/ui/input';
 import { Label } from '@repo/ui/components/ui/label';
-import { redirect } from 'next/navigation';
 import { Textarea } from '@repo/ui/components/ui/textarea';
-import { dateFormatter } from '../../../../../packages/shared/src/util/local';
-import { Button } from '@repo/ui/components/ui/button';
-import EditUserForm from './edit-user.form';
-import { validateUser } from '@/lib/auth';
 import { format } from 'date-fns';
+import { redirect } from 'next/navigation';
+
+import { validateUser } from '@/lib/auth';
+
+import EditUserForm from './edit-user.form';
 
 export default async function Page() {
   const auth = await validateUser();

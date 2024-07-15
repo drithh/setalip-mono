@@ -1,22 +1,21 @@
 import { container, TYPES } from '@repo/shared/inversify';
+import { SelectDetailLocation } from '@repo/shared/repository';
 import { LocationService } from '@repo/shared/service';
-import { Badge } from '@repo/ui/components/ui/badge';
-import { Button } from '@repo/ui/components/ui/button';
+import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
+import { Card, CardContent, CardHeader } from '@repo/ui/components/ui/card';
 import {
   Carousel,
-  CarouselMainContainer,
-  SliderMainItem,
-  CarouselThumbsContainer,
   CarouselIndicator,
+  CarouselMainContainer,
+  CarouselThumbsContainer,
+  SliderMainItem,
 } from '@repo/ui/components/ui/carousel';
-import { redirect } from 'next/navigation';
-import Image from 'next/image';
-import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
-import { Mail, MapPin, Phone, User2 } from 'lucide-react';
-import { Card, CardContent, CardHeader } from '@repo/ui/components/ui/card';
-import { format, setDay } from 'date-fns';
-import { SelectDetailLocation } from '@repo/shared/repository';
 import { Separator } from '@repo/ui/components/ui/separator';
+import { format, setDay } from 'date-fns';
+import { Mail, MapPin, Phone, User2 } from 'lucide-react';
+import Image from 'next/image';
+import { redirect } from 'next/navigation';
+
 import { ImageWithFallback } from '@/lib/image-with-fallback';
 
 export default async function LocationDetail({

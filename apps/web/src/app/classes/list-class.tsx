@@ -4,10 +4,11 @@ import {
   SelectAllClassWithAsset,
   SelectClassType,
 } from '@repo/shared/repository';
-import Class from './class';
-import { useEffect, useState } from 'react';
 import { Button } from '@repo/ui/components/ui/button';
 import { cn } from '@repo/ui/lib/utils';
+import { useState } from 'react';
+
+import Class from './class';
 
 interface ClassProps {
   classes: SelectAllClassWithAsset['data'];

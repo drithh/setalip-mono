@@ -1,7 +1,8 @@
 'use server';
-import { TYPES, container } from '@repo/shared/inversify';
+import { container,TYPES } from '@repo/shared/inversify';
 import { LocationService, WebSettingService } from '@repo/shared/service';
 import { Button } from '@repo/ui/components/ui/button';
+import { Card } from '@repo/ui/components/ui/card';
 import {
   Carousel,
   CarouselIndicator,
@@ -11,11 +12,11 @@ import {
   CarouselThumbsContainer,
   SliderMainItem,
 } from '@repo/ui/components/ui/carousel';
-import { Building, MapPin, Phone } from 'lucide-react';
+import { MapPin, Phone } from 'lucide-react';
 import Image from 'next/image';
-import { Review } from './_components/review';
 import Link from 'next/link';
-import { Card } from '@repo/ui/components/ui/card';
+
+import { Review } from './_components/review';
 
 export default async function Home() {
   const locationService = container.get<LocationService>(TYPES.LocationService);

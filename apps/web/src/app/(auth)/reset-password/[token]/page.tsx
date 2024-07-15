@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 import ResetPasswordForm from './reset-password.form';
 
 export default function ResetPassword({

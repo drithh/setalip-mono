@@ -1,22 +1,18 @@
-import { TYPES, container } from '@repo/shared/inversify';
-import { LoyaltyService } from '@repo/shared/service';
-import { MultiSelect } from '@repo/ui/components/multi-select';
-import LoyaltyTransactionTable from './loyalty-transaction';
 import {
-  findAllScheduleSchema,
-  findAllUserAgendaSchema,
   findAllUserLoyaltySchema,
 } from '@repo/shared/api/schema';
-import { redirect } from 'next/navigation';
+import { container,TYPES } from '@repo/shared/inversify';
+import { LoyaltyService } from '@repo/shared/service';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
+
 import { validateUser } from '@/lib/auth';
+
+import LoyaltyTransactionTable from './loyalty-transaction';
 
 export default async function Loyalty({ searchParams }: { searchParams: any }) {
   const auth = await validateUser();

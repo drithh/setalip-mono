@@ -1,7 +1,8 @@
-import Link from 'next/link';
-import RegisterUserForm from './register-user.form';
 import { container, TYPES } from '@repo/shared/inversify';
 import { LocationService } from '@repo/shared/service';
+import Link from 'next/link';
+
+import RegisterUserForm from './register-user.form';
 
 export default async function Register() {
   const locationService = container.get<LocationService>(TYPES.LocationService);

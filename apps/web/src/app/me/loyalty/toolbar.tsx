@@ -6,8 +6,6 @@ import {
   SelectLocationWithAsset,
 } from '@repo/shared/repository';
 import { MultiSelect } from '@repo/ui/components/multi-select';
-import { useState } from 'react';
-import { DataTableFacetedFilter } from '@repo/ui/components/data-table/faceted-filter';
 import {
   Select,
   SelectContent,
@@ -15,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/ui/components/ui/select';
+import { useState } from 'react';
 interface ToolbarProps {
   locations: SelectLocationWithAsset[];
   classTypes: SelectClassType[];

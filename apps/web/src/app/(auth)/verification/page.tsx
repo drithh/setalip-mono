@@ -1,7 +1,9 @@
-import VerifyUserForm from './verify-user.form';
-import ResendOtpForm from './resend-otp.form';
-import { validateUser } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+
+import { validateUser } from '@/lib/auth';
+
+import ResendOtpForm from './resend-otp.form';
+import VerifyUserForm from './verify-user.form';
 
 export default async function UserVerification() {
   const auth = await validateUser();
