@@ -3,13 +3,8 @@
 import * as React from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 
-
-
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
-import {
-  SelectAllLoyalty,
-  SelectAllUserName,
-} from '@repo/shared/repository';
+import { SelectAllLoyalty, SelectAllUserName } from '@repo/shared/repository';
 import { Badge } from '@repo/ui/components/ui/badge';
 
 interface getColumnsProps {
@@ -67,12 +62,12 @@ export function getColumns({
       },
     },
     {
-      accessorKey: 'updated_by',
+      accessorKey: 'created_at',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Updated By" />
+        <DataTableColumnHeader column={column} title="Created At" />
       ),
       cell: ({ row }) => {
-        return <span>{row.original.updated_by}</span>;
+        return <span>{row.original.created_at.toDateString()}</span>;
       },
     },
     // {

@@ -111,6 +111,9 @@ export const findAllLoyaltySchema = defaultPaginationSchema.extend({
   user_name: z.string().optional(),
 });
 
+export const findAllLoyaltyRewardSchema = defaultPaginationSchema.extend({});
+export const findAllLoyaltyShopSchema = defaultPaginationSchema.extend({});
+
 export const findAllUserLoyaltySchema = defaultPaginationSchema.extend({
   type: z.string().optional(),
 });
@@ -171,5 +174,13 @@ export const findVoucherByCodeSchema = z.object({
 });
 
 export const deleteVoucherSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});
+
+export const deleteLoyaltyRewardSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});
+
+export const deleteLoyaltyShopSchema = z.object({
   id: z.coerce.number().refine((data) => data > 0),
 });

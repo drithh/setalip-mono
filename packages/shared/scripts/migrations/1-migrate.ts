@@ -417,6 +417,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.notNull())
         .addColumn('credit', 'int4', (col) => col.notNull().unsigned())
+        .$call(addDefaultColumns)
         .execute();
 
       await trx.schema

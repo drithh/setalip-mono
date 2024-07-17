@@ -10,8 +10,18 @@ import type {
   UserRepository,
   FindAllLoyaltyByUserIdOptions,
   FindAllLoyaltyOptions,
+  FindAllLoyaltyShopOptions,
+  SelectAllLoyaltyShop,
+  FindAllLoyaltyRewardOptions,
+  InsertLoyaltyReward,
+  InsertLoyaltyShop,
+  SelectLoyaltyReward,
+  SelectLoyaltyShop,
+  UpdateLoyaltyReward,
+  UpdateLoyaltyShop,
 } from '../repository';
 import { LoyaltyService } from './loyalty';
+import { PromiseResult } from '../types';
 
 @injectable()
 export class LoyaltyServiceImpl implements LoyaltyService {
@@ -35,8 +45,54 @@ export class LoyaltyServiceImpl implements LoyaltyService {
     };
   }
 
+  async findAllReward(data: FindAllLoyaltyRewardOptions) {
+    const loyaltyes = await this._loyaltyRepository.findAllReward(data);
+
+    return {
+      result: loyaltyes,
+      error: undefined,
+    };
+  }
+
+  async findAllShop(data: FindAllLoyaltyShopOptions) {
+    const loyaltyes = await this._loyaltyRepository.findAllShop(data);
+
+    return {
+      result: loyaltyes,
+      error: undefined,
+    };
+  }
+
   async findById(id: SelectLoyalty['id']) {
     const loyalty = await this._loyaltyRepository.findById(id);
+
+    if (!loyalty) {
+      return {
+        error: new Error('Loyalty not found'),
+      };
+    }
+
+    return {
+      result: loyalty,
+    };
+  }
+
+  async findRewardByName(name: SelectLoyaltyReward['name']) {
+    const loyalty = await this._loyaltyRepository.findRewardByName(name);
+
+    if (!loyalty) {
+      return {
+        error: new Error('Loyalty not found'),
+      };
+    }
+
+    return {
+      result: loyalty,
+    };
+  }
+
+  async findShopByName(name: SelectLoyaltyShop['name']) {
+    const loyalty = await this._loyaltyRepository.findShopByName(name);
 
     if (!loyalty) {
       return {
@@ -105,6 +161,36 @@ export class LoyaltyServiceImpl implements LoyaltyService {
     };
   }
 
+  async createReward(data: InsertLoyaltyReward) {
+    const result = await this._loyaltyRepository.createReward(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
+  async createShop(data: InsertLoyaltyShop) {
+    const result = await this._loyaltyRepository.createShop(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
   async update(data: UpdateLoyalty) {
     const result = await this._loyaltyRepository.update(data);
 
@@ -120,8 +206,68 @@ export class LoyaltyServiceImpl implements LoyaltyService {
     };
   }
 
+  async updateReward(data: UpdateLoyaltyReward) {
+    const result = await this._loyaltyRepository.updateReward(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result: result,
+    };
+  }
+
+  async updateShop(data: UpdateLoyaltyShop) {
+    const result = await this._loyaltyRepository.updateShop(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result: result,
+    };
+  }
+
   async delete(data: DeleteLoyalty) {
     const result = await this._loyaltyRepository.delete(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
+  async deleteReward(id: SelectLoyaltyReward['id']) {
+    const result = await this._loyaltyRepository.deleteReward(id);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
+  async deleteShop(id: SelectLoyaltyShop['id']) {
+    const result = await this._loyaltyRepository.deleteShop(id);
 
     if (result instanceof Error) {
       return {

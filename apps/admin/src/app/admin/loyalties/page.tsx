@@ -1,5 +1,3 @@
-
-
 import { FindAllLoyaltyOptions } from '@repo/shared/repository';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import LoyaltyTable from './_components/loyalty-table';
@@ -14,6 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
+import LoyaltyRewardTable from './_components/loyalty-reward-table';
+import LoyaltyShopTable from './_components/loyalty-shop-table';
 
 export interface IndexPageProps {
   searchParams: FindAllLoyaltyOptions;
@@ -32,7 +32,49 @@ export default async function Loyaltys({ searchParams }: IndexPageProps) {
           <CardTitle>Loyalty Shop</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>Wip</p>
+          <QueryResetBoundary>
+            <React.Suspense
+              fallback={
+                <DataTableSkeleton
+                  columnCount={5}
+                  searchableColumnCount={1}
+                  filterableColumnCount={2}
+                  cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem']}
+                  shrinkZero
+                />
+              }
+            >
+              <LoyaltyShopTable search={search} />
+            </React.Suspense>
+          </QueryResetBoundary>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Loyalty Reward</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <QueryResetBoundary>
+            <React.Suspense
+              fallback={
+                <DataTableSkeleton
+                  columnCount={5}
+                  searchableColumnCount={1}
+                  filterableColumnCount={2}
+                  cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem']}
+                  shrinkZero
+                />
+              }
+            >
+              <LoyaltyRewardTable
+                search={{
+                  ...search,
+                  per_page: 100,
+                }}
+              />
+            </React.Suspense>
+          </QueryResetBoundary>
         </CardContent>
       </Card>
 

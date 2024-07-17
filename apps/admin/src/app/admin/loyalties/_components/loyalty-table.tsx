@@ -7,7 +7,7 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
-import { getColumns } from './columns';
+import { getColumns } from './loyalty-columns';
 import {
   SelectAllLoyalty,
   SelectAllUserName,

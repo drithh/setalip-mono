@@ -172,10 +172,13 @@ export interface Locations {
 }
 
 export interface LoyaltyRewards {
+  created_at: Generated<Date>;
   credit: number;
   description: string;
   id: Generated<number>;
   name: string;
+  updated_at: Generated<Date>;
+  updated_by: Generated<number>;
 }
 
 export interface LoyaltyShops {
