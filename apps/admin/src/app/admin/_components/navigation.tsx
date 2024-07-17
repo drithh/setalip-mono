@@ -10,6 +10,7 @@ import {
   Package,
   Settings,
   SquarePercent,
+  Trophy,
   Users2,
 } from 'lucide-react';
 
@@ -53,6 +54,11 @@ export const menus: Menu[] = [
     icon: <SquarePercent className="h-5 w-5" />,
     label: 'Voucher & Flash Sale',
     path: '/admin/discounts',
+  },
+  {
+    icon: <Trophy className="h-5 w-5" />,
+    label: 'Statistics',
+    path: '/admin/statistics',
   },
   {
     icon: <MessageCircleHeart className="h-5 w-5" />,

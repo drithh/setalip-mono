@@ -5,6 +5,7 @@ import { fileRouter } from './router/file';
 import { locationRouter } from './router/location';
 import { loyaltyRouter } from './router/loyalty';
 import { packageRouter } from './router/package';
+import { statisticRouter } from './router/statistic';
 import { userRouter } from './router/user';
 import { voucherRouter } from './router/voucher';
 import { webSettingRouter } from './router/web-settings';
@@ -21,6 +22,7 @@ export const appRouter = createTRPCRouter({
   loyalty: loyaltyRouter,
   webSetting: webSettingRouter,
   voucher: voucherRouter,
+  statistic: statisticRouter,
 });
 
 // export type definition of API

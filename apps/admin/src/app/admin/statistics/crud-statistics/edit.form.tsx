@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { editPackageTransaction } from './_actions/edit-package-transaction';
+import { edit } from './_actions/edit';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,18 +10,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import {
-  EditPackageTransactionSchema,
-  editPackageTransactionSchema,
-} from './form-schema';
+import { EditSchema, editSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { SelectPackageTransaction } from '@repo/shared/repository';
+import { Switch } from '@repo/ui/components/ui/switch';
+import { MoneyInput } from '@repo/ui/components/money-input';
+import { AddonInput } from '@repo/ui/components/addon-input';
+import { SelectStatistic } from '@repo/shared/repository';
 import {
   Sheet,
   SheetContent,
@@ -38,48 +39,44 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
+import { CONSTANT, ROLES } from './constant';
 
-interface EditPackageTransactionProps {
-  statuses: SelectPackageTransaction['status'][];
-  singlePackageTransaction: SelectPackageTransaction;
+interface EditProps {
+  data: SelectStatistic;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal memperbarui transaksi',
+    title: `Gagal memperbarui ${CONSTANT.Item}`,
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Memperbarui transaksi...',
+    title: `Memperbarui ${CONSTANT.Item}...`,
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Transaksi berhasil diperbarui',
+    title: `${CONSTANT.Item} berhasil diperbarui`,
   },
 };
 
-export default function EditPackageTransactionForm({
-  statuses,
-  singlePackageTransaction,
-  open,
-  onOpenChange,
-}: EditPackageTransactionProps) {
+export default function EditForm({ data, open, onOpenChange }: EditProps) {
   const trpcUtils = api.useUtils();
   const router = useRouter();
-  type FormSchema = EditPackageTransactionSchema;
+  type FormSchema = EditSchema;
 
-  const [formState, formAction] = useFormState(editPackageTransaction, {
+  const [formState, formAction] = useFormState(edit, {
     status: 'default',
     form: {
-      id: singlePackageTransaction.id,
-      status: singlePackageTransaction.status,
+      name: data.name,
+      role: data.role,
+      point: data.point,
     } as FormSchema,
   });
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(editPackageTransactionSchema),
+    resolver: zodResolver(editSchema),
     defaultValues: formState.form,
   });
 
@@ -135,9 +132,9 @@ export default function EditPackageTransactionForm({
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">Edit Transaksi</SheetTitle>
+            <SheetTitle className="text-left">Edit Paket</SheetTitle>
             <SheetDescription className="text-left">
-              Edit transaksi. Pastikan klik simpan ketika selesai.
+              Edit paket. Pastikan klik simpan ketika selesai.
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -163,10 +160,23 @@ export default function EditPackageTransactionForm({
 
                 <FormField
                   control={form.control}
-                  name="status"
+                  name="name"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Status</FormLabel>
+                      <FormLabel>Nama</FormLabel>
+                      <FormControl>
+                        <Input id="name" type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Role</FormLabel>
                       <FormControl>
                         <>
                           <Input type="hidden" {...field} />
@@ -176,20 +186,33 @@ export default function EditPackageTransactionForm({
                             defaultValue={field.value.toString()}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Pilih tipe kelas" />
+                              <SelectValue
+                                placeholder={`Pilih ${field.name}`}
+                              />
                             </SelectTrigger>
                             <SelectContent>
-                              {statuses.map((status) => (
-                                <SelectItem
-                                  key={status}
-                                  value={status.toString()}
-                                >
-                                  {status}
+                              {ROLES.map((role) => (
+                                <SelectItem key={role} value={role}>
+                                  {role}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="point"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Point</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

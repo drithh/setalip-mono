@@ -2,28 +2,29 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { editPackageTransaction } from './_actions/edit-package-transaction';
+import { create } from './_actions/create';
 import { useFormState } from 'react-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import {
-  EditPackageTransactionSchema,
-  editPackageTransactionSchema,
-} from './form-schema';
+import { CreateSchema, createSchema } from './form-schema';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { SelectPackageTransaction } from '@repo/shared/repository';
+import { Switch } from '@repo/ui/components/ui/switch';
+import { MoneyInput } from '@repo/ui/components/money-input';
+import { AddonInput } from '@repo/ui/components/addon-input';
+import { SelectClassType, SelectStatistic } from '@repo/shared/repository';
 import {
   Sheet,
+  SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -38,48 +39,41 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
+import { CONSTANT, ROLES } from './constant';
+import { Textarea } from '@repo/ui/components/ui/textarea';
 
-interface EditPackageTransactionProps {
-  statuses: SelectPackageTransaction['status'][];
-  singlePackageTransaction: SelectPackageTransaction;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+interface CreateProps {}
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal memperbarui transaksi',
-    description: 'Silahkan coba lagi',
+    title: `Gagal membuat ${CONSTANT.Item}`,
   },
   loading: {
-    title: 'Memperbarui transaksi...',
+    title: `Membuat ${CONSTANT.Item}...`,
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Transaksi berhasil diperbarui',
+    title: `${CONSTANT.Item} berhasil dibuat`,
   },
 };
 
-export default function EditPackageTransactionForm({
-  statuses,
-  singlePackageTransaction,
-  open,
-  onOpenChange,
-}: EditPackageTransactionProps) {
-  const trpcUtils = api.useUtils();
-  const router = useRouter();
-  type FormSchema = EditPackageTransactionSchema;
+export default function CreateForm({}: CreateProps) {
+  const [openSheet, setOpenSheet] = useState(false);
 
-  const [formState, formAction] = useFormState(editPackageTransaction, {
+  const trpcUtils = api.useUtils();
+  type FormSchema = CreateSchema;
+
+  const [formState, formAction] = useFormState(create, {
     status: 'default',
     form: {
-      id: singlePackageTransaction.id,
-      status: singlePackageTransaction.status,
+      name: '',
+      role: 'user',
+      point: 0,
     } as FormSchema,
   });
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(editPackageTransactionSchema),
+    resolver: zodResolver(createSchema),
     defaultValues: formState.form,
   });
 
@@ -106,9 +100,9 @@ export default function EditPackageTransactionForm({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
-      router.refresh();
+      form.reset();
       trpcUtils.invalidate();
-      onOpenChange(false);
+      setOpenSheet(false);
     }
   }, [formState]);
 
@@ -125,19 +119,18 @@ export default function EditPackageTransactionForm({
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <Sheet
-      open={open}
-      onOpenChange={(ev) => {
-        form.reset();
-        onOpenChange(ev);
-      }}
-    >
+    <Sheet open={openSheet} onOpenChange={setOpenSheet}>
+      <SheetTrigger asChild>
+        <Button variant={'outline'}>Tambah</Button>
+      </SheetTrigger>
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">Edit Transaksi</SheetTitle>
+            <SheetTitle className="text-left capitalize">
+              Buat {CONSTANT.Item}
+            </SheetTitle>
             <SheetDescription className="text-left">
-              Edit transaksi. Pastikan klik simpan ketika selesai.
+              Buat {CONSTANT.Item} baru. Pastikan klik simpan ketika selesai.
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -150,23 +143,23 @@ export default function EditPackageTransactionForm({
               >
                 <FormField
                   control={form.control}
-                  name="id"
+                  name="name"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
+                      <FormLabel>Nama</FormLabel>
                       <FormControl>
-                        <Input type="hidden" {...field} />
+                        <Input id="name" type="text" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
-                  name="status"
+                  name="role"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Status</FormLabel>
+                      <FormLabel>Role</FormLabel>
                       <FormControl>
                         <>
                           <Input type="hidden" {...field} />
@@ -176,20 +169,33 @@ export default function EditPackageTransactionForm({
                             defaultValue={field.value.toString()}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Pilih tipe kelas" />
+                              <SelectValue
+                                placeholder={`Pilih ${field.name}`}
+                              />
                             </SelectTrigger>
                             <SelectContent>
-                              {statuses.map((status) => (
-                                <SelectItem
-                                  key={status}
-                                  value={status.toString()}
-                                >
-                                  {status}
+                              {ROLES.map((role) => (
+                                <SelectItem key={role} value={role}>
+                                  {role}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="point"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Point</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

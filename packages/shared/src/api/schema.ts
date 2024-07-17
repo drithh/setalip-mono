@@ -49,6 +49,14 @@ export const findAllPackageSchema = defaultPaginationSchema.extend({
   class_type_id: z.string().optional(),
 });
 
+export const findAllStatisticSchema = defaultPaginationSchema.extend({
+  role: z.string().optional(),
+});
+
+export const deleteStatisticSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});
+
 export const findAllPackageTransactionSchema = defaultPaginationSchema.extend({
   user_name: z.string().optional(),
   status: z.string().optional(),
