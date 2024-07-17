@@ -113,37 +113,34 @@ export class KyselyMySqlStatisticRepository implements StatisticRepository {
       const result = await this._db.executeQuery(query);
 
       if (result.rows[0] === undefined) {
-        console.error('Failed to create class type', result);
-        return new Error('Failed to create class type');
+        console.error('Failed to create stastic', result);
+        return new Error('Failed to create stastic');
       }
 
       return result.rows[0];
     } catch (error) {
-      console.error('Error creating class type:', error);
-      return new Error('Failed to create class type');
+      console.error('Error creating stastic:', error);
+      return new Error('Failed to create stastic');
     }
   }
 
   async update(data: UpdateStatistic) {
     try {
-      const query = this._db
+      const query = await this._db
         .updateTable('statistics')
         .set(data)
         .where('statistics.id', '=', data.id)
-        .returningAll()
-        .compile();
+        .executeTakeFirst();
 
-      const result = await this._db.executeQuery(query);
-
-      if (result.rows[0] === undefined) {
-        console.error('Failed to update class type', result);
-        return new Error('Failed to update class type');
+      if (query.numUpdatedRows === undefined) {
+        console.error('Failed to update stastic', query);
+        return new Error('Failed to update stastic');
       }
 
       return;
     } catch (error) {
-      console.error('Error updating class type:', error);
-      return new Error('Failed to update class type');
+      console.error('Error updating stastic:', error);
+      return new Error('Failed to update stastic');
     }
   }
 
@@ -156,8 +153,8 @@ export class KyselyMySqlStatisticRepository implements StatisticRepository {
 
       return;
     } catch (error) {
-      console.error('Error deleting class type:', error);
-      return new Error('Failed to delete class type');
+      console.error('Error deleting stastic:', error);
+      return new Error('Failed to delete stastic');
     }
   }
 }

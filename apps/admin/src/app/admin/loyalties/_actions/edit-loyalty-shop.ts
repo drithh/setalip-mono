@@ -43,10 +43,15 @@ export async function editLoyaltyShop(
     };
   }
 
+  console.log('fileUpload', fileUpload);
+
   const loyaltyService = container.get<LoyaltyService>(TYPES.LoyaltyService);
 
   const result = await loyaltyService.updateShop({
-    ...parsed.data,
+    id: parsed.data.id,
+    name: parsed.data.name,
+    description: parsed.data.description,
+    price: parsed.data.price,
     image_url: fileUpload[0]?.url ?? null,
   });
 

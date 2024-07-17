@@ -51,6 +51,8 @@ interface EditLoyaltyShopProps {
   onOpenChange: (open: boolean) => void;
 }
 
+type FileWithPreview = File & { preview: string };
+
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui item',
@@ -147,6 +149,8 @@ export default function EditLoyaltyShopForm({
     form.clearErrors('file');
   }
 
+  const [imageRemoved, setImageRemoved] = useState(false);
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="p-0">
@@ -228,7 +232,7 @@ export default function EditLoyaltyShopForm({
                       <FormControl>
                         <>
                           <FormLabel>Foto</FormLabel>
-                          {field.value && field.value.size !== 0 && (
+                          {field.value && field.value.size !== 0 ? (
                             <PhotoProvider>
                               <div className="grid h-40 w-full gap-2">
                                 <FileCard
@@ -242,6 +246,25 @@ export default function EditLoyaltyShopForm({
                                 />
                               </div>
                             </PhotoProvider>
+                          ) : (
+                            data.image_url &&
+                            !imageRemoved && (
+                              <PhotoProvider>
+                                <div className="grid h-40 w-full gap-2">
+                                  <FileCard
+                                    file={
+                                      {
+                                        preview: data.image_url,
+                                        name: data.name,
+                                      } as FileWithPreview
+                                    }
+                                    onDelete={() => {
+                                      setImageRemoved(true);
+                                    }}
+                                  />
+                                </div>
+                              </PhotoProvider>
+                            )
                           )}
                           <div className="space-y-6">
                             <Dropzone

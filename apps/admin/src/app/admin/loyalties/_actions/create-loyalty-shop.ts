@@ -46,7 +46,9 @@ export async function createLoyaltyShop(
   const loyaltyService = container.get<LoyaltyService>(TYPES.LoyaltyService);
 
   const result = await loyaltyService.createShop({
-    ...parsed.data,
+    name: parsed.data.name,
+    description: parsed.data.description,
+    price: parsed.data.price,
     image_url: fileUpload[0]?.url ?? null,
   });
 

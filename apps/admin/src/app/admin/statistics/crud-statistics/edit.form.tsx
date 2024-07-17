@@ -50,7 +50,6 @@ interface EditProps {
 const TOAST_MESSAGES = {
   error: {
     title: `Gagal memperbarui ${CONSTANT.Item}`,
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: `Memperbarui ${CONSTANT.Item}...`,
@@ -69,6 +68,7 @@ export default function EditForm({ data, open, onOpenChange }: EditProps) {
   const [formState, formAction] = useFormState(edit, {
     status: 'default',
     form: {
+      id: data.id,
       name: data.name,
       role: data.role,
       point: data.point,
@@ -132,9 +132,11 @@ export default function EditForm({ data, open, onOpenChange }: EditProps) {
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">Edit Paket</SheetTitle>
+            <SheetTitle className="text-left capitalize">
+              Edit {CONSTANT.Item}
+            </SheetTitle>
             <SheetDescription className="text-left">
-              Edit paket. Pastikan klik simpan ketika selesai.
+              Edit {CONSTANT.Item}. Pastikan klik simpan ketika selesai.
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -151,7 +153,7 @@ export default function EditForm({ data, open, onOpenChange }: EditProps) {
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
                       <FormControl>
-                        <Input type="hidden" {...field} />
+                        <Input type="hidden" {...field} value={data.id} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
