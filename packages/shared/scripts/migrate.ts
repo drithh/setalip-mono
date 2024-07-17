@@ -1,5 +1,5 @@
 // scripts/migrate.ts
-import 'dotenv/config';
+// import 'dotenv/config';
 import 'reflect-metadata';
 import * as path from 'path';
 import fs, { promises } from 'fs';

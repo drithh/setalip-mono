@@ -26,9 +26,11 @@ import {
   WebSettings,
   Reviews,
   FrequentlyAskedQuestions,
+  Statistics,
 } from '@repo/shared/db';
 import { DB } from '@repo/shared/db';
 import { hash } from '@node-rs/argon2';
+import { SelectStatistic } from '#dep/repository/statistic';
 
 export async function up(db: Kysely<DB>): Promise<void> {
   try {
@@ -520,6 +522,21 @@ export async function up(db: Kysely<DB>): Promise<void> {
         .insertInto('loyalty_transactions')
         .values(loyaltyTransactions)
         .execute();
+
+      const statistics: Insertable<Statistics>[] = Array.from({
+        length: 30,
+      }).map((_, index) => {
+        const role: SelectStatistic['role'][] = ['coach', 'user'];
+        const roleRandom = role[Math.floor(Math.random() * 2)] ?? 'user';
+        return {
+          id: index + 1,
+          role: roleRandom,
+          name: faker.person.fullName(),
+          point: faker.number.int({ min: 100, max: 1000 }),
+        };
+      });
+
+      await trx.insertInto('statistics').values(statistics).execute();
     });
 
     console.info('Migration 100-seed completed');
@@ -531,6 +548,8 @@ export async function up(db: Kysely<DB>): Promise<void> {
 export async function down(db: Kysely<any>): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
+      await trx.deleteFrom('statistics').execute();
+      await trx.deleteFrom('reviews').execute();
       await trx.deleteFrom('loyalty_transactions').execute();
       await trx.deleteFrom('package_transactions').execute();
       await trx

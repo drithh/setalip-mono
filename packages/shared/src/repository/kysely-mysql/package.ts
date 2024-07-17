@@ -604,8 +604,8 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
             status: data.status,
             deposit_account_id: data.deposit_account_id,
 
-            discount: data.discount,
-            voucher_id: data.voucher_id,
+            discount: data.discount ?? packageTransaction.discount,
+            voucher_id: data.voucher_id ?? packageTransaction.voucher_id,
 
             user_package_id: userPackageId,
           })

@@ -1,7 +1,5 @@
 'use server';
-import {
-  PackageService,
-} from '@repo/shared/service';
+import { PackageService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import {
   editPackageTransactionSchema,
@@ -35,6 +33,11 @@ export async function editPackageTransaction(
   const result = await packageService.updatePackageTransaction({
     id: parsed.data.id,
     status: parsed.data.status as SelectPackageTransaction['status'],
+
+    discount: null,
+    deposit_account_id: null,
+    voucher_code: null,
+    voucher_id: null,
   });
 
   if (result.error) {
