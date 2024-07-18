@@ -19,6 +19,7 @@ import {
   InsertLoyaltyReward,
   InsertLoyaltyShop,
   UpdateLoyaltyReward,
+  InsertLoyaltyOnReward,
 } from '../loyalty';
 import { sql } from 'kysely';
 import { SelectUser } from '../user';
@@ -92,6 +93,10 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
 
     if (name) {
       query = query.where('loyalty_rewards.name', 'like', `%${name}%`);
+    }
+
+    if (data.is_active) {
+      query = query.where('loyalty_rewards.is_active', '=', data.is_active);
     }
 
     const queryData = await query
@@ -231,6 +236,40 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
         .values({
           ...data,
           type: 'debit' as const,
+        })
+        .returningAll()
+        .compile();
+
+      const result = await this._db.executeQuery(query);
+
+      if (result.rows[0] === undefined) {
+        console.error('Failed to create loyalty', result);
+        return new Error('Failed to create loyalty');
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating loyalty:', error);
+      return new Error('Failed to create loyalty');
+    }
+  }
+
+  async createOnReward(data: InsertLoyaltyOnReward) {
+    try {
+      const reward = await this.findRewardByName(data.reward_name);
+
+      if (reward === undefined) {
+        console.error('Reward not found:', data.reward_name);
+        return new Error('Reward not found');
+      }
+
+      const query = this._db
+        .insertInto('loyalty_transactions')
+        .values({
+          user_id: data.user_id,
+          amount: reward.credit,
+          type: 'debit' as const,
+          note: data.note,
         })
         .returningAll()
         .compile();

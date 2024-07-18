@@ -15,6 +15,7 @@ export default async function Schedules({
   const packages = await packageService.findAll({
     ...search,
     perPage: 100,
+    is_active: 1,
   });
 
   const classTypeService = container.get<ClassTypeService>(

@@ -59,6 +59,7 @@ export async function createPackage(
     one_time_only: parsed.data.one_time_only,
     valid_for: parsed.data.valid_for,
     class_type_id: parsed.data.class_type_id,
+    is_active: parsed.data.is_active,
   });
 
   if (result.error) {

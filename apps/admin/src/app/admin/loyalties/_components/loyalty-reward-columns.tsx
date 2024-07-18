@@ -54,6 +54,15 @@ export function getColumns({}: getColumnsProps): ColumnDef<
       },
     },
     {
+      accessorKey: 'is_active',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Aktif" />
+      ),
+      cell: ({ row }) => {
+        return <Badge>{row.original.is_active ? 'Aktif' : 'Tidak'}</Badge>;
+      },
+    },
+    {
       accessorKey: 'updated_at',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Updated At" />
@@ -105,12 +114,12 @@ export function getColumns({}: getColumnsProps): ColumnDef<
                 <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
+                {/* <DropdownMenuSeparator /> */}
+                {/* <DropdownMenuItem
                   onSelect={() => setShowDeleteTaskDialog(true)}
                 >
                   Delete
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
           </>

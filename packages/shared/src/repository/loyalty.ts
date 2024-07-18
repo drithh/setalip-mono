@@ -60,6 +60,7 @@ export type UpdateLoyaltyReward = OptionalToRequired<
 
 export interface FindAllLoyaltyRewardOptions extends DefaultPagination {
   name?: SelectLoyaltyReward['name'];
+  is_active?: SelectLoyaltyReward['is_active'];
 }
 
 export interface SelectAllLoyaltyReward {
@@ -83,6 +84,11 @@ export interface SelectAllLoyaltyShop {
   pageCount: number;
 }
 
+export interface InsertLoyaltyOnReward {
+  reward_name: SelectLoyaltyReward['name'];
+  user_id: SelectUser['id'];
+  note: SelectLoyalty['note'];
+}
 export interface LoyaltyRepository {
   count(): Promise<number>;
 
@@ -107,6 +113,7 @@ export interface LoyaltyRepository {
   ): Promise<SelectAmountLoyalty | undefined>;
 
   create(data: InsertLoyalty): Promise<SelectLoyalty | Error>;
+  createOnReward(data: InsertLoyaltyOnReward): Promise<SelectLoyalty | Error>;
   createReward(data: InsertLoyaltyReward): Promise<SelectLoyaltyReward | Error>;
   createShop(data: InsertLoyaltyShop): Promise<SelectLoyaltyShop | Error>;
 

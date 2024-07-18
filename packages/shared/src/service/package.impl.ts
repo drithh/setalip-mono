@@ -163,6 +163,12 @@ export class PackageServiceImpl implements PackageService {
       };
     }
 
+    if (!packageData.is_active) {
+      return {
+        error: new Error('Package is not active'),
+      };
+    }
+
     if (packageData.one_time_only) {
       const userPackage = await this._packageRepository.findAllPackageByUserId(
         data.user_id
@@ -284,6 +290,13 @@ export class PackageServiceImpl implements PackageService {
       return {
         result: undefined,
         error: new Error('Package not found'),
+      };
+    }
+
+    if (!packageData.is_active) {
+      return {
+        result: undefined,
+        error: new Error('Package is not active'),
       };
     }
 

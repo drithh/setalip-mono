@@ -22,10 +22,7 @@ import { useRouter } from 'next/navigation';
 import { Switch } from '@repo/ui/components/ui/switch';
 import { MoneyInput } from '@repo/ui/components/money-input';
 import { AddonInput } from '@repo/ui/components/addon-input';
-import {
-  SelectClassType,
-  SelectPackage,
-} from '@repo/shared/repository';
+import { SelectClassType, SelectPackage } from '@repo/shared/repository';
 import {
   Sheet,
   SheetContent,
@@ -85,6 +82,7 @@ export default function EditPackageForm({
       loyalty_points: singlePackage.loyalty_points,
       one_time_only: singlePackage.one_time_only,
       valid_for: singlePackage.valid_for,
+      is_active: singlePackage.is_active,
     } as FormSchema,
   });
 
@@ -184,6 +182,29 @@ export default function EditPackageForm({
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="is_active"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Aktifkan Paket</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(e) => {
+                              field.onChange(e ? 1 : 0);
+                            }}
+                          />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="class_type_id"

@@ -37,7 +37,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
   }
 
   async findAll(data: FindAllPackageOptions) {
-    const { page = 1, perPage = 10, sort, name, types } = data;
+    const { page = 1, perPage = 10, sort, name, types, is_active } = data;
 
     const offset = (page - 1) * perPage;
     const orderBy = (
@@ -54,6 +54,11 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     if (types && types.length > 0) {
       query = query.where('class_type_id', 'in', types);
     }
+
+    if (is_active) {
+      query = query.where('is_active', '=', is_active);
+    }
+
     const queryData = await query
       .selectAll('packages')
       .select('class_types.type as class_type')

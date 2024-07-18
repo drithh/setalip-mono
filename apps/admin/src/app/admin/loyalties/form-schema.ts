@@ -23,6 +23,7 @@ export const createLoyaltyRewardSchema = z.object({
   name: z.string().min(3).max(255),
   description: z.string().min(3).max(255),
   credit: z.coerce.number(),
+  is_active: z.coerce.number().refine((v) => v === 0 || v === 1),
 }) satisfies ZodType<InsertLoyaltyReward>;
 
 export type CreateLoyaltyRewardSchema = z.infer<

@@ -27,6 +27,7 @@ export default async function Loyalty({ searchParams }: { searchParams: any }) {
 
   const loyaltyRewards = await loyaltyService.findAllReward({
     perPage: 100,
+    is_active: 1,
   });
 
   const loyaltyShops = await loyaltyService.findAllShop({

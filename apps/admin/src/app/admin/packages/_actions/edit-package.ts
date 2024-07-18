@@ -1,8 +1,5 @@
 'use server';
-import {
-  ClassTypeService,
-  PackageService,
-} from '@repo/shared/service';
+import { ClassTypeService, PackageService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { editPackageSchema, FormEditPackage } from '../form-schema';
 import {
@@ -60,6 +57,7 @@ export async function editPackage(
     one_time_only: parsed.data.one_time_only,
     valid_for: parsed.data.valid_for,
     class_type_id: parsed.data.class_type_id,
+    is_active: parsed.data.is_active,
   });
 
   if (result.error) {

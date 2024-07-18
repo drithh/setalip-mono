@@ -20,6 +20,7 @@ import {
 export interface FindAllPackageOptions extends DefaultPagination {
   name?: string;
   types?: number[];
+  is_active?: number;
 }
 
 export interface SelectPackages extends SelectPackage {

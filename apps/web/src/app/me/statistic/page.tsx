@@ -25,12 +25,18 @@ export default async function Statistic({}: {}) {
   });
 
   const agendaService = container.get<AgendaService>(TYPES.AgendaService);
-  const userAgenda =
-    (await agendaService.countCheckedInByUserId(auth.user.id)) ?? 0;
+  let totalAgenda = 0;
 
-  // compare if the currentStatistic is less than the userAgenda then get the statistics
+  if (role === 'coach') {
+    totalAgenda = (await agendaService.countCoachAgenda(auth.user.id)) ?? 0;
+  } else {
+    totalAgenda =
+      (await agendaService.countCheckedInByUserId(auth.user.id)) ?? 0;
+  }
+
+  // compare if the currentStatistic is less than the totalAgenda then get the statistics
   const currentStatistic = statistics.result?.data
-    .filter((stat) => stat.point < userAgenda)
+    .filter((stat) => stat.point < totalAgenda)
     .pop();
 
   return (
@@ -40,7 +46,7 @@ export default async function Statistic({}: {}) {
         <p className="text-center text-3xl font-semibold capitalize">
           {currentStatistic?.name ?? 'No milestone yet'}
         </p>
-        <p className="text-[5rem] font-semibold">{userAgenda}</p>
+        <p className="text-[5rem] font-semibold">{totalAgenda}</p>
         <p className="text-3xl font-semibold">Lifetime</p>
       </Card>
       <h1 className="text-3xl font-bold">Milestones</h1>
@@ -51,7 +57,7 @@ export default async function Statistic({}: {}) {
               key={stat.id}
               name={stat.name}
               point={stat.point}
-              variant={stat.point >= userAgenda ? 'locked' : 'unlocked'}
+              variant={stat.point >= totalAgenda ? 'locked' : 'unlocked'}
             />
           ))}
         </div>
@@ -84,8 +90,7 @@ const StatisticBadge = ({
           className={`absolute inset-0 my-auto h-full w-full place-content-center place-items-center px-4 md:px-8 ${variantClass}`}
         >
           <p className="text-center text-base font-semibold md:text-xl">
-            {/* {name} */}
-            Pilates Enthusiast
+            {name}
           </p>
           <p className="text-center text-3xl font-bold md:text-[2.5rem]">
             {point}

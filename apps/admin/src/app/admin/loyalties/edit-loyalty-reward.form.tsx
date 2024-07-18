@@ -44,6 +44,7 @@ import {
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { Textarea } from '@repo/ui/components/ui/textarea';
+import { Switch } from '@repo/ui/components/ui/switch';
 
 interface EditLoyaltyRewardProps {
   data: SelectLoyaltyReward;
@@ -80,6 +81,7 @@ export default function EditLoyaltyRewardForm({
       name: data.name,
       credit: data.credit,
       description: data.description,
+      is_active: data.is_active,
     } as FormSchema,
   });
 
@@ -110,8 +112,8 @@ export default function EditLoyaltyRewardForm({
     }
 
     if (formState.status === 'success') {
-      toast.success(TOAST_MESSAGES.success.title);
       form.reset();
+      toast.success(TOAST_MESSAGES.success.title);
       trpcUtils.invalidate();
       onOpenChange(false);
     }
@@ -168,6 +170,28 @@ export default function EditLoyaltyRewardForm({
                       <FormLabel>Nama</FormLabel>
                       <FormControl>
                         <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="is_active"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Aktifkan Reward</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(e) => {
+                              field.onChange(e ? 1 : 0);
+                            }}
+                          />
+                        </>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -8,6 +8,7 @@ export const createPackageSchema = z.object({
   credit: z.coerce.number(),
   loyalty_points: z.coerce.number(),
   one_time_only: z.coerce.number().refine((v) => v === 0 || v === 1),
+  is_active: z.coerce.number().refine((v) => v === 0 || v === 1),
   valid_for: z.coerce.number(),
   class_type_id: z.coerce.number(),
 }) satisfies ZodType<InsertPackage>;

@@ -417,6 +417,9 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.notNull())
         .addColumn('credit', 'int4', (col) => col.notNull().unsigned())
+        .addColumn('is_active', 'boolean', (col) =>
+          col.notNull().defaultTo(true)
+        )
         .$call(addDefaultColumns)
         .execute();
 
@@ -436,6 +439,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('type', sql`ENUM('debit', 'credit')`, (col) => col.notNull())
         .addColumn('amount', 'int4', (col) => col.notNull())
         .addColumn('note', 'text', (col) => col.notNull())
+        .addColumn('reference_id', 'bigint')
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
         )
@@ -447,6 +451,12 @@ export async function up(db: Kysely<any>): Promise<void> {
         )
         .$call(addDefaultColumns)
         .execute();
+
+      // add comment to references columns
+      await sql`
+      ALTER TABLE loyalty_transactions MODIFY COLUMN reference_id bigint COMMENT 'RewardId=1 => AgendaBookings;  RewardId=2 => Users; RewardId=3 => Reviews; RewardId=5 => UserPackages'`.execute(
+        trx
+      );
 
       await trx.schema
         .createTable('flash_sales')

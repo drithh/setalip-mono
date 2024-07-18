@@ -176,6 +176,7 @@ export interface LoyaltyRewards {
   credit: number;
   description: string;
   id: Generated<number>;
+  is_active: Generated<number>;
   name: string;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
@@ -199,6 +200,10 @@ export interface LoyaltyTransactions {
   loyalty_reward_id: Generated<number | null>;
   loyalty_shop_id: Generated<number | null>;
   note: string;
+  /**
+   * RewardId=1 => AgendaBookings;  RewardId=2 => Users; RewardId=3 => Reviews; RewardId=5 => UserPackages
+   */
+  reference_id: Generated<number | null>;
   type: "credit" | "debit";
   updated_at: Generated<Date>;
   updated_by: Generated<number>;

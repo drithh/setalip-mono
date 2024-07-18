@@ -25,6 +25,7 @@ export interface AgendaService {
   countCheckedInByUserId(
     userId: SelectAgenda['id']
   ): Promise<number | undefined>;
+  countCoachAgenda(userId: SelectCoach['user_id']): Promise<number>;
 
   findAll(data: FindAllAgendaOptions): PromiseResult<SelectAllAgenda, Error>;
   findById(

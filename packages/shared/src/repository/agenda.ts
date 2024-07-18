@@ -160,6 +160,7 @@ export interface AgendaRepository {
   count(): Promise<number>;
   countParticipant(id: SelectAgenda['id']): Promise<number>;
   countCheckedInByUserId(userId: SelectUser['id']): Promise<number | undefined>;
+  countCoachAgenda(userId: SelectCoach['user_id']): Promise<number>;
 
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;

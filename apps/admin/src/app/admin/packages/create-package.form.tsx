@@ -74,6 +74,7 @@ export default function CreatePackageForm({ classTypes }: CreatePackageProps) {
       one_time_only: 0,
       valid_for: 0,
       class_type_id: 0,
+      is_active: 1,
     } as FormSchema,
   });
 
@@ -157,6 +158,29 @@ export default function CreatePackageForm({ classTypes }: CreatePackageProps) {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="is_active"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Aktifkan Paket</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(e) => {
+                              field.onChange(e ? 1 : 0);
+                            }}
+                          />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="class_type_id"
