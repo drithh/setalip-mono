@@ -5,6 +5,7 @@ import type {
   InsertDepositAccount,
   InsertFrequentlyAskedQuestion,
   InsertReview,
+  LoyaltyRepository,
   SelectCarousel,
   SelectDepositAccount,
   SelectFrequentlyAskedQuestion,
@@ -24,12 +25,15 @@ import { WebSettingService } from './web-setting';
 @injectable()
 export class WebSettingServiceImpl implements WebSettingService {
   private _webSettingRepository: WebSettingRepository;
+  private _loyaltyRepository: LoyaltyRepository;
 
   constructor(
     @inject(TYPES.WebSettingRepository)
-    webSettingRepository: WebSettingRepository
+    webSettingRepository: WebSettingRepository,
+    @inject(TYPES.LoyaltyRepository) loyaltyRepository: LoyaltyRepository
   ) {
     this._webSettingRepository = webSettingRepository;
+    this._loyaltyRepository = loyaltyRepository;
   }
 
   async findContact() {
@@ -138,6 +142,20 @@ export class WebSettingServiceImpl implements WebSettingService {
     if (review instanceof Error) {
       return {
         error: review,
+      };
+    }
+
+    // loyalty reward
+    const loyalty = await this._loyaltyRepository.createOnReward({
+      reward_id: 3,
+      user_id: data.user_id,
+      note: 'Post review to our website',
+      reference_id: review.id,
+    });
+
+    if (loyalty instanceof Error) {
+      return {
+        error: loyalty,
       };
     }
 

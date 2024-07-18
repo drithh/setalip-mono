@@ -7,6 +7,7 @@ import type {
   FindAllUserPackageTransactionOption,
   InsertPackage,
   InsertPackageTransaction,
+  LoyaltyRepository,
   PackageRepository,
   SelectClassType,
   SelectPackage,
@@ -28,6 +29,7 @@ export class PackageServiceImpl implements PackageService {
   private _webSettingRepository: WebSettingRepository;
   private _classTypeRepository: ClassTypeRepository;
   private _voucherRepository: VoucherRepository;
+  private _loyaltyRepository: LoyaltyRepository;
 
   constructor(
     @inject(TYPES.PackageRepository) packageRepository: PackageRepository,
@@ -35,7 +37,8 @@ export class PackageServiceImpl implements PackageService {
     @inject(TYPES.UserRepository) userRepository: UserRepository,
     @inject(TYPES.WebSettingRepository) websRepository: WebSettingRepository,
     @inject(TYPES.ClassTypeRepository) classTypeRepository: ClassTypeRepository,
-    @inject(TYPES.VoucherRepository) voucherRepository: VoucherRepository
+    @inject(TYPES.VoucherRepository) voucherRepository: VoucherRepository,
+    @inject(TYPES.LoyaltyRepository) loyaltyRepository: LoyaltyRepository
   ) {
     this._packageRepository = packageRepository;
     this._notificationService = notificationService;
@@ -43,6 +46,7 @@ export class PackageServiceImpl implements PackageService {
     this._webSettingRepository = websRepository;
     this._classTypeRepository = classTypeRepository;
     this._voucherRepository = voucherRepository;
+    this._loyaltyRepository = loyaltyRepository;
   }
 
   async findAll(data: FindAllPackageOptions) {
@@ -365,6 +369,25 @@ export class PackageServiceImpl implements PackageService {
           class_type: classTypes.type,
         },
         recipient: user.phone_number,
+      });
+
+      // check whether user bought package for the first time
+      const userPackage = await this._packageRepository.findAllPackageByUserId(
+        user.id
+      );
+
+      if (userPackage.length === 0) {
+        return {
+          result: undefined,
+        };
+      }
+
+      // loyalty
+      const loyalty = await this._loyaltyRepository.createOnReward({
+        reward_id: 5,
+        user_id: user.id,
+        note: `You bought ${packageData.name}`,
+        reference_id: data.id,
       });
 
       if (notification.error) {

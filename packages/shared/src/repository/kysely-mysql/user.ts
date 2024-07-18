@@ -82,6 +82,15 @@ export class KyselyMySqlUserRepository implements UserRepository {
     return this._db.selectFrom('users').select(['name', 'id']).execute();
   }
 
+  findAllUserBirthday() {
+    // find all users with birthday today
+    return this._db
+      .selectFrom('users')
+      .selectAll()
+      .where('users.date_of_birth', '=', sql`CURDATE()` as any)
+      .execute();
+  }
+
   async findAllMember() {
     return this._db
       .selectFrom('users')

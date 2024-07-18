@@ -182,6 +182,30 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
     };
   }
 
+  findByRewardIdAndUserId(
+    rewardId: SelectLoyalty['loyalty_reward_id'],
+    userId: SelectLoyalty['user_id']
+  ): Promise<SelectLoyalty | undefined> {
+    return this._db
+      .selectFrom('loyalty_transactions')
+      .selectAll()
+      .where('loyalty_transactions.loyalty_reward_id', '=', rewardId)
+      .where('loyalty_transactions.user_id', '=', userId)
+      .executeTakeFirst();
+  }
+
+  findByRewardIdAndReferenceId(
+    rewardId: SelectLoyalty['loyalty_reward_id'],
+    referenceId: SelectLoyalty['reference_id']
+  ) {
+    return this._db
+      .selectFrom('loyalty_transactions')
+      .selectAll()
+      .where('loyalty_transactions.loyalty_reward_id', '=', rewardId)
+      .where('loyalty_transactions.reference_id', '=', referenceId)
+      .executeTakeFirst();
+  }
+
   async findRewardById(
     id: SelectLoyaltyReward['id']
   ): Promise<SelectLoyaltyReward | undefined> {

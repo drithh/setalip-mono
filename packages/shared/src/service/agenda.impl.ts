@@ -19,6 +19,8 @@ import type {
   FindAllAgendaByCoachOptions,
   SelectCoach,
   UpdateAgendaBookingById,
+  LoyaltyRepository,
+  SelectAgendaBooking,
 } from '../repository';
 import { AgendaService } from './agenda';
 import { addMinutes, isAfter, isBefore, isEqual } from 'date-fns';
@@ -33,6 +35,7 @@ export class AgendaServiceImpl implements AgendaService {
   private _creditRepository: CreditRepository;
   private _notificationService: NotificationService;
   private _locationRepository: LocationRepository;
+  private _loyaltyRepository: LoyaltyRepository;
 
   constructor(
     @inject(TYPES.AgendaRepository) agendaRepository: AgendaRepository,
@@ -41,7 +44,8 @@ export class AgendaServiceImpl implements AgendaService {
     @inject(TYPES.PackageRepository) packageRepository: PackageRepository,
     @inject(TYPES.CreditRepository) creditRepository: CreditRepository,
     @inject(TYPES.NotificationService) notificationService: NotificationService,
-    @inject(TYPES.LocationRepository) locationRepository: LocationRepository
+    @inject(TYPES.LocationRepository) locationRepository: LocationRepository,
+    @inject(TYPES.LoyaltyRepository) loyaltyRepository: LoyaltyRepository
   ) {
     this._agendaRepository = agendaRepository;
     this._userRepository = userRepository;
@@ -50,6 +54,7 @@ export class AgendaServiceImpl implements AgendaService {
     this._creditRepository = creditRepository;
     this._notificationService = notificationService;
     this._locationRepository = locationRepository;
+    this._loyaltyRepository = loyaltyRepository;
   }
 
   async count() {
@@ -89,6 +94,11 @@ export class AgendaServiceImpl implements AgendaService {
     return {
       result: singleAgenda,
     };
+  }
+
+  async findAgendaBookingById(id: SelectAgendaBooking['id']) {
+    const agendaBooking =
+      await this._agendaRepository.findAgendaBookingById(id);
   }
 
   async findAllParticipantByAgendaId(id: SelectAgenda['id']) {
@@ -352,6 +362,78 @@ export class AgendaServiceImpl implements AgendaService {
         result: undefined,
         error: result,
       };
+    }
+
+    // loyalty rewards
+    if (data.status === 'checked_in') {
+      // check if loyalty reward already exists
+
+      const agendaBooking = await this._agendaRepository.findAgendaBookingById(
+        data.id
+      );
+
+      if (!agendaBooking) {
+        return {
+          result: undefined,
+          error: new Error('Agenda booking not found'),
+        };
+      }
+
+      const loyaltyCheck =
+        await this._loyaltyRepository.findByRewardIdAndReferenceId(
+          1,
+          agendaBooking.id
+        );
+
+      if (loyaltyCheck) {
+        return {
+          result: undefined,
+          error: undefined,
+        };
+      }
+
+      const agenda = await this._agendaRepository.findById(
+        agendaBooking.agenda_id
+      );
+
+      if (!agenda) {
+        return {
+          result: undefined,
+          error: new Error('Agenda not found'),
+        };
+      }
+
+      const singleClass = await this._classRepository.findById(agenda.class_id);
+
+      if (!singleClass) {
+        return {
+          result: undefined,
+          error: new Error('Class not found'),
+        };
+      }
+
+      const user = await this._userRepository.findById(agendaBooking.user_id);
+
+      if (!user) {
+        return {
+          result: undefined,
+          error: new Error('User not found'),
+        };
+      }
+
+      const loyalty = await this._loyaltyRepository.createOnReward({
+        reward_id: 1,
+        user_id: user.id,
+        note: `Checked in to ${singleClass.name} class on ${agenda.time}`,
+        reference_id: agendaBooking.id,
+      });
+
+      if (loyalty instanceof Error) {
+        return {
+          result: undefined,
+          error: new Error('Failed to create loyalty reward', loyalty),
+        };
+      }
     }
 
     return {

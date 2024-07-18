@@ -42,6 +42,7 @@ export interface UserRepository {
 
   findAll(data: FindAllUserOptions): Promise<SelectAllUser>;
   findAllUserName(): Promise<SelectAllUserName>;
+  findAllUserBirthday(): Promise<SelectUser[]>;
 
   findAllMember(): Promise<SelectUser[]>;
   findById(id: SelectUser['id']): Promise<SelectUser | undefined>;

@@ -19,6 +19,7 @@ export enum NotificationType {
   AdminCancelledUserAgenda,
   UserBoughtPackage,
   AdminConfirmedUserPackage,
+  UserBookingLessThan2Hours,
 }
 
 interface OtpSentPayload {
@@ -65,13 +66,22 @@ interface AdminConfirmedUserPackagePayload {
   expired_at: SelectCredit['expired_at'];
 }
 
+interface UserBookingLessThan2HoursPayload {
+  type: NotificationType.UserBookingLessThan2Hours;
+  date: SelectAgenda['time'];
+  class: SelectClass['name'];
+  location: SelectLocation['name'];
+  facility: LocationFacilities['name'];
+}
+
 export type NotificationPayload =
   | OtpSentPayload
   | UserResetPasswordPayload
   | UserBookedAgendaPayload
   | AdminCancelledUserAgendaPayload
   | UserBoughtPackagePayload
-  | AdminConfirmedUserPackagePayload;
+  | AdminConfirmedUserPackagePayload
+  | UserBookingLessThan2HoursPayload;
 
 export interface SendNotification {
   payload: NotificationPayload;

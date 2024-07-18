@@ -89,6 +89,16 @@ const parseNotification = (payload: NotificationPayload) => {
         `Paket kadaluarsa: ${payload.expired_at ? format(new Date(payload.expired_at), 'eeee, dd/MM/yyyy') : 'Tidak terbatas'}` +
         `${FOOTER_MESSAGE}`
       );
+    case NotificationType.UserBookingLessThan2Hours:
+      return (
+        `${HEADER_MESSAGE}` +
+        `Booking kelas kurang dari 2 jam lagi, Detail:\n` +
+        `Kelas: ${payload.class}\n` +
+        `Tanggal: ${format(new Date(payload.date), 'eeee, dd/MM/yyyy')}\n` +
+        `Waktu: ${format(new Date(payload.date), 'HH:mm')}\n` +
+        `Lokasi: ${payload.location} - ${payload.facility}` +
+        `${FOOTER_MESSAGE}`
+      );
     default:
       return 'Unknown notification!';
   }

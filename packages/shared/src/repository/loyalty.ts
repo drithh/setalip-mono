@@ -103,6 +103,14 @@ export interface LoyaltyRepository {
   ): Promise<SelectAllLoyaltyByUserId>;
 
   findById(id: SelectLoyalty['id']): Promise<SelectLoyalty | undefined>;
+  findByRewardIdAndUserId(
+    rewardId: SelectLoyalty['loyalty_reward_id'],
+    userId: SelectLoyalty['user_id']
+  ): Promise<SelectLoyalty | undefined>;
+  findByRewardIdAndReferenceId(
+    rewardId: SelectLoyalty['loyalty_reward_id'],
+    referenceId: SelectLoyalty['reference_id']
+  ): Promise<SelectLoyalty | undefined>;
   findRewardById(
     id: SelectLoyaltyReward['id']
   ): Promise<SelectLoyaltyReward | undefined>;

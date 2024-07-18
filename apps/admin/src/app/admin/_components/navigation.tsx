@@ -52,7 +52,7 @@ export const menus: Menu[] = [
   },
   {
     icon: <SquarePercent className="h-5 w-5" />,
-    label: 'Voucher & Flash Sale',
+    label: 'Voucher',
     path: '/admin/discounts',
   },
   {

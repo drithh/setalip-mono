@@ -177,6 +177,14 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .executeTakeFirst();
   }
 
+  findAgendaBookingById(id: SelectAgendaBooking['id']) {
+    return this._db
+      .selectFrom('agenda_bookings')
+      .selectAll()
+      .where('id', '=', id)
+      .executeTakeFirst();
+  }
+
   findAllParticipantByAgendaId(id: SelectAgenda['id']) {
     return this._db
       .selectFrom('agenda_bookings')
@@ -374,12 +382,12 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     }
 
     if (date) {
-      const dateTomorrow = new Date(date);
-      dateTomorrow.setDate(dateTomorrow.getDate() + 1);
+      const today = new Date(date);
+      const tomorrow = addDays(today, 1);
 
       query = query
-        .where('agendas.time', '>=', date)
-        .where('agendas.time', '<=', dateTomorrow);
+        .where('agendas.time', '>=', today)
+        .where('agendas.time', '<=', tomorrow);
     }
 
     const queryData = await query

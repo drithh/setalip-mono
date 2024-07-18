@@ -4,6 +4,7 @@ import { creditRouter } from './router/credit';
 import { fileRouter } from './router/file';
 import { locationRouter } from './router/location';
 import { loyaltyRouter } from './router/loyalty';
+import { cronRouter } from './router/cron';
 import { packageRouter } from './router/package';
 import { statisticRouter } from './router/statistic';
 import { userRouter } from './router/user';
@@ -23,6 +24,7 @@ export const appRouter = createTRPCRouter({
   webSetting: webSettingRouter,
   voucher: voucherRouter,
   statistic: statisticRouter,
+  cron: cronRouter,
 });
 
 // export type definition of API
