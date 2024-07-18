@@ -30,7 +30,7 @@ export async function createCarousel(
       ? await api.file.upload({ files: parsed.data.file })
       : [{ url: '', name: '' }];
 
-  if (fileUpload.length === 0 || fileUpload[0]?.url === '') {
+  if (fileUpload.length === 0) {
     return {
       form: parsed.data,
       status: 'field-errors',

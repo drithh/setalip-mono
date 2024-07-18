@@ -63,11 +63,11 @@ export default async function Home() {
         <Carousel className="relative m-0 w-full overflow-x-hidden">
           <CarouselPrevious
             variant={'ghost'}
-            className="border-0 bg-transparent hover:bg-transparent"
+            className="border-0 bg-transparent text-white hover:bg-transparent"
           />
           <CarouselNext
             variant={'ghost'}
-            className="border-0 bg-transparent hover:bg-transparent"
+            className="border-0 bg-transparent text-white hover:bg-transparent"
           />
 
           <div className="relative z-0 w-full">
@@ -75,29 +75,32 @@ export default async function Home() {
               {carousels.result?.map((carousel, index) => (
                 <SliderMainItem
                   key={index}
-                  className="relative h-[calc(100vh-72px)] w-full bg-transparent p-0"
+                  className="relative h-[50vh] w-full bg-transparent p-0 md:h-[calc(100vh-72px)]"
                 >
                   <Image
                     fill
+                    style={{ filter: 'brightness(70%) saturate(90%)' }}
                     className="absolute object-cover"
                     alt={carousel.title}
                     src={carousel.image_url}
                   />
-                  <div className="absolute left-1/2 top-1/2 flex max-w-xl -translate-x-1/2 -translate-y-1/2 flex-col gap-4 text-center text-primary-foreground/70 md:left-[8rem] md:-translate-x-0 md:text-left ">
-                    <h1 className="text-3xl font-medium sm:text-5xl md:text-7xl">
+                  <div className="absolute left-1/2 top-1/2 z-0 flex max-w-2xl -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-md bg-black/40 p-8 text-center text-white md:left-[8rem] md:-translate-x-0 md:gap-8 md:rounded-xl md:text-left">
+                    <h1 className="z-10 text-xl font-medium sm:text-5xl md:text-7xl">
                       {carousel.title}
                     </h1>
-                    <Button
-                      className="h-12 w-40 text-xl shadow-md"
-                      variant={'default'}
-                    >
-                      Book Now
-                    </Button>
+                    <Link href="/schedules" className="z-10">
+                      <Button
+                        className="h-10 w-28 text-base shadow-md md:h-16 md:w-48 md:text-xl"
+                        variant={'default'}
+                      >
+                        Book Now
+                      </Button>
+                    </Link>
                   </div>
                 </SliderMainItem>
               ))}
             </CarouselMainContainer>
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
               <CarouselThumbsContainer className="gap-x-1 ">
                 {carousels.result?.map((_, index) => (
                   <CarouselIndicator key={index} index={index} />
