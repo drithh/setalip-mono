@@ -41,7 +41,7 @@ export default async function Contacts() {
               </div>
               <div className="flex flex-col gap-4">
                 <Link
-                  href="#"
+                  href={`https://instagram.com/${contact.result?.instagram_handle}`}
                   className="flex gap-2 text-muted-foreground hover:text-primary"
                   prefetch={false}
                 >
@@ -50,7 +50,7 @@ export default async function Contacts() {
                   <p>{contact.result?.instagram_handle}</p>
                 </Link>
                 <Link
-                  href="#"
+                  href={`https://instagram.com/${contact.result?.tiktok_handle}`}
                   className="flex gap-2 text-muted-foreground hover:text-primary"
                   prefetch={false}
                 >

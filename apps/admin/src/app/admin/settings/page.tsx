@@ -1,11 +1,10 @@
-import { Button } from '@repo/ui/components/ui/button';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
-import { ChevronLeft } from 'lucide-react';
+import { BackButton } from '@repo/ui/components/back-button';
 import { Label } from '@repo/ui/components/ui/label';
 import { Input } from '@repo/ui/components/ui/input';
 import { container, TYPES } from '@repo/shared/inversify';
@@ -34,12 +33,7 @@ export default async function Page({ searchParams }: IndexPageProps) {
 
   return (
     <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
-      <div className="flex place-items-center gap-4">
-        <Button variant="outline" size="icon" className="h-7 w-7">
-          <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Back</span>
-        </Button>
-      </div>
+      <BackButton />
       <Card>
         <CardHeader className="flex flex-row place-content-between items-center">
           <CardTitle className="w-fit">Settings</CardTitle>

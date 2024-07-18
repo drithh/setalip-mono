@@ -16,7 +16,6 @@ import { Label } from '@repo/ui/components/ui/label';
 import { Input } from '@repo/ui/components/ui/input';
 import 'react-photo-view/dist/react-photo-view.css';
 
-
 import UploadLocationAsset from './upload-location-asset.form';
 import LocationAssets from './_components/location-assets';
 import { validateAdmin } from '@/lib/auth';
@@ -26,6 +25,7 @@ import CreateFacilityForm from './create-facility.form';
 import OperationalHour from './_components/operational-hour';
 import EditOperationalHourForm from './edit-operational-hour.form';
 import DeleteLocation from './delete-location.dialog';
+import { BackButton } from '@repo/ui/components/back-button';
 
 export default async function LocationDetail({
   params,
@@ -48,10 +48,7 @@ export default async function LocationDetail({
   return (
     <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
       <div className="flex place-items-center gap-4">
-        <Button variant="outline" size="icon" className="h-7 w-7">
-          <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Back</span>
-        </Button>
+        <BackButton />
         <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
           {location.result?.name}
         </h1>
