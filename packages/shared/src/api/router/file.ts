@@ -6,13 +6,13 @@ import { z } from 'zod';
 import path from 'path';
 import { writeFile } from 'fs/promises';
 import { fileUploadSchema } from '../schema';
+import { env } from '#dep/env';
 
 export const fileRouter = {
   upload: protectedProcedure
     .input(fileUploadSchema)
     .mutation(async ({ ctx, input }) => {
-      const host = 'localhost:3000'; // Default host
-      const protocol = 'http';
+      const host = env.HOST; // Default host
 
       let files = input.files;
       if (!Array.isArray(files)) {
@@ -33,7 +33,7 @@ export const fileRouter = {
           await writeFile(fullPath, buffer);
 
           return {
-            url: `${protocol}://${host}/uploads/${filename}`,
+            url: `${host}/uploads/${filename}`,
             name: file.name,
           };
         })
