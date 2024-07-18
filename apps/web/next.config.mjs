@@ -42,6 +42,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'wembleypark.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'admin.pilatesreform.id',
+      },
     ],
   },
   experimental: {
