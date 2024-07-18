@@ -85,9 +85,10 @@ export interface SelectAllLoyaltyShop {
 }
 
 export interface InsertLoyaltyOnReward {
-  reward_name: SelectLoyaltyReward['name'];
+  reward_id: SelectLoyaltyReward['id'];
   user_id: SelectUser['id'];
   note: SelectLoyalty['note'];
+  reference_id?: SelectLoyalty['reference_id'];
 }
 export interface LoyaltyRepository {
   count(): Promise<number>;
@@ -102,6 +103,9 @@ export interface LoyaltyRepository {
   ): Promise<SelectAllLoyaltyByUserId>;
 
   findById(id: SelectLoyalty['id']): Promise<SelectLoyalty | undefined>;
+  findRewardById(
+    id: SelectLoyaltyReward['id']
+  ): Promise<SelectLoyaltyReward | undefined>;
   findRewardByName(
     name: SelectLoyaltyReward['name']
   ): Promise<SelectLoyaltyReward | undefined>;
@@ -113,7 +117,7 @@ export interface LoyaltyRepository {
   ): Promise<SelectAmountLoyalty | undefined>;
 
   create(data: InsertLoyalty): Promise<SelectLoyalty | Error>;
-  createOnReward(data: InsertLoyaltyOnReward): Promise<SelectLoyalty | Error>;
+  createOnReward(data: InsertLoyaltyOnReward): Promise<undefined | Error>;
   createReward(data: InsertLoyaltyReward): Promise<SelectLoyaltyReward | Error>;
   createShop(data: InsertLoyaltyShop): Promise<SelectLoyaltyShop | Error>;
 

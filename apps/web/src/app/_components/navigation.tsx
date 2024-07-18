@@ -36,7 +36,7 @@ export default async function Navigation() {
             <Image
               src={logo.result?.logo ?? '/logo.webp'}
               alt="Pilates Reform"
-              layout="fill"
+              fill
               objectFit="contain"
             />
           </div>

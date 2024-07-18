@@ -9,6 +9,7 @@ export interface RegisterUser {
   address: string;
   location_id: number | null;
   dateOfBirth: Date;
+  referralId?: number;
 }
 
 export interface LoginUser {

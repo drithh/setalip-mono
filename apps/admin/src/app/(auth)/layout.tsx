@@ -34,8 +34,8 @@ export default function Layout({
           <Image
             src={randomImage?.src ?? '/placeholder.svg'}
             alt={randomImage?.alt ?? 'Placeholder'}
-            className="h-full w-full object-cover"
-            layout="fill"
+            className="h-full w-full object-cover "
+            fill
             style={{ filter: 'brightness(70%) saturate(90%)' }}
           />
           <div className="absolute inset-0 flex items-end justify-start text-center text-white">

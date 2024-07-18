@@ -14,6 +14,7 @@ export const registerUserSchema = z
     address: z.string(),
     location_id: z.coerce.number(),
     dateOfBirth: z.date(),
+    referralId: z.coerce.number().optional(),
   })
   .refine(
     (data) => {

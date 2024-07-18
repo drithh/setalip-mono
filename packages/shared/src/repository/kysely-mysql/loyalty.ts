@@ -182,6 +182,16 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
     };
   }
 
+  async findRewardById(
+    id: SelectLoyaltyReward['id']
+  ): Promise<SelectLoyaltyReward | undefined> {
+    return this._db
+      .selectFrom('loyalty_rewards')
+      .selectAll()
+      .where('loyalty_rewards.id', '=', id)
+      .executeTakeFirst();
+  }
+
   async findRewardByName(
     name: SelectLoyaltyReward['name']
   ): Promise<SelectLoyaltyReward | undefined> {
@@ -256,11 +266,16 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
 
   async createOnReward(data: InsertLoyaltyOnReward) {
     try {
-      const reward = await this.findRewardByName(data.reward_name);
+      const reward = await this.findRewardById(data.reward_id);
 
       if (reward === undefined) {
-        console.error('Reward not found:', data.reward_name);
+        console.error('Reward not found:', data.reward_id);
         return new Error('Reward not found');
+      }
+
+      if (!reward.is_active) {
+        console.error('Reward is not active:', reward);
+        return undefined;
       }
 
       const query = this._db
@@ -270,6 +285,8 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
           amount: reward.credit,
           type: 'debit' as const,
           note: data.note,
+          loyalty_reward_id: data.reward_id,
+          reference_id: data.reference_id,
         })
         .returningAll()
         .compile();
@@ -281,7 +298,7 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
         return new Error('Failed to create loyalty');
       }
 
-      return result.rows[0];
+      return undefined;
     } catch (error) {
       console.error('Error creating loyalty:', error);
       return new Error('Failed to create loyalty');

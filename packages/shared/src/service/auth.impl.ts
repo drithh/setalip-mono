@@ -9,7 +9,7 @@ import {
 import { lucia } from '../auth';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
-import type { UserRepository } from '../repository';
+import type { LoyaltyRepository, UserRepository } from '../repository';
 import type { OtpService } from './otp';
 import type { ResetPasswordService } from './reset-password';
 import { Database } from '../db';
@@ -19,19 +19,20 @@ export class AuthServiceImpl implements AuthService {
   private _userRepository: UserRepository;
   private _otpService: OtpService;
   private _resetPasswordService: ResetPasswordService;
-  private _db: Database;
+  private _loyaltyRepository: LoyaltyRepository;
 
   constructor(
     @inject(TYPES.UserRepository) userRepository: UserRepository,
+    @inject(TYPES.LoyaltyRepository) loyaltyRepository: LoyaltyRepository,
     @inject(TYPES.OtpService) otpService: OtpService,
     @inject(TYPES.ResetPasswordService)
     resetPasswordService: ResetPasswordService,
     @inject(TYPES.Database) db: Database
   ) {
     this._userRepository = userRepository;
+    this._loyaltyRepository = loyaltyRepository;
     this._otpService = otpService;
     this._resetPasswordService = resetPasswordService;
-    this._db = db;
   }
 
   async register(data: RegisterUser) {
@@ -87,6 +88,25 @@ export class AuthServiceImpl implements AuthService {
       return {
         error: sendOtp.error,
       };
+    }
+
+    // referral reward
+    if (data.referralId) {
+      const referer = await this._userRepository.findById(data.referralId);
+      if (referer !== undefined) {
+        const loyalty = await this._loyaltyRepository.createOnReward({
+          reward_id: 2,
+          user_id: referer.id,
+          note: `${user.name} joined using your referral link`,
+          reference_id: user.id,
+        });
+
+        if (loyalty instanceof Error) {
+          return {
+            error: new Error('Failed to create loyalty reward', loyalty),
+          };
+        }
+      }
     }
 
     const session = await lucia.createSession(user.id, {});

@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '@repo/ui/components/ui/select';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
@@ -56,6 +56,10 @@ interface RegisterUserFormProps {
 
 export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
   const router = useRouter();
+  const params = useSearchParams();
+
+  const referral = params.get('referral');
+  const referralId = referral ? parseInt(referral) : undefined;
 
   const auth = api.auth.getSession.useQuery(void {}, {
     refetchOnMount: false,
@@ -81,6 +85,7 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
       phoneNumber: '',
       location_id: undefined,
       dateOfBirth: new Date(),
+      referralId: referralId,
     },
   });
 
@@ -90,8 +95,6 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
     resolver: zodResolver(registerUserSchema),
     defaultValues: formState.form,
   });
-
-  console.log(form.formState.errors);
 
   useEffect(() => {
     toast.dismiss();
@@ -140,6 +143,23 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
         action={formAction}
         onSubmit={onSubmitForm}
       >
+        <FormField
+          control={form.control}
+          name="referralId"
+          render={({ field }) => (
+            <FormItem className="grid w-full gap-2">
+              <FormControl>
+                <Input
+                  type="hidden"
+                  placeholder=""
+                  {...field}
+                  value={referralId}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="name"
