@@ -1,5 +1,5 @@
 import { findAllScheduleSchema } from '@repo/shared/api/schema';
-import { container,TYPES } from '@repo/shared/inversify';
+import { container, TYPES } from '@repo/shared/inversify';
 import {
   ClassService,
   ClassTypeService,
@@ -38,7 +38,7 @@ export default async function Schedules({
 
   return (
     <div className="">
-      <div className="mx-auto flex min-h-screen w-full max-w-[90vw] flex-col gap-24 py-4 sm:py-32 md:max-w-screen-xl">
+      <div className="mx-auto flex min-h-screen w-full max-w-[95vw] flex-col gap-24 py-4 sm:py-32 md:max-w-screen-xl">
         <AgendaTable
           locations={locations.result || []}
           coaches={coaches.result || []}

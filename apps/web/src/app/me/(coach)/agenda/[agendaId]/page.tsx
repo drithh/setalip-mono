@@ -1,10 +1,5 @@
-
-
-import { container,TYPES } from '@repo/shared/inversify';
-import {
-  AgendaService,
-} from '@repo/shared/service';
-
+import { container, TYPES } from '@repo/shared/inversify';
+import { AgendaService } from '@repo/shared/service';
 
 import { redirect } from 'next/navigation';
 
@@ -38,7 +33,7 @@ export default async function Attendances({
   return (
     <div className="w-full p-6">
       <h1 className="text-3xl font-bold">Attendances</h1>
-      <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[90vw] flex-col gap-24 md:max-w-screen-xl">
+      <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[95vw] flex-col gap-24 md:max-w-screen-xl">
         <AgendaTable participants={agendas.result} />
       </div>
     </div>

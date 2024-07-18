@@ -1,10 +1,7 @@
 import Avatar from '../_components/avatar';
 import { validateUser } from '@/lib/auth';
 import NavigationLink from './_components/navigation-link';
-import {
-  LogOut,
-  User2,
-} from 'lucide-react';
+import { LogOut, User2 } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default async function Layout({
@@ -36,7 +33,7 @@ export default async function Layout({
   ];
 
   return (
-    <div className="mx-auto flex w-full max-w-[90vw] flex-row pb-32 pt-16 md:max-w-screen-xl">
+    <div className="mx-auto flex w-full max-w-[95vw] flex-row pb-32 pt-16 md:max-w-screen-xl">
       <div className="relative hidden md:inline-block">
         <div className="sticky top-[89px] flex  w-64 flex-col gap-4 rounded-xl border-2 border-primary px-4 py-8 ">
           <div className="flex flex-col place-items-center gap-4">
@@ -44,7 +41,9 @@ export default async function Layout({
               <Avatar user={auth.user} />
             </div>
             <div className="flex flex-col place-items-center gap-2">
-              <p className="text-xl text-center font-semibold">{auth.user.name}</p>
+              <p className="text-center text-xl font-semibold">
+                {auth.user.name}
+              </p>
               <p className="">
                 Joined Since{' '}
                 {format(new Date(auth.user.createdAt), 'MMM dd yyyy')}

@@ -113,14 +113,14 @@ export class KyselyMySqlStatisticRepository implements StatisticRepository {
       const result = await this._db.executeQuery(query);
 
       if (result.rows[0] === undefined) {
-        console.error('Failed to create stastic', result);
-        return new Error('Failed to create stastic');
+        console.error('Failed to create stastistic', result);
+        return new Error('Failed to create stastistic');
       }
 
       return result.rows[0];
     } catch (error) {
-      console.error('Error creating stastic:', error);
-      return new Error('Failed to create stastic');
+      console.error('Error creating stastistic:', error);
+      return new Error('Failed to create stastistic');
     }
   }
 
@@ -133,14 +133,14 @@ export class KyselyMySqlStatisticRepository implements StatisticRepository {
         .executeTakeFirst();
 
       if (query.numUpdatedRows === undefined) {
-        console.error('Failed to update stastic', query);
-        return new Error('Failed to update stastic');
+        console.error('Failed to update stastistic', query);
+        return new Error('Failed to update stastistic');
       }
 
       return;
     } catch (error) {
-      console.error('Error updating stastic:', error);
-      return new Error('Failed to update stastic');
+      console.error('Error updating stastistic:', error);
+      return new Error('Failed to update stastistic');
     }
   }
 
@@ -153,8 +153,8 @@ export class KyselyMySqlStatisticRepository implements StatisticRepository {
 
       return;
     } catch (error) {
-      console.error('Error deleting stastic:', error);
-      return new Error('Failed to delete stastic');
+      console.error('Error deleting stastistic:', error);
+      return new Error('Failed to delete stastistic');
     }
   }
 }

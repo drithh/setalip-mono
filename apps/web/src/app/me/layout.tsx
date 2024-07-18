@@ -14,7 +14,7 @@ export default async function Layout({
   const auth = await validateUser();
 
   return (
-    <div className="mx-auto flex w-full max-w-[90vw] flex-row pb-32 pt-16 md:max-w-screen-xl">
+    <div className="mx-auto flex w-full max-w-[95vw] flex-row pb-32 pt-16 md:max-w-screen-xl">
       <div className="relative hidden md:inline-block">
         <div className="sticky top-[89px] flex  w-64 flex-col gap-4 rounded-xl border-2 border-primary px-4 py-8 ">
           <div className="flex flex-col place-items-center gap-4">

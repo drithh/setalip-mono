@@ -214,7 +214,7 @@ export default async function Home() {
           </div>
         </section>
         <section className="bg-background" id="locations">
-          <div className="mx-auto flex max-w-[90vw] flex-col gap-24 pb-12 pt-32 md:max-w-screen-xl">
+          <div className="mx-auto flex max-w-[95vw] flex-col gap-24 pb-12 pt-32 md:max-w-screen-xl">
             <div className="flex flex-col place-content-center place-items-center gap-4">
               <h2 className="text-center text-4xl font-bold md:text-6xl">
                 Our Locations

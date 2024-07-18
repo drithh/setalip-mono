@@ -1,7 +1,5 @@
-import {
-  findAllUserLoyaltySchema,
-} from '@repo/shared/api/schema';
-import { container,TYPES } from '@repo/shared/inversify';
+import { findAllUserLoyaltySchema } from '@repo/shared/api/schema';
+import { container, TYPES } from '@repo/shared/inversify';
 import { LoyaltyService } from '@repo/shared/service';
 import {
   Card,
@@ -37,7 +35,8 @@ export default async function Loyalty({ searchParams }: { searchParams: any }) {
           </CardContent>
         </Card>
       </div>
-      <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[90vw] flex-col gap-24 md:max-w-screen-xl">
+      <h1 className="text-3xl font-bold">Loyalty</h1>
+      <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[95vw] flex-col gap-24 md:max-w-screen-xl">
         <LoyaltyTransactionTable search={search} />
       </div>
     </div>

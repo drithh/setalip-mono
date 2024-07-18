@@ -1,7 +1,5 @@
-import {
-  findAllCoachAgendaSchema,
-} from '@repo/shared/api/schema';
-import { container,TYPES } from '@repo/shared/inversify';
+import { findAllCoachAgendaSchema } from '@repo/shared/api/schema';
+import { container, TYPES } from '@repo/shared/inversify';
 import {
   AgendaService,
   ClassTypeService,
@@ -81,7 +79,7 @@ export default async function Schedules({
         ))}
       </div>
       <h1 className="text-3xl font-bold">All Schedule</h1>
-      <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[90vw] flex-col gap-24 md:max-w-screen-xl">
+      <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[95vw] flex-col gap-24 md:max-w-screen-xl">
         <AgendaTable
           locations={locations.result || []}
           classTypes={classTypes.result || []}

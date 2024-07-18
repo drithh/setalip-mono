@@ -1,8 +1,6 @@
 import { findAllUserCreditSchema } from '@repo/shared/api/schema';
-import { container,TYPES } from '@repo/shared/inversify';
-import {
-  CreditService,
-} from '@repo/shared/service';
+import { container, TYPES } from '@repo/shared/inversify';
+import { CreditService } from '@repo/shared/service';
 import {
   Card,
   CardContent,
@@ -39,7 +37,7 @@ export default async function Credit({ searchParams }: { searchParams: any }) {
           </Card>
         ))}
       </div>
-      <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[90vw] flex-col gap-24 md:max-w-screen-xl">
+      <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[95vw] flex-col gap-24 md:max-w-screen-xl">
         <CreditTransactionTable search={search} />
       </div>
     </div>
