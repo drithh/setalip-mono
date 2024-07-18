@@ -24,6 +24,7 @@ import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/mysql';
 import { Selectable, sql } from 'kysely';
 import { SelectCoach } from '../coach';
 import { addDays } from 'date-fns';
+import { SelectUser } from '../user';
 
 @injectable()
 export class KyselyMySqlAgendaRepository implements AgendaRepository {
@@ -51,6 +52,17 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .executeTakeFirst();
 
     return query?.count ?? 0;
+  }
+
+  async countCheckedInByUserId(userId: SelectUser['id']) {
+    const query = await this._db
+      .selectFrom('agenda_bookings')
+      .select(({ fn }) => [fn.count<number>('agenda_bookings.id').as('count')])
+      .where('agenda_bookings.user_id', '=', userId)
+      .where('agenda_bookings.status', '=', 'checked_in')
+      .executeTakeFirst();
+
+    return query?.count;
   }
 
   async findAll(data: FindAllAgendaOptions) {

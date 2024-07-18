@@ -60,6 +60,10 @@ export class AgendaServiceImpl implements AgendaService {
     return this._agendaRepository.countParticipant(id);
   }
 
+  async countCheckedInByUserId(userId: SelectAgenda['id']) {
+    return this._agendaRepository.countCheckedInByUserId(userId);
+  }
+
   async findAll(data: FindAllAgendaOptions) {
     const agendas = await this._agendaRepository.findAll(data);
 

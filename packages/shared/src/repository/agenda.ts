@@ -159,6 +159,7 @@ export interface SelectBookingParticipant {
 export interface AgendaRepository {
   count(): Promise<number>;
   countParticipant(id: SelectAgenda['id']): Promise<number>;
+  countCheckedInByUserId(userId: SelectUser['id']): Promise<number | undefined>;
 
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;

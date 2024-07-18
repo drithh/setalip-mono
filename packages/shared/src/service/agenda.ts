@@ -22,6 +22,9 @@ import { PromiseResult } from '../types';
 export interface AgendaService {
   count(): Promise<number>;
   countParticipant(id: SelectAgenda['id']): Promise<number>;
+  countCheckedInByUserId(
+    userId: SelectAgenda['id']
+  ): Promise<number | undefined>;
 
   findAll(data: FindAllAgendaOptions): PromiseResult<SelectAllAgenda, Error>;
   findById(
