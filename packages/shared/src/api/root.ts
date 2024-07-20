@@ -11,9 +11,11 @@ import { userRouter } from './router/user';
 import { voucherRouter } from './router/voucher';
 import { webSettingRouter } from './router/web-settings';
 import { createTRPCRouter } from './trpc';
+import { classRouter } from './router/class';
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
+  class: classRouter,
   location: locationRouter,
   file: fileRouter,
   package: packageRouter,

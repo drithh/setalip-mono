@@ -6,6 +6,8 @@ import {
   SelectClass,
   UpdateClass,
   SelectDetailClassAssetAndLocation,
+  InsertClassAsset,
+  SelectClassAsset,
 } from '../class';
 import { ClassAssets, Database } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
@@ -192,6 +194,28 @@ export class KyselyMySqlClassRepository implements ClassRepository {
     }
   }
 
+  async createAsset(data: InsertClassAsset[]) {
+    try {
+      const query = this._db
+        .insertInto('class_assets')
+        .values(data)
+        .returningAll()
+        .compile();
+
+      const result = await this._db.executeQuery(query);
+
+      if (result.rows[0] === undefined) {
+        console.error('Failed to create class asset', result);
+        return new Error('Failed to create class asset');
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating class asset:', error);
+      return new Error('Failed to create class asset');
+    }
+  }
+
   async update(data: UpdateClass) {
     try {
       const query = await this._db
@@ -231,6 +255,25 @@ export class KyselyMySqlClassRepository implements ClassRepository {
     } catch (error) {
       console.error('Error deleting class:', error);
       return new Error('Failed to delete class');
+    }
+  }
+
+  async deleteAsset(id: SelectClass['id']) {
+    try {
+      const query = await this._db
+        .deleteFrom('class_assets')
+        .where('class_assets.class_id', '=', id)
+        .executeTakeFirst();
+
+      if (query.numDeletedRows === undefined) {
+        console.error('Failed to delete class asset', query);
+        return new Error('Failed to delete class asset');
+      }
+
+      return;
+    } catch (error) {
+      console.error('Error deleting class asset:', error);
+      return new Error('Failed to delete class asset');
     }
   }
 }

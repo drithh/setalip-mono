@@ -26,6 +26,11 @@ export const menus: Menu[] = [
     path: '/admin/locations',
   },
   {
+    icon: <PilatesSvg className="h-5 w-5 fill-current" />,
+    label: 'Classes',
+    path: '/admin/classes',
+  },
+  {
     icon: <Package className="h-5 w-5" />,
     label: 'Packages',
     path: '/admin/packages',

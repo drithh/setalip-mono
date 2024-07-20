@@ -26,6 +26,14 @@ export const deleteLocationAssetSchema = z.object({
   assetId: z.coerce.number().refine((data) => data > 0),
 });
 
+export const deleteClassSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});
+
+export const deleteClassAssetSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});
+
 export const deleteFacilitySchema = z.object({
   facilityId: z.coerce.number(),
 });

@@ -59,8 +59,8 @@ export default async function Home() {
 
   return (
     <main className="relative z-0 mx-auto w-full">
-      <div className="sticky top-[72px] z-0">
-        <Carousel className="relative m-0 w-full overflow-x-hidden">
+      <div className="">
+        <Carousel className="w-full overflow-x-hidden">
           <CarouselPrevious
             variant={'ghost'}
             className="border-0 bg-transparent text-white hover:bg-transparent"

@@ -1,7 +1,5 @@
 'use server';
-import {
-  LocationService,
-} from '@repo/shared/service';
+import { LocationService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import {
   editDetailLocationSchema,

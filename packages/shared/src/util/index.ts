@@ -1,3 +1,5 @@
+import { isValid, parseISO } from 'date-fns';
+
 export * from '#dep/util/zod';
 export * from '#dep/util/local';
 
@@ -10,7 +12,7 @@ function isString(value: FormDataEntryValue): value is string {
 }
 
 function isDate(value: FormDataEntryValue): value is string {
-  return isString(value) && !isNaN(Date.parse(value));
+  return isString(value) && isValid(parseISO(value));
 }
 
 function isBoolean(value: FormDataEntryValue): value is string {

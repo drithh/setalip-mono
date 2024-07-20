@@ -73,7 +73,7 @@ export default async function LocationDetail({
                     readOnly
                     type="text"
                     className="w-full"
-                    defaultValue={location.result?.name}
+                    value={location.result?.name}
                   />
                 </div>
                 <div className="grid gap-3">
@@ -82,7 +82,7 @@ export default async function LocationDetail({
                     id="address"
                     readOnly
                     className="w-full"
-                    defaultValue={location.result?.address}
+                    value={location.result?.address}
                   />
                 </div>
                 <div className="grid gap-3">
@@ -92,7 +92,7 @@ export default async function LocationDetail({
                     readOnly
                     type="text"
                     className="w-full"
-                    defaultValue={location.result?.phone_number}
+                    value={location.result?.phone_number}
                   />
                 </div>
                 <div className="grid gap-3">
@@ -102,7 +102,7 @@ export default async function LocationDetail({
                     readOnly
                     type="email"
                     className="w-full"
-                    defaultValue={location.result?.email}
+                    value={location.result?.email}
                   />
                 </div>
                 <div className="grid gap-3">
@@ -111,7 +111,7 @@ export default async function LocationDetail({
                     id="googleMapsUrl"
                     readOnly
                     className="w-full"
-                    defaultValue={location.result?.link_maps}
+                    value={location.result?.link_maps}
                   />
                 </div>
               </div>

@@ -6,15 +6,23 @@ import type {
   ClassRepository,
   SelectClass,
   UpdateClass,
+  ClassTypeRepository,
+  InsertClassAsset,
+  SelectClassAsset,
 } from '../repository';
 import { ClassService } from './class';
 
 @injectable()
 export class ClassServiceImpl implements ClassService {
   private _classRepository: ClassRepository;
+  private _classTypeRepository: ClassTypeRepository;
 
-  constructor(@inject(TYPES.ClassRepository) classRepository: ClassRepository) {
+  constructor(
+    @inject(TYPES.ClassRepository) classRepository: ClassRepository,
+    @inject(TYPES.ClassTypeRepository) classTypeRepository: ClassTypeRepository
+  ) {
     this._classRepository = classRepository;
+    this._classTypeRepository = classTypeRepository;
   }
 
   async findAll(data: FindAllClassOptions) {
@@ -65,7 +73,32 @@ export class ClassServiceImpl implements ClassService {
   }
 
   async create(data: InsertClass) {
+    // find class type
+    const classType = await this._classTypeRepository.findById(
+      data.class_type_id
+    );
+
+    if (!classType) {
+      return {
+        error: new Error('Class type not found'),
+      };
+    }
+
     const result = await this._classRepository.create(data);
+
+    if (result instanceof Error) {
+      return {
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
+  async createAsset(data: InsertClassAsset[]) {
+    const result = await this._classRepository.createAsset(data);
 
     if (result instanceof Error) {
       return {
@@ -95,6 +128,21 @@ export class ClassServiceImpl implements ClassService {
 
   async delete(id: SelectClass['id']) {
     const result = await this._classRepository.delete(id);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result: result,
+    };
+  }
+
+  async deleteAsset(id: SelectClassAsset['id']) {
+    const result = await this._classRepository.deleteAsset(id);
 
     if (result instanceof Error) {
       return {

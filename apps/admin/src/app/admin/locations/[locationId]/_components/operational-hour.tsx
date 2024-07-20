@@ -62,7 +62,7 @@ export default function OperationalHour({
                   readOnly
                   type="text"
                   className="w-[72px] text-center"
-                  defaultValue={openingDate}
+                  value={openingDate}
                 />
 
                 <span className="text-sm">Sampai</span>
@@ -71,7 +71,7 @@ export default function OperationalHour({
                   readOnly
                   type="text"
                   className="w-[72px] text-center"
-                  defaultValue={closingDate}
+                  value={closingDate}
                 />
               </div>
             </div>

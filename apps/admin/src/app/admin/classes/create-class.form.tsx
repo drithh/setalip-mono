@@ -14,11 +14,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { EditDetailLocationSchema } from './form-schema';
+import { CreateClassSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
-import { SelectLocation } from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,
@@ -27,50 +26,57 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
-import { editDetailLocationSchema } from './form-schema';
-import { editDetailLocation } from './_actions/edit-detail-location';
+import { createClassSchema } from './form-schema';
+import { createClass } from './_actions/create-class';
 import { PhoneInput } from '@repo/ui/components/phone-input';
+import { SelectClassType } from '@repo/shared/repository';
+import { Textarea } from '@repo/ui/components/ui/textarea';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@repo/ui/components/ui/select';
+import { AddonInput } from '@repo/ui/components/addon-input';
 
-interface EditDetailLocationFormProps {
-  location: SelectLocation;
+interface CreateClassFormProps {
+  classTypes: SelectClassType[];
 }
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal mengubah detail lokasi',
+    title: 'Gagal membuat lokasi',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Mengubah detail lokasi...',
+    title: 'Membuat lokasi...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Detail lokasi berhasil diubah',
+    title: 'Lokasi berhasil dibuat',
   },
 };
 
-export default function EditDetailLocationForm({
-  location,
-}: EditDetailLocationFormProps) {
+export default function CreateClassForm({ classTypes }: CreateClassFormProps) {
   const router = useRouter();
 
   const [openSheet, setOpenSheet] = useState(false);
 
-  const [formState, formAction] = useFormState(editDetailLocation, {
+  const [formState, formAction] = useFormState(createClass, {
     status: 'default',
     form: {
-      locationId: location.id,
-      name: location.name,
-      address: location.address,
-      phoneNumber: location.phone_number,
-      email: location.email,
-      linkMaps: location.link_maps,
+      name: '',
+      class_type_id: 0,
+      description: '',
+      duration: 0,
+      slot: 0,
     },
   });
 
-  type FormSchema = EditDetailLocationSchema;
+  type FormSchema = CreateClassSchema;
   const form = useForm<FormSchema>({
-    resolver: zodResolver(editDetailLocationSchema),
+    resolver: zodResolver(createClassSchema),
     defaultValues: formState.form,
   });
 
@@ -98,8 +104,7 @@ export default function EditDetailLocationForm({
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
       router.refresh();
-      // router.replace(`/admin/locations/${location.id}`);
-      // setOpenSheet(false);
+      setOpenSheet(false);
     }
   }, [formState]);
 
@@ -118,14 +123,13 @@ export default function EditDetailLocationForm({
   return (
     <Sheet open={openSheet} onOpenChange={setOpenSheet}>
       <SheetTrigger asChild>
-        <Button variant={'outline'}>Edit</Button>
+        <Button>Tambah</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle className="text-left">Edit Detail Lokasi</SheetTitle>
+          <SheetTitle className="text-left">Buat Lokasi</SheetTitle>
           <SheetDescription className="text-left">
-            Buat perubahan pada detail lokasi, pastikan klik simpan ketika
-            selesai.
+            Buat lokasi, pastikan klik simpan ketika selesai.
           </SheetDescription>
         </SheetHeader>
         <div className="grid gap-4 py-4">
@@ -136,12 +140,6 @@ export default function EditDetailLocationForm({
               action={formAction}
               onSubmit={onFormSubmit}
             >
-              <FormField
-                control={form.control}
-                name="locationId"
-                render={({ field }) => <Input type="hidden" {...field} />}
-              />
-
               <FormField
                 control={form.control}
                 name="name"
@@ -155,14 +153,47 @@ export default function EditDetailLocationForm({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
-                name="address"
+                name="class_type_id"
                 render={({ field }) => (
                   <FormItem className="grid w-full gap-2">
-                    <FormLabel>Alamat</FormLabel>
+                    <FormLabel>Tipe Kelas</FormLabel>
                     <FormControl>
-                      <Input type="text" {...field} />
+                      <>
+                        <Input type="hidden" {...field} />
+
+                        <Select onValueChange={field.onChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih tipe kelas" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {classTypes.map((classType) => (
+                              <SelectItem
+                                key={classType.id}
+                                value={classType.id.toString()}
+                              >
+                                {classType.type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="grid w-full gap-2">
+                    <FormLabel>Deskripsi</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -170,14 +201,17 @@ export default function EditDetailLocationForm({
               />
               <FormField
                 control={form.control}
-                name="phoneNumber"
+                name="slot"
                 render={({ field }) => (
                   <FormItem className="grid w-full gap-2">
-                    <FormLabel>Telepon</FormLabel>
+                    <FormLabel>Slot</FormLabel>
                     <FormControl>
-                      <PhoneInput
+                      <AddonInput
+                        type="number"
+                        min={0}
+                        max={100}
                         {...field}
-                        value={field.value as PhoneNumberValue}
+                        endAdornment="Orang"
                       />
                     </FormControl>
                     <FormMessage />
@@ -186,25 +220,18 @@ export default function EditDetailLocationForm({
               />
               <FormField
                 control={form.control}
-                name="email"
+                name="duration"
                 render={({ field }) => (
                   <FormItem className="grid w-full gap-2">
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Duration</FormLabel>
                     <FormControl>
-                      <Input type="email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="linkMaps"
-                render={({ field }) => (
-                  <FormItem className="grid w-full gap-2">
-                    <FormLabel>Google Maps URL</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
+                      <AddonInput
+                        type="number"
+                        min={0}
+                        max={100}
+                        {...field}
+                        endAdornment="Menit"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

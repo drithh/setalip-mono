@@ -50,8 +50,8 @@ export async function up(db: Kysely<any>): Promise<void> {
       await trx.schema
         .createTable('locations')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
-        .addColumn('email', 'text', (col) => col.notNull().unique())
-        .addColumn('phone_number', 'text', (col) => col.notNull().unique())
+        .addColumn('email', 'text', (col) => col.notNull())
+        .addColumn('phone_number', 'text', (col) => col.notNull())
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('address', 'text', (col) => col.notNull())
         .addColumn('link_maps', 'text', (col) => col.notNull())

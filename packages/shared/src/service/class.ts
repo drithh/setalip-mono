@@ -6,6 +6,8 @@ import {
   SelectAllClass,
   SelectAllClassWithAsset,
   SelectDetailClassAssetAndLocation,
+  SelectClassAsset,
+  InsertClassAsset,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -22,8 +24,10 @@ export interface ClassService {
   ): PromiseResult<SelectDetailClassAssetAndLocation | undefined, Error>;
 
   create(data: InsertClass): PromiseResult<SelectClass, Error>;
+  createAsset(data: InsertClassAsset[]): PromiseResult<SelectClassAsset, Error>;
 
   update(data: UpdateClass): PromiseResult<undefined, Error>;
 
   delete(id: SelectClass['id']): PromiseResult<undefined, Error>;
+  deleteAsset(id: SelectClassAsset['id']): PromiseResult<undefined, Error>;
 }

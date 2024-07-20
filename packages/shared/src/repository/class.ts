@@ -37,6 +37,12 @@ export type InsertClass = Insertable<Classes>;
 
 export type UpdateClass = OptionalToRequired<Updateable<Classes>, 'id'>;
 
+export type SelectClassAsset = Selectable<ClassAssets>;
+export type InsertClassAsset = Insertable<ClassAssets>;
+export type UpdateClassAsset = OptionalToRequired<
+  Updateable<ClassAssets>,
+  'id'
+>;
 export interface ClassRepository {
   count(): Promise<number>;
 
@@ -51,8 +57,10 @@ export interface ClassRepository {
   ): Promise<SelectDetailClassAssetAndLocation | undefined>;
 
   create(data: InsertClass): Promise<SelectClass | Error>;
+  createAsset(data: InsertClassAsset[]): Promise<SelectClassAsset | Error>;
 
   update(data: UpdateClass): Promise<undefined | Error>;
 
   delete(id: SelectClass['id']): Promise<undefined | Error>;
+  deleteAsset(id: SelectClass['id']): Promise<undefined | Error>;
 }
