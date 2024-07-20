@@ -9,6 +9,7 @@ import type {
   ClassTypeRepository,
   InsertClassAsset,
   SelectClassAsset,
+  UpdateClassWithLocation,
 } from '../repository';
 import { ClassService } from './class';
 
@@ -111,7 +112,7 @@ export class ClassServiceImpl implements ClassService {
     };
   }
 
-  async update(data: UpdateClass) {
+  async update(data: UpdateClassWithLocation) {
     const result = await this._classRepository.update(data);
 
     if (result instanceof Error) {

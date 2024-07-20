@@ -5,7 +5,7 @@ import { createClassSchema } from '../form-schema';
 
 export const editDetailClassSchema = createClassSchema.extend({
   class_id: z.coerce.number(),
-  class_locations: z.array(z.coerce.number()),
+  class_locations: z.coerce.string().optional(),
 });
 
 export type EditDetailClassSchema = z.infer<typeof editDetailClassSchema>;

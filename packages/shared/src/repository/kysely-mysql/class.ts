@@ -8,6 +8,7 @@ import {
   SelectDetailClassAssetAndLocation,
   InsertClassAsset,
   SelectClassAsset,
+  UpdateClassWithLocation,
 } from '../class';
 import { ClassAssets, Database } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
@@ -162,7 +163,7 @@ export class KyselyMySqlClassRepository implements ClassRepository {
           .select(
             sql<
               SelectDetailClassAssetAndLocation['locations']
-            >`coalesce(json_arrayagg(json_object('name', locations.name)), '[]')`.as(
+            >`coalesce(json_arrayagg(json_object('name', locations.name, 'location_id', locations.id)), '[]')`.as(
               'locations'
             )
           )
@@ -216,20 +217,94 @@ export class KyselyMySqlClassRepository implements ClassRepository {
     }
   }
 
-  async update(data: UpdateClass) {
+  async update(data: UpdateClassWithLocation) {
     try {
-      const query = await this._db
-        .updateTable('classes')
-        .set(data)
-        .where('classes.id', '=', data.id)
-        .executeTakeFirst();
+      const result = await this._db.transaction().execute(async (trx) => {
+        const query = await trx
+          .updateTable('classes')
+          .set({
+            id: data.id,
+            name: data.name,
+            class_type_id: data.class_type_id,
+            description: data.description,
+            duration: data.duration,
+            slot: data.slot,
+          })
+          .where('classes.id', '=', data.id)
+          .executeTakeFirst();
 
-      if (query.numUpdatedRows === undefined) {
-        console.error('Failed to update class', query);
-        return new Error('Failed to update class');
-      }
+        if (query.numUpdatedRows === undefined) {
+          console.error('Failed to update class', query);
+          return new Error('Failed to update class');
+        }
 
-      return;
+        const currentClassLocations = await trx
+          .selectFrom('class_locations')
+          .select(['location_id', 'id'])
+          .where('class_id', '=', data.id)
+          .execute();
+
+        const newLocations = new Set(
+          data.class_locations.map((location) => location)
+        );
+
+        const toDelete = currentClassLocations.filter(
+          (location) => !newLocations.has(location.location_id)
+        );
+
+        if (toDelete.length > 0) {
+          const result = await trx
+            .deleteFrom('class_locations')
+            .where(
+              'id',
+              'in',
+              toDelete.map((location) => location.id)
+            )
+            .execute();
+
+          if (result[0]?.numDeletedRows === undefined) {
+            console.error('Failed to delete class locations', result);
+            return new Error('Failed to delete class locations');
+          }
+        }
+
+        const toInsert = data.class_locations.filter(
+          (location) =>
+            !currentClassLocations.some(
+              (currentLocation) => currentLocation.location_id === location
+            )
+        );
+
+        console.log(
+          'toInsert',
+          toInsert,
+          'toDelete',
+          toDelete,
+          'data',
+          newLocations,
+          currentClassLocations
+        );
+
+        if (toInsert.length > 0) {
+          const result = await trx
+            .insertInto('class_locations')
+            .values(
+              toInsert.map((location) => ({
+                class_id: data.id,
+                location_id: location,
+              }))
+            )
+            .execute();
+
+          if (result[0]?.numInsertedOrUpdatedRows === undefined) {
+            console.error('Failed to insert class locations', result);
+            return new Error('Failed to insert class locations');
+          }
+        }
+
+        return;
+      });
+      return result;
     } catch (error) {
       console.error('Error updating class:', error);
       return new Error('Failed to update class');

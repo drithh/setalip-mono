@@ -98,8 +98,7 @@ export default function EditDetailLocationForm({
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
       router.refresh();
-      // router.replace(`/admin/locations/${location.id}`);
-      // setOpenSheet(false);
+      setOpenSheet(false);
     }
   }, [formState]);
 

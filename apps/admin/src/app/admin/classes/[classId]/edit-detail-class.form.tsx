@@ -18,7 +18,14 @@ import { EditDetailClassSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
-import { SelectClass, SelectClassType } from '@repo/shared/repository';
+import {
+  SelectClass,
+  SelectClassType,
+  SelectClassWithAsset,
+  SelectDetailClassAssetAndLocation,
+  SelectLocation,
+} from '@repo/shared/repository';
+import { MultiSelect } from '@repo/ui/components/multi-select';
 import {
   Sheet,
   SheetTrigger,
@@ -41,8 +48,9 @@ import {
 } from '@repo/ui/components/ui/select';
 
 interface EditDetailClassFormProps {
-  singleClass: SelectClass;
+  singleClass: SelectDetailClassAssetAndLocation;
   classTypes: SelectClassType[];
+  locations: SelectLocation[];
 }
 
 const TOAST_MESSAGES = {
@@ -62,6 +70,7 @@ const TOAST_MESSAGES = {
 export default function EditDetailClassForm({
   singleClass,
   classTypes,
+  locations,
 }: EditDetailClassFormProps) {
   const router = useRouter();
 
@@ -76,9 +85,23 @@ export default function EditDetailClassForm({
       description: singleClass.description,
       slot: singleClass.slot,
       duration: singleClass.duration,
-      class_locations: [],
+      class_locations: singleClass.locations
+        ?.map((location) => location.location_id.toString())
+        .join(','),
     },
   });
+
+  const [selectedLocation, setSelectedLocation] = useState<
+    {
+      value: string;
+      label: string;
+    }[]
+  >(
+    singleClass.locations?.map((location) => ({
+      value: location.location_id.toString(),
+      label: location.name,
+    })) || [],
+  );
 
   type FormSchema = EditDetailClassSchema;
   const form = useForm<FormSchema>({
@@ -110,8 +133,7 @@ export default function EditDetailClassForm({
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
       router.refresh();
-      // router.replace(`/admin/classs/${class.id}`);
-      // setOpenSheet(false);
+      setOpenSheet(false);
     }
   }, [formState]);
 
@@ -166,7 +188,7 @@ export default function EditDetailClassForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem className="grid w-full gap-2">
-                    <FormLabel>Nama Lokasi</FormLabel>
+                    <FormLabel>Nama Kelas</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
                     </FormControl>
@@ -253,6 +275,37 @@ export default function EditDetailClassForm({
                         {...field}
                         endAdornment="Menit"
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="class_locations"
+                render={({ field }) => (
+                  <FormItem className="grid w-full gap-2">
+                    <FormLabel>Tersedia Di Lokasi</FormLabel>
+                    <FormControl>
+                      <>
+                        <Input
+                          type="hidden"
+                          {...field}
+                          value={selectedLocation
+                            .map((location) => location.value)
+                            .join(',')}
+                        />
+                        <MultiSelect
+                          options={locations.map((location) => ({
+                            label: location.name,
+                            value: location.id.toString(),
+                          }))}
+                          placeholder="Pilih lokasi"
+                          selected={selectedLocation}
+                          setSelected={setSelectedLocation}
+                        />
+                      </>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

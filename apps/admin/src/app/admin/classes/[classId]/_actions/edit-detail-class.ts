@@ -27,7 +27,10 @@ export async function editDetailClass(
 
   const classService = container.get<ClassService>(TYPES.ClassService);
 
-  // class_locations: parsed.data.class_locations,
+  const class_locations =
+    parsed.data.class_locations?.split(',').map((loc) => {
+      return parseInt(loc);
+    }) || [];
 
   const updateClass = await classService.update({
     id: parsed.data.class_id,
@@ -36,6 +39,7 @@ export async function editDetailClass(
     description: parsed.data.description,
     duration: parsed.data.duration,
     slot: parsed.data.slot,
+    class_locations: class_locations,
   });
 
   if (updateClass.error) {

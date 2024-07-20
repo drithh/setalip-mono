@@ -29,7 +29,6 @@ export function MultiSelect({
 }: MultiSelectProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
-  // const [selected, setSelected] = React.useState<Option[]>([]);
   const [inputValue, setInputValue] = React.useState('');
 
   const handleUnselect = React.useCallback((option: Option) => {
@@ -71,7 +70,7 @@ export function MultiSelect({
         <div className="flex flex-wrap gap-1">
           {selected.map((option) => {
             return (
-              <Badge key={option.value} variant="secondary">
+              <Badge key={option.value} variant="default">
                 {option.label}
                 <button
                   className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"

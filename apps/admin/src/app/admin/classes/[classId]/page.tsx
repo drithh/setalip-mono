@@ -9,7 +9,11 @@ import {
   CardTitle,
 } from '@repo/ui/components/ui/card';
 import { Textarea } from '@repo/ui/components/ui/textarea';
-import { ClassService, ClassTypeService } from '@repo/shared/service';
+import {
+  ClassService,
+  ClassTypeService,
+  LocationService,
+} from '@repo/shared/service';
 import { ChevronLeft } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { Label } from '@repo/ui/components/ui/label';
@@ -21,8 +25,9 @@ import { validateAdmin } from '@/lib/auth';
 import EditDetailClassForm from './edit-detail-class.form';
 import { BackButton } from '@repo/ui/components/back-button';
 import { AddonInput } from '@repo/ui/components/addon-input';
-import DeleteClass from './delete-location.dialog';
+import DeleteClass from './delete-class.dialog';
 import ClassAssets from './_components/class-assets';
+import { Badge } from '@repo/ui/components/ui/badge';
 
 export default async function ClassDetail({
   params,
@@ -48,6 +53,9 @@ export default async function ClassDetail({
   );
   const classTypes = await classTypeService.findAll();
 
+  const locationService = container.get<LocationService>(TYPES.LocationService);
+  const locations = await locationService.findAll();
+
   return (
     <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
       <div className="flex place-items-center gap-4">
@@ -64,10 +72,11 @@ export default async function ClassDetail({
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8 xl:col-span-2">
           <Card>
             <CardHeader className="flex flex-row place-content-between place-items-center">
-              <CardTitle>Detail Lokasi</CardTitle>
+              <CardTitle>Detail Kelas</CardTitle>
               <EditDetailClassForm
                 singleClass={singleClass.result}
                 classTypes={classTypes.result || []}
+                locations={locations.result || []}
               />
             </CardHeader>
             <CardContent>
@@ -128,6 +137,21 @@ export default async function ClassDetail({
                     endAdornment="Menit"
                   />
                 </div>
+
+                <div className="grid gap-3">
+                  <Label>Tersedia di Lokasi</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {singleClass.result?.locations?.map((loca) => (
+                      <Badge
+                        key={loca.location_id}
+                        className="w-fit"
+                        variant="default"
+                      >
+                        {loca.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -136,7 +160,7 @@ export default async function ClassDetail({
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
           <Card className="overflow-hidden">
             <CardHeader>
-              <CardTitle>Foto Lokasi</CardTitle>
+              <CardTitle>Foto Kelas</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-2">

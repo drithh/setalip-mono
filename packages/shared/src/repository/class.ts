@@ -19,9 +19,14 @@ export interface SelectClassWithAsset extends ClassWithoutGenerated {
 }
 
 type ClassWithoutGenerated = Omit<SelectClass, 'updated_at' | 'updated_by'>;
+
+export interface ClassLocationsWithName {
+  name: SelectClassLocation['name'];
+  location_id: SelectClass['id'];
+}
 export interface SelectDetailClassAssetAndLocation extends SelectClass {
   asset: Selectable<ClassAssets>[] | null;
-  locations: Record<'name', string>[] | null;
+  locations: ClassLocationsWithName[] | null;
   class_type: ClassTypes['type'];
 }
 
@@ -36,6 +41,10 @@ export type SelectClassLocation = Selectable<Locations>;
 export type InsertClass = Insertable<Classes>;
 
 export type UpdateClass = OptionalToRequired<Updateable<Classes>, 'id'>;
+
+export interface UpdateClassWithLocation extends UpdateClass {
+  class_locations: number[];
+}
 
 export type SelectClassAsset = Selectable<ClassAssets>;
 export type InsertClassAsset = Insertable<ClassAssets>;
@@ -59,7 +68,7 @@ export interface ClassRepository {
   create(data: InsertClass): Promise<SelectClass | Error>;
   createAsset(data: InsertClassAsset[]): Promise<SelectClassAsset | Error>;
 
-  update(data: UpdateClass): Promise<undefined | Error>;
+  update(data: UpdateClassWithLocation): Promise<undefined | Error>;
 
   delete(id: SelectClass['id']): Promise<undefined | Error>;
   deleteAsset(id: SelectClass['id']): Promise<undefined | Error>;
