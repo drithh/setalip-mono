@@ -5,10 +5,10 @@ export async function up(db: Kysely<any>): Promise<void> {
     builder: CreateTableBuilder<T, C>
   ) => {
     return builder
-      .addColumn('created_at', 'timestamp', (col) =>
+      .addColumn('created_at', 'datetime', (col) =>
         col.notNull().defaultTo(sql`now()`)
       )
-      .addColumn('updated_at', 'timestamp', (col) =>
+      .addColumn('updated_at', 'datetime', (col) =>
         col.notNull().defaultTo(sql`now()`)
       )
       .addColumn('updated_by', 'bigint', (col) =>
@@ -55,7 +55,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('address', 'text', (col) => col.notNull())
         .addColumn('link_maps', 'text', (col) => col.notNull())
-        .addColumn('deleted_at', 'timestamp')
+        .addColumn('deleted_at', 'datetime')
         .$call(addDefaultColumns)
         .execute();
 
@@ -79,7 +79,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('location_id', 'bigint', (col) =>
           col.references('locations.id')
         )
-        .addColumn('verified_at', 'timestamp')
+        .addColumn('verified_at', 'datetime')
         .$call(addDefaultColumns)
         .execute();
 
@@ -117,7 +117,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('otp')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('otp', 'text', (col) => col.notNull())
-        .addColumn('expired_at', 'timestamp', (col) => col.notNull())
+        .addColumn('expired_at', 'datetime', (col) => col.notNull())
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id').unique()
         )
@@ -127,7 +127,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       await trx.schema
         .createTable('user_sessions')
         .addColumn('id', 'varchar(50)', (col) => col.notNull().primaryKey())
-        .addColumn('expires_at', 'timestamp', (col) => col.notNull())
+        .addColumn('expires_at', 'datetime', (col) => col.notNull())
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
         )
@@ -138,7 +138,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('reset_password')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('token', 'text', (col) => col.notNull().unique())
-        .addColumn('expired_at', 'timestamp', (col) => col.notNull())
+        .addColumn('expired_at', 'datetime', (col) => col.notNull())
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
         )
@@ -188,7 +188,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('location_id', 'bigint', (col) =>
           col.notNull().references('locations.id')
         )
-        .addColumn('deleted_at', 'timestamp')
+        .addColumn('deleted_at', 'datetime')
         .$call(addDefaultColumns)
         .execute();
 
@@ -245,7 +245,7 @@ export async function up(db: Kysely<any>): Promise<void> {
           col.notNull()
         )
         .addColumn('discount', 'int4', (col) => col.notNull())
-        .addColumn('expired_at', 'timestamp', (col) => col.notNull())
+        .addColumn('expired_at', 'datetime', (col) => col.notNull())
         .addColumn('user_id', 'bigint', (col) => col.references('users.id'))
         .addCheckConstraint(
           'discount_percentage_max',
@@ -258,7 +258,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('user_packages')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('credit', 'int4', (col) => col.notNull())
-        .addColumn('expired_at', 'timestamp', (col) => col.notNull())
+        .addColumn('expired_at', 'datetime', (col) => col.notNull())
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
         )
@@ -356,7 +356,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       await trx.schema
         .createTable('agendas')
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
-        .addColumn('time', 'timestamp', (col) => col.notNull())
+        .addColumn('time', 'datetime', (col) => col.notNull())
         .addColumn('class_id', 'bigint', (col) =>
           col.notNull().references('classes.id')
         )
@@ -391,7 +391,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'bigint', (col) => col.primaryKey().autoIncrement())
         .addColumn('type', sql`ENUM('debit', 'credit')`, (col) => col.notNull())
         .addColumn('amount', 'int4', (col) => col.notNull())
-        .addColumn('expired_at', 'timestamp')
+        .addColumn('expired_at', 'datetime')
         .addColumn('note', 'text', (col) => col.notNull())
         .addColumn('user_id', 'bigint', (col) =>
           col.notNull().references('users.id')
@@ -470,7 +470,7 @@ export async function up(db: Kysely<any>): Promise<void> {
           'discount_percentage_max',
           sql`type = 'percentage' AND discount <= 100 OR type = 'fixed'`
         )
-        .addColumn('expired_at', 'timestamp', (col) => col.notNull())
+        .addColumn('expired_at', 'datetime', (col) => col.notNull())
         .$call(addDefaultColumns)
         .execute();
     });

@@ -34,15 +34,15 @@ interface CreateLocationFormProps {}
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal mengubah detail lokasi',
+    title: 'Gagal membuat lokasi',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Mengubah detail lokasi...',
+    title: 'Membuat lokasi...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Detail lokasi berhasil diubah',
+    title: 'Lokasi berhasil dibuat',
   },
 };
 
@@ -115,10 +115,9 @@ export default function CreateLocationForm({}: CreateLocationFormProps) {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle className="text-left">Edit Detail Lokasi</SheetTitle>
+          <SheetTitle className="text-left">Buat Lokasi</SheetTitle>
           <SheetDescription className="text-left">
-            Buat perubahan pada detail lokasi, pastikan klik simpan ketika
-            selesai.
+            Buat lokasi, pastikan klik simpan ketika selesai.
           </SheetDescription>
         </SheetHeader>
         <div className="grid gap-4 py-4">

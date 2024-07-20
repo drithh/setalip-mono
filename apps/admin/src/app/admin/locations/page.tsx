@@ -65,7 +65,6 @@ export default async function Locations() {
                 Tambahkan lokasi baru atau cabang baru
               </p>
               <CreateLocationForm />
-              {/* <Button className="mt-4">Tambah Lokasi</Button> */}
             </div>
           </Card>
         </div>
