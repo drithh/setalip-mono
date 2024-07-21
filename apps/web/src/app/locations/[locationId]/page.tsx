@@ -15,8 +15,16 @@ import { format, setDay } from 'date-fns';
 import { Mail, MapPin, Phone, User2 } from 'lucide-react';
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
-
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@repo/ui/components/ui/breadcrumb';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
+import { BackButton } from '@repo/ui/components/back-button';
 
 export default async function LocationDetail({
   params,
@@ -63,8 +71,26 @@ export default async function LocationDetail({
   return (
     <div>
       <div className="w-full">
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container grid  gap-6 px-4 md:px-6  lg:grid-cols-[5fr_3fr] lg:gap-12">
+        <section className="container w-full py-12 md:py-24 lg:py-32">
+          <div className="my-2 flex place-items-center gap-2">
+            <BackButton />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/" className="text-[1.05rem]">
+                    Locations
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="text-[1.05rem]">
+                    {singleLocation.result.name}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <div className=" grid  gap-6 lg:grid-cols-[5fr_3fr] lg:gap-12">
             <div className="flex flex-col gap-4">
               <Carousel className="m-0 w-full">
                 <div className="relative w-full overflow-hidden rounded-xl">

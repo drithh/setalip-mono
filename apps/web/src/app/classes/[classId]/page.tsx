@@ -14,6 +14,15 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { ImageWithFallback } from '@/lib/image-with-fallback';
+import { BackButton } from '@repo/ui/components/back-button';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from '@repo/ui/components/ui/breadcrumb';
 export default async function ClassDetail({
   params,
 }: {
@@ -34,8 +43,26 @@ export default async function ClassDetail({
   return (
     <div>
       <div className="w-full">
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container grid gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-12">
+        <section className="container w-full py-12 md:py-24 lg:py-32">
+          <div className=" my-2 flex place-items-center gap-2">
+            <BackButton />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/" className="text-[1.05rem]">
+                    Classes
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="text-[1.05rem]">
+                    {singleClass.result.name}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <div className=" grid gap-6 lg:grid-cols-2 lg:gap-12">
             <Carousel className="m-0 w-full">
               <div className="relative w-full overflow-hidden rounded-xl">
                 <CarouselMainContainer className="">

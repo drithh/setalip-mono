@@ -1,5 +1,5 @@
 import { container, TYPES } from '@repo/shared/inversify';
-import { WebSettingService } from '@repo/shared/service';
+import { LoyaltyService, WebSettingService } from '@repo/shared/service';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   DropdownMenu,
@@ -25,6 +25,10 @@ export default async function Navigation() {
 
   const logo = await webSettingService.findLogo();
 
+  const loyaltyService = container.get<LoyaltyService>(TYPES.LoyaltyService);
+
+  const loyalty = await loyaltyService.findAmountByUserId(auth?.user?.id ?? 0);
+
   return (
     <nav className="sticky top-0 z-30 h-auto gap-4 border-b-2 border-b-primary bg-background px-4 py-4  sm:h-auto sm:px-6">
       <div className="mx-auto flex max-w-screen-xl items-center justify-center">
@@ -46,6 +50,15 @@ export default async function Navigation() {
         <div className="flex flex-grow flex-row items-center justify-end">
           {/* auth profile */}
           <div className="mr-6 hidden h-full flex-row gap-4 pt-1 font-medium uppercase md:flex xl:gap-6">
+            <Link href="/">
+              <Button
+                variant="link"
+                size="default"
+                className="uppercase text-primary-foreground"
+              >
+                Home
+              </Button>
+            </Link>
             <Link href="/classes">
               <Button
                 variant="link"
@@ -56,7 +69,7 @@ export default async function Navigation() {
               </Button>
             </Link>
             <Link
-              href={`/schedules${auth?.user?.locationId !== undefined ? `?location_name=${auth?.user?.locationId}` : ''}`}
+              href={`/schedules${auth?.user?.locationId !== undefined && auth?.user?.locationId !== null ? `?location_name=${auth?.user?.locationId}` : ''}`}
             >
               <Button
                 variant="link"
@@ -88,29 +101,43 @@ export default async function Navigation() {
 
           <div className="flex-shrink-0">
             {auth?.user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="overflow-hidden rounded-full"
-                  >
-                    <Avatar user={auth.user} />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {menus.map((menu) =>
-                    menu?.role === auth?.user?.role ||
-                    menu.role === undefined ? (
-                      <DropdownMenuItem key={menu.path} asChild>
-                        <Link className="cursor-pointer" href={menu.path}>
-                          <span>{menu.label}</span>
-                        </Link>
-                      </DropdownMenuItem>
-                    ) : null,
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex place-content-end gap-5">
+                {auth.user.role === 'user' && (
+                  <Link href="/me/loyalty">
+                    <Button
+                      className="min-w-20 uppercase text-primary-foreground"
+                      variant="outline"
+                    >
+                      {(loyalty.result?.total_debit ?? 0) -
+                        (loyalty.result?.total_credit ?? 0)}{' '}
+                      pts
+                    </Button>
+                  </Link>
+                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="overflow-hidden rounded-full"
+                    >
+                      <Avatar user={auth.user} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {menus.map((menu) =>
+                      menu?.role === auth?.user?.role ||
+                      menu.role === undefined ? (
+                        <DropdownMenuItem key={menu.path} asChild>
+                          <Link className="cursor-pointer" href={menu.path}>
+                            <span>{menu.label}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      ) : null,
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : (
               <div className="flex place-content-end gap-2 ">
                 <Link href="/login">

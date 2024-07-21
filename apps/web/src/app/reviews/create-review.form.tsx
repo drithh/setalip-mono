@@ -32,6 +32,7 @@ import { api } from '@/trpc/react';
 
 import { createReview } from './_actions/create-review';
 import { CreateReviewSchema, createReviewSchema } from './form-schema';
+import { BackButton } from '@repo/ui/components/back-button';
 
 interface CreateReviewProps {}
 
@@ -111,7 +112,10 @@ export default function CreateReviewForm({}: CreateReviewProps) {
   return (
     <Card className="mx-auto w-full max-w-md space-y-8">
       <CardHeader>
-        <CardTitle>Write a Review</CardTitle>
+        <CardTitle className="flex place-items-center gap-2">
+          <BackButton />
+          Write a Review
+        </CardTitle>
         <CardDescription>
           Share your thoughts and experience with this product or service.
         </CardDescription>

@@ -3,21 +3,25 @@ import { WebSettingService } from '@repo/shared/service';
 import RichTextViewer from '@repo/ui/components/rich-text/viewer';
 import Image from 'next/image';
 import Link from 'next/link';
+import { BackButton } from '@repo/ui/components/back-button';
 
 import { env } from '@repo/shared/env';
 
 const ImageUrl = {
-  whyUs: `${env.HOST}/static/why-us.webp`,
+  whyUs: `${env.HOST}/static/auth-1.webp`,
   story: `${env.HOST}/static/story.webp`,
 };
 
 export default async function Page() {
   return (
     <div className="mx-auto mb-24 flex w-full max-w-5xl flex-col gap-12  px-4 py-12 md:px-6 md:py-16">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
-          Our Story
-        </h1>
+      <div className="flex">
+        <BackButton />
+        <div className="w-full text-center">
+          <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
+            Our Story
+          </h1>
+        </div>
       </div>
       <div className=" flex flex-col gap-6">
         <div className="grid items-start gap-2 lg:grid-cols-2 lg:gap-6">

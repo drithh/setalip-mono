@@ -43,7 +43,7 @@ const whyUs = [
   {
     title: 'Proven Results and Client Success Stories',
     description:
-      'At Pilates Reform, we take pride in our track record of delivering results. Experience significant improvements in strength, flexibility, and overall fitness through our structured programs, supported by inspiring success stories from our community.',
+      'At Pilates Reform, Experience significant improvements in strength, flexibility, and overall fitness through our structured programs, supported by inspiring success stories from our community.',
   },
 ];
 
