@@ -78,7 +78,7 @@ export default async function AgendaDetail({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/" className="text-[1.05rem]">
+                  <BreadcrumbLink href="/schedules" className="text-[1.05rem]">
                     Schedules
                   </BreadcrumbLink>
                 </BreadcrumbItem>

@@ -31,7 +31,7 @@ export default async function Attendances({
   }
 
   return (
-    <div className="w-full p-6">
+    <div className="w-full p-2 md:p-6">
       <h1 className="text-3xl font-bold">Attendances</h1>
       <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[95vw] flex-col gap-24 md:max-w-screen-xl">
         <AgendaTable participants={agendas.result} />

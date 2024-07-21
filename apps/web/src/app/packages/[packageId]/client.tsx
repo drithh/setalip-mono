@@ -71,7 +71,7 @@ export default function Client({
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/" className="text-[1.05rem]">
+              <BreadcrumbLink href="/packages" className="text-[1.05rem]">
                 Packages
               </BreadcrumbLink>
             </BreadcrumbItem>

@@ -90,7 +90,7 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <div className="flex flex-col sm:flex-row items-center sm:place-content-center gap-2">
+      <div className="self-end flex flex-col sm:flex-row items-center sm:place-content-center gap-2">
         {children}
         <DataTableViewOptions table={table} />
       </div>

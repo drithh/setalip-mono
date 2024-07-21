@@ -46,7 +46,7 @@ export default async function Schedules({
   const agendas = await agendaService.findTodayScheduleByCoachId(auth.user.id);
 
   return (
-    <div className="w-full p-6">
+    <div className="w-full p-2 md:p-6">
       <h1 className="text-3xl font-bold">Today's Schedule</h1>
       <div className="my-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
         {agendas?.result?.map((agenda) => (

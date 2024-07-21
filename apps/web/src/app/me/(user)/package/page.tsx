@@ -25,7 +25,7 @@ export default async function Package({ searchParams }: { searchParams: any }) {
   );
 
   return (
-    <div className="w-full p-6">
+    <div className="w-full p-2 md:p-6">
       <h1 className="text-3xl font-bold">Package</h1>
       <div className="my-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
         {packages?.result?.map((singlePackage) => (

@@ -49,7 +49,7 @@ export default async function ClassDetail({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/" className="text-[1.05rem]">
+                  <BreadcrumbLink href="/classes" className="text-[1.05rem]">
                     Classes
                   </BreadcrumbLink>
                 </BreadcrumbItem>

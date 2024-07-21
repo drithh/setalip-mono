@@ -21,6 +21,10 @@ const config = {
       },
     },
     extend: {
+      dropShadow: {
+        bevel:
+          'inset 0.2em 0.2em 0.2em 0 rgba(255,255,255,0.5), inset -0.2em -0.2em 0.2em 0 rgba(0,0,0,0.5)',
+      },
       fontSize: {
         tiny: '.625rem',
       },

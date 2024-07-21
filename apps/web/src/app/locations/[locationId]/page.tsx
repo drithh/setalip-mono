@@ -77,7 +77,7 @@ export default async function LocationDetail({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/" className="text-[1.05rem]">
+                  <BreadcrumbLink href="/locations" className="text-[1.05rem]">
                     Locations
                   </BreadcrumbLink>
                 </BreadcrumbItem>

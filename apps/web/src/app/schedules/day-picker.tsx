@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@repo/ui/lib/utils';
-import { format , addDays, isBefore,startOfDay } from 'date-fns';
+import { format, addDays, isBefore, startOfDay } from 'date-fns';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -17,32 +17,10 @@ export default function DayPicker({
   setDate: setSelectedDate,
   // onDateChangex
 }: DayPickerProps) {
-  const [numberOfDays, setNumberOfDays] = useState(3);
+  const numberOfDays = 7;
   const [currentDayIndex, setCurrentDayIndex] = useState(
     selectedDate.getDay() % numberOfDays,
   );
-
-  useEffect(() => {
-    function handleResize() {
-      setNumberOfDays(calculateNumberOfDays());
-    }
-    handleResize();
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  function calculateNumberOfDays() {
-    if (window.innerWidth > 880) {
-      return 7;
-    } else if (window.innerWidth > 520) {
-      return 5;
-    } else {
-      return 3;
-    }
-  }
 
   const handleArrowClick = (direction: string) => {
     const currentDate = startOfDay(new Date());
@@ -80,14 +58,14 @@ export default function DayPicker({
   };
 
   return (
-    <div className="mx-auto mb-8 flex w-full max-w-screen-lg flex-col items-center justify-center gap-4 pt-2 sm:flex-row">
+    <div className="mx-auto flex w-full max-w-screen-lg flex-col items-center justify-center gap-4 pt-2 sm:mb-8 sm:flex-row">
       <button
         className="hidden h-16 rounded-full sm:inline"
         onClick={() => handleArrowClick('left')}
       >
         <ChevronLeft className="h-16 w-16 text-secondary" />
       </button>
-      <div className="flex w-full place-content-between gap-2">
+      <div className="flex w-full grid-cols-3 flex-wrap place-content-center gap-2">
         {Array.from(
           { length: numberOfDays },
           (_, index) => index - currentDayIndex,
@@ -95,14 +73,14 @@ export default function DayPicker({
           <div
             key={index}
             className={cn(
-              'h-24 w-24 cursor-pointer rounded-lg p-2',
+              'h-[4.6rem] w-[4.6rem] cursor-pointer rounded-md p-2  sm:h-24 sm:w-24 sm:rounded-lg',
               index === currentDayIndex
                 ? 'bg-secondary text-white md:animate-scale-in'
                 : 'bg-primary md:animate-scale-out',
             )}
             onClick={() => handleDateClick(index)} // Use handleDateClick instead of inline function
           >
-            <div className="flex h-full flex-col items-center justify-center text-center text-lg">
+            <div className="flex h-full flex-col items-center justify-center text-center text-base sm:text-lg">
               <p className="font-semibold">
                 {format(
                   new Date(
@@ -132,13 +110,13 @@ export default function DayPicker({
           className="inline rounded-full sm:hidden"
           onClick={() => handleArrowClick('left')}
         >
-          <ChevronLeft className="h-16 w-16 text-secondary" />
+          <ChevronLeft className="h-12 w-12 text-secondary sm:h-16 sm:w-16" />
         </button>
         <button
           className="inline rounded-full"
           onClick={() => handleArrowClick('right')}
         >
-          <ChevronRight className="h-16 w-16 text-secondary" />
+          <ChevronRight className="h-12 w-12 text-secondary sm:h-16 sm:w-16" />
         </button>
       </div>
     </div>
