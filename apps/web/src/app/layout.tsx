@@ -8,6 +8,8 @@ import { Montserrat } from 'next/font/google';
 import Footer from './_components/footer';
 import Header from './_components/navigation';
 import Provider from './provider';
+import GlobalToast from './_components/global-toast';
+import { Suspense } from 'react';
 
 const monserrat = Montserrat({
   display: 'swap',
@@ -144,6 +146,9 @@ export default function RootLayout({
       </head>
       <body className="font-sans">
         <Provider>
+          <Suspense>
+            <GlobalToast />
+          </Suspense>
           <div className="flex min-h-screen w-full flex-col  bg-background">
             <Header />
             <div className="flex-grow">{children}</div>
