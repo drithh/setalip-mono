@@ -275,16 +275,6 @@ export class KyselyMySqlClassRepository implements ClassRepository {
             )
         );
 
-        console.log(
-          'toInsert',
-          toInsert,
-          'toDelete',
-          toDelete,
-          'data',
-          newLocations,
-          currentClassLocations
-        );
-
         if (toInsert.length > 0) {
           const result = await trx
             .insertInto('class_locations')

@@ -37,7 +37,6 @@ export const voucherRouter = {
   findByCode: protectedProcedure
     .input(findVoucherByCodeSchema)
     .mutation(async ({ ctx, input }) => {
-      console.log('input', input);
       const voucherService = ctx.container.get<VoucherService>(
         TYPES.VoucherService
       );
@@ -46,8 +45,6 @@ export const voucherRouter = {
         code: input.code,
         user_id: ctx.session.userId,
       });
-
-      console.log('voucher', ctx);
 
       return voucher;
     }),

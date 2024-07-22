@@ -123,7 +123,7 @@ export default async function Home() {
                 </h2>
               </div>
             </div>
-            <div className="mx-auto grid  items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
+            <div className="mx-auto flex flex-col-reverse items-center gap-6 py-12 lg:grid lg:grid-cols-2 lg:gap-12">
               <div className="flex flex-col justify-center space-y-4">
                 <ul className="grid gap-8">
                   {whyUs.map((item, index) => (
@@ -138,14 +138,14 @@ export default async function Home() {
                   ))}
                 </ul>
               </div>
-              <div className="relative h-full w-full">
+              <div className="relative h-72 w-full lg:h-full">
                 <div className="absolute inset-0">
                   <Image
                     src={ImageUrl.whyUs ?? '/placeholder.svg'}
                     fill
                     alt="Why Us"
                     style={{ filter: 'brightness(90%) saturate(90%)' }}
-                    className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:w-full"
+                    className="mx-auto aspect-video h-full w-full overflow-hidden rounded-xl object-cover object-center "
                   />
                 </div>
               </div>
@@ -182,7 +182,7 @@ export default async function Home() {
                   </p>
                 </div>
               </div>
-              <div className="relative h-full w-full">
+              <div className="relative h-72 w-full lg:h-full">
                 <div className="absolute bottom-0 left-0 right-0 top-auto h-[90%]">
                   <Image
                     src={ImageUrl.story ?? '/placeholder.svg'}
@@ -196,7 +196,7 @@ export default async function Home() {
             </div>
           </div>
         </section>
-        <section className="flex h-[40rem] flex-col gap-4 bg-background py-12 md:py-24 lg:pb-24 lg:pt-32 ">
+        <section className="flex  flex-col gap-4 bg-background py-12 md:py-24 lg:pb-24 lg:pt-32 ">
           <div className="flex flex-col place-items-center">
             <h2 className="text-center text-3xl font-bold tracking-tighter sm:text-5xl">
               Reviews that Speak Volumes

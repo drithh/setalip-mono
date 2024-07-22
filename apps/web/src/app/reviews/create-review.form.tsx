@@ -51,7 +51,6 @@ const TOAST_MESSAGES = {
 };
 
 export default function CreateReviewForm({}: CreateReviewProps) {
-  const trpcUtils = api.useUtils();
   const router = useRouter();
   type FormSchema = CreateReviewSchema;
 
@@ -92,8 +91,10 @@ export default function CreateReviewForm({}: CreateReviewProps) {
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
       form.reset();
-      trpcUtils.invalidate();
-      router.push('/');
+      router.push('/', {
+        scroll: true,
+      });
+      router.refresh();
     }
   }, [formState]);
 

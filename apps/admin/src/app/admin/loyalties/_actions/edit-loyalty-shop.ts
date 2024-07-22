@@ -43,8 +43,6 @@ export async function editLoyaltyShop(
     };
   }
 
-  console.log('fileUpload', fileUpload);
-
   const loyaltyService = container.get<LoyaltyService>(TYPES.LoyaltyService);
 
   const result = await loyaltyService.updateShop({

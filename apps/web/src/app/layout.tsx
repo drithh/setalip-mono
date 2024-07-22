@@ -150,7 +150,13 @@ export default function RootLayout({
             <Footer />
           </div>
         </Provider>
-        <Toaster position="top-right" duration={5000} />
+        <Toaster
+          theme="light"
+          richColors
+          closeButton={true}
+          position="top-right"
+          duration={5000}
+        />
       </body>
     </html>
   );

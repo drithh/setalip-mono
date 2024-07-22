@@ -55,6 +55,7 @@ export async function Review() {
 
   const reviewQuery = await webSettingService.findAllReview({
     perPage: 100,
+    is_show: 1,
   });
   const reviews = reviewQuery.result?.data ?? [];
 

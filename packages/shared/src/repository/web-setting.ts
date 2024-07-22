@@ -64,6 +64,7 @@ export interface SelectAllFrequentlyAskedQuestion {
 
 export interface findAllReviewOption extends DefaultPagination {
   email?: SelectUser['email'];
+  is_show?: SelectReview['is_show'];
 }
 
 export interface SelectAllReview {

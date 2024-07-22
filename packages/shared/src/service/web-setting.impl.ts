@@ -137,7 +137,10 @@ export class WebSettingServiceImpl implements WebSettingService {
   }
 
   async createReview(data: InsertReview) {
-    const review = await this._webSettingRepository.createReview(data);
+    const review = await this._webSettingRepository.createReview({
+      ...data,
+      is_show: 0,
+    });
 
     if (review instanceof Error) {
       return {

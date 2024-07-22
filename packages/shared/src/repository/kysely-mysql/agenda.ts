@@ -621,8 +621,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       const endTime = new Date(data.time);
       endTime.setMinutes(endTime.getMinutes() + duration.duration);
 
-      console.log('startTime', startTime, 'endTime', endTime);
-
       const coachAvailability = await this._db
         .selectFrom('agendas')
         .select(['agendas.id'])

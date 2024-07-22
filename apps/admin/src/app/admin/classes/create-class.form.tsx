@@ -46,15 +46,15 @@ interface CreateClassFormProps {
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal membuat lokasi',
+    title: 'Gagal membuat kelas',
     description: 'Silahkan coba lagi',
   },
   loading: {
-    title: 'Membuat lokasi...',
+    title: 'Membuat kelas...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Lokasi berhasil dibuat',
+    title: 'Kelas berhasil dibuat',
   },
 };
 
@@ -127,9 +127,9 @@ export default function CreateClassForm({ classTypes }: CreateClassFormProps) {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle className="text-left">Buat Lokasi</SheetTitle>
+          <SheetTitle className="text-left">Buat Kelas</SheetTitle>
           <SheetDescription className="text-left">
-            Buat lokasi, pastikan klik simpan ketika selesai.
+            Buat kelas, pastikan klik simpan ketika selesai.
           </SheetDescription>
         </SheetHeader>
         <div className="grid gap-4 py-4">
@@ -145,7 +145,7 @@ export default function CreateClassForm({ classTypes }: CreateClassFormProps) {
                 name="name"
                 render={({ field }) => (
                   <FormItem className="grid w-full gap-2">
-                    <FormLabel>Nama Lokasi</FormLabel>
+                    <FormLabel>Nama Kelas</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
                     </FormControl>

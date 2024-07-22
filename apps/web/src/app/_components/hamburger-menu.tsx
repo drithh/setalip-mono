@@ -7,12 +7,7 @@ import {
   SheetTrigger,
 } from '@repo/ui/components/ui/sheet';
 import { User } from 'lucia';
-import {
-  CalendarClock,
-  Menu,
-  Phone,
-  Tag,
-} from 'lucide-react';
+import { CalendarClock, Home, Menu, Phone, Tag } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -70,7 +65,14 @@ export default function HamburgerMenu({ user }: MenuProps) {
               <Separator />
             </>
           )}
-
+          <Link
+            href="/home"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+          >
+            <Home className="h-5 w-5 fill-current" />
+            Home
+          </Link>
           <Link
             href="/classes"
             onClick={() => setOpen(false)}
@@ -81,7 +83,7 @@ export default function HamburgerMenu({ user }: MenuProps) {
           </Link>
           <Link
             onClick={() => setOpen(false)}
-            href={`/schedules${user?.locationId !== undefined ? `?location_name=${user?.locationId}` : ''}`}
+            href={`/schedules${user?.locationId !== undefined && user?.locationId !== null ? `?location_name=${user?.locationId}` : ''}`}
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <CalendarClock className="h-5 w-5" />

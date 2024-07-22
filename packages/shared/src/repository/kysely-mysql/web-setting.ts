@@ -165,6 +165,9 @@ export class KyselyMySqlWebSettingRepository implements WebSettingRepository {
     if (email) {
       query = query.where('users.email', 'like', `%${email}%`);
     }
+    if (data.is_show !== undefined) {
+      query = query.where('is_show', '=', data.is_show);
+    }
 
     const queryData = await query
       .selectAll('reviews')
