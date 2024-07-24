@@ -110,13 +110,7 @@ export function getColumns({
         />
       ),
       cell: ({ row }) => {
-        return (
-          <Badge>
-            <p className="-ml-5 text-center">
-              {row.original.is_active ? 'Active' : 'Inactive'}
-            </p>
-          </Badge>
-        );
+        return <Badge>{row.original.is_active ? 'Active' : 'Inactive'}</Badge>;
       },
     },
     {
