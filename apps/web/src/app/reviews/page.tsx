@@ -19,11 +19,11 @@ export default async function Page() {
   });
 
   const totalPackage = singlePackage.result?.data.length;
-  // if (totalPackage === 0) {
-  //   redirect(
-  //     '/packages?error=You need to purchase a package before you can write a review',
-  //   );
-  // }
+  if (totalPackage === 0) {
+    redirect(
+      '/packages?error=You need to purchase a package before you can write a review',
+    );
+  }
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-12 md:px-6 md:py-16">
       <CreateReviewForm />

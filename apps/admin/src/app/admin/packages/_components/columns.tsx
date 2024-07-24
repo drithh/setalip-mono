@@ -17,6 +17,7 @@ import { SelectClassType, SelectPackage } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import EditPackageForm from '../edit-package.form';
 import DeletePackageDialog from '../delete-package.dialog';
+import { Badge } from '@repo/ui/components/ui/badge';
 
 interface getColumnsProps {
   classTypes: SelectClassType[];
@@ -96,6 +97,25 @@ export function getColumns({
               )?.type
             }
           </span>
+        );
+      },
+    },
+    {
+      accessorKey: 'is_active',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          className="justify-center"
+          column={column}
+          title="Active"
+        />
+      ),
+      cell: ({ row }) => {
+        return (
+          <Badge>
+            <p className="-ml-5 text-center">
+              {row.original.is_active ? 'Active' : 'Inactive'}
+            </p>
+          </Badge>
         );
       },
     },
