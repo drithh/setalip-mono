@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+export const cronSchema = z.object({
+  secret: z.string(),
+});
+
 export const fileUploadSchema = z.object({
   files: z.custom<File[] | File>((data) => {
     if (!Array.isArray(data)) {

@@ -96,6 +96,16 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
+  async findAllAgendaBookingByAgendaId(id: SelectAgenda['id']) {
+    const agendaBooking =
+      await this._agendaRepository.findAllAgendaBookingByAgendaId(id);
+
+    return {
+      result: agendaBooking,
+      error: undefined,
+    };
+  }
+
   async findAgendaBookingById(id: SelectAgendaBooking['id']) {
     const agendaBooking =
       await this._agendaRepository.findAgendaBookingById(id);

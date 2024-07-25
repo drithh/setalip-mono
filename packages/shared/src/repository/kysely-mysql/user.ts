@@ -87,7 +87,9 @@ export class KyselyMySqlUserRepository implements UserRepository {
     return this._db
       .selectFrom('users')
       .selectAll()
-      .where('users.date_of_birth', '=', sql`CURDATE()` as any)
+      .where(sql<boolean>`MONTH(users.date_of_birth) = MONTH(CURDATE())`)
+      .where(sql<boolean>`DAY(users.date_of_birth) = DAY(CURDATE())`)
+      .where('users.role', '=', 'user')
       .execute();
   }
 

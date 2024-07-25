@@ -177,6 +177,16 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .executeTakeFirst();
   }
 
+  findAllAgendaBookingByAgendaId(
+    id: SelectAgenda['id']
+  ): Promise<SelectAgendaBooking[]> {
+    return this._db
+      .selectFrom('agenda_bookings')
+      .selectAll()
+      .where('agenda_id', '=', id)
+      .execute();
+  }
+
   findAgendaBookingById(id: SelectAgendaBooking['id']) {
     return this._db
       .selectFrom('agenda_bookings')

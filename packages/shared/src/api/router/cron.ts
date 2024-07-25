@@ -8,71 +8,115 @@ import { LoyaltyService } from '#dep/service/loyalty';
 import { AgendaService } from '#dep/service/agenda';
 import { NotificationService, NotificationType } from '#dep/notification/index';
 import { differenceInHours } from 'date-fns';
+import { cronSchema } from '../schema';
+import { env } from '#dep/env';
+
 export const cronRouter = {
-  cron: publicProcedure.query(async ({ ctx, input }) => {
-    const loyaltyService = ctx.container.get<LoyaltyService>(
-      TYPES.LoyaltyService
-    );
-    const userRepository = ctx.container.get<UserRepository>(
-      TYPES.UserRepository
-    );
+  cron: publicProcedure.input(cronSchema).mutation(async ({ ctx, input }) => {
+    if (input.secret !== env.CRON_SECRET) {
+      return {
+        result: undefined,
+        error: new Error('Invalid secret'),
+      };
+    }
+    let cronRun = [];
 
-    const users = await userRepository.findAllUserBirthday();
+    const currentDate = new Date();
+    if (currentDate.getHours() % 3 === 0) {
+      const loyaltyService = ctx.container.get<LoyaltyService>(
+        TYPES.LoyaltyService
+      );
 
-    for (const user of users) {
-      await loyaltyService.createOnReward({
-        user_id: user.id,
-        note: 'From us for your birthday',
-        reward_id: 4,
-        reference_id: user.id,
+      const userRepository = ctx.container.get<UserRepository>(
+        TYPES.UserRepository
+      );
+      // for every 9am
+      if (currentDate.getHours() === 9) {
+        const users = await userRepository.findAllUserBirthday();
+
+        for (const user of users) {
+          const result = await loyaltyService.createOnReward({
+            user_id: user.id,
+            note: 'From us for your birthday',
+            reward_id: 4,
+            reference_id: user.id,
+          });
+
+          if (result.error) {
+            cronRun.push(`Job: Birthday reward failed to run for ${user.name}`);
+          }
+        }
+
+        cronRun.push('Job: Birthday reward successfully run');
+      }
+
+      // notification agenda if less than 3 hours
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+      const schedules = await agendaService.findScheduleByDate({
+        page: 1,
+        perPage: 1000,
+        date: currentDate,
       });
+
+      const notifcationService = ctx.container.get<NotificationService>(
+        TYPES.NotificationService
+      );
+
+      const scheduleResults = schedules.result?.data ?? [];
+      for (const schedule of scheduleResults) {
+        if ((schedule.participant ?? 0) < 1) {
+          continue;
+        }
+        const agendaBookings =
+          await agendaService.findAllAgendaBookingByAgendaId(schedule.id);
+        if (
+          agendaBookings?.result === undefined ||
+          agendaBookings.result.length < 1
+        ) {
+          continue;
+        }
+
+        for (const booking of agendaBookings.result) {
+          const user = await userRepository.findById(booking.user_id);
+          if (!user) {
+            cronRun.push(
+              `Job: Notification agenda if less than 3 hours failed to run for user_id ${booking.user_id}`
+            );
+            continue;
+          }
+
+          const diff = differenceInHours(schedule.time, currentDate);
+          if (diff < 3) {
+            const result = await notifcationService.sendNotification({
+              recipient: user.phone_number,
+              payload: {
+                type: NotificationType.UserBookingLessThan2Hours,
+                class: schedule.class_name,
+                date: schedule.time,
+                facility: schedule.location_facility_name,
+                location: schedule.location_name,
+              },
+            });
+
+            if (result.error) {
+              cronRun.push(
+                `Job: Notification agenda if less than 3 hours failed to run for ${user.name}`
+              );
+            }
+          }
+        }
+      }
+
+      cronRun.push(
+        'Job: Notification agenda if less than 3 hours successfully run'
+      );
     }
 
-    // notification agenda if less than 2 hours
-    const agendaService = ctx.container.get<AgendaService>(TYPES.AgendaService);
-
-    const schedules = await agendaService.findScheduleByDate({
-      page: 1,
-      perPage: 1000,
-      date: new Date(),
-    });
-
-    const notifcationService = ctx.container.get<NotificationService>(
-      TYPES.NotificationService
-    );
-
-    const scheduleResults = schedules.result?.data ?? [];
-
-    for (const schedule of scheduleResults) {
-      if (schedule.participant ?? 0 < 1) {
-        continue;
-      }
-
-      const booking = await agendaService.findAgendaBookingById(schedule.id);
-
-      if (!booking || !booking.result) {
-        continue;
-      }
-
-      const user = await userRepository.findById(booking.result?.user_id);
-      if (!user) {
-        continue;
-      }
-
-      const now = new Date();
-      const diff = differenceInHours(schedule.time, now);
-      if (diff < 3) {
-        await notifcationService.sendNotification({
-          recipient: user.phone_number,
-          payload: {
-            type: NotificationType.UserBookingLessThan2Hours,
-            class: schedule.class_name,
-            date: schedule.time,
-            facility: schedule.location_facility_name,
-            location: schedule.location_name,
-          },
-        });
-      }
-    }
+    return {
+      result: cronRun.length > 0 ? cronRun.join('\n') : 'No job run',
+      error: undefined,
+    };
   }),
 } satisfies TRPCRouterRecord;

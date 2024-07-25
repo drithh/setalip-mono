@@ -92,7 +92,7 @@ const parseNotification = (payload: NotificationPayload) => {
     case NotificationType.UserBookingLessThan2Hours:
       return (
         `${HEADER_MESSAGE}` +
-        `Booking kelas kurang dari 2 jam lagi, Detail:\n` +
+        `Pemberitahuan, Anda memiliki kelas yang akan dimulai kurang dari 2 jam lagi.\n` +
         `Kelas: ${payload.class}\n` +
         `Tanggal: ${format(new Date(payload.date), 'eeee, dd/MM/yyyy')}\n` +
         `Waktu: ${format(new Date(payload.date), 'HH:mm')}\n` +
