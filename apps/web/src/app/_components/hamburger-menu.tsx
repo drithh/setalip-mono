@@ -66,11 +66,11 @@ export default function HamburgerMenu({ user }: MenuProps) {
             </>
           )}
           <Link
-            href="/home"
+            href="/"
             onClick={() => setOpen(false)}
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
-            <Home className="h-5 w-5 fill-current" />
+            <Home className="h-5 w-5" />
             Home
           </Link>
           <Link
