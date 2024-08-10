@@ -21,7 +21,6 @@ import {
 } from './form-schema';
 import { toast } from 'sonner';
 
-
 import {
   Sheet,
   SheetTrigger,
@@ -31,7 +30,6 @@ import {
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
 
-
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 
@@ -40,7 +38,6 @@ interface CreateDepositAccountProps {}
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat akun deposit',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat akun deposit',

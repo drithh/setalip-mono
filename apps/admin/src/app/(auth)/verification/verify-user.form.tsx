@@ -32,7 +32,6 @@ interface VerifyUserFormProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal verifikasi user',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Verifikasi user...',

@@ -47,7 +47,6 @@ interface CreateLoyaltyRewardProps {}
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal menambahkan reward',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Menambahkan reward...',

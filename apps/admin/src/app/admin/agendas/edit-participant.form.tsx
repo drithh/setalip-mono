@@ -50,7 +50,6 @@ interface EditParticipantProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui peserta',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Memperbarui peserta...',

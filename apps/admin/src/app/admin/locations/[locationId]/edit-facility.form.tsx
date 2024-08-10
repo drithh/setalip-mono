@@ -40,7 +40,6 @@ interface EditFacilityProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengubah fasilitas',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengubah fasilitas...',

@@ -47,7 +47,6 @@ interface CreateClassFormProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat kelas',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat kelas...',

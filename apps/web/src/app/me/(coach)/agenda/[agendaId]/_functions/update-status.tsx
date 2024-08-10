@@ -7,7 +7,6 @@ import { api } from '@/trpc/react';
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengubah status',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengubah status',

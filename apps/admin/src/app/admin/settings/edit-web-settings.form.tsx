@@ -39,7 +39,6 @@ interface EditWebSettingFormProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengubah pengaturan',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengubah pengaturan...',

@@ -49,7 +49,6 @@ interface EditPackageTransactionProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui transaksi',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Memperbarui transaksi...',

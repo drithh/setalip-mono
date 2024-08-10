@@ -55,7 +55,6 @@ interface EditLoyaltyRewardProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui reward',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Memperbarui reward...',

@@ -50,7 +50,6 @@ interface EditPackageProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui paket',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Memperbarui paket...',

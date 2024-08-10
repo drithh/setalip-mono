@@ -56,7 +56,6 @@ interface EditVoucherProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui voucher',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Memperbarui voucher',

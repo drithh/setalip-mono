@@ -47,7 +47,6 @@ interface CreatePackageProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat paket',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat paket...',

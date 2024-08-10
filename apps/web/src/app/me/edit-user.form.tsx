@@ -1,10 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  SelectLocation,
-  SelectUser,
-} from '@repo/shared/repository';
+import { SelectLocation, SelectUser } from '@repo/shared/repository';
 import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Button } from '@repo/ui/components/ui/button';
 import {
@@ -53,7 +50,6 @@ interface EditUserProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui user',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Memperbarui user...',

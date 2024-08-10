@@ -19,9 +19,7 @@ import {
 import { DeleteLoyaltySchema, deleteLoyaltySchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import {
-  SelectAllUserName,
-} from '@repo/shared/repository';
+import { SelectAllUserName } from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,
@@ -47,7 +45,6 @@ interface DeleteLoyaltyProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengurangi point loyalty',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengurangi point loyalty...',

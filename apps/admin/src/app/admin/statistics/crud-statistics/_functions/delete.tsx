@@ -7,7 +7,6 @@ import { CONSTANT } from '../constant';
 const TOAST_MESSAGES = {
   error: {
     title: `Gagal menghapus ${CONSTANT.Item}`,
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: `Menghapus ${CONSTANT.Item}...`,

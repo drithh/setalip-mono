@@ -56,7 +56,6 @@ type FileWithPreview = File & { preview: string };
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui item',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Memperbarui item...',

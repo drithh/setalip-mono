@@ -21,9 +21,7 @@ import {
 } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import {
-  SelectFrequentlyAskedQuestion,
-} from '@repo/shared/repository';
+import { SelectFrequentlyAskedQuestion } from '@repo/shared/repository';
 import {
   Sheet,
   SheetContent,
@@ -31,7 +29,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
-
 
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
@@ -46,7 +43,6 @@ interface EditFrequentlyAskedQuestionProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui frequently asked question',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Memperbarui frequently asked question',

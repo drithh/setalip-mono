@@ -51,7 +51,6 @@ interface DeleteCreditProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengurangi credit',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengurangi credit...',

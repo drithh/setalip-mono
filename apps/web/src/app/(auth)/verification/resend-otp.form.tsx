@@ -25,7 +25,6 @@ interface ResendOtpFormProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengirim ulang kode OTP',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengirim ulang kode OTP...',

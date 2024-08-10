@@ -27,7 +27,6 @@ type FileWithPreview = File & { preview: string };
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengunggah file',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengunggah file...',

@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal menghapus frequently asked question',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Menghapus frequently asked question',

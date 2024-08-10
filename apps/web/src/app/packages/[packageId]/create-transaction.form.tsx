@@ -42,7 +42,6 @@ interface CreateTransactionProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat transaksi',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat transaksi',

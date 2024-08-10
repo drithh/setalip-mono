@@ -19,10 +19,7 @@ import { CreateCreditSchema, createCreditSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { FormDatePicker } from '@repo/ui/components/form-date-picker';
-import {
-  SelectClassType,
-  SelectUser,
-} from '@repo/shared/repository';
+import { SelectClassType, SelectUser } from '@repo/shared/repository';
 import {
   Sheet,
   SheetContent,
@@ -51,7 +48,6 @@ interface CreateCreditProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal menambah credit',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Menambah credit...',

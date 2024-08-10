@@ -21,9 +21,7 @@ import {
 } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import {
-  SelectDepositAccount,
-} from '@repo/shared/repository';
+import { SelectDepositAccount } from '@repo/shared/repository';
 import {
   Sheet,
   SheetContent,
@@ -31,7 +29,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
-
 
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
@@ -45,7 +42,6 @@ interface EditDepositAccountProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui akun deposit',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Memperbarui akun deposit',

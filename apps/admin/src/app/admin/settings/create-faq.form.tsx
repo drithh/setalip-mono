@@ -28,7 +28,6 @@ import {
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
 
-
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { Textarea } from '@repo/ui/components/ui/textarea';
@@ -38,7 +37,6 @@ interface CreateFrequentlyAskedQuestionProps {}
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat frequently asked question',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat frequently asked question',

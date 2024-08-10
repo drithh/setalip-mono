@@ -40,7 +40,6 @@ interface CreateFacilityProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat fasilitas',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat fasilitas...',

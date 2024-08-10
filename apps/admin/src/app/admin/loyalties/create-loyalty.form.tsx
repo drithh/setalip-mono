@@ -18,9 +18,7 @@ import {
 } from '@repo/ui/components/ui/form';
 import { CreateLoyaltySchema, createLoyaltySchema } from './form-schema';
 import { toast } from 'sonner';
-import {
-  SelectAllUserName,
-} from '@repo/shared/repository';
+import { SelectAllUserName } from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,
@@ -46,7 +44,6 @@ interface CreateLoyaltyProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal menambahkan point loyalty',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Menambahkan point loyalty...',

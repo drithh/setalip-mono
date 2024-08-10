@@ -49,7 +49,6 @@ interface CreateLoyaltyShopProps {}
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal menambahkan item',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Menambahkan item...',

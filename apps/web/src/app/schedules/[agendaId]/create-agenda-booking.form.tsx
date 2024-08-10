@@ -1,10 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  SelectAgenda,
-  SelectClass,
-} from '@repo/shared/repository';
+import { SelectAgenda, SelectClass } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   Form,
@@ -19,7 +16,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-
 
 import { createAgendaBooking } from './_actions/create-agenda-booking';
 import CreateAgendaBookingDialog from './confirmation.dialog';
@@ -37,7 +33,6 @@ interface CreateAgendaBookingProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat booking',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat booking',

@@ -18,10 +18,7 @@ import {
 import { EditUserSchema, editUserSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import {
-  SelectLocation,
-  SelectUser,
-} from '@repo/shared/repository';
+import { SelectLocation, SelectUser } from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,
@@ -51,7 +48,6 @@ interface EditUserProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui user',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Memperbarui user...',

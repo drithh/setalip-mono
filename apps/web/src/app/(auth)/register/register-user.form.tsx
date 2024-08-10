@@ -38,7 +38,6 @@ import { RegisterUserSchema, registerUserSchema } from './form-schema';
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal registrasi',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mendaftarkan User...',

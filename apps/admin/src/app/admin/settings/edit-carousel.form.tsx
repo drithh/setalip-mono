@@ -18,9 +18,7 @@ import {
 import { EditCarouselSchema, editCarouselSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import {
-  SelectCarousel,
-} from '@repo/shared/repository';
+import { SelectCarousel } from '@repo/shared/repository';
 import {
   Sheet,
   SheetContent,
@@ -28,7 +26,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
-
 
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
@@ -47,7 +44,6 @@ interface EditCarouselProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal memperbarui carousel',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Memperbarui carousel',

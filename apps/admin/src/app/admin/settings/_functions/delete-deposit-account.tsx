@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal menghapus akun deposit',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Menghapus akun deposit',

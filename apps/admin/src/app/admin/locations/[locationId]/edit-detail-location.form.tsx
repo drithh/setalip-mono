@@ -38,7 +38,6 @@ interface EditDetailLocationFormProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengubah detail lokasi',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengubah detail lokasi...',

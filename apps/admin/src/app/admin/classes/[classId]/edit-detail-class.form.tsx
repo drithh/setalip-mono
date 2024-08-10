@@ -56,7 +56,6 @@ interface EditDetailClassFormProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengubah detail kelas',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengubah detail kelas...',

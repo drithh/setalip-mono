@@ -39,7 +39,6 @@ interface CreateReviewProps {}
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat review',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat review',

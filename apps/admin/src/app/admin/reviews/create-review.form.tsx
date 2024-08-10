@@ -18,9 +18,7 @@ import {
 import { CreateReviewSchema, createReviewSchema } from './form-schema';
 import { toast } from 'sonner';
 import { Switch } from '@repo/ui/components/ui/switch';
-import {
-  SelectAllUserName,
-} from '@repo/shared/repository';
+import { SelectAllUserName } from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,
@@ -47,7 +45,6 @@ interface CreateReviewProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat review',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat review',

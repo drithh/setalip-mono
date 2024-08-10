@@ -38,7 +38,6 @@ interface EditOperationalHourFormProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengubah waktu operasional',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengubah waktu operasional...',

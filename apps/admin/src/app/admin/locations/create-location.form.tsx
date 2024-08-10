@@ -35,7 +35,6 @@ interface CreateLocationFormProps {}
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat lokasi',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat lokasi...',

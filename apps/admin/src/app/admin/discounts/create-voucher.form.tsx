@@ -49,7 +49,6 @@ interface CreateVoucherProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat voucher',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat voucher',

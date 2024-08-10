@@ -23,7 +23,6 @@ import { ForgotPasswordSchema, forgotPasswordSchema } from './form-schema';
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengirim link reset password',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengirim data...',

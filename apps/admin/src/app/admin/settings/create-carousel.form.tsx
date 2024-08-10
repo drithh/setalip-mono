@@ -18,7 +18,6 @@ import {
 import { CreateCarouselSchema, createCarouselSchema } from './form-schema';
 import { toast } from 'sonner';
 
-
 import {
   Sheet,
   SheetTrigger,
@@ -27,7 +26,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
-
 
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
@@ -42,7 +40,6 @@ interface CreateCarouselProps {}
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal membuat carousel',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Membuat carousel',
