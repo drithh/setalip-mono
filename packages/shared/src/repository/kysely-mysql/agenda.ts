@@ -639,18 +639,18 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         .where((eb) =>
           // if there are start agenda time between the new agenda time
           eb.or([
-            eb('agendas.time', '>=', startTime).and(
+            eb('agendas.time', '>', startTime).and(
               'agendas.time',
-              '<=',
+              '<',
               endTime
             ),
             eb(
               sql`ADDTIME(agendas.time, SEC_TO_TIME(classes.duration * 60))`,
-              '>=',
+              '>',
               startTime
             ).and(
               sql`ADDTIME(agendas.time, SEC_TO_TIME(classes.duration * 60))`,
-              '<=',
+              '<',
               endTime
             ),
           ])
