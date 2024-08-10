@@ -1,17 +1,13 @@
 'use server';
 
-import {
-  ResetPasswordService,
-} from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
-import {
-  FormResetPassword,
-  resetPasswordSchema,
-} from '../form-schema';
+import { AuthService, ResetPasswordService } from '@repo/shared/service';
 import {
   convertFormData,
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
+
+import { FormResetPassword, resetPasswordSchema } from '../form-schema';
 
 export async function resetPassword(
   state: FormResetPassword,
@@ -30,12 +26,12 @@ export async function resetPassword(
     };
   }
 
-  const resetPasswordService = container.get<ResetPasswordService>(
-    TYPES.ResetPasswordService,
-  );
+  const authService = container.get<AuthService>(TYPES.AuthService);
 
-  const resetPassword = await resetPasswordService.verify({
+  const resetPassword = await authService.resetPassword({
     token: state.form?.token || parsed.data.token,
+    password: parsed.data.password,
+    passwordConfirmation: parsed.data.passwordConfirmation,
   });
 
   if (resetPassword.error) {

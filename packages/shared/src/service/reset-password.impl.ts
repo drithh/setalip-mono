@@ -50,8 +50,8 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
       };
     }
 
-    const host = env.HOST || 'localhost:3000';
-    const resetPasswordLink = `http://${host}/reset-password/${token}`;
+    const host = env.HOST;
+    const resetPasswordLink = `${host}/reset-password/${token}`;
 
     const notification = await this._notificationService.sendNotification({
       payload: {
@@ -92,9 +92,9 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
       resetPassword.id
     );
 
-    if (!deleteResetPassword) {
+    if (deleteResetPassword) {
       return {
-        error: new Error('Failed to delete reset password'),
+        error: deleteResetPassword,
       };
     }
 

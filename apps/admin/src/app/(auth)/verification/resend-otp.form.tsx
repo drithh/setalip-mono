@@ -24,7 +24,6 @@ interface ResendOtpFormProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengirim ulang kode OTP',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengirim ulang kode OTP...',
@@ -65,7 +64,7 @@ export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
       }
     } else if (formState.status === 'error') {
       toast.error(TOAST_MESSAGES.error.title, {
-        description: TOAST_MESSAGES.error.description,
+        description: formState.errors,
       });
     } else if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title, {

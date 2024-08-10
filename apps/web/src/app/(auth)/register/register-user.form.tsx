@@ -110,7 +110,7 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
       }
     } else if (formState.status === 'error') {
       toast.error(TOAST_MESSAGES.error.title, {
-        description: TOAST_MESSAGES.error.description,
+        description: formState.errors,
       });
       form.setError('root', { message: formState.errors });
     } else {
@@ -259,38 +259,6 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
               <FormLabel>Konfirmasi Password</FormLabel>
               <FormControl>
                 <PasswordInput {...field} autoComplete="new-password" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="location_id"
-          render={({ field }) => (
-            <FormItem className="grid w-full gap-2">
-              <FormLabel>Lokasi Cabang</FormLabel>
-              <FormControl>
-                <>
-                  <Input type="hidden" {...field} />
-
-                  <Select onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih kelas" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {locations.map((location) => (
-                        <SelectItem
-                          key={location.id}
-                          value={location.id.toString()}
-                        >
-                          {location.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </>
               </FormControl>
               <FormMessage />
             </FormItem>

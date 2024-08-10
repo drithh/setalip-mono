@@ -27,7 +27,6 @@ interface ResetPasswordFormProps {
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal melakukan reset password',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mereset password...',
@@ -71,7 +70,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       }
     } else if (formState.status === 'error') {
       toast.error(TOAST_MESSAGES.error.title, {
-        description: TOAST_MESSAGES.error.description,
+        description: formState.errors,
       });
       form.setError('root', { message: formState.errors });
     } else {

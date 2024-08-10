@@ -26,7 +26,6 @@ import { api } from '@/trpc/react';
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal login',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengautentikasi...',

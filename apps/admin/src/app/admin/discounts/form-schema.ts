@@ -10,7 +10,7 @@ export const createVoucherSchema = z.object({
   code: z.string(),
   type: z.enum(['fixed', 'percentage']),
   discount: z.coerce.number().positive(),
-  expired_at: z.date(),
+  expired_at: z.coerce.date(),
   user_id: z.coerce.number().optional(),
 }) satisfies ZodType<InsertVoucher>;
 

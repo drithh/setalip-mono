@@ -191,16 +191,14 @@ export class AuthServiceImpl implements AuthService {
       parallelism: 1,
     });
 
-    const updated = await this._userRepository.update({
+    const updatePassword = await this._userRepository.update({
       id: resetPassword.result,
       hashed_password,
     });
 
-    if (!updated) {
+    if (updatePassword) {
       return {
-        error: new UserValidationError({
-          password: 'Could not update password',
-        }),
+        error: updatePassword,
       };
     }
 

@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@repo/ui/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/ui/components/ui/button';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
-import { useEffect, useRef } from "react";
-import { useFormState } from "react-dom";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+} from '@repo/ui/components/ui/form';
+import { Input } from '@repo/ui/components/ui/input';
+import { useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
-import { resendOtp } from "./_actions/resend-otp";
-import { ResendOtpSchema, resendOtpSchema } from "./form-schema";
+import { resendOtp } from './_actions/resend-otp';
+import { ResendOtpSchema, resendOtpSchema } from './form-schema';
 
 interface ResendOtpFormProps {
   userId: number;
@@ -24,22 +24,22 @@ interface ResendOtpFormProps {
 
 const TOAST_MESSAGES = {
   error: {
-    title: "Gagal mengirim ulang kode OTP",
-    description: "Silahkan coba lagi",
+    title: 'Gagal mengirim ulang kode OTP',
+    description: 'Silahkan coba lagi',
   },
   loading: {
-    title: "Mengirim ulang kode OTP...",
-    description: "Mohon tunggu",
+    title: 'Mengirim ulang kode OTP...',
+    description: 'Mohon tunggu',
   },
   success: {
-    title: "Kode OTP berhasil dikirim ulang",
-    description: "Silahkan cek whatsapp Anda",
+    title: 'Kode OTP berhasil dikirim ulang',
+    description: 'Silahkan cek whatsapp Anda',
   },
 };
 
 export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
   const [formState, formAction] = useFormState(resendOtp, {
-    status: "default",
+    status: 'default',
     form: {
       userId: userId,
     },
@@ -54,7 +54,7 @@ export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
 
   useEffect(() => {
     toast.dismiss();
-    if (formState.status === "field-errors") {
+    if (formState.status === 'field-errors') {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
           const typedFieldName = fieldName as keyof FormSchema;
@@ -64,11 +64,11 @@ export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
           }
         }
       }
-    } else if (formState.status === "error") {
+    } else if (formState.status === 'error') {
       toast.error(TOAST_MESSAGES.error.title, {
-        description: TOAST_MESSAGES.error.description,
+        description: formState.errors,
       });
-    } else if (formState.status === "success") {
+    } else if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title, {
         description: TOAST_MESSAGES.success.description,
       });
@@ -102,8 +102,8 @@ export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
           )}
         />
         <div className="mt-4 text-center text-sm">
-          Belum dapat kode OTP?{" "}
-          <Button className="p-1" variant={"link"}>
+          Belum dapat kode OTP?{' '}
+          <Button className="p-1" variant={'link'}>
             Kirim ulang
           </Button>
         </div>

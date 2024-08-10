@@ -22,7 +22,6 @@ import { toast } from 'sonner';
 const TOAST_MESSAGES = {
   error: {
     title: 'Gagal mengirim link reset password',
-    description: 'Silahkan coba lagi',
   },
   loading: {
     title: 'Mengirim data...',
@@ -63,7 +62,7 @@ export default function ForgotPasswordForm() {
       }
     } else if (formState.status === 'error') {
       toast.error(TOAST_MESSAGES.error.title, {
-        description: TOAST_MESSAGES.error.description,
+        description: formState.errors,
       });
       form.setError('root', { message: formState.errors });
     } else {

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PhoneInput } from "@repo/ui/components/phone-input";
-import { Button } from "@repo/ui/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { PhoneInput } from '@repo/ui/components/phone-input';
+import { Button } from '@repo/ui/components/ui/button';
 import {
   Form,
   FormControl,
@@ -10,36 +10,36 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@repo/ui/components/ui/form";
-import { useEffect, useRef } from "react";
-import { useFormState } from "react-dom";
-import { useForm } from "react-hook-form";
-import { Value as PhoneNumberValue } from "react-phone-number-input";
-import { toast } from "sonner";
+} from '@repo/ui/components/ui/form';
+import { useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
+import { useForm } from 'react-hook-form';
+import { Value as PhoneNumberValue } from 'react-phone-number-input';
+import { toast } from 'sonner';
 
-import { forgotPassword } from "./_actions/forgot-password";
-import { ForgotPasswordSchema, forgotPasswordSchema } from "./form-schema";
+import { forgotPassword } from './_actions/forgot-password';
+import { ForgotPasswordSchema, forgotPasswordSchema } from './form-schema';
 
 const TOAST_MESSAGES = {
   error: {
-    title: "Gagal mengirim link reset password",
-    description: "Silahkan coba lagi",
+    title: 'Gagal mengirim link reset password',
+    description: 'Silahkan coba lagi',
   },
   loading: {
-    title: "Mengirim data...",
-    description: "Mohon tunggu",
+    title: 'Mengirim data...',
+    description: 'Mohon tunggu',
   },
   success: {
-    title: "Berhasil mengirim link reset password",
-    description: "Silahkan cek whatsapp anda",
+    title: 'Berhasil mengirim link reset password',
+    description: 'Silahkan cek whatsapp anda',
   },
 };
 
 export default function ForgotPasswordForm() {
   const [formState, formAction] = useFormState(forgotPassword, {
-    status: "default",
+    status: 'default',
     form: {
-      phoneNumber: "",
+      phoneNumber: '',
     },
   });
 
@@ -52,7 +52,7 @@ export default function ForgotPasswordForm() {
 
   useEffect(() => {
     toast.dismiss();
-    if (formState.status === "field-errors") {
+    if (formState.status === 'field-errors') {
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
           const typedFieldName = fieldName as keyof FormSchema;
@@ -62,15 +62,15 @@ export default function ForgotPasswordForm() {
           }
         }
       }
-    } else if (formState.status === "error") {
+    } else if (formState.status === 'error') {
       toast.error(TOAST_MESSAGES.error.title, {
-        description: TOAST_MESSAGES.error.description,
+        description: formState.errors,
       });
-      form.setError("root", { message: formState.errors });
+      form.setError('root', { message: formState.errors });
     } else {
       form.clearErrors();
     }
-    if (formState.status === "success") {
+    if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title, {
         description: TOAST_MESSAGES.success.description,
       });
