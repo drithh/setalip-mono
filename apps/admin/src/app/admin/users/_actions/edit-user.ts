@@ -6,6 +6,7 @@ import {
   convertFormData,
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
+import { parsePhoneNumber } from 'libphonenumber-js';
 
 export async function editUser(
   state: FormEditUser,
@@ -44,11 +45,14 @@ export async function editUser(
     };
   }
 
+  const parsedPhoneNumber = parsePhoneNumber(parsed.data.phone_number);
+  const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;
+
   const result = await userService.update({
     id: parsed.data.id,
     name: parsed.data.name,
     email: parsed.data.email,
-    phone_number: parsed.data.phone_number,
+    phone_number: formattedPhoneNumber,
     address: parsed.data.address,
     role: parsed.data.role,
     location_id: parsed.data.location_id,
