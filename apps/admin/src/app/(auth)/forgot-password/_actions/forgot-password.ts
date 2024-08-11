@@ -1,13 +1,8 @@
 'use server';
 
-import {
-  ResetPasswordService,
-} from '@repo/shared/service';
+import { ResetPasswordService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
-import {
-  forgotPasswordSchema,
-  FormForgotPassword,
-} from '../form-schema';
+import { forgotPasswordSchema, FormForgotPassword } from '../form-schema';
 import {
   convertFormData,
   convertZodErrorsToFieldErrors,
@@ -40,6 +35,7 @@ export async function forgotPassword(
 
   const resetPassword = await resetPasswordService.send({
     phoneNumber: formattedPhoneNumber,
+    referrerHost: 'admin',
   });
 
   if (resetPassword.error) {

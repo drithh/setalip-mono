@@ -12,7 +12,7 @@ export const fileRouter = {
   upload: protectedProcedure
     .input(fileUploadSchema)
     .mutation(async ({ ctx, input }) => {
-      const host = env.HOST; // Default host
+      const host = env.ADMIN_URL; // Default host
 
       let files = input.files;
       if (!Array.isArray(files)) {

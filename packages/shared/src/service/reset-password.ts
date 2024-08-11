@@ -8,6 +8,7 @@ export interface VerifyResetPassword {
 
 export interface SendResetPassword {
   phoneNumber: SelectUser['phone_number'];
+  referrerHost: 'admin' | 'web';
 }
 
 export interface ResetPasswordService {

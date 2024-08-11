@@ -50,7 +50,7 @@ export default async function Contacts() {
                   <p>{contact.result?.instagram_handle}</p>
                 </Link>
                 <Link
-                  href={`https://instagram.com/${contact.result?.tiktok_handle}`}
+                  href={`https://tiktok.com/@${contact.result?.tiktok_handle}`}
                   className="flex gap-2 text-muted-foreground hover:text-primary"
                   prefetch={false}
                 >

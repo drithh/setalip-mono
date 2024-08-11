@@ -8,8 +8,8 @@ import { BackButton } from '@repo/ui/components/back-button';
 import { env } from '@repo/shared/env';
 
 const ImageUrl = {
-  whyUs: `${env.HOST}/static/auth-1.webp`,
-  story: `${env.HOST}/static/story.webp`,
+  whyUs: `${env.ADMIN_URL}/static/auth-1.webp`,
+  story: `${env.ADMIN_URL}/static/story.webp`,
 };
 
 export default async function Page() {

@@ -1,19 +1,14 @@
 'use server';
 
 import { container, TYPES } from '@repo/shared/inversify';
-import {
-  ResetPasswordService,
-} from '@repo/shared/service';
+import { ResetPasswordService } from '@repo/shared/service';
 import {
   convertFormData,
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
 import { parsePhoneNumber } from 'libphonenumber-js';
 
-import {
-  forgotPasswordSchema,
-  FormForgotPassword,
-} from '../form-schema';
+import { forgotPasswordSchema, FormForgotPassword } from '../form-schema';
 
 export async function forgotPassword(
   state: FormForgotPassword,
@@ -41,6 +36,7 @@ export async function forgotPassword(
 
   const resetPassword = await resetPasswordService.send({
     phoneNumber: formattedPhoneNumber,
+    referrerHost: 'web',
   });
 
   if (resetPassword.error) {

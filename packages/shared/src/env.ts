@@ -7,7 +7,8 @@ export const env = createEnv({
     NODE_ENV: z.string().default('development'),
     WHAPIFY_ACCOUNT: z.string(),
     WHAPIFY_SECRET: z.string(),
-    HOST: z.string().default('http://localhost:3000'),
+    ADMIN_URL: z.string().default('http://localhost:3000'),
+    WEB_URL: z.string().default('http://localhost:3001'),
     CRON_SECRET: z.string(),
   },
 
@@ -29,7 +30,8 @@ export const env = createEnv({
     WHAPIFY_ACCOUNT: process.env.WHAPIFY_ACCOUNT,
     WHAPIFY_SECRET: process.env.WHAPIFY_SECRET,
     CRON_SECRET: process.env.CRON_SECRET,
-    HOST: process.env.HOST,
+    ADMIN_URL: process.env.ADMIN_URL,
+    WEB_URL: process.env.WEB_URL,
   },
 
   /**

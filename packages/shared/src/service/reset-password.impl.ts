@@ -1,7 +1,11 @@
 import { inject, injectable } from 'inversify';
 import { ResetPassword } from '../db';
 import { PromiseResult } from '../types';
-import { ResetPasswordService, VerifyResetPassword } from './reset-password';
+import {
+  ResetPasswordService,
+  SendResetPassword,
+  VerifyResetPassword,
+} from './reset-password';
 import type { ResetPasswordRepository } from '#dep/repository/reset-password';
 import { TYPES } from '../inversify';
 import { UserValidationError } from './auth';
@@ -27,8 +31,8 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
     this._userRepository = userRepository;
   }
 
-  async send({ phoneNumber }: { phoneNumber: SelectUser['phone_number'] }) {
-    const user = await this._userRepository.findByPhoneNumber(phoneNumber);
+  async send(data: SendResetPassword) {
+    const user = await this._userRepository.findByPhoneNumber(data.phoneNumber);
 
     if (!user) {
       return {
@@ -50,7 +54,8 @@ export class ResetPasswordServiceImpl implements ResetPasswordService {
       };
     }
 
-    const host = env.HOST;
+    // get host from header or anything else except env
+    const host = data.referrerHost === 'admin' ? env.ADMIN_URL : env.WEB_URL;
     const resetPasswordLink = `${host}/reset-password/${token}`;
 
     const notification = await this._notificationService.sendNotification({
