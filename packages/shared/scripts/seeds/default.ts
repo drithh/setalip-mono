@@ -1,4 +1,10 @@
-import { CreateTableBuilder, Insertable, Kysely, sql } from 'kysely';
+import {
+  CreateTableBuilder,
+  Insertable,
+  Kysely,
+  MysqlDialect,
+  sql,
+} from 'kysely';
 import { faker } from '@faker-js/faker';
 import {
   LoyaltyTransactions,
@@ -26,11 +32,24 @@ import {
   WebSettings,
   Reviews,
   FrequentlyAskedQuestions,
+  pool,
 } from '@repo/shared/db';
 import { DB } from '@repo/shared/db';
 import { hash } from '@node-rs/argon2';
 
-export async function up(db: Kysely<DB>): Promise<void> {
+const db = new Kysely<any>({
+  dialect: new MysqlDialect({
+    pool: pool.pool,
+  }),
+  log(event) {
+    if (event.level === 'query') {
+      console.info(event.query.sql);
+      console.info(event.query.parameters);
+    }
+  },
+});
+
+export async function up(): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
       const class_names = ['Private', 'Semi', 'Group'];
@@ -134,7 +153,7 @@ export async function up(db: Kysely<DB>): Promise<void> {
   }
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
+export async function down(): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
       await trx.deleteFrom('frequently_asked_questions').execute();

@@ -23,7 +23,8 @@
   },
   "scripts": {
     "codegen": "dotenv -e ../../.env -- kysely-codegen --runtime-enums --out-file ./src/db/schema.ts --dialect mysql",
-    "migrate": "dotenv -e ../../.env -- node ./scripts/register.js"
+    "migrate": "dotenv -e ../../.env -- node ./scripts/register-migrate.js",
+    "seed": "dotenv -e ../../.env -- node ./scripts/register-seed.js"
   },
   "dependencies": {
     "@abraham/reflection": "^0.12.0",

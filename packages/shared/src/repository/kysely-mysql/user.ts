@@ -189,11 +189,12 @@ export class KyselyMySqlUserRepository implements UserRepository {
             return;
           } else if (currentUser?.role === 'coach' && data.role === 'user') {
             const query = await trx
-              .deleteFrom('coaches')
-              .where('coaches.user_id', '=', data.id)
+              .updateTable('coaches')
+              .set({ user_id: null })
+              .where('user_id', '=', data.id)
               .executeTakeFirst();
 
-            if (query.numDeletedRows === undefined) {
+            if (query.numUpdatedRows === undefined) {
               console.error('Failed to delete coach', query);
               return new Error('Failed to delete coach');
             }
