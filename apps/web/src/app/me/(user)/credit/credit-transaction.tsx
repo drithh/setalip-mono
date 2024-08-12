@@ -1,9 +1,7 @@
 'use client';
 
 import { findAllUserCreditSchema } from '@repo/shared/api/schema';
-import {
-  SelectAllCredit,
-} from '@repo/shared/repository';
+import { SelectAllCredit, SelectClassType } from '@repo/shared/repository';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 import type { DataTableFilterField } from '@repo/ui/types';
@@ -19,10 +17,12 @@ import { getColumns } from './columns';
 
 interface CreditTransactionTableProps {
   search: z.infer<typeof findAllUserCreditSchema>;
+  classTypes: SelectClassType[];
 }
 
 export default function CreditTransactionTable({
   search,
+  classTypes,
 }: CreditTransactionTableProps) {
   const [{ result, error }] = api.credit.findAllByUserId.useSuspenseQuery(
     search,
@@ -36,7 +36,13 @@ export default function CreditTransactionTable({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const columns = React.useMemo(() => getColumns(), []);
+  const columns = React.useMemo(
+    () =>
+      getColumns({
+        classTypes,
+      }),
+    [],
+  );
 
   const creditTypes = [
     'credit',

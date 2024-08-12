@@ -1,6 +1,6 @@
 import { findAllUserCreditSchema } from '@repo/shared/api/schema';
 import { container, TYPES } from '@repo/shared/inversify';
-import { CreditService } from '@repo/shared/service';
+import { ClassTypeService, CreditService } from '@repo/shared/service';
 import {
   Card,
   CardContent,
@@ -20,6 +20,11 @@ export default async function Credit({ searchParams }: { searchParams: any }) {
   const creditService = container.get<CreditService>(TYPES.CreditService);
   const credits = await creditService.findAmountByUserId(auth.user.id);
 
+  const classTypeService = container.get<ClassTypeService>(
+    TYPES.ClassTypeService,
+  );
+  const classTypes = await classTypeService.findAll();
+
   return (
     <div className="w-full p-2 md:p-6">
       <h1 className="text-3xl font-bold">Credit</h1>
@@ -38,7 +43,10 @@ export default async function Credit({ searchParams }: { searchParams: any }) {
         ))}
       </div>
       <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[95vw] flex-col gap-24 md:max-w-screen-xl">
-        <CreditTransactionTable search={search} />
+        <CreditTransactionTable
+          search={search}
+          classTypes={classTypes.result ?? []}
+        />
       </div>
     </div>
   );

@@ -40,9 +40,10 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     const { page = 1, perPage = 10, sort, name, types, is_active } = data;
 
     const offset = (page - 1) * perPage;
-    const orderBy = (
-      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
-    ).join(' ') as `${keyof SelectPackage} ${'asc' | 'desc'}`;
+    const orderBy = sort?.split(',').map((part) => {
+      const [field, direction] = part.split('.');
+      return `${field?.trim()} ${direction?.toLowerCase()}` as `${keyof SelectPackage} ${'asc' | 'desc'}`;
+    }) ?? ['created_at desc'];
 
     let query = this._db
       .selectFrom('packages')
@@ -485,6 +486,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
   async update(data: UpdatePackage) {
     try {
+      console.log('data', data);
       const query = await this._db
         .updateTable('packages')
         .set(data)

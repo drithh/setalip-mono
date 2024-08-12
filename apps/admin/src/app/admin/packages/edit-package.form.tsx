@@ -82,6 +82,7 @@ export default function EditPackageForm({
       one_time_only: singlePackage.one_time_only,
       valid_for: singlePackage.valid_for,
       is_active: singlePackage.is_active,
+      position: singlePackage.position,
     } as FormSchema,
   });
 
@@ -113,9 +114,9 @@ export default function EditPackageForm({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
-      router.refresh();
       trpcUtils.invalidate();
-      onOpenChange(false);
+      // router.refresh();
+      // onOpenChange(false);
     }
   }, [formState]);
 
@@ -135,7 +136,6 @@ export default function EditPackageForm({
     <Sheet
       open={open}
       onOpenChange={(ev) => {
-        form.reset();
         onOpenChange(ev);
       }}
     >
@@ -198,6 +198,20 @@ export default function EditPackageForm({
                             }}
                           />
                         </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="position"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Urutan Tampilan</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

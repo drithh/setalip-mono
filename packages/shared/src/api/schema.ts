@@ -99,6 +99,11 @@ export const deleteParticipantSchema = z.object({
   participantId: z.coerce.number().refine((data) => data > 0),
 });
 
+export const deleteAgendaSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+  is_refund: z.boolean(),
+});
+
 export const findAllScheduleSchema = defaultPaginationSchema.extend({
   class_type_name: z.string().optional(),
   coach_name: z.string().optional(),

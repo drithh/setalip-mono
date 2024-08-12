@@ -46,6 +46,19 @@ export function getColumns({
       },
     },
     {
+      accessorKey: 'position',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          className="justify-center"
+          column={column}
+          title="Urutan Tampilan"
+        />
+      ),
+      cell: ({ row }) => {
+        return <p className="-ml-5 text-center">{row.original.position}</p>;
+      },
+    },
+    {
       accessorKey: 'credit',
       header: ({ column }) => (
         <DataTableColumnHeader

@@ -156,6 +156,11 @@ export interface SelectBookingParticipant {
   status: SelectAgendaBooking['status'];
   name: SelectUser['name'];
 }
+
+export interface DeleteAgenda {
+  id: SelectAgenda['id'];
+  is_refund: boolean;
+}
 export interface AgendaRepository {
   count(): Promise<number>;
   countParticipant(id: SelectAgenda['id']): Promise<number>;
@@ -206,6 +211,6 @@ export interface AgendaRepository {
   ): Promise<undefined | Error>;
   updateAgendaBooking(data: UpdateAgendaBooking): Promise<undefined | Error>;
 
-  delete(id: SelectAgenda['id']): Promise<undefined | Error>;
+  delete(data: DeleteAgenda): Promise<undefined | Error>;
   // deleteParticipant(id: InsertAgendaBooking['id']): Promise<undefined | Error>;
 }

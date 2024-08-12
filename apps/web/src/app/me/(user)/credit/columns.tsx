@@ -1,13 +1,19 @@
 'use client';
 
-import { SelectAllCredit } from '@repo/shared/repository';
+import { SelectAllCredit, SelectClassType } from '@repo/shared/repository';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { Badge } from '@repo/ui/components/ui/badge';
 import { type ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import * as React from 'react';
 
-export function getColumns(): ColumnDef<SelectAllCredit['data'][0]>[] {
+interface getColumnsProps {
+  classTypes: SelectClassType[];
+}
+
+export function getColumns(
+  data: getColumnsProps,
+): ColumnDef<SelectAllCredit['data'][0]>[] {
   return [
     {
       accessorKey: 'updated_at',
@@ -38,6 +44,23 @@ export function getColumns(): ColumnDef<SelectAllCredit['data'][0]>[] {
         <DataTableColumnHeader column={column} title="Catatan" />
       ),
       cell: ({ row }) => <div>{row.original.note}</div>,
+    },
+    {
+      accessorKey: 'class_type_id',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Tipe Kelas" />
+      ),
+      cell: ({ row }) => (
+        <div className="md:-ml-5 md:text-center">
+          <Badge>
+            {
+              data.classTypes.find(
+                (classType) => classType.id === row.original.class_type_id,
+              )?.type
+            }
+          </Badge>
+        </div>
+      ),
     },
     {
       accessorKey: 'amount',

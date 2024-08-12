@@ -17,13 +17,14 @@ import {
   FindAllAgendaByCoachOptions,
   SelectScheduleByDate,
   UpdateAgendaBookingById,
+  DeleteAgenda,
 } from '../agenda';
 import { Database, Users } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/mysql';
 import { Selectable, sql } from 'kysely';
 import { SelectCoach } from '../coach';
-import { addDays } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { SelectUser } from '../user';
 
 @injectable()
@@ -827,19 +828,83 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     }
   }
 
-  async delete(id: SelectAgenda['id']) {
+  async delete(data: DeleteAgenda) {
     try {
-      const query = await this._db
-        .deleteFrom('agendas')
-        .where('id', '=', id)
-        .executeTakeFirst();
+      const result = await this._db.transaction().execute(async (trx) => {
+        const agenda = await trx
+          .selectFrom('agendas')
+          .selectAll()
+          .where('id', '=', data.id)
+          .executeTakeFirst();
 
-      if (query.numDeletedRows === undefined) {
-        console.error('Failed to delete agenda', query);
-        return new Error('Failed to delete agenda');
-      }
+        if (agenda === undefined) {
+          console.error('Failed to get agenda', agenda);
+          return new Error('Failed to get agenda');
+        }
 
-      return;
+        const agendaBookings = await trx
+          .selectFrom('agenda_bookings')
+          .selectAll()
+          .where('agenda_id', '=', data.id)
+          .execute();
+
+        const singleClass = await trx
+          .selectFrom('classes')
+          .selectAll()
+          .where('id', '=', agenda.class_id)
+          .executeTakeFirst();
+
+        if (singleClass === undefined) {
+          console.error('Failed to get class type', singleClass);
+          return new Error('Failed to get class type');
+        }
+
+        if (agendaBookings.length > 0) {
+          await Promise.all(
+            agendaBookings.map((booking) =>
+              trx
+                .updateTable('agenda_bookings')
+                .set({ status: 'cancelled' })
+                .where('id', '=', booking.id)
+                .execute()
+            )
+          );
+
+          if (data.is_refund) {
+            const tomorrow = addDays(new Date(), 1);
+            await Promise.all(
+              agendaBookings.map((booking) =>
+                trx
+                  .insertInto('credit_transactions')
+                  .values({
+                    agenda_booking_id: booking.id,
+                    user_id: booking.user_id,
+                    type: 'debit',
+                    expired_at: tomorrow,
+                    class_type_id: singleClass.class_type_id,
+                    amount: 1,
+                    note: `Refund for book ${singleClass.name} on ${format(
+                      agenda.time,
+                      'yyyy-MM-dd HH:mm'
+                    )}`,
+                  })
+                  .execute()
+              )
+            );
+          }
+        }
+
+        const query = await trx
+          .deleteFrom('agendas')
+          .where('id', '=', data.id)
+          .executeTakeFirst();
+
+        if (query.numDeletedRows === undefined) {
+          console.error('Failed to delete agenda', query);
+          return new Error('Failed to delete agenda');
+        }
+      });
+      return result;
     } catch (error) {
       console.error('Error deleting agenda:', error);
       return new Error('Error deleting agenda');

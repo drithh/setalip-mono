@@ -9,8 +9,12 @@ export async function up(db: Kysely<any>): Promise<void> {
 
       await trx.schema
         .alterTable('packages')
-        .addColumn('position', 'int8', (col) => col.defaultTo(0))
+        .addColumn('position', 'int8', (col) => col.defaultTo(1000))
         .execute();
+
+      await sql`ALTER TABLE agenda_bookings MODIFY COLUMN agenda_id bigint(20) NULL`.execute(
+        trx
+      );
 
       await trx.schema
         .alterTable('agenda_bookings')
@@ -25,7 +29,7 @@ export async function up(db: Kysely<any>): Promise<void> {
           'agendas',
           ['id']
         )
-        .onDelete('cascade')
+        .onDelete('set null')
         .execute();
     });
   } catch (error) {
@@ -42,6 +46,11 @@ export async function down(db: Kysely<any>): Promise<void> {
         .execute();
 
       await trx.schema.alterTable('packages').dropColumn('position').execute();
+
+      await trx.schema
+        .alterTable('agenda_bookings')
+        .modifyColumn('agenda_id', 'bigint', (col) => col.notNull())
+        .execute();
 
       await trx.schema
         .alterTable('agenda_bookings')

@@ -76,7 +76,7 @@ export interface Coaches {
   id: Generated<number>;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
-  user_id: number;
+  user_id: Generated<number | null>;
 }
 
 export interface CreditTransactions {
@@ -229,6 +229,7 @@ export interface Packages {
   loyalty_points: number;
   name: string;
   one_time_only: number;
+  position: Generated<number | null>;
   price: number;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;

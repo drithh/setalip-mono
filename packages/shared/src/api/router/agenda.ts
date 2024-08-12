@@ -1,8 +1,9 @@
 import { TYPES } from '#dep/inversify/types';
 import { AgendaService } from '#dep/service/agenda';
 import { TRPCRouterRecord } from '@trpc/server';
-import { protectedProcedure, publicProcedure } from '../trpc';
+import { adminProcedure, protectedProcedure, publicProcedure } from '../trpc';
 import {
+  deleteAgendaSchema,
   deleteParticipantSchema,
   findAllAgendaSchema,
   findAllCoachAgendaSchema,
@@ -183,6 +184,25 @@ export const agendaRouter = {
         status,
       });
 
+      return result;
+    }),
+  delete: adminProcedure
+    .input(deleteAgendaSchema)
+    .mutation(async ({ ctx, input }) => {
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+
+      console.log('input', input);
+
+      const result = await agendaService.delete({
+        id: input.id,
+        is_refund: input.is_refund,
+      });
+
+      if (result.error) {
+        throw result;
+      }
       return result;
     }),
 } satisfies TRPCRouterRecord;

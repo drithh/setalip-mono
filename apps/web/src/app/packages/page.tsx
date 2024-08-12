@@ -16,6 +16,7 @@ export default async function Schedules({
     ...search,
     perPage: 100,
     is_active: 1,
+    sort: 'position.ASC, created_at.DESC',
   });
 
   const classTypeService = container.get<ClassTypeService>(

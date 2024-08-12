@@ -21,6 +21,7 @@ import type {
   UpdateAgendaBookingById,
   LoyaltyRepository,
   SelectAgendaBooking,
+  DeleteAgenda,
 } from '../repository';
 import { AgendaService } from './agenda';
 import { addMinutes, isAfter, isBefore, isEqual } from 'date-fns';
@@ -461,14 +462,75 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
-  async delete(id: SelectAgenda['id']) {
-    const result = await this._agendaRepository.delete(id);
+  async delete(data: DeleteAgenda) {
+    const agenda = await this._agendaRepository.findById(data.id);
+
+    if (!agenda) {
+      return {
+        result: undefined,
+        error: new Error('Agenda not found'),
+      };
+    }
+
+    const agendaClass = await this._classRepository.findById(agenda.class_id);
+
+    if (!agendaClass) {
+      return {
+        result: undefined,
+        error: new Error('Class not found'),
+      };
+    }
+
+    const agendaLocation =
+      await this._locationRepository.findLocationByFacilityId(
+        agenda.location_facility_id
+      );
+
+    if (!agendaLocation) {
+      return {
+        result: undefined,
+        error: new Error('Location not found'),
+      };
+    }
+    const agendaBookings =
+      await this._agendaRepository.findAllAgendaBookingByAgendaId(data.id);
+
+    const result = await this._agendaRepository.delete(data);
 
     if (result instanceof Error) {
       return {
         result: undefined,
         error: result,
       };
+    }
+
+    for (const booking of agendaBookings) {
+      const user = await this._userRepository.findById(booking.user_id);
+
+      if (!user) {
+        return {
+          result: undefined,
+          error: new Error('User not found'),
+        };
+      }
+
+      const notification = await this._notificationService.sendNotification({
+        payload: {
+          type: NotificationType.AdminDeletedAgenda,
+          date: agenda.time,
+          class: agendaClass.name,
+          location: agendaLocation.name,
+          is_refund: data.is_refund,
+        },
+        recipient: user.phone_number,
+      });
+
+      if (notification.error) {
+        return {
+          result: undefined,
+          error: notification.error,
+        };
+      }
     }
 
     return {

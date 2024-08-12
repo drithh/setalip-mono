@@ -74,6 +74,7 @@ export default function CreatePackageForm({ classTypes }: CreatePackageProps) {
       valid_for: 0,
       class_type_id: 0,
       is_active: 1,
+      position: 1000,
     } as FormSchema,
   });
 
@@ -174,6 +175,20 @@ export default function CreatePackageForm({ classTypes }: CreatePackageProps) {
                             }}
                           />
                         </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="position"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Urutan Tampilan</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

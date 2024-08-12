@@ -22,6 +22,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import EditParticipantForm from '../edit-participant.form';
 import EditAgendaForm from '../edit-agenda.form';
 import { format } from 'date-fns';
+import DeleteAgendaDialog from '../delete-agenda.dialog';
 
 interface getColumnsProps {
   locations: SelectLocation[];
@@ -145,6 +146,8 @@ export function getColumns({
           React.useState(false);
         const [showEditParticipantSheet, setShowEditParticipantSheet] =
           React.useState(false);
+        const [showDeleteAgendaDialog, setShowDeleteAgendaDialog] =
+          React.useState(false);
 
         return (
           <>
@@ -163,6 +166,11 @@ export function getColumns({
               participants={row.original.participants ?? []}
               agendaId={row.original.id}
             />
+            <DeleteAgendaDialog
+              open={showDeleteAgendaDialog}
+              onOpenChange={setShowDeleteAgendaDialog}
+              data={row.original}
+            />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -177,11 +185,16 @@ export function getColumns({
                 <DropdownMenuItem onSelect={() => setShowEditAgendaSheet(true)}>
                   Edit Agenda
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onSelect={() => setShowEditParticipantSheet(true)}
                 >
                   Manage Participants
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onSelect={() => setShowDeleteAgendaDialog(true)}
+                >
+                  Delete Agenda
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

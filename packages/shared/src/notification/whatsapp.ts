@@ -89,6 +89,16 @@ const parseNotification = (payload: NotificationPayload) => {
         `Paket kadaluarsa: ${payload.expired_at ? format(new Date(payload.expired_at), 'eeee, dd/MM/yyyy') : 'Tidak terbatas'}` +
         `${FOOTER_MESSAGE}`
       );
+    case NotificationType.AdminDeletedAgenda:
+      return (
+        `${HEADER_MESSAGE}` +
+        `Kelas dibatalkan oleh admin, Detail:\n` +
+        `Kelas: ${payload.class}\n` +
+        `Tanggal: ${format(new Date(payload.date), 'eeee, dd/MM/yyyy')}\n` +
+        `Lokasi: ${payload.location}\n` +
+        `Refund: ${payload.is_refund ? 'Ya, segera gunakan kredit Anda sebelum 24 jam' : 'Tidak'}` +
+        `${FOOTER_MESSAGE}`
+      );
     case NotificationType.UserBookingLessThan2Hours:
       return (
         `${HEADER_MESSAGE}` +
