@@ -91,8 +91,7 @@ export const findAllAgendaSchema = defaultPaginationSchema.extend({
   class_name: z.string().optional(),
   coach_name: z.string().optional(),
   location_name: z.string().optional(),
-  dateStart: z.date().optional(),
-  dateEnd: z.date().optional(),
+  date: z.string().optional(),
 });
 
 export const deleteParticipantSchema = z.object({

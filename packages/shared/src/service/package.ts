@@ -52,5 +52,8 @@ export interface PackageService {
   ): PromiseResult<undefined, Error>;
 
   delete(id: SelectPackage['id']): PromiseResult<undefined, Error>;
-  deleteExpiredPackageTransaction(): PromiseResult<undefined, Error>;
+  deleteExpiredPackageTransaction(): PromiseResult<
+    SelectPackageTransaction[],
+    Error
+  >;
 }

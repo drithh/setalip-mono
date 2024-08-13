@@ -22,7 +22,6 @@ import { api } from '@/trpc/react';
 
 import { getColumns } from './columns';
 import DayPicker from './day-picker';
-// import CreateAgendaForm from './create-agenda.form';
 
 interface AgendaTableProps {
   locations: SelectLocation[];
@@ -59,7 +58,6 @@ export default function AgendaTable({
   const onDateChange = (date: Date) => {
     setDate(date);
 
-    // search params
     const newSearchParams = new URLSearchParams(searchParams.toString());
     const stringDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate()}`;
     newSearchParams.set('date', stringDate);

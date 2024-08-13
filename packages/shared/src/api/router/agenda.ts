@@ -36,8 +36,7 @@ export const agendaRouter = {
         className: input.class_name,
         locations: locations,
         coaches: coaches,
-        dateStart: input.dateStart,
-        dateEnd: input.dateEnd,
+        date: new Date(input.date ?? new Date()),
       });
 
       return agendas;

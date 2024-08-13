@@ -354,18 +354,27 @@ export class AgendaServiceImpl implements AgendaService {
 
     // insert all recurrence agenda for next week
     try {
-      await Promise.all(
+      const result = await Promise.all(
         recurrenceAgendas.map(async (agenda) => {
-          const nextWeekAgenda = {
+          const nextWeekAgenda: InsertAgenda = {
             ...agenda,
+            id: undefined,
+            weekly_recurrence: 0,
+            recurrence_day: 0,
             time: addDays(agenda.time, 7),
           };
 
-          await this._agendaRepository.create(nextWeekAgenda);
+          const createAgenda =
+            await this._agendaRepository.create(nextWeekAgenda);
+
+          if (createAgenda instanceof Error) {
+            console.error('Failed to create recurrence agenda', createAgenda);
+          }
+          return createAgenda;
         })
       );
       return {
-        result: undefined,
+        result: result,
         error: undefined,
       };
     } catch (error) {

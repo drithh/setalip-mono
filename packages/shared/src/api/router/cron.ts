@@ -25,27 +25,6 @@ export const cronRouter = {
 
     const currentDate = new Date();
 
-    const packageService = container.get<PackageService>(TYPES.PackageService);
-
-    const result = await packageService.deleteExpiredPackageTransaction();
-    if (result.error) {
-      cronRun.push('Job: Delete expired package transaction failed to run');
-    } else {
-      cronRun.push('Job: Delete expired package transaction successfully run');
-    }
-
-    const agendaService = ctx.container.get<AgendaService>(TYPES.AgendaService);
-
-    const createRecurrence = await agendaService.createTodayRecurrence(
-      currentDate.getDay()
-    );
-
-    if (createRecurrence.error) {
-      cronRun.push('Job: Create today recurrence failed to run');
-    } else {
-      cronRun.push('Job: Create today recurrence successfully run');
-    }
-
     if (currentDate.getHours() % 3 === 0) {
       const loyaltyService = ctx.container.get<LoyaltyService>(
         TYPES.LoyaltyService
@@ -76,6 +55,49 @@ export const cronRouter = {
 
       if (currentDate.getHours() === 6) {
         // delete package transaction if expired
+        const packageService = container.get<PackageService>(
+          TYPES.PackageService
+        );
+
+        const deleteExpiredPackageTransaction =
+          await packageService.deleteExpiredPackageTransaction();
+        if (deleteExpiredPackageTransaction.error) {
+          cronRun.push('Job: Delete expired package transaction failed to run');
+        } else {
+          for (const transaction of deleteExpiredPackageTransaction.result) {
+            cronRun.push(
+              `Job: Delete expired package transaction successfully run for ${transaction.id}`
+            );
+          }
+          cronRun.push(
+            'Job: Delete expired package transaction successfully run'
+          );
+        }
+
+        const agendaService = ctx.container.get<AgendaService>(
+          TYPES.AgendaService
+        );
+
+        const createRecurrence = await agendaService.createTodayRecurrence(
+          currentDate.getDay()
+        );
+
+        if (createRecurrence.error) {
+          cronRun.push('Job: Create today recurrence failed to run');
+        } else {
+          for (const recurrence of createRecurrence.result) {
+            if (recurrence instanceof Error) {
+              cronRun.push(
+                `Job: Create today recurrence failed to run for ${recurrence}`
+              );
+            } else {
+              cronRun.push(
+                `Job: Create today recurrence successfully run for ${recurrence.class_id}`
+              );
+            }
+          }
+          cronRun.push('Job: Create today recurrence successfully run');
+        }
       }
 
       // notification agenda if less than 3 hours

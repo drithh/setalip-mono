@@ -18,6 +18,9 @@ import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllAgendaSchema } from '@repo/shared/api/schema';
 import CreateAgendaForm from '../create-agenda.form';
+import DayPicker from './day-picker';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { parse } from 'date-fns';
 
 interface AgendaTableProps {
   locations: SelectLocation[];
@@ -41,6 +44,22 @@ export default function AgendaTable({
     () => getColumns({ locations, coaches, classes }),
     [],
   );
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const convertDate = (date: string) => parse(date, 'yyyy-MM-dd', new Date());
+  const defaultDate = search.date ? convertDate(search.date) : new Date();
+  const [date, setDate] = React.useState<Date>(defaultDate);
+
+  const onDateChange = (date: Date) => {
+    setDate(date);
+
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    const stringDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate()}`;
+    newSearchParams.set('date', stringDate);
+    router.push(`${pathname}?${newSearchParams.toString()}`);
+  };
 
   const filterFields: DataTableFilterField<SelectAgendaWithCoachAndClass>[] = [
     {
@@ -85,6 +104,7 @@ export default function AgendaTable({
 
   return (
     <DataTable table={table}>
+      <DayPicker date={date} setDate={onDateChange} />
       <DataTableToolbar table={table} filterFields={filterFields}>
         <CreateAgendaForm
           coaches={coaches}

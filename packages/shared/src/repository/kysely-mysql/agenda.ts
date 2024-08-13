@@ -85,8 +85,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       className,
       coaches,
       locations,
-      dateStart,
-      dateEnd,
+      date,
     } = data;
 
     const offset = (page - 1) * perPage;
@@ -119,10 +118,13 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       query = query.where('locations.id', 'in', locations);
     }
 
-    if (dateStart && dateEnd) {
+    if (date) {
+      const today = new Date(date);
+      const tomorrow = addDays(today, 1);
+
       query = query
-        .where('agendas.time', '>=', dateStart)
-        .where('agendas.time', '<=', dateEnd);
+        .where('agendas.time', '>=', today)
+        .where('agendas.time', '<=', tomorrow);
     }
 
     const queryData = await query

@@ -664,6 +664,13 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
   async deleteExpiredPackageTransaction() {
     try {
+      const packageTransactions = await this._db
+        .selectFrom('package_transactions')
+        .selectAll()
+        .where('status', '=', 'pending')
+        .where('created_at', '<', addDays(new Date(), -2))
+        .execute();
+
       const result = await this._db
         .updateTable('package_transactions')
         .where('status', '=', 'pending')
@@ -678,7 +685,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
         return new Error('Failed to delete package transaction');
       }
 
-      return;
+      return packageTransactions;
     } catch (error) {
       console.error('Error deleting package transaction:', error);
       return new Error('Failed to delete package transaction');

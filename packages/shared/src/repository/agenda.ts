@@ -22,8 +22,7 @@ export interface FindAllAgendaOptions extends DefaultPagination {
   className?: string;
   coaches?: number[];
   locations: number[];
-  dateStart?: Date;
-  dateEnd?: Date;
+  date?: Date;
 }
 
 export interface FindScheduleByDateOptions extends DefaultPagination {
