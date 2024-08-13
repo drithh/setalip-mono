@@ -3,6 +3,7 @@ import { TYPES, container } from '@repo/shared/inversify';
 import { FindAllAgendaOptions } from '@repo/shared/repository';
 import {
   ClassService,
+  ClassTypeService,
   CoachService,
   LocationService,
 } from '@repo/shared/service';
@@ -26,6 +27,11 @@ export default async function Agendas({ searchParams }: IndexPageProps) {
   const coachService = container.get<CoachService>(TYPES.CoachService);
   const coaches = await coachService.findAll();
 
+  const classTypeService = container.get<ClassTypeService>(
+    TYPES.ClassTypeService,
+  );
+  const classTypes = await classTypeService.findAll();
+
   return (
     <main className="mx-auto flex w-full max-w-screen-2xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
       <QueryResetBoundary>
@@ -43,6 +49,7 @@ export default async function Agendas({ searchParams }: IndexPageProps) {
           <AgendaTable
             locations={locations?.result ?? []}
             coaches={coaches?.result ?? []}
+            classTypes={classTypes?.result ?? []}
             classes={classes?.result?.data ?? []}
             search={search}
           />

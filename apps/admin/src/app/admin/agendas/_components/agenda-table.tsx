@@ -6,13 +6,14 @@ import type { DataTableFilterField } from '@repo/ui/types';
 import { useDataTable } from '@/hooks/use-data-table';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
-
+import { DatePicker } from '@repo/ui/components/date-picker';
 import { getColumns } from './columns';
 import {
   SelectAgendaWithCoachAndClass,
   SelectLocation,
   SelectCoachWithUser,
   SelectClass,
+  SelectClassType,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
@@ -21,10 +22,13 @@ import CreateAgendaForm from '../create-agenda.form';
 import DayPicker from './day-picker';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { parse } from 'date-fns';
+import { Switch } from '@repo/ui/components/ui/switch';
+import { Card, CardContent } from '@repo/ui/components/ui/card';
 
 interface AgendaTableProps {
   locations: SelectLocation[];
   coaches: SelectCoachWithUser[];
+  classTypes: SelectClassType[];
   classes: SelectClass[];
   search: z.infer<typeof findAllAgendaSchema>;
 }
@@ -32,6 +36,7 @@ interface AgendaTableProps {
 export default function AgendaTable({
   locations,
   coaches,
+  classTypes,
   classes,
   search,
 }: AgendaTableProps) {
@@ -63,16 +68,29 @@ export default function AgendaTable({
 
   const filterFields: DataTableFilterField<SelectAgendaWithCoachAndClass>[] = [
     {
-      label: 'Nama Kelas',
-      value: 'class_name',
-      placeholder: 'Filter nama kelas...',
-    },
-    {
       label: 'Lokasi',
       value: 'location_name',
       options: locations.map((location) => ({
         label: location.name,
         value: location.id.toString(),
+        withCount: true,
+      })),
+    },
+    {
+      label: 'Kelas',
+      value: 'class_name',
+      options: classes.map((singleClass) => ({
+        label: singleClass.name,
+        value: singleClass.id.toString(),
+        withCount: true,
+      })),
+    },
+    {
+      label: 'Tipe Kelas',
+      value: 'class_type_name',
+      options: classTypes.map((classType) => ({
+        label: classType.type,
+        value: classType.id.toString(),
         withCount: true,
       })),
     },
@@ -105,7 +123,29 @@ export default function AgendaTable({
   return (
     <DataTable table={table}>
       <DayPicker date={date} setDate={onDateChange} />
+      <Card className="w-fit pt-4">
+        <CardContent className="flex flex-col gap-2">
+          <div>Display All Recurrence Agenda</div>
+          <Switch
+            checked={search.is_recurrence === 0 ? false : true}
+            onCheckedChange={(value) => {
+              const newSearchParams = new URLSearchParams(
+                searchParams.toString(),
+              );
+              newSearchParams.set('is_recurrence', value ? '1' : '0');
+              console.log('newSearchParams', newSearchParams.toString());
+              router.push(`${pathname}?${newSearchParams.toString()}`);
+            }}
+          />
+        </CardContent>
+      </Card>
+
       <DataTableToolbar table={table} filterFields={filterFields}>
+        <DatePicker
+          selected={date}
+          setSelected={onDateChange}
+          onDateChange={onDateChange}
+        />
         <CreateAgendaForm
           coaches={coaches}
           locations={locations}

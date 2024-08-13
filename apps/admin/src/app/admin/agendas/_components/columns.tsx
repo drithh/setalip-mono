@@ -35,38 +35,76 @@ export function getColumns({
   coaches,
   classes,
 }: getColumnsProps): ColumnDef<SelectAgendaWithCoachAndClass>[] {
+  // generate random color in total of classes
+  // Function to generate a random color in hexadecimal format
+  const generateColorFromName = (name: string) => {
+    // Simple hash function to convert string to a number
+    const hashCode = (str: string) => {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = (hash << 5) - hash + str.charCodeAt(i);
+        hash |= 0; // Convert to 32-bit integer
+      }
+      return hash;
+    };
+
+    // Convert hash code to a bright color code
+    const hash = hashCode(name);
+    const red = (hash & 0xff0000) >> 16;
+    const green = (hash & 0x00ff00) >> 8;
+    const blue = hash & 0x0000ff;
+
+    // Ensure the color is bright by adjusting the color components
+    const brighten = (color: number) => Math.min(255, color + 64); // Add 128 to make sure it's bright
+
+    const brightRed = brighten(red);
+    const brightGreen = brighten(green);
+    const brightBlue = brighten(blue);
+
+    const color = `#${brightRed.toString(16).padStart(2, '0')}${brightGreen.toString(16).padStart(2, '0')}${brightBlue.toString(16).padStart(2, '0')}`;
+
+    return color;
+  };
+  // Generate random colors for the total number of classes
+  const colors = classes.map(({ name }) => {
+    return {
+      name,
+      color: generateColorFromName(name),
+    };
+  });
   return [
-    // {
-    //   id: 'select',
-    //   header: ({ table }) => (
-    //     <Checkbox
-    //       checked={
-    //         table.getIsAllPageRowsSelected() ||
-    //         (table.getIsSomePageRowsSelected() && 'indeterminate')
-    //       }
-    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-    //       aria-label="Select all"
-    //       className="translate-y-0.5"
-    //     />
-    //   ),
-    //   cell: ({ row }) => (
-    //     <Checkbox
-    //       checked={row.getIsSelected()}
-    //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-    //       aria-label="Select row"
-    //       className="translate-y-0.5"
-    //     />
-    //   ),
-    //   enableSorting: false,
-    //   enableHiding: false,
-    // },
     {
       accessorKey: 'class_name',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Kelas" />
       ),
       cell: ({ row }) => {
-        return <span>{row.original.class_name}</span>;
+        return (
+          <div className="flex place-items-center gap-2">
+            <div
+              className="h-4 w-4 rounded-full"
+              style={{
+                backgroundColor: colors.find(
+                  (color) => color.name === row.original.class_name,
+                )?.color,
+              }}
+            ></div>
+            <span>{row.original.class_name}</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'time',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Waktu" />
+      ),
+      cell: ({ row }) => {
+        return (
+          <p className="">
+            {`${format(new Date(row.original.time), 'MMM dd - HH:mm')} (${row.original.class_duration} menit)`}
+          </p>
+        );
       },
     },
     {
@@ -89,19 +127,7 @@ export function getColumns({
         return <div>{row.original.coach_name}</div>;
       },
     },
-    {
-      accessorKey: 'time',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Waktu" />
-      ),
-      cell: ({ row }) => {
-        return (
-          <p className="">
-            {`${format(new Date(row.original.time), 'MMM dd - HH:mm')} (${row.original.class_duration} menit)`}
-          </p>
-        );
-      },
-    },
+
     {
       accessorKey: 'slot',
       header: ({ column }) => (
@@ -120,7 +146,20 @@ export function getColumns({
         );
       },
     },
-
+    {
+      accessorKey: 'class_type_name',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Tipe Kelas" />
+      ),
+      cell: ({ row }) => (
+        <div className="capitalize">
+          <span className="inline-block font-semibold sm:hidden">
+            Tipe :&ensp;
+          </span>
+          {row.original.class_type_name}
+        </div>
+      ),
+    },
     {
       accessorKey: 'updated_at',
       header: ({ column }) => (

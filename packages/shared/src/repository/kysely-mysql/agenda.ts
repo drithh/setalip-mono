@@ -24,7 +24,7 @@ import { TYPES } from '#dep/inversify/types';
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/mysql';
 import { Selectable, sql } from 'kysely';
 import { SelectCoach } from '../coach';
-import { addDays, format } from 'date-fns';
+import { addDays, endOfDay, format, startOfDay } from 'date-fns';
 import { SelectUser } from '../user';
 
 @injectable()
@@ -84,6 +84,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       sort,
       className,
       coaches,
+      is_recurrence,
       locations,
       date,
     } = data;
@@ -106,6 +107,10 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
       .innerJoin('class_types', 'classes.class_type_id', 'class_types.id');
 
+    if (is_recurrence !== undefined && is_recurrence === true) {
+      query = query.where('agendas.weekly_recurrence', '=', 1);
+    }
+
     if (className) {
       query = query.where('classes.name', 'like', `%${className}%`);
     }
@@ -119,9 +124,9 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     }
 
     if (date) {
-      const today = new Date(date);
-      const tomorrow = addDays(today, 1);
-
+      const today = startOfDay(new Date(date));
+      const tomorrow = endOfDay(today);
+      console.log('today', today, 'tomorrow', tomorrow);
       query = query
         .where('agendas.time', '>=', today)
         .where('agendas.time', '<=', tomorrow);
@@ -305,12 +310,12 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     }
 
     if (date) {
-      const dateTomorrow = new Date(date);
-      dateTomorrow.setDate(dateTomorrow.getDate() + 1);
+      const today = startOfDay(new Date(date));
+      const tomorrow = endOfDay(today);
 
       query = query
         .where('agendas.time', '>=', date)
-        .where('agendas.time', '<=', dateTomorrow);
+        .where('agendas.time', '<=', tomorrow);
     }
 
     const queryData = await query

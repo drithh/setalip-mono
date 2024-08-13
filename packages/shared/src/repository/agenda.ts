@@ -22,6 +22,7 @@ export interface FindAllAgendaOptions extends DefaultPagination {
   className?: string;
   coaches?: number[];
   locations: number[];
+  is_recurrence?: boolean;
   date?: Date;
 }
 

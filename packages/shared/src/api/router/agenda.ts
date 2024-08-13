@@ -36,7 +36,10 @@ export const agendaRouter = {
         className: input.class_name,
         locations: locations,
         coaches: coaches,
-        date: new Date(input.date ?? new Date()),
+        is_recurrence: input.is_recurrence === 1,
+        date: !input.is_recurrence
+          ? new Date(input.date ?? new Date())
+          : undefined,
       });
 
       return agendas;
