@@ -24,8 +24,9 @@ import type {
   DeleteAgenda,
 } from '../repository';
 import { AgendaService } from './agenda';
-import { addMinutes, isAfter, isBefore, isEqual } from 'date-fns';
+import { addDays, addMinutes, isAfter, isBefore, isEqual } from 'date-fns';
 import { NotificationType, type NotificationService } from '../notification';
+import { PromiseResult } from '../types';
 
 @injectable()
 export class AgendaServiceImpl implements AgendaService {
@@ -206,7 +207,9 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const agenda = await this._agendaRepository.findById(data.agenda_id);
+    const agenda = await this._agendaRepository.findById(
+      data.agenda_id as number
+    );
     if (!agenda) {
       return {
         error: new Error('Agenda not found'),
@@ -233,7 +236,7 @@ export class AgendaServiceImpl implements AgendaService {
     }
 
     const countParticipant = await this._agendaRepository.countParticipant(
-      data.agenda_id
+      data.agenda_id as number
     );
 
     if (countParticipant >= agendaClass.slot) {
@@ -345,6 +348,35 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
+  async createTodayRecurrence(recurrenceDay: SelectAgenda['recurrence_day']) {
+    const recurrenceAgendas =
+      await this._agendaRepository.findAllByRecurrenceDay(recurrenceDay);
+
+    // insert all recurrence agenda for next week
+    try {
+      await Promise.all(
+        recurrenceAgendas.map(async (agenda) => {
+          const nextWeekAgenda = {
+            ...agenda,
+            time: addDays(agenda.time, 7),
+          };
+
+          await this._agendaRepository.create(nextWeekAgenda);
+        })
+      );
+      return {
+        result: undefined,
+        error: undefined,
+      };
+    } catch (error) {
+      console.error('Failed to create recurrence agenda', error);
+      return {
+        result: undefined,
+        error: new Error('Failed to create recurrence agenda'),
+      };
+    }
+  }
+
   async update(data: UpdateAgenda) {
     const result = await this._agendaRepository.update(data);
 
@@ -414,7 +446,7 @@ export class AgendaServiceImpl implements AgendaService {
       }
 
       const agenda = await this._agendaRepository.findById(
-        agendaBooking.agenda_id
+        agendaBooking.agenda_id as number
       );
 
       if (!agenda) {

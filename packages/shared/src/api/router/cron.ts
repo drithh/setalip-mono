@@ -10,6 +10,8 @@ import { NotificationService, NotificationType } from '#dep/notification/index';
 import { differenceInHours } from 'date-fns';
 import { cronSchema } from '../schema';
 import { env } from '#dep/env';
+import { container } from '#dep/inversify/container';
+import { PackageService } from '#dep/service/package';
 
 export const cronRouter = {
   cron: publicProcedure.input(cronSchema).mutation(async ({ ctx, input }) => {
@@ -22,6 +24,28 @@ export const cronRouter = {
     let cronRun = [];
 
     const currentDate = new Date();
+
+    const packageService = container.get<PackageService>(TYPES.PackageService);
+
+    const result = await packageService.deleteExpiredPackageTransaction();
+    if (result.error) {
+      cronRun.push('Job: Delete expired package transaction failed to run');
+    } else {
+      cronRun.push('Job: Delete expired package transaction successfully run');
+    }
+
+    const agendaService = ctx.container.get<AgendaService>(TYPES.AgendaService);
+
+    const createRecurrence = await agendaService.createTodayRecurrence(
+      currentDate.getDay()
+    );
+
+    if (createRecurrence.error) {
+      cronRun.push('Job: Create today recurrence failed to run');
+    } else {
+      cronRun.push('Job: Create today recurrence successfully run');
+    }
+
     if (currentDate.getHours() % 3 === 0) {
       const loyaltyService = ctx.container.get<LoyaltyService>(
         TYPES.LoyaltyService
@@ -48,6 +72,10 @@ export const cronRouter = {
         }
 
         cronRun.push('Job: Birthday reward successfully run');
+      }
+
+      if (currentDate.getHours() === 6) {
+        // delete package transaction if expired
       }
 
       // notification agenda if less than 3 hours

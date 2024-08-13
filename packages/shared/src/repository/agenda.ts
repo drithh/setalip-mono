@@ -175,6 +175,9 @@ export interface AgendaRepository {
 
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;
+  findAllByRecurrenceDay(
+    day: SelectAgenda['recurrence_day']
+  ): Promise<SelectAgenda[]>;
   findAllAgendaBookingByAgendaId(
     id: SelectAgenda['id']
   ): Promise<SelectAgendaBooking[]>;

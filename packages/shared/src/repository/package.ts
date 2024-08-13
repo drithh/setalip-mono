@@ -170,4 +170,5 @@ export interface PackageRepository {
   ): Promise<UpdatePackageTransactionResult | Error>;
 
   delete(id: SelectPackage['id']): Promise<undefined | Error>;
+  deleteExpiredPackageTransaction(): Promise<undefined | Error>;
 }

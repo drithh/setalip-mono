@@ -178,6 +178,16 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .executeTakeFirst();
   }
 
+  async findAllByRecurrenceDay(day: number): Promise<SelectAgenda[]> {
+    const query = await this._db
+      .selectFrom('agendas')
+      .selectAll()
+      .where('recurrence_day', '=', day)
+      .execute();
+
+    return query;
+  }
+
   findAllAgendaBookingByAgendaId(
     id: SelectAgenda['id']
   ): Promise<SelectAgendaBooking[]> {

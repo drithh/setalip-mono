@@ -444,4 +444,20 @@ export class PackageServiceImpl implements PackageService {
       result: result,
     };
   }
+
+  async deleteExpiredPackageTransaction() {
+    const result =
+      await this._packageRepository.deleteExpiredPackageTransaction();
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result: result,
+    };
+  }
 }
