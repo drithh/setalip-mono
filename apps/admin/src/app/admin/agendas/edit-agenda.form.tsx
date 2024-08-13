@@ -40,6 +40,8 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
+import { Switch } from '@repo/ui/components/ui/switch';
+import { format } from 'date-fns';
 
 interface EditAgendaProps {
   locations: SelectLocation[];
@@ -84,6 +86,8 @@ export default function EditAgendaForm({
       class_id: agenda.class_id,
       coach_id: agenda.coach_id,
       location_facility_id: agenda.location_facility_id,
+      is_show: agenda.is_show,
+      weekly_recurrence: agenda.weekly_recurrence,
     } as FormSchema,
   });
 
@@ -124,7 +128,6 @@ export default function EditAgendaForm({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
-      form.reset();
       trpcUtils.invalidate();
       onOpenChange(false);
     }
@@ -205,6 +208,28 @@ export default function EditAgendaForm({
 
                 <FormField
                   control={form.control}
+                  name="is_show"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Show agenda</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(e) => {
+                              field.onChange(e ? 1 : 0);
+                            }}
+                          />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="time"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
@@ -253,19 +278,39 @@ export default function EditAgendaForm({
                   <FormMessage />
                 </FormItem>
 
-                {/* <FormField
+                <FormField
                   control={form.control}
-                  name="slot"
+                  name="weekly_recurrence"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Slot</FormLabel>
+                      <FormLabel>Weekly Recurrence</FormLabel>
                       <FormControl>
-                        <Input id="name" type="number" {...field} />
+                        <>
+                          <Input type="hidden" {...field} />
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(e) => {
+                              field.onChange(e ? 1 : 0);
+                            }}
+                          />
+                        </>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
-                /> */}
+                />
+                {form.watch('weekly_recurrence') === 1 && (
+                  <FormItem className="grid w-full gap-2">
+                    <FormLabel>Recurrence Day</FormLabel>
+                    <FormControl>
+                      <Input
+                        readOnly
+                        value={`Setiap ${format(form.watch('time'), 'EEEE')}`}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
 
                 <FormField
                   control={form.control}

@@ -12,7 +12,10 @@ export async function up(db: Kysely<any>): Promise<void> {
 
       await trx.schema
         .alterTable('agendas')
-        .addColumn('weekly_recurring', 'boolean', (col) => col.defaultTo(false))
+        .addColumn('weekly_recurrence', 'boolean', (col) =>
+          col.defaultTo(false)
+        )
+        .addColumn('recurrence_day', 'int4', (col) => col.defaultTo(0))
         .addColumn('is_show', 'boolean', (col) => col.defaultTo(true))
         .execute();
     });
@@ -32,7 +35,8 @@ export async function down(db: Kysely<any>): Promise<void> {
 
       await trx.schema
         .alterTable('agendas')
-        .dropColumn('weekly_recurring')
+        .dropColumn('weekly_recurrence')
+        .dropColumn('recurrence_day')
         .dropColumn('is_show')
         .execute();
     });

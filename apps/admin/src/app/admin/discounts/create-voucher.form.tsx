@@ -253,7 +253,7 @@ export default function CreateVoucherForm({ users }: CreateVoucherProps) {
                     <FormItem className="grid w-full gap-2">
                       <FormLabel>Discount</FormLabel>
                       <FormControl>
-                        {form.getValues('type') === 'fixed' ? (
+                        {form.watch('type') === 'fixed' ? (
                           <MoneyInput {...field} className="w-full" />
                         ) : (
                           <AddonInput

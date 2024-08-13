@@ -21,10 +21,11 @@ export interface Agendas {
   id: Generated<number>;
   is_show: Generated<number | null>;
   location_facility_id: number;
+  recurrence_day: Generated<number | null>;
   time: Date;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
-  weekly_recurring: Generated<number | null>;
+  weekly_recurrence: Generated<number | null>;
 }
 
 export interface Carousels {
