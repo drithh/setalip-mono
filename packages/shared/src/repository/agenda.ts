@@ -31,6 +31,7 @@ export interface FindScheduleByDateOptions extends DefaultPagination {
   locations?: number[];
   classTypes?: number[];
   classNames?: number[];
+  is_show?: boolean;
   date?: Date;
 }
 
@@ -80,7 +81,12 @@ export type SelectLocationAgenda = {
 
 type SelectAgendaWithoutGenerated = Omit<
   SelectAgenda,
-  'created_at' | 'updated_at' | 'updated_by'
+  | 'created_at'
+  | 'updated_at'
+  | 'updated_by'
+  | 'weekly_recurrence'
+  | 'recurrence_day'
+  | 'is_show'
 >;
 
 export interface SelectAgendaWithCoachAndClass

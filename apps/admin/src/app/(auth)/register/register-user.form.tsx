@@ -90,8 +90,6 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
     defaultValues: formState.form,
   });
 
-  console.log(form.formState);
-
   useEffect(() => {
     toast.dismiss();
     if (formState.status === 'field-errors') {

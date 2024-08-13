@@ -151,21 +151,24 @@ export function getColumns({
 
         return (
           <>
-            <EditAgendaForm
-              open={showEditAgendaSheet}
-              onOpenChange={setShowEditAgendaSheet}
-              agenda={row.original}
-              classes={classes}
-              locations={locations}
-              coaches={coaches}
-            />
-            {/* participant use sheet */}
-            <EditParticipantForm
-              open={showEditParticipantSheet}
-              onOpenChange={setShowEditParticipantSheet}
-              participants={row.original.participants ?? []}
-              agendaId={row.original.id}
-            />
+            {showEditAgendaSheet && (
+              <EditAgendaForm
+                open={showEditAgendaSheet}
+                onOpenChange={setShowEditAgendaSheet}
+                agenda={row.original}
+                classes={classes}
+                locations={locations}
+                coaches={coaches}
+              />
+            )}
+            {showEditParticipantSheet && (
+              <EditParticipantForm
+                open={showEditParticipantSheet}
+                onOpenChange={setShowEditParticipantSheet}
+                participants={row.original.participants ?? []}
+                agendaId={row.original.id}
+              />
+            )}
             <DeleteAgendaDialog
               open={showDeleteAgendaDialog}
               onOpenChange={setShowDeleteAgendaDialog}
@@ -178,11 +181,20 @@ export function getColumns({
                   variant="ghost"
                   className="flex size-8 p-0 data-[state=open]:bg-muted"
                 >
-                  <DotsHorizontalIcon className="size-4" aria-hidden="true" />
+                  <DotsHorizontalIcon
+                    // onClick={() => }
+                    className="size-4"
+                    aria-hidden="true"
+                  />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem onSelect={() => setShowEditAgendaSheet(true)}>
+                <DropdownMenuItem
+                  onSelect={() => {
+                    console.log(row.original);
+                    setShowEditAgendaSheet(true);
+                  }}
+                >
                   Edit Agenda
                 </DropdownMenuItem>
                 <DropdownMenuItem

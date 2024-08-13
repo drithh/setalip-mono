@@ -81,6 +81,10 @@ const config = {
         'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
         'scale-in': 'scale-in 0.2s ease-out forwards',
         'scale-out': 'scale-out 0.2s ease-out forwards',
+        backgroundPositionSpin:
+          'background-position-spin 3000ms infinite alternate',
+        'border-beam': 'border-beam calc(var(--duration)*1s) infinite linear',
+        pulse: 'pulse var(--duration) ease-out infinite',
       },
       keyframes: {
         'scale-in': {
@@ -114,6 +118,19 @@ const config = {
         'marquee-vertical': {
           from: { transform: 'translateY(0)' },
           to: { transform: 'translateY(calc(-100% - var(--gap)))' },
+        },
+        'background-position-spin': {
+          '0%': { backgroundPosition: 'top center' },
+          '100%': { backgroundPosition: 'bottom center' },
+        },
+        'border-beam': {
+          '100%': {
+            'offset-distance': '100%',
+          },
+        },
+        pulse: {
+          '0%, 100%': { boxShadow: '0 0 0 0 var(--pulse-color)' },
+          '50%': { boxShadow: '0 0 0 8px var(--pulse-color)' },
         },
       },
     },

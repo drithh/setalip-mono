@@ -152,72 +152,76 @@ export default function EditParticipantForm({
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
-            <Form {...form}>
-              <form
-                className="grid gap-4"
-                ref={formRef}
-                action={formAction}
-                onSubmit={onFormSubmit}
-              >
-                <FormField
-                  control={form.control}
-                  name="agenda_id"
-                  render={({ field }) => (
-                    <Input type="hidden" {...field} value={agendaId} />
-                  )}
-                />
-                <FormLabel>Peserta</FormLabel>
-                <div className="flex w-full flex-col">
-                  {selectedParticipants.map((participant, index) => (
-                    <div key={participant.user_id}>
-                      <FormField
-                        control={form.control}
-                        name={`participants.${index}.user_id`}
-                        render={({ field }) => (
-                          <FormItem className="grid w-full gap-2">
-                            <FormControl>
-                              <>
-                                <Input
-                                  type="hidden"
-                                  {...field}
-                                  value={participant.user_id}
-                                />
-                                <div className="flex gap-2">
-                                  <Input readOnly value={participant.name} />
-                                  <DeleteParticipantDialog
-                                    participant={participant}
-                                    onDelete={() => {
-                                      setSelectedParticipants((prev) =>
-                                        prev.filter((_, i) => i !== index),
-                                      );
-                                    }}
-                                  />
-                                </div>
-                              </>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      {participant.agenda_booking_id && (
+            {agendaId ? (
+              <Form {...form}>
+                <form
+                  className="grid gap-4"
+                  ref={formRef}
+                  action={formAction}
+                  onSubmit={onFormSubmit}
+                >
+                  <FormField
+                    control={form.control}
+                    name="agenda_id"
+                    render={({ field }) => (
+                      <Input type="hidden" {...field} value={agendaId} />
+                    )}
+                  />
+                  <FormLabel>Peserta</FormLabel>
+                  <div className="flex w-full flex-col">
+                    {selectedParticipants.map((participant, index) => (
+                      <div key={participant.user_id}>
                         <FormField
                           control={form.control}
-                          name={`participants.${index}.agenda_booking_id`}
+                          name={`participants.${index}.user_id`}
                           render={({ field }) => (
-                            <Input type="hidden" {...field} />
+                            <FormItem className="grid w-full gap-2">
+                              <FormControl>
+                                <>
+                                  <Input
+                                    type="hidden"
+                                    {...field}
+                                    value={participant.user_id}
+                                  />
+                                  <div className="flex gap-2">
+                                    <Input readOnly value={participant.name} />
+                                    <DeleteParticipantDialog
+                                      participant={participant}
+                                      onDelete={() => {
+                                        setSelectedParticipants((prev) =>
+                                          prev.filter((_, i) => i !== index),
+                                        );
+                                      }}
+                                    />
+                                  </div>
+                                </>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
                           )}
                         />
-                      )}
-                    </div>
-                  ))}
-                </div>
 
-                <Button type="submit" className="w-full">
-                  Simpan
-                </Button>
-              </form>
-            </Form>
+                        {participant.agenda_booking_id && (
+                          <FormField
+                            control={form.control}
+                            name={`participants.${index}.agenda_booking_id`}
+                            render={({ field }) => (
+                              <Input type="hidden" {...field} />
+                            )}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <Button type="submit" className="w-full">
+                    Simpan
+                  </Button>
+                </form>
+              </Form>
+            ) : (
+              <p>Agenda tidak ditemukan</p>
+            )}
 
             <p>Tambah Peserta</p>
             <Select

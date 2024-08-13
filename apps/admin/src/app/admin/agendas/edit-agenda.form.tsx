@@ -74,7 +74,6 @@ export default function EditAgendaForm({
   onOpenChange,
 }: EditAgendaProps) {
   const [selectedLocation, setSelectedLocation] = useState<SelectLocation>();
-
   const trpcUtils = api.useUtils();
   type FormSchema = EditAgendaSchema;
 
@@ -269,7 +268,8 @@ export default function EditAgendaForm({
                         `${
                           classes.find(
                             (singleClass) =>
-                              singleClass.id === form.getValues('class_id'),
+                              singleClass.id ===
+                              parseInt(form.getValues('class_id').toString()),
                           )?.duration
                         } menit` ?? ''
                       }

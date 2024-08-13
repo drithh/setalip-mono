@@ -354,6 +354,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       classTypes,
       coaches,
       locations,
+      is_show,
       classNames,
       date,
     } = data;
@@ -375,6 +376,10 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       )
       .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
       .innerJoin('class_types', 'classes.class_type_id', 'class_types.id');
+
+    if (is_show) {
+      query = query.where('agendas.is_show', '=', is_show ? 1 : 0);
+    }
 
     if (classTypes?.length && classTypes.length > 0) {
       query = query.where('class_types.id', 'in', classTypes);
