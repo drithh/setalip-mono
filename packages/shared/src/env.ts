@@ -10,6 +10,13 @@ export const env = createEnv({
     ADMIN_URL: z.string().default('http://localhost:3000'),
     WEB_URL: z.string().default('http://localhost:3001'),
     CRON_SECRET: z.string(),
+
+    AWS_REGION: z.string(),
+    AWS_ACCESS_KEY_ID: z.string(),
+    AWS_SECRET_ACCESS_KEY: z.string(),
+    AWS_S3_BUCKET: z.string(),
+
+    CLOUDFLARE_ACCOUNT_ID: z.string(),
   },
 
   /**
@@ -32,6 +39,12 @@ export const env = createEnv({
     CRON_SECRET: process.env.CRON_SECRET,
     ADMIN_URL: process.env.ADMIN_URL,
     WEB_URL: process.env.WEB_URL,
+
+    AWS_REGION: process.env.AWS_REGION,
+    AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+    AWS_S3_BUCKET: process.env.AWS_S3_BUCKET,
+    CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID,
   },
 
   /**

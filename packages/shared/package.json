@@ -36,6 +36,7 @@
     "@tiptap/core": "^2.4.0",
     "@tiptap/extension-text-style": "^2.4.0",
     "@trpc/server": "next",
+    "aws-sdk": "^2.1673.0",
     "axios": "^1.6.8",
     "date-fns": "^3.6.0",
     "date-fns-tz": "^3.1.3",
