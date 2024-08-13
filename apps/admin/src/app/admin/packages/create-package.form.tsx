@@ -39,6 +39,7 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
+import { DatetimePicker } from '@repo/ui/components/datetime-picker';
 
 interface CreatePackageProps {
   classTypes: SelectClassType[];
@@ -75,6 +76,10 @@ export default function CreatePackageForm({ classTypes }: CreatePackageProps) {
       class_type_id: 0,
       is_active: 1,
       position: 1000,
+
+      is_discount: 0,
+      discount_end_date: undefined,
+      discount_percentage: undefined,
     } as FormSchema,
   });
 
@@ -317,6 +322,89 @@ export default function CreatePackageForm({ classTypes }: CreatePackageProps) {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="is_discount"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Discount</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(e) => {
+                              field.onChange(e ? 1 : 0);
+                            }}
+                          />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {form.watch('is_discount') === 1 && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="discount_end_date"
+                      render={({ field }) => (
+                        <FormItem className="grid w-full gap-2">
+                          <FormLabel>Discount End Date</FormLabel>
+                          <FormDescription>
+                            Waktu kadaluarsa diskon
+                          </FormDescription>
+                          <FormControl>
+                            <>
+                              <Input
+                                type="hidden"
+                                {...field}
+                                value={(field.value ?? new Date()).toString()}
+                              />
+                              <DatetimePicker
+                                value={field.value ?? new Date()}
+                                onChange={(value) => {
+                                  field.onChange(value);
+                                }}
+                                disabled={(date) =>
+                                  date <
+                                  new Date(
+                                    new Date().setDate(
+                                      new Date().getDate() - 1,
+                                    ),
+                                  )
+                                }
+                              />
+                            </>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="discount_percentage"
+                      render={({ field }) => (
+                        <FormItem className="grid w-full gap-2">
+                          <FormLabel>Discount</FormLabel>
+                          <FormControl>
+                            <AddonInput
+                              type="number"
+                              min={0}
+                              max={100}
+                              {...field}
+                              value={field.value ?? 0}
+                              endAdornment="%"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
+                )}
 
                 <Button type="submit" className="w-full">
                   Simpan

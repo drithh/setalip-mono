@@ -18,6 +18,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import EditPackageForm from '../edit-package.form';
 import DeletePackageDialog from '../delete-package.dialog';
 import { Badge } from '@repo/ui/components/ui/badge';
+import { compareAsc, format } from 'date-fns';
 
 interface getColumnsProps {
   classTypes: SelectClassType[];
@@ -97,19 +98,35 @@ export function getColumns({
       },
     },
     {
+      accessorKey: 'discount_end_date',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Discount End Date" />
+      ),
+      cell: ({ row }) => {
+        return (
+          <span>
+            {row.original.discount_end_date &&
+            compareAsc(row.original.discount_end_date, new Date()) === 1
+              ? format(row.original.discount_end_date, 'MMM dd, yyyy hh:mm a')
+              : '-'}
+          </span>
+        );
+      },
+    },
+    {
       accessorKey: 'class_type_id',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Class Type" />
       ),
       cell: ({ row }) => {
         return (
-          <span className="capitalize">
+          <Badge className="capitalize">
             {
               classTypes.find(
                 (classType) => classType.id === row.original.class_type_id,
               )?.type
             }
-          </span>
+          </Badge>
         );
       },
     },
@@ -123,7 +140,11 @@ export function getColumns({
         />
       ),
       cell: ({ row }) => {
-        return <Badge>{row.original.is_active ? 'Active' : 'Inactive'}</Badge>;
+        return (
+          <div className="-ml-5 text-center">
+            <Badge>{row.original.is_active ? 'Active' : 'Inactive'}</Badge>;
+          </div>
+        );
       },
     },
     {

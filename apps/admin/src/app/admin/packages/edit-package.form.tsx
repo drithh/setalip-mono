@@ -39,6 +39,8 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
+import { compareAsc } from 'date-fns';
+import { DatetimePicker } from '@repo/ui/components/datetime-picker';
 
 interface EditPackageProps {
   singlePackage: SelectPackage;
@@ -83,6 +85,14 @@ export default function EditPackageForm({
       valid_for: singlePackage.valid_for,
       is_active: singlePackage.is_active,
       position: singlePackage.position,
+
+      is_discount:
+        singlePackage.discount_end_date &&
+        compareAsc(singlePackage.discount_end_date, new Date()) == 1
+          ? 1
+          : 0,
+      discount_end_date: singlePackage.discount_end_date,
+      discount_percentage: singlePackage.discount_percentage,
     } as FormSchema,
   });
 
@@ -114,11 +124,13 @@ export default function EditPackageForm({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
+      router.refresh();
       trpcUtils.invalidate();
-      // router.refresh();
-      // onOpenChange(false);
+      onOpenChange(false);
     }
   }, [formState]);
+
+  console.log(form.formState.errors);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -340,6 +352,89 @@ export default function EditPackageForm({
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="is_discount"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Discount</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+                          <Switch
+                            checked={field.value === 1}
+                            onCheckedChange={(e) => {
+                              field.onChange(e ? 1 : 0);
+                            }}
+                          />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {form.watch('is_discount') === 1 && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="discount_end_date"
+                      render={({ field }) => (
+                        <FormItem className="grid w-full gap-2">
+                          <FormLabel>Discount End Date</FormLabel>
+                          <FormDescription>
+                            Waktu kadaluarsa diskon
+                          </FormDescription>
+                          <FormControl>
+                            <>
+                              <Input
+                                type="hidden"
+                                {...field}
+                                value={(field.value ?? new Date()).toString()}
+                              />
+                              <DatetimePicker
+                                value={field.value ?? new Date()}
+                                onChange={(value) => {
+                                  field.onChange(value);
+                                }}
+                                disabled={(date) =>
+                                  date <
+                                  new Date(
+                                    new Date().setDate(
+                                      new Date().getDate() - 1,
+                                    ),
+                                  )
+                                }
+                              />
+                            </>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="discount_percentage"
+                      render={({ field }) => (
+                        <FormItem className="grid w-full gap-2">
+                          <FormLabel>Discount</FormLabel>
+                          <FormControl>
+                            <AddonInput
+                              type="number"
+                              min={0}
+                              max={100}
+                              {...field}
+                              value={field.value ?? 0}
+                              endAdornment="%"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
+                )}
 
                 <Button type="submit" className="w-full">
                   Simpan

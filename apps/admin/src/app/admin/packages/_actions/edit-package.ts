@@ -48,6 +48,10 @@ export async function editPackage(
 
   const packageService = container.get<PackageService>(TYPES.PackageService);
 
+  const [discount_end_date, discount_percentage] = parsed.data.is_discount
+    ? [parsed.data.discount_end_date, parsed.data.discount_percentage]
+    : [null, null];
+
   const result = await packageService.update({
     id: parsed.data.id,
     name: parsed.data.name,
@@ -58,6 +62,9 @@ export async function editPackage(
     valid_for: parsed.data.valid_for,
     class_type_id: parsed.data.class_type_id,
     is_active: parsed.data.is_active,
+
+    discount_end_date,
+    discount_percentage,
   });
 
   if (result.error) {

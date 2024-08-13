@@ -5,10 +5,7 @@ import QueryResetBoundary from '../../../lib/query-reset-boundary';
 import React from 'react';
 import UserTable from './_components/user-table';
 import { TYPES, container } from '@repo/shared/inversify';
-import {
-  ClassTypeService,
-  LocationService,
-} from '@repo/shared/service';
+import { ClassTypeService, LocationService } from '@repo/shared/service';
 import { validateAdmin } from '@/lib/auth';
 
 export interface IndexPageProps {
@@ -29,7 +26,7 @@ export default async function Packages({ searchParams }: IndexPageProps) {
   const classTypes = await classTypeService.findAll();
 
   return (
-    <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
+    <main className="mx-auto flex w-full max-w-screen-2xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
       <QueryResetBoundary>
         <React.Suspense
           fallback={

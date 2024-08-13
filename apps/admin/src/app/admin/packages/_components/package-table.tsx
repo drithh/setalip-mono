@@ -61,6 +61,7 @@ export default function PackageTable({
       updated_at: false,
       updated_by: false,
       one_time_only: false,
+      loyalty_points: false,
     },
   });
 

@@ -5,7 +5,7 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   : ColumnType<T, T | undefined, T>;
 
 export interface AgendaBookings {
-  agenda_id: number;
+  agenda_id: Generated<number | null>;
   created_at: Generated<Date>;
   id: Generated<number>;
   status: "booked" | "cancelled" | "checked_in" | "no_show";
@@ -19,10 +19,12 @@ export interface Agendas {
   coach_id: number;
   created_at: Generated<Date>;
   id: Generated<number>;
+  is_show: Generated<number | null>;
   location_facility_id: number;
   time: Date;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
+  weekly_recurring: Generated<number | null>;
 }
 
 export interface Carousels {
@@ -224,6 +226,8 @@ export interface Packages {
   class_type_id: number;
   created_at: Generated<Date>;
   credit: number;
+  discount_end_date: Generated<Date | null>;
+  discount_percentage: Generated<number | null>;
   id: Generated<number>;
   is_active: Generated<number>;
   loyalty_points: number;

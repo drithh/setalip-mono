@@ -1,5 +1,3 @@
-
-
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import PackageTransactionTable from './_components/package-transaction-table';
 import { findAllPackageTransactionSchema } from '@repo/shared/api/schema';
@@ -16,7 +14,7 @@ export default async function PackageTransactions({
   const search = findAllPackageTransactionSchema.parse(searchParams);
 
   return (
-    <main className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
+    <main className="mx-auto flex w-full max-w-screen-2xl flex-1 flex-col gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 lg:gap-6">
       <QueryResetBoundary>
         <React.Suspense
           fallback={
