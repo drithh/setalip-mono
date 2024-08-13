@@ -115,7 +115,13 @@ export default async function ClassDetail({
                   Participants: {singleClass.result.slot}
                 </p>
               </div>
-              <Link href={`/schedules?class_name=${singleClass.result.id}`}>
+              <Link
+                href={
+                  singleClass.result.class_type === 'Private'
+                    ? `https://api.whatsapp.com/send/?phone=6281511673808&text=Halo,%20saya%20ingin%20mendaftar%20kelas%20${singleClass.result.name}`
+                    : `/schedules?class_name=${singleClass.result.id}`
+                }
+              >
                 <Button className="w-full max-w-[200px]">Book Now</Button>
               </Link>
               <div className="space-y-2">

@@ -35,7 +35,7 @@
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tiptap/core": "^2.4.0",
     "@tiptap/extension-text-style": "^2.4.0",
-    "@trpc/server": "next",
+    "@trpc/server": "11.0.0-rc.394",
     "aws-sdk": "^2.1673.0",
     "axios": "^1.6.8",
     "date-fns": "^3.6.0",
