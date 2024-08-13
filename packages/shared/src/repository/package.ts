@@ -43,20 +43,24 @@ export interface InsertPackageTransaction {
   package_id: SelectPackage['id'];
   deposit_account_id: SelectDepositAccount['id'];
   unique_code: SelectPackageTransaction['unique_code'];
+  amount_paid: SelectPackageTransaction['amount_paid'];
 
   discount: SelectPackageTransaction['discount'];
   voucher_id: SelectVoucher['id'] | null;
   voucher_code: SelectVoucher['code'] | null;
+  voucher_discount: SelectPackageTransaction['voucher_discount'];
 }
 
 export interface UpdatePackageTransaction {
   id: SelectPackageTransaction['id'];
   status: SelectPackageTransaction['status'];
   deposit_account_id?: SelectPackageTransaction['deposit_account_id'];
+  amount_paid: SelectPackageTransaction['amount_paid'] | null;
 
   discount: SelectPackageTransaction['discount'];
   voucher_id: SelectVoucher['id'] | null;
   voucher_code: SelectVoucher['code'] | null;
+  voucher_discount: SelectPackageTransaction['voucher_discount'];
 }
 
 export interface SelectPackageTransactionWithUser
@@ -98,6 +102,7 @@ export interface SelectPackageTransactionByUser {
   discount: number | null;
   user_package_id: number | null;
   voucher_id: number | null;
+  voucher_discount: number | null;
 }
 
 export interface SelectAllPackageTransactionWithUser {

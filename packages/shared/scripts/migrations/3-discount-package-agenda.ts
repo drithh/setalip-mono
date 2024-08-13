@@ -18,6 +18,11 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('recurrence_day', 'int4', (col) => col.defaultTo(0))
         .addColumn('is_show', 'boolean', (col) => col.defaultTo(true))
         .execute();
+
+      await trx.schema
+        .alterTable('package_transactions')
+        .addColumn('voucher_discount', 'int4', (col) => col.defaultTo(0))
+        .execute();
     });
   } catch (error) {
     console.error(error);
@@ -38,6 +43,11 @@ export async function down(db: Kysely<any>): Promise<void> {
         .dropColumn('weekly_recurrence')
         .dropColumn('recurrence_day')
         .dropColumn('is_show')
+        .execute();
+
+      await trx.schema
+        .alterTable('package_transactions')
+        .dropColumn('voucher_discount')
         .execute();
     });
   } catch (error) {

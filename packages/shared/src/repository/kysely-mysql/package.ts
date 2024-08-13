@@ -398,7 +398,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
     let newUniqueCode;
     do {
-      newUniqueCode = Math.floor(Math.random() * 1000);
+      newUniqueCode = Math.floor(Math.random() * 100);
     } while (uniqueCodes.has(newUniqueCode));
 
     return {
@@ -410,6 +410,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       id: null,
       deposit_account_id: null,
       discount: null,
+      voucher_discount: null,
       user_package_id: null,
       voucher_id: null,
     };
@@ -451,8 +452,6 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
           return new Error('Package not found');
         }
 
-        const total = queryPackage.price + data.unique_code;
-
         const queryUserPackage = trx
           .insertInto('package_transactions')
           .values({
@@ -463,7 +462,8 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
             deposit_account_id: data.deposit_account_id,
             unique_code: data.unique_code,
             status: 'pending',
-            amount_paid: total,
+            amount_paid: data.amount_paid,
+            voucher_discount: data.voucher_discount,
           })
           .returningAll()
           .compile();
@@ -610,8 +610,10 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
             id: data.id,
             status: data.status,
             deposit_account_id: data.deposit_account_id,
+            amount_paid: data.amount_paid ?? packageTransaction.amount_paid,
 
-            discount: data.discount ?? packageTransaction.discount,
+            voucher_discount:
+              data.voucher_discount ?? packageTransaction.voucher_discount,
             voucher_id: data.voucher_id ?? packageTransaction.voucher_id,
 
             user_package_id: userPackageId,

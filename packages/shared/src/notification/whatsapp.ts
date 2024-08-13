@@ -8,6 +8,7 @@ import {
 import { env } from '#dep/env';
 import { injectable } from 'inversify';
 import { addMinutes, format } from 'date-fns';
+import { moneyFormatter } from '../util';
 
 interface PostBody {
   secret: string;
@@ -73,6 +74,7 @@ const parseNotification = (payload: NotificationPayload) => {
       return (
         `${HEADER_MESSAGE}` +
         `Transaksi pembelian paket ${payload.package} berhasil dibuat.\n\n` +
+        `Harga: ${moneyFormatter.format(payload.price)}\n` +
         `Silahkan melakukan pembayaran pada:\n` +
         `Bank: ${payload.deposit_account_bank_name}\n` +
         `Atas Nama: ${payload.deposit_account_name}\n` +

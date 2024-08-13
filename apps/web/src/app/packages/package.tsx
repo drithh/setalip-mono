@@ -16,7 +16,9 @@ export default function Package({ singlePackage }: Package) {
     compareAsc(singlePackage.discount_end_date, new Date()) === 1;
 
   const price = isDiscount
-    ? singlePackage.price * (singlePackage.discount_percentage ?? 1) * 0.01
+    ? singlePackage.price *
+      (100 - (singlePackage.discount_percentage ?? 0)) *
+      0.01
     : singlePackage.price;
 
   return (

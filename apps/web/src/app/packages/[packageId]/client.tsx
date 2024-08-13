@@ -56,14 +56,25 @@ export default function Client({
   depositAccounts,
 }: ClientProps) {
   const [voucher, setVoucher] = useState<SelectVoucher>();
-  const discount = voucher
+  const isDiscount =
+    singlePackage.discount_end_date &&
+    singlePackage.discount_end_date > new Date();
+  const discount = isDiscount
+    ? (singlePackage.price * (singlePackage.discount_percentage ?? 100)) / 100
+    : 0;
+
+  const voucherDiscount = voucher
     ? voucher.type === 'percentage'
-      ? (singlePackage.price * voucher.discount) / 100
+      ? ((singlePackage.price - discount) * voucher.discount) / 100
       : voucher.discount
-    : packageTransaction?.discount ?? 0;
+    : (packageTransaction?.voucher_discount ?? 0);
 
   const totalPrice =
-    singlePackage.price + packageTransaction?.unique_code - discount;
+    singlePackage.price +
+    packageTransaction?.unique_code -
+    voucherDiscount -
+    discount;
+
   return (
     <div className="container flex flex-col gap-4">
       <div className=" my-2 flex place-items-center gap-2">
@@ -180,7 +191,7 @@ export default function Client({
                     Discount
                   </p>
                   <p className="text-base/relaxed text-muted-foreground md:text-lg/relaxed">
-                    {moneyFormatter.format(0)}
+                    {moneyFormatter.format(discount)}
                   </p>
                 </div>
                 <div className="flex place-content-between gap-3">
@@ -188,7 +199,7 @@ export default function Client({
                     Voucher Discount
                   </p>
                   <p className="text-base/relaxed text-muted-foreground md:text-lg/relaxed">
-                    {moneyFormatter.format(discount)}
+                    {moneyFormatter.format(voucherDiscount)}
                   </p>
                 </div>
                 <div className="flex place-content-between gap-3">

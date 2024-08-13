@@ -53,6 +53,7 @@ interface AdminCancelledUserAgendaPayload {
 interface UserBoughtPackagePayload {
   type: NotificationType.UserBoughtPackage;
   package: SelectPackage['name'];
+  price: SelectPackageTransaction['amount_paid'];
   deposit_account_bank_name: SelectDepositAccount['bank_name'];
   deposit_account_name: SelectDepositAccount['name'];
   deposit_account_account_number: SelectDepositAccount['account_number'];

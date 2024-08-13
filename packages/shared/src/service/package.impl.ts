@@ -201,6 +201,20 @@ export class PackageServiceImpl implements PackageService {
 
     let dataWithDiscount = data;
 
+    const isDiscount =
+      packageData.discount_end_date &&
+      packageData.discount_end_date > new Date();
+
+    let reducedPrice = packageData.price;
+
+    if (isDiscount) {
+      const discount =
+        (reducedPrice * (100 - (packageData.discount_percentage ?? 0))) / 100;
+
+      dataWithDiscount.discount = discount;
+      reducedPrice = discount;
+    }
+
     // verify voucher
     if (data.voucher_code) {
       const voucher = await this._voucherRepository.findByCodeAndUser({
@@ -209,14 +223,20 @@ export class PackageServiceImpl implements PackageService {
       });
       if (voucher) {
         dataWithDiscount.voucher_id = voucher.id;
+
         if (voucher.type === 'percentage') {
-          dataWithDiscount.discount =
-            (packageData.price * voucher.discount) / 100;
+          const voucherDiscount = reducedPrice * (1 - voucher.discount / 100);
+          dataWithDiscount.voucher_discount = voucherDiscount;
+          reducedPrice = voucherDiscount;
         } else {
-          dataWithDiscount.discount = voucher.discount;
+          const voucherDiscount = voucher.discount;
+          reducedPrice = reducedPrice - voucherDiscount;
+          dataWithDiscount.voucher_discount = voucherDiscount;
         }
       }
     }
+
+    dataWithDiscount.amount_paid = reducedPrice + data.unique_code;
 
     const result =
       await this._packageRepository.createPackageTransaction(dataWithDiscount);
@@ -231,6 +251,7 @@ export class PackageServiceImpl implements PackageService {
       payload: {
         type: NotificationType.UserBoughtPackage,
         package: packageData.name,
+        price: dataWithDiscount.amount_paid,
         deposit_account_account_number: depositAccount.account_number,
         deposit_account_name: depositAccount.name,
         deposit_account_bank_name: depositAccount.bank_name,
@@ -328,7 +349,9 @@ export class PackageServiceImpl implements PackageService {
     }
 
     let dataWithDiscount = data;
-
+    let reducedPrice =
+      packageTransaction.amount_paid +
+      (packageTransaction.voucher_discount ?? 0);
     // verify voucher
     if (data.voucher_code) {
       const voucher = await this._voucherRepository.findByCodeAndUser({
@@ -337,18 +360,22 @@ export class PackageServiceImpl implements PackageService {
       });
       if (voucher) {
         dataWithDiscount.voucher_id = voucher.id;
+
         if (voucher.type === 'percentage') {
-          dataWithDiscount.discount =
-            (packageData.price * voucher.discount) / 100;
+          const voucherDiscount = reducedPrice * (1 - voucher.discount / 100);
+          dataWithDiscount.voucher_discount = voucherDiscount;
+          reducedPrice = voucherDiscount;
         } else {
-          dataWithDiscount.discount = voucher.discount;
+          const voucherDiscount = voucher.discount;
+          reducedPrice = reducedPrice - voucherDiscount;
+          dataWithDiscount.voucher_discount = voucherDiscount;
         }
       }
     } else {
       dataWithDiscount.voucher_id = packageTransaction.voucher_id;
-      dataWithDiscount.discount = packageTransaction.discount;
     }
 
+    dataWithDiscount.amount_paid = reducedPrice;
     const result = await this._packageRepository.updatePackageTransaction(data);
 
     if (result instanceof Error) {
