@@ -6,7 +6,6 @@ import { id } from 'date-fns/locale';
 import { FloatingWhatsApp } from './_components/floating-whatsapp/floating-whatsapp';
 
 import { TRPCReactProvider } from '@/trpc/react';
-import { env } from '@repo/shared/env';
 setDefaultOptions({ locale: id });
 
 export default function Provider({

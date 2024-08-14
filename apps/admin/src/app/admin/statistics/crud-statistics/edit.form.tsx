@@ -10,7 +10,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,9 +18,6 @@ import {
 import { EditSchema, editSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { Switch } from '@repo/ui/components/ui/switch';
-import { MoneyInput } from '@repo/ui/components/money-input';
-import { AddonInput } from '@repo/ui/components/addon-input';
 import { SelectStatistic } from '@repo/shared/repository';
 import {
   Sheet,

@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
@@ -28,7 +27,6 @@ import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { api } from '@/trpc/react';
 
 import { createReview } from './_actions/create-review';
 import { CreateReviewSchema, createReviewSchema } from './form-schema';

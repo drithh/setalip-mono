@@ -34,6 +34,8 @@ export async function editPackageTransaction(
     id: parsed.data.id,
     status: parsed.data.status as SelectPackageTransaction['status'],
 
+    amount_paid: null,
+    voucher_discount: null,
     discount: null,
     deposit_account_id: null,
     voucher_code: null,

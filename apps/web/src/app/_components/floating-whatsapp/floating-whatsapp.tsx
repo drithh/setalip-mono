@@ -12,7 +12,6 @@ import css from './style.module.css';
 
 import darkBG from './assets/bg-chat-tile-light.png';
 import lightBG from './assets/bg-chat-tile-dark.png';
-import dummyAvatar from './assets/uifaces-avatar.jpg';
 
 export interface FloatingWhatsAppProps {
   /** Callback function fires on click */

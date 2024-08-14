@@ -1,8 +1,4 @@
-import { container, TYPES } from '@repo/shared/inversify';
-import { WebSettingService } from '@repo/shared/service';
-import RichTextViewer from '@repo/ui/components/rich-text/viewer';
 import Image from 'next/image';
-import Link from 'next/link';
 import { BackButton } from '@repo/ui/components/back-button';
 
 import { env } from '@repo/shared/env';

@@ -17,7 +17,6 @@ import {
 import { CreateClassSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import {
   Sheet,
   SheetTrigger,
@@ -28,7 +27,6 @@ import {
 } from '@repo/ui/components/ui/sheet';
 import { createClassSchema } from './form-schema';
 import { createClass } from './_actions/create-class';
-import { PhoneInput } from '@repo/ui/components/phone-input';
 import { SelectClassType } from '@repo/shared/repository';
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import {

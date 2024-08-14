@@ -1,6 +1,5 @@
 import { FormState } from '@repo/shared/form';
 import { InsertClass } from '@repo/shared/repository';
-import { isPossiblePhoneNumber } from 'libphonenumber-js';
 import { z, ZodType } from 'zod';
 
 export const createClassSchema = z.object({

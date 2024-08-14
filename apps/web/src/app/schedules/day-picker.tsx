@@ -3,7 +3,7 @@ import { cn } from '@repo/ui/lib/utils';
 import { format, addDays, isBefore, startOfDay } from 'date-fns';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 interface DayPickerProps {

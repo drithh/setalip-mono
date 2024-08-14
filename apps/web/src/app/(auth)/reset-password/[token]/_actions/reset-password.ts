@@ -1,7 +1,7 @@
 'use server';
 
 import { container, TYPES } from '@repo/shared/inversify';
-import { AuthService, ResetPasswordService } from '@repo/shared/service';
+import { AuthService } from '@repo/shared/service';
 import {
   convertFormData,
   convertZodErrorsToFieldErrors,

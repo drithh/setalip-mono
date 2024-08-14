@@ -2,7 +2,6 @@ import { container, TYPES } from '@repo/shared/inversify';
 import { PackageService } from '@repo/shared/service';
 
 import { redirect } from 'next/navigation';
-import { toast } from 'sonner';
 
 import { validateUser } from '@/lib/auth';
 

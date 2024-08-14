@@ -1,7 +1,6 @@
 'use server';
 
 import { container, TYPES } from '@repo/shared/inversify';
-import { Button } from '@repo/ui/components/ui/button';
 import {
   Card,
   CardContent,
@@ -14,7 +13,6 @@ import {
   ClassTypeService,
   LocationService,
 } from '@repo/shared/service';
-import { ChevronLeft } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { Label } from '@repo/ui/components/ui/label';
 import { Input } from '@repo/ui/components/ui/input';

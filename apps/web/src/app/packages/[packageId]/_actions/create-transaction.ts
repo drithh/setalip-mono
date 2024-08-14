@@ -35,10 +35,12 @@ export async function createTransaction(
     const result = await packageService.updatePackageTransaction({
       id: parsed.data.id,
       discount: 0,
-      voucher_code: parsed.data.voucher_code ?? null,
-      voucher_id: null,
       status: 'pending',
       deposit_account_id: parsed.data.deposit_account_id,
+      voucher_code: parsed.data.voucher_code ?? null,
+      voucher_id: null,
+      amount_paid: null,
+      voucher_discount: null,
     });
 
     if (result.error) {
@@ -52,11 +54,13 @@ export async function createTransaction(
     const result = await packageService.createPackageTransaction({
       user_id: auth.user.id,
       package_id: parsed.data.package_id,
-      discount: 0,
-      voucher_code: parsed.data.voucher_code ?? null,
-      voucher_id: null,
       deposit_account_id: parsed.data.deposit_account_id,
       unique_code: parsed.data.unique_code,
+      voucher_code: parsed.data.voucher_code ?? null,
+      voucher_id: null,
+      discount: 0,
+      voucher_discount: null,
+      amount_paid: 0,
     });
 
     if (result.error) {

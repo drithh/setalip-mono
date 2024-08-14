@@ -3,7 +3,6 @@ import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import {
   SelectPackage,
   SelectClassType,
-  SelectPackageTransaction,
   SelectAllDepositAccount,
   SelectPackageTransactionByUser,
   SelectVoucher,

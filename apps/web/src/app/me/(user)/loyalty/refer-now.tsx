@@ -2,8 +2,6 @@
 
 import { SelectUser } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 interface ReferNowProps {

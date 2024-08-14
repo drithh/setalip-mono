@@ -5,9 +5,7 @@ import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import {
-  SelectAllLoyalty,
   SelectAllLoyaltyReward,
-  SelectAllUserName,
 } from '@repo/shared/repository';
 import { Badge } from '@repo/ui/components/ui/badge';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
@@ -17,7 +15,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
 } from '@repo/ui/components/ui/dropdown-menu';
 import DeleteLoyaltyRewardDialog from '../delete-loyalty-reward.dialog';
 import EditLoyaltyRewardForm from '../edit-loyalty-reward.form';

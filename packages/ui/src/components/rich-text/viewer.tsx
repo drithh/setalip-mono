@@ -46,7 +46,7 @@ const RichTextViewer = ({
 
   return (
     <div>
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor as Editor} />
     </div>
   );
 };

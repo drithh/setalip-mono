@@ -1,7 +1,6 @@
 'use client';
 import {
   AlertDialog,
-  AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -13,7 +12,6 @@ import {
 import { Button } from '@repo/ui/components/ui/button';
 import { api } from '@/trpc/react';
 import { SelectAgenda } from '@repo/shared/repository';
-import { Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useDeleteMutation } from './_functions/delete-agenda';
 

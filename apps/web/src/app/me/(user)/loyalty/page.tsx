@@ -12,7 +12,6 @@ import {
 import { validateUser } from '@/lib/auth';
 
 import LoyaltyTransactionTable from './loyalty-transaction';
-import { Button } from '@repo/ui/components/ui/button';
 import ReferNow from './refer-now';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';

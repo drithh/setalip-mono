@@ -9,16 +9,12 @@ import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './loyalty-reward-columns';
 import {
-  SelectAllLoyalty,
   SelectAllLoyaltyReward,
-  SelectAllUserName,
-  SelectLoyalty,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
 import {
   findAllLoyaltyRewardSchema,
-  findAllLoyaltySchema,
 } from '@repo/shared/api/schema';
 import CreateLoyaltyRewardForm from '../create-loyalty-reward.form';
 

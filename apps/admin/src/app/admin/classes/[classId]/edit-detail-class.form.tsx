@@ -17,11 +17,8 @@ import {
 import { EditDetailClassSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import {
-  SelectClass,
   SelectClassType,
-  SelectClassWithAsset,
   SelectDetailClassAssetAndLocation,
   SelectLocation,
 } from '@repo/shared/repository';
@@ -36,7 +33,6 @@ import {
 } from '@repo/ui/components/ui/sheet';
 import { editDetailClassSchema } from './form-schema';
 import { editDetailClass } from './_actions/edit-detail-class';
-import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import { AddonInput } from '@repo/ui/components/addon-input';
 import {

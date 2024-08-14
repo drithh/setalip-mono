@@ -10,7 +10,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,10 +17,6 @@ import {
 } from '@repo/ui/components/ui/form';
 import { CreateSchema, createSchema } from './form-schema';
 import { toast } from 'sonner';
-import { Switch } from '@repo/ui/components/ui/switch';
-import { MoneyInput } from '@repo/ui/components/money-input';
-import { AddonInput } from '@repo/ui/components/addon-input';
-import { SelectClassType, SelectStatistic } from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,
@@ -40,7 +35,6 @@ import {
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { CONSTANT, ROLES } from './constant';
-import { Textarea } from '@repo/ui/components/ui/textarea';
 
 interface CreateProps {}
 

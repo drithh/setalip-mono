@@ -2,13 +2,10 @@ import { container, TYPES } from '@repo/shared/inversify';
 import { AgendaService, StatisticService } from '@repo/shared/service';
 import {
   Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
 } from '@repo/ui/components/ui/card';
 
 import { validateUser } from '@/lib/auth';
-import { Lock, LockIcon, UnlockIcon } from 'lucide-react';
+import { LockIcon, UnlockIcon } from 'lucide-react';
 
 export default async function Statistic({}: {}) {
   const auth = await validateUser();

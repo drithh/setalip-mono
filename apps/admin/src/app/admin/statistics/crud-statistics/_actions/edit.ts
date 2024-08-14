@@ -1,5 +1,5 @@
 'use server';
-import { ClassTypeService, StatisticService } from '@repo/shared/service';
+import { StatisticService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { editSchema, FormEdit } from '../form-schema';
 import {

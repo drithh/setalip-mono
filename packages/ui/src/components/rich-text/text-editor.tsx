@@ -4,6 +4,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { Bold, Strikethrough, Italic, List, ListOrdered } from 'lucide-react';
 import { Toggle } from '#dep/components/ui/toggle';
 import { Separator } from '#dep/components/ui/separator';
+import { Editor as CoreEditor } from '@tiptap/core';
 
 const RichTextEditor = ({
   value,
@@ -41,8 +42,8 @@ const RichTextEditor = ({
 
   return (
     <div>
-      <EditorContent editor={editor} />
-      {editor ? <RichTextEditorToolbar editor={editor} /> : null}
+      <EditorContent editor={editor as Editor} />
+      {editor ? <RichTextEditorToolbar editor={editor as Editor} /> : null}
     </div>
   );
 };

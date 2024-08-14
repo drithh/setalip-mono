@@ -4,7 +4,6 @@ import * as React from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
-import { Badge } from '@repo/ui/components/ui/badge';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Button } from '@repo/ui/components/ui/button';
 import {

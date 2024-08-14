@@ -10,7 +10,7 @@ import {
 import { ClassService, ClassTypeService } from '@repo/shared/service';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
-import { Clock, Crosshair, MapPin, Phone, User2 } from 'lucide-react';
+import { Clock, Crosshair, User2 } from 'lucide-react';
 import Link from 'next/link';
 import CreateClassForm from './create-class.form';
 import { Badge } from '@repo/ui/components/ui/badge';

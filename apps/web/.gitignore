@@ -9,8 +9,8 @@ cache
 .yarn/install-state.gz
 
 # pwa
-public/sw.js
-public/workbox-*.js
+./public/sw.js
+./public/workbox-*.js
 
 # testing
 /coverage

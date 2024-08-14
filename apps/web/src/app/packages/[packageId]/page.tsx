@@ -1,35 +1,19 @@
-import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { container, TYPES } from '@repo/shared/inversify';
 import {
   ClassTypeService,
   PackageService,
   WebSettingService,
 } from '@repo/shared/service';
-import { moneyFormatter } from '@repo/shared/util';
 
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from '@repo/ui/components/ui/alert';
-import { Badge } from '@repo/ui/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@repo/ui/components/ui/card';
 
-import { Separator } from '@repo/ui/components/ui/separator';
-import { Calendar, CheckCircle, MapPin, Sparkles } from 'lucide-react';
+
+
+
+
 import { redirect } from 'next/navigation';
 
 import { validateUser } from '@/lib/auth';
 
-import CreateTransaction from './create-transaction.form';
-import FindVoucher from './find-voucher.form';
-import { useState } from 'react';
-import { SelectVoucher } from '@repo/shared/repository';
 import Client from './client';
 
 export default async function PackageDetail({
