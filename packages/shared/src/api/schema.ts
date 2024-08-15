@@ -92,10 +92,10 @@ export const findAllAgendaSchema = defaultPaginationSchema.extend({
   coach_name: z.string().optional(),
   location_name: z.string().optional(),
   date: z.string().optional(),
-  is_recurrence: z.coerce
-    .number()
-    .optional()
-    .refine((data) => data === 0 || data === 1),
+  is_recurrence: z.union([
+    z.coerce.number().refine((data) => data === 0 || data === 1),
+    z.undefined(),
+  ]),
 });
 
 export const deleteParticipantSchema = z.object({
