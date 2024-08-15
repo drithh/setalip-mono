@@ -4,7 +4,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editPackage } from './_actions/edit-package';
 import { useFormState } from 'react-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -68,6 +68,10 @@ export default function EditPackageForm({
   open,
   onOpenChange,
 }: EditPackageProps) {
+  const [isDiscountPercentage, setIsDiscountPercentage] = useState(
+    (singlePackage.discount_percentage ?? 0) > 0,
+  );
+
   const trpcUtils = api.useUtils();
   const router = useRouter();
   type FormSchema = EditPackageSchema;
@@ -93,6 +97,7 @@ export default function EditPackageForm({
           : 0,
       discount_end_date: singlePackage.discount_end_date,
       discount_percentage: singlePackage.discount_percentage,
+      discount_credit: singlePackage.discount_credit,
     } as FormSchema,
   });
 
@@ -129,8 +134,6 @@ export default function EditPackageForm({
       onOpenChange(false);
     }
   }, [formState]);
-
-  console.log(form.formState.errors);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -413,26 +416,61 @@ export default function EditPackageForm({
                       )}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name="discount_percentage"
-                      render={({ field }) => (
-                        <FormItem className="grid w-full gap-2">
-                          <FormLabel>Discount</FormLabel>
-                          <FormControl>
-                            <AddonInput
-                              type="number"
-                              min={0}
-                              max={100}
-                              {...field}
-                              value={field.value ?? 0}
-                              endAdornment="%"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Discount Percentage?</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={isDiscountPercentage}
+                          onCheckedChange={(e) => {
+                            setIsDiscountPercentage(e);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+
+                    {isDiscountPercentage ? (
+                      <FormField
+                        control={form.control}
+                        name="discount_percentage"
+                        render={({ field }) => (
+                          <FormItem className="grid w-full gap-2">
+                            <FormLabel>Discount Percentage</FormLabel>
+                            <FormControl>
+                              <AddonInput
+                                type="number"
+                                min={0}
+                                max={100}
+                                {...field}
+                                value={field.value ?? 0}
+                                endAdornment="%"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      <FormField
+                        control={form.control}
+                        name="discount_credit"
+                        render={({ field }) => (
+                          <FormItem className="grid w-full gap-2">
+                            <FormLabel>Discount Credit</FormLabel>
+                            <FormControl>
+                              <AddonInput
+                                type="number"
+                                min={0}
+                                {...field}
+                                value={field.value ?? 0}
+                                endAdornment="Session(s)"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </>
                 )}
 

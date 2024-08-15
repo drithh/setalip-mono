@@ -196,8 +196,6 @@ export const agendaRouter = {
         TYPES.AgendaService
       );
 
-      console.log('input', input);
-
       const result = await agendaService.delete({
         id: input.id,
         is_refund: input.is_refund,

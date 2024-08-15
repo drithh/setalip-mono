@@ -6,6 +6,7 @@ import { Card } from '@repo/ui/components/ui/card';
 import { compareAsc, format } from 'date-fns';
 import Link from 'next/link';
 import PulsatingButton from '@repo/ui/components/pulsating-button';
+import Countdown from 'react-countdown';
 import { useState } from 'react';
 import { cn } from '@repo/ui/lib/utils';
 interface Package {
@@ -39,9 +40,21 @@ export default function Package({ singlePackage }: Package) {
       onMouseLeave={() => setIsPressed(false)} // Ensure it resets if mouse leaves while pressed
     >
       {isDiscount && (
-        <div className="absolute right-0 top-0 rounded-bl-xl  border border-red-700 bg-gradient-to-l from-red-600 to-red-400 px-4 py-1 font-semibold text-white shadow-lg">
-          <p>{singlePackage.discount_percentage}% off</p>
-        </div>
+        <>
+          <div className="absolute left-0 top-0 flex w-full place-content-between rounded-b  border border-red-700 bg-gradient-to-l from-red-600 to-red-400 px-4 py-1 font-semibold text-white shadow-lg">
+            {(singlePackage?.discount_percentage ?? 0 > 0) ? (
+              <p>{singlePackage.discount_percentage}% OFF</p>
+            ) : (
+              <p>FREE {singlePackage.discount_credit} SESSION(S)</p>
+            )}
+            <p>
+              ENDS ON:{' '}
+              <Countdown
+                date={new Date(singlePackage.discount_end_date ?? new Date())}
+              />
+            </p>
+          </div>
+        </>
       )}
       <div className="mb-10 flex h-40 flex-col place-content-between px-4">
         <div className="flex flex-col">
@@ -75,6 +88,7 @@ export default function Package({ singlePackage }: Package) {
           </div>
         )}
       </div>
+
       <div className="h-16 px-4 py-2">
         <Link
           href={`/packages/${singlePackage.id}`}
@@ -82,9 +96,11 @@ export default function Package({ singlePackage }: Package) {
           className="w-full"
         >
           {isDiscount ? (
-            <PulsatingButton className="w-full">Buy now</PulsatingButton>
+            <PulsatingButton className="w-full font-bold uppercase">
+              Buy now
+            </PulsatingButton>
           ) : (
-            <Button variant={'outline'} className="w-full">
+            <Button variant={'outline'} className="w-full uppercase">
               Buy now
             </Button>
           )}

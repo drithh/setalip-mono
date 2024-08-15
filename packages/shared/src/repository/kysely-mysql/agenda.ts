@@ -126,7 +126,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     if (date) {
       const today = startOfDay(new Date(date));
       const tomorrow = endOfDay(today);
-      console.log('today', today, 'tomorrow', tomorrow);
       query = query
         .where('agendas.time', '>=', today)
         .where('agendas.time', '<=', tomorrow);

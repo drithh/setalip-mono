@@ -1,8 +1,5 @@
 'use server';
-import {
-  ClassTypeService,
-  PackageService,
-} from '@repo/shared/service';
+import { ClassTypeService, PackageService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { createPackageSchema, FormCreatePackage } from '../form-schema';
 import {
@@ -51,6 +48,15 @@ export async function createPackage(
 
   const packageService = container.get<PackageService>(TYPES.PackageService);
 
+  const [discount_end_date, discount_percentage, discount_credit] = parsed.data
+    .is_discount
+    ? [
+        parsed.data.discount_end_date,
+        parsed.data.discount_percentage,
+        parsed.data.discount_credit,
+      ]
+    : [null, null, null];
+
   const result = await packageService.create({
     name: parsed.data.name,
     price: parsed.data.price,
@@ -60,6 +66,11 @@ export async function createPackage(
     valid_for: parsed.data.valid_for,
     class_type_id: parsed.data.class_type_id,
     is_active: parsed.data.is_active,
+
+    discount_end_date,
+    discount_percentage:
+      discount_percentage === undefined ? null : discount_percentage,
+    discount_credit: discount_credit === undefined ? null : discount_credit,
   });
 
   if (result.error) {

@@ -16,6 +16,7 @@ export const createPackageSchema = z.object({
   is_discount: z.coerce.number().refine((v) => v === 0 || v === 1),
   discount_end_date: z.coerce.date().optional(),
   discount_percentage: z.coerce.number().optional(),
+  discount_credit: z.coerce.number().optional(),
 }) satisfies ZodType<InsertPackage>;
 
 export type CreatePackageSchema = z.infer<typeof createPackageSchema>;

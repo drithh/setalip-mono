@@ -230,7 +230,6 @@ export function getColumns({
               <DropdownMenuContent align="end" className="w-40">
                 <DropdownMenuItem
                   onSelect={() => {
-                    console.log(row.original);
                     setShowEditAgendaSheet(true);
                   }}
                 >

@@ -48,9 +48,14 @@ export async function editPackage(
 
   const packageService = container.get<PackageService>(TYPES.PackageService);
 
-  const [discount_end_date, discount_percentage] = parsed.data.is_discount
-    ? [parsed.data.discount_end_date, parsed.data.discount_percentage]
-    : [null, null];
+  const [discount_end_date, discount_percentage, discount_credit] = parsed.data
+    .is_discount
+    ? [
+        parsed.data.discount_end_date,
+        parsed.data.discount_percentage,
+        parsed.data.discount_credit,
+      ]
+    : [null, null, null];
 
   const result = await packageService.update({
     id: parsed.data.id,
@@ -64,7 +69,9 @@ export async function editPackage(
     is_active: parsed.data.is_active,
 
     discount_end_date,
-    discount_percentage,
+    discount_percentage:
+      discount_percentage === undefined ? null : discount_percentage,
+    discount_credit: discount_credit === undefined ? null : discount_credit,
   });
 
   if (result.error) {

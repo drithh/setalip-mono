@@ -133,7 +133,6 @@ export default function AgendaTable({
                 searchParams.toString(),
               );
               newSearchParams.set('is_recurrence', value ? '1' : '0');
-              console.log('newSearchParams', newSearchParams.toString());
               router.push(`${pathname}?${newSearchParams.toString()}`);
             }}
           />

@@ -60,6 +60,7 @@ const TOAST_MESSAGES = {
 
 export default function CreatePackageForm({ classTypes }: CreatePackageProps) {
   const [openSheet, setOpenSheet] = useState(false);
+  const [isDiscountPercentage, setIsDiscountPercentage] = useState(true);
 
   const trpcUtils = api.useUtils();
   type FormSchema = CreatePackageSchema;
@@ -80,6 +81,7 @@ export default function CreatePackageForm({ classTypes }: CreatePackageProps) {
       is_discount: 0,
       discount_end_date: undefined,
       discount_percentage: undefined,
+      discount_credit: undefined,
     } as FormSchema,
   });
 
@@ -383,26 +385,60 @@ export default function CreatePackageForm({ classTypes }: CreatePackageProps) {
                       )}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name="discount_percentage"
-                      render={({ field }) => (
-                        <FormItem className="grid w-full gap-2">
-                          <FormLabel>Discount</FormLabel>
-                          <FormControl>
-                            <AddonInput
-                              type="number"
-                              min={0}
-                              max={100}
-                              {...field}
-                              value={field.value ?? 0}
-                              endAdornment="%"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Discount Percentage?</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={isDiscountPercentage}
+                          onCheckedChange={(e) => {
+                            setIsDiscountPercentage(e);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                    {isDiscountPercentage ? (
+                      <FormField
+                        control={form.control}
+                        name="discount_percentage"
+                        render={({ field }) => (
+                          <FormItem className="grid w-full gap-2">
+                            <FormLabel>Discount Percentage</FormLabel>
+                            <FormControl>
+                              <AddonInput
+                                type="number"
+                                min={0}
+                                max={100}
+                                {...field}
+                                value={field.value ?? 0}
+                                endAdornment="%"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      <FormField
+                        control={form.control}
+                        name="discount_credit"
+                        render={({ field }) => (
+                          <FormItem className="grid w-full gap-2">
+                            <FormLabel>Discount Credit</FormLabel>
+                            <FormControl>
+                              <AddonInput
+                                type="number"
+                                min={0}
+                                {...field}
+                                value={field.value ?? 0}
+                                endAdornment="Session(s)"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </>
                 )}
 
