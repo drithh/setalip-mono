@@ -22,7 +22,15 @@ export async function up(db: Kysely<any>): Promise<void> {
 export async function down(db: Kysely<any>): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
-      await trx.schema.alterTable('packages').dropColumn('discount_credit');
+      await trx.schema
+        .alterTable('packages')
+        .dropColumn('discount_credit')
+        .execute();
+
+      await trx.schema
+        .alterTable('statistics')
+        .dropColumn('description')
+        .execute();
     });
   } catch (error) {
     console.error(error);

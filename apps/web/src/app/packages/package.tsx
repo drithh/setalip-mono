@@ -38,6 +38,8 @@ export default function Package({ singlePackage }: Package) {
       onMouseDown={() => setIsPressed(true)}
       onMouseUp={() => setIsPressed(false)}
       onMouseLeave={() => setIsPressed(false)} // Ensure it resets if mouse leaves while pressed
+      onTouchStart={() => setIsPressed(true)}
+      onTouchEnd={() => setIsPressed(false)}
     >
       {isDiscount && (
         <>
@@ -65,7 +67,7 @@ export default function Package({ singlePackage }: Package) {
             {singlePackage.class_type} class
           </p>
         </div>
-        {isDiscount ? (
+        {isDiscount && singlePackage.price !== price ? (
           <div className="flex flex-col place-content-end place-items-center">
             <p className="text-gray-500 line-through">
               {moneyFormatter.format(singlePackage.price)}
