@@ -6,11 +6,14 @@ import { Card } from '@repo/ui/components/ui/card';
 import { compareAsc, format } from 'date-fns';
 import Link from 'next/link';
 import PulsatingButton from '@repo/ui/components/pulsating-button';
+import { useState } from 'react';
+import { cn } from '@repo/ui/lib/utils';
 interface Package {
   singlePackage: SelectPackages;
 }
 
 export default function Package({ singlePackage }: Package) {
+  const [isPressed, setIsPressed] = useState(false);
   const isDiscount =
     singlePackage.discount_end_date &&
     compareAsc(singlePackage.discount_end_date, new Date()) === 1;
@@ -23,14 +26,20 @@ export default function Package({ singlePackage }: Package) {
 
   return (
     <Card
-      className={`relative flex flex-col overflow-hidden rounded-xl border pt-10 ${
-        isDiscount
-          ? ' border-2 border-red-400 bg-gradient-to-r from-red-50 to-red-100'
-          : ''
-      }`}
+      className={cn(
+        'relative flex transform flex-col overflow-hidden rounded-xl border pt-10 transition-all duration-500',
+        {
+          'scale-[1.02] ring-2 ring-[#7A8466]': isPressed,
+          'border-[3px] border-red-500 shadow-[0_0_1px_#fff,inset_0_0_1px_#fff,0_0_2px_#f00,0_0_10px_#f00,0_0_15px_#f00] ring-red-500':
+            isDiscount,
+        },
+      )}
+      onMouseDown={() => setIsPressed(true)}
+      onMouseUp={() => setIsPressed(false)}
+      onMouseLeave={() => setIsPressed(false)} // Ensure it resets if mouse leaves while pressed
     >
       {isDiscount && (
-        <div className="absolute right-0 top-0 rounded-bl-xl rounded-tr-xl border border-red-700 bg-gradient-to-r from-red-600 to-red-400 px-4 py-1 font-semibold text-white shadow-lg">
+        <div className="absolute right-0 top-0 rounded-bl-xl  border border-red-700 bg-gradient-to-l from-red-600 to-red-400 px-4 py-1 font-semibold text-white shadow-lg">
           <p>{singlePackage.discount_percentage}% off</p>
         </div>
       )}
@@ -96,7 +105,7 @@ export default function Package({ singlePackage }: Package) {
         ) : (
           <p className="text-center ">Recurring purchase allowed</p>
         )}
-        {isDiscount && (
+        {/* {isDiscount && (
           <p className="f text-center">
             Discount ends on:{' '}
             {format(
@@ -104,7 +113,7 @@ export default function Package({ singlePackage }: Package) {
               'dd MMM yyyy HH:mm',
             )}
           </p>
-        )}
+        )} */}
       </div>
     </Card>
   );

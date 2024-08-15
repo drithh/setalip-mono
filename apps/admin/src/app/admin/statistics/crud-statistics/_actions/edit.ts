@@ -30,6 +30,7 @@ export async function edit(state: FormEdit, data: FormData): Promise<FormEdit> {
     name: parsed.data.name,
     point: parsed.data.point,
     role: parsed.data.role,
+    description: parsed.data.description,
   });
 
   if (result.error) {

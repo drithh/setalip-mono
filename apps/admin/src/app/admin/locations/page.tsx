@@ -38,11 +38,11 @@ export default async function Locations() {
                 <CardTitle>{location.name}</CardTitle>
                 <div className="mt-2 flex flex-col gap-2">
                   <div className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5" />
+                    <MapPin className="h-5 w-5 flex-shrink-0" />
                     <p>{location.address}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Phone className="h-5 w-5" />
+                    <Phone className="h-5 w-5 flex-shrink-0" />
                     <p>{location.phone_number}</p>
                   </div>
                 </div>

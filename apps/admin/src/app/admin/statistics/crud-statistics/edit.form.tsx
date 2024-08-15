@@ -36,6 +36,7 @@ import {
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { CONSTANT, ROLES } from './constant';
+import RichTextEditor from '@repo/ui/components/rich-text/text-editor';
 
 interface EditProps {
   data: SelectStatistic;
@@ -68,6 +69,7 @@ export default function EditForm({ data, open, onOpenChange }: EditProps) {
       name: data.name,
       role: data.role,
       point: data.point,
+      description: data.description,
     } as FormSchema,
   });
 
@@ -211,6 +213,28 @@ export default function EditForm({ data, open, onOpenChange }: EditProps) {
                       <FormLabel>Point</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+                          <RichTextEditor
+                            value={field.value}
+                            onChange={(value) =>
+                              form.setValue('description', value)
+                            }
+                          />
+                        </>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

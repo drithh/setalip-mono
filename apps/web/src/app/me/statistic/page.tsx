@@ -1,11 +1,10 @@
 import { container, TYPES } from '@repo/shared/inversify';
 import { AgendaService, StatisticService } from '@repo/shared/service';
-import {
-  Card,
-} from '@repo/ui/components/ui/card';
+import { Card } from '@repo/ui/components/ui/card';
 
 import { validateUser } from '@/lib/auth';
 import { LockIcon, UnlockIcon } from 'lucide-react';
+import { StatisticBadge } from './_components/statistic-badge';
 
 export default async function Statistic({}: {}) {
   const auth = await validateUser();
@@ -52,9 +51,8 @@ export default async function Statistic({}: {}) {
           {statistics.result?.data.map((stat) => (
             <StatisticBadge
               key={stat.id}
-              name={stat.name}
-              point={stat.point}
-              variant={stat.point >= totalAgenda ? 'locked' : 'unlocked'}
+              statistic={stat}
+              totalAgenda={totalAgenda}
             />
           ))}
         </div>
@@ -62,74 +60,3 @@ export default async function Statistic({}: {}) {
     </div>
   );
 }
-
-interface StatisticBadgeProps {
-  name: string;
-  point: number;
-  variant?: 'locked' | 'unlocked';
-}
-
-const StatisticBadge = ({
-  name,
-  point,
-  variant = 'locked',
-}: StatisticBadgeProps) => {
-  const variantClass =
-    variant === 'locked'
-      ? 'opacity-80 fill-neutral-100 text-neutral-500 cursor-not-allowed border-black/50 stroke-border'
-      : 'opacity-100 fill-sky-200 text-white cursor-pointer border-white stroke-white';
-
-  return (
-    <div className="mb-4 flex flex-col items-center justify-center overflow-hidden">
-      <div className={`relative h-52 w-44 md:h-72 md:w-64`}>
-        <HexagonSvg className={`fill-white/90 drop-shadow-lg`} />
-        <HexagonSvg
-          className={`top-2 h-[196px] w-[164px]  md:h-[290px] md:w-[250px] ${variantClass} absolute inset-0 mx-auto my-auto md:top-6`}
-        />
-        <div
-          className={`${variantClass} absolute inset-0 top-8 mx-auto  flex h-9 w-9 place-items-center justify-center rounded-full border-2 md:h-12 md:w-12`}
-        >
-          {variant === 'locked' ? (
-            <LockIcon className="h-6 w-6 md:h-8 md:w-8 " />
-          ) : (
-            <UnlockIcon className="h-6 w-6 md:h-8 md:w-8 " />
-          )}
-        </div>
-        <div
-          className={`absolute inset-0 top-3 my-auto w-full place-content-center place-items-center px-4 md:top-0 md:px-8 ${variantClass}`}
-        >
-          <p className="text-center text-2xl font-bold italic leading-6 md:text-[3rem] md:leading-[1.02]">
-            {point}
-          </p>
-          <p className="text-center text-2xl font-bold italic leading-6 md:text-[3rem] md:leading-9">
-            Class Reward
-          </p>
-        </div>
-      </div>
-      <p className="w-44 text-center text-xl font-bold uppercase text-black/50 md:w-64 md:text-[1.7rem]">
-        {name}
-      </p>
-    </div>
-  );
-};
-interface HexagonProps {
-  className?: string;
-}
-
-const HexagonSvg = ({ className }: HexagonProps) => (
-  <svg
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    fill="currentColor"
-    viewBox="1 -0.5 22 27"
-  >
-    <g>
-      <path
-        strokeWidth="0.5"
-        d="m10.88544,0.68293c0.6932,-0.40144 1.53592,-0.40144 2.22912,0l8.03245,4.65211c0.72854,0.42197 1.18043,1.22255 1.18043,2.09144l0,9.14704c0,0.86884 -0.45188,1.6695 -1.18043,2.09141l-8.03245,4.65212c-0.6932,0.40146 -1.53592,0.40146 -2.22912,0l-8.03244,-4.65212c-0.72858,-0.42192 -1.18044,-1.22257 -1.18044,-2.09141l0,-9.14704c0,-0.86889 0.45186,-1.66947 1.18044,-2.09144l8.03244,-4.65211z"
-      >
-        asdasd
-      </path>
-    </g>
-  </svg>
-);

@@ -6,6 +6,7 @@ export const createSchema = z.object({
   name: z.string().min(3).max(255),
   point: z.coerce.number(),
   role: z.enum(['coach', 'user']),
+  description: z.string().min(3),
 }) satisfies ZodType<InsertStatistic>;
 
 export type CreateSchema = z.infer<typeof createSchema>;

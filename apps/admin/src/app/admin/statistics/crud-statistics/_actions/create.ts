@@ -32,6 +32,7 @@ export async function create(
     name: parsed.data.name,
     point: parsed.data.point,
     role: parsed.data.role,
+    description: parsed.data.description,
   });
 
   if (result.error) {
