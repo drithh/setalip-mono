@@ -32,7 +32,7 @@ export default async function Package({ searchParams }: { searchParams: any }) {
           <Card key={singlePackage?.id} className="sm:col-span-1">
             <CardHeader>
               <CardTitle className="capitalize">
-                {singlePackage?.package_name}
+                {singlePackage?.package_name ?? singlePackage.note}
               </CardTitle>
               <CardDescription className="capitalize">
                 {singlePackage?.class_type}
@@ -41,11 +41,14 @@ export default async function Package({ searchParams }: { searchParams: any }) {
             <CardContent className="">
               <p>
                 Sessions Remaining:{' '}
-                {singlePackage?.credit - (singlePackage?.credit_used ?? 0)}
+                {singlePackage?.amount - (singlePackage?.credit_used ?? 0)}
               </p>
               <p>
                 Expired At:{' '}
-                {format(new Date(singlePackage?.expired_at), 'dd MMM yyyy')}
+                {format(
+                  new Date(singlePackage?.expired_at ?? new Date()),
+                  'dd MMM yyyy',
+                )}
               </p>
             </CardContent>
           </Card>

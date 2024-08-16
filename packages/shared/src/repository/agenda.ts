@@ -109,14 +109,17 @@ export interface SelectScheduleByDate
   location_address: SelectLocation['address'];
 }
 
+type Nullable<T> = {
+  [P in keyof T]: T[P] | null;
+};
 interface SelectAgendaByUser
-  extends SelectAgendaWithoutGenerated,
-    SelectLocationAgenda,
-    SelectCoachAgenda,
-    SelectClassAgenda {
+  extends Nullable<SelectAgendaWithoutGenerated>,
+    Nullable<SelectLocationAgenda>,
+    Nullable<SelectCoachAgenda>,
+    Nullable<SelectClassAgenda> {
   agenda_booking_status: Selectable<AgendaBookings>['status'];
   agenda_booking_updated_at: Selectable<AgendaBookings>['updated_at'];
-  location_facility_name: Selectable<LocationFacilities>['name'];
+  location_facility_name: Selectable<LocationFacilities>['name'] | null;
 }
 
 export interface SelectAllSchedule {

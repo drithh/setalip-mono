@@ -58,8 +58,9 @@ export default function Client({
   const isDiscount =
     singlePackage.discount_end_date &&
     singlePackage.discount_end_date > new Date();
+
   const discount = isDiscount
-    ? (singlePackage.price * (singlePackage.discount_percentage ?? 100)) / 100
+    ? singlePackage.price * (singlePackage.discount_percentage ?? 0) * 0.01
     : 0;
 
   const voucherDiscount = voucher

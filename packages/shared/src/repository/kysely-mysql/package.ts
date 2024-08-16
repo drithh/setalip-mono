@@ -153,7 +153,6 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
         'packages.name as package_name',
         'class_types.type as class_type',
         'user_packages.credit as credit',
-        sql<number>`0`.as('credit_used'),
       ])
       .execute();
 
@@ -253,7 +252,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       .selectFrom('ct_debit')
       .select([
         'ct_debit.class_type_id',
-        'ct_debit.user_package_id',
+        'ct_debit.id',
         'ct_debit.amount',
         sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`.as(
           'amount_used'
@@ -264,7 +263,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
         'ct_debit.id',
         'credit_transactions.credit_transaction_id'
       )
-      .groupBy(['ct_debit.id', 'ct_debit.user_package_id'])
+      .groupBy(['ct_debit.id', 'ct_debit.id'])
       .having(
         'ct_debit.amount',
         '>',
@@ -273,21 +272,31 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       .execute();
 
     const query = await this._db
-      .selectFrom('user_packages')
-      .innerJoin('packages', 'user_packages.package_id', 'packages.id')
-      .innerJoin('class_types', 'packages.class_type_id', 'class_types.id')
-      .where('user_packages.user_id', '=', user_id)
-      .where('user_packages.expired_at', '>', new Date())
-      .selectAll('user_packages')
+      .selectFrom('credit_transactions')
+      .leftJoin(
+        'user_packages',
+        'credit_transactions.user_package_id',
+        'user_packages.id'
+      )
+      .leftJoin('packages', 'user_packages.package_id', 'packages.id')
+      .innerJoin(
+        'class_types',
+        'credit_transactions.class_type_id',
+        'class_types.id'
+      )
+      .where('credit_transactions.user_id', '=', user_id)
+      .where('credit_transactions.expired_at', '>', new Date())
+      .selectAll('credit_transactions')
       .select([
         'packages.name as package_name',
         'class_types.type as class_type',
       ])
+      .orderBy('user_packages.expired_at', 'asc')
       .execute();
 
     const combined = query.map((userPackage) => {
       const packageTransaction = packageSession.find(
-        (session) => session.user_package_id === userPackage.id
+        (session) => session.id === userPackage.id
       );
 
       if (packageTransaction) {
@@ -298,7 +307,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       } else {
         return {
           ...userPackage,
-          credit_used: null,
+          credit_used: 0,
         };
       }
     });
@@ -307,7 +316,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
   }
 
   async findAboutToExpiredPackage(user_id: number, class_type: number) {
-    const packageSession = await this._db
+    const creditUsages = await this._db
       .with('ct_debit', (q) =>
         q
           .selectFrom('credit_transactions')
@@ -318,7 +327,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       .selectFrom('ct_debit')
       .select([
         'ct_debit.class_type_id',
-        'ct_debit.user_package_id',
+        'ct_debit.id',
         'ct_debit.amount',
         sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`.as(
           'amount_used'
@@ -329,7 +338,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
         'ct_debit.id',
         'credit_transactions.credit_transaction_id'
       )
-      .groupBy(['ct_debit.id', 'ct_debit.user_package_id'])
+      .groupBy(['ct_debit.id', 'ct_debit.id'])
       .having(
         'ct_debit.amount',
         '>',
@@ -338,32 +347,43 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       .execute();
 
     const query = await this._db
-      .selectFrom('user_packages')
-      .innerJoin('packages', 'user_packages.package_id', 'packages.id')
-      .innerJoin('class_types', 'packages.class_type_id', 'class_types.id')
-      .where('user_packages.user_id', '=', user_id)
-      .where('user_packages.expired_at', '>', new Date())
+      .selectFrom('credit_transactions')
+      .leftJoin(
+        'user_packages',
+        'credit_transactions.user_package_id',
+        'user_packages.id'
+      )
+      .leftJoin('packages', 'user_packages.package_id', 'packages.id')
+      .innerJoin(
+        'class_types',
+        'credit_transactions.class_type_id',
+        'class_types.id'
+      )
+      .where('credit_transactions.user_id', '=', user_id)
+      .where('credit_transactions.expired_at', '>', new Date())
       .where('class_types.id', '=', class_type)
-      .selectAll('user_packages')
+      .selectAll('credit_transactions')
       .select([
         'packages.name as package_name',
         'class_types.type as class_type',
       ])
       .orderBy('user_packages.expired_at', 'asc')
+      .limit(1)
       .executeTakeFirst();
 
     if (!query) {
       return undefined;
     }
 
-    const combined = {
-      ...query,
-      credit_used:
-        packageSession.find((session) => session.user_package_id === query.id)
-          ?.amount_used ?? null,
-    };
+    const expiringCredit = creditUsages.find(
+      (credit) => credit.id === query.id
+    );
 
-    return combined;
+    return {
+      ...query,
+      credit: expiringCredit?.amount ?? 0,
+      credit_used: expiringCredit?.amount_used ?? 0,
+    };
   }
 
   async findPackageTransactionByUserIdAndPackageId(
@@ -458,6 +478,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
             user_id: data.user_id,
             package_id: queryPackage.id,
             discount: data.discount,
+            credit: queryPackage.credit + (queryPackage.discount_credit ?? 0),
             voucher_id: data.voucher_id,
             deposit_account_id: data.deposit_account_id,
             unique_code: data.unique_code,
@@ -564,7 +585,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
               note: `Credit from package ${singlePackage.name}`,
               class_type_id: singlePackage.class_type_id,
               user_id: packageTransaction.user_id,
-              amount: singlePackage.credit,
+              amount: packageTransaction.credit ?? singlePackage.credit,
               type: 'debit',
             })
             .returningAll()

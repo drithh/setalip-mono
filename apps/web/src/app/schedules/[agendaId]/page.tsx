@@ -119,7 +119,10 @@ export default async function AgendaDetail({
               {singlePackage.result ? (
                 <p className="text-lg text-muted-foreground">
                   You are using <span className="font-semibold">1 credit</span>{' '}
-                  on {singlePackage.result?.package_name} package
+                  on{' '}
+                  {singlePackage.result?.package_name !== null
+                    ? `${singlePackage.result?.package_name} package`
+                    : singlePackage.result.note}
                 </p>
               ) : (
                 <>
@@ -140,7 +143,8 @@ export default async function AgendaDetail({
                 >
                   <CardHeader>
                     <CardTitle className="capitalize">
-                      {singlePackage.result?.package_name}
+                      {singlePackage.result?.package_name ??
+                        singlePackage.result?.note}
                     </CardTitle>
                     <CardDescription className="capitalize">
                       {singlePackage.result?.class_type}
@@ -149,12 +153,15 @@ export default async function AgendaDetail({
                   <CardContent className="">
                     <p>
                       Sessions Remaining:{' '}
-                      {(singlePackage.result?.credit ?? 0) -
+                      {(singlePackage.result?.amount ?? 0) -
                         (singlePackage.result?.credit_used ?? 0)}
                     </p>
                     <p>
                       Expired At:{' '}
-                      {format(singlePackage.result?.expired_at, 'dd MMM yyyy')}
+                      {format(
+                        singlePackage.result?.expired_at ?? new Date(),
+                        'dd MMM yyyy',
+                      )}
                     </p>
                   </CardContent>
                 </Card>

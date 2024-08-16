@@ -4,7 +4,6 @@ import { SelectAllAgendaByUser } from '@repo/shared/repository';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { Badge } from '@repo/ui/components/ui/badge';
 
-
 import { type ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import * as React from 'react';
@@ -49,7 +48,10 @@ export function getColumns(): ColumnDef<SelectAllAgendaByUser['data'][0]>[] {
         return (
           <div className="-ml-5 flex flex-col place-items-center">
             <p className="font-semibold">
-              {format(new Date(row.original.time), 'MMM dd - HH:mm')}
+              {format(
+                new Date(row.original.time ?? new Date()),
+                'MMM dd - HH:mm',
+              )}
             </p>
             <p>({row.original.class_duration} menit)</p>
           </div>

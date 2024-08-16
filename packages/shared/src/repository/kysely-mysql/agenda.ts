@@ -530,18 +530,18 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
 
     let query = this._db
-      .selectFrom('agendas')
-      .innerJoin('agenda_bookings', 'agenda_bookings.agenda_id', 'agendas.id')
-      .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
-      .innerJoin('users', 'coaches.user_id', 'users.id')
-      .innerJoin('classes', 'agendas.class_id', 'classes.id')
-      .innerJoin(
+      .selectFrom('agenda_bookings')
+      .leftJoin('agendas', 'agenda_bookings.agenda_id', 'agendas.id')
+      .leftJoin('coaches', 'agendas.coach_id', 'coaches.id')
+      .leftJoin('users', 'coaches.user_id', 'users.id')
+      .leftJoin('classes', 'agendas.class_id', 'classes.id')
+      .leftJoin(
         'location_facilities',
         'agendas.location_facility_id',
         'location_facilities.id'
       )
-      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
-      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id')
+      .leftJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .leftJoin('class_types', 'classes.class_type_id', 'class_types.id')
       .where('agenda_bookings.user_id', '=', userId);
 
     if (classTypes?.length && classTypes.length > 0) {
@@ -581,7 +581,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .offset(offset)
       .orderBy(orderBy)
       .execute();
-    const test = queryData[0];
+
     const queryCount = await query
       .select(({ fn }) => [fn.count<number>('agendas.id').as('count')])
       .executeTakeFirst();

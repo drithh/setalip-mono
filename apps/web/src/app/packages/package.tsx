@@ -18,17 +18,16 @@ export default function Package({ singlePackage }: Package) {
   const isDiscount =
     singlePackage.discount_end_date &&
     compareAsc(singlePackage.discount_end_date, new Date()) === 1;
+  const discountPercentage = singlePackage.discount_percentage ?? 0;
 
   const price = isDiscount
-    ? singlePackage.price *
-      (100 - (singlePackage.discount_percentage ?? 0)) *
-      0.01
+    ? singlePackage.price * (100 - discountPercentage) * 0.01
     : singlePackage.price;
 
   return (
     <Card
       className={cn(
-        'relative flex transform flex-col overflow-hidden rounded-xl border pt-10 transition-all duration-500',
+        'relative flex transform flex-col overflow-hidden rounded-xl border pt-10 transition-all duration-300',
         {
           'scale-[1.02] ring-2 ring-[#7A8466]': isPressed,
           'border-[3px] border-red-500 shadow-[0_0_1px_#fff,inset_0_0_1px_#fff,0_0_2px_#f00,0_0_10px_#f00,0_0_15px_#f00] ring-red-500':

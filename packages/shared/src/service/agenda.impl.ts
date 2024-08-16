@@ -291,13 +291,13 @@ export class AgendaServiceImpl implements AgendaService {
 
     for (const userAgendaItem of userAgenda) {
       const userAgendaEndTime = addMinutes(
-        userAgendaItem.time,
-        userAgendaItem.class_duration
+        userAgendaItem.time ?? new Date(),
+        userAgendaItem.class_duration ?? 0
       );
 
       if (
-        (isBefore(userAgendaItem.time, agenda.time) ||
-          isEqual(userAgendaItem.time, agenda.time)) &&
+        (isBefore(userAgendaItem.time ?? new Date(), agenda.time) ||
+          isEqual(userAgendaItem.time ?? new Date(), agenda.time)) &&
         (isAfter(userAgendaEndTime, agenda.time) ||
           isEqual(userAgendaEndTime, agenda.time))
       ) {

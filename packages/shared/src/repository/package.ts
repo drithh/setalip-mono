@@ -2,6 +2,7 @@ import { Insertable, Selectable, Updateable } from 'kysely';
 import {
   ClassTypes,
   Classes,
+  CreditTransactions,
   DepositAccounts,
   PackageTransactions,
   Packages,
@@ -114,9 +115,14 @@ export interface SelectAllPackageTransaction {
   pageCount: number;
 }
 
-export interface SelectAllActivePackage extends Selectable<UserPackages> {
-  credit_used: Selectable<UserPackages>['credit'] | null;
-  package_name: Selectable<Packages>['name'];
+export interface SelectAllActivePackage extends Selectable<CreditTransactions> {
+  credit_used: Selectable<UserPackages>['credit'];
+  package_name: Selectable<Packages>['name'] | null;
+  class_type: ClassTypes['type'];
+}
+
+export interface SelectAllUserPackage extends Selectable<UserPackages> {
+  package_name: Selectable<Packages>['name'] | null;
   class_type: ClassTypes['type'];
 }
 
@@ -139,7 +145,7 @@ export interface PackageRepository {
   ): Promise<SelectPackageTransactionWithPackage | undefined>;
   findAllPackageByUserId(
     user_id: SelectPackageTransaction['user_id']
-  ): Promise<SelectAllActivePackage[]>;
+  ): Promise<SelectAllUserPackage[]>;
   findAllPackageTransactionByUserId(
     data: FindAllUserPackageOption
   ): Promise<SelectAllPackageTransaction>;

@@ -245,6 +245,7 @@ export interface Packages {
 export interface PackageTransactions {
   amount_paid: number;
   created_at: Generated<Date>;
+  credit: Generated<number | null>;
   deposit_account_id: Generated<number | null>;
   discount: Generated<number | null>;
   id: Generated<number>;

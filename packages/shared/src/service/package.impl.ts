@@ -209,10 +209,10 @@ export class PackageServiceImpl implements PackageService {
 
     if (isDiscount) {
       const discount =
-        (reducedPrice * (100 - (packageData.discount_percentage ?? 0))) / 100;
+        reducedPrice * (packageData.discount_percentage ?? 0) * 0.01;
 
       dataWithDiscount.discount = discount;
-      reducedPrice = discount;
+      reducedPrice = reducedPrice - discount;
     }
 
     // verify voucher
