@@ -13,12 +13,12 @@ const TOAST_MESSAGES = {
   },
   success: {
     title: 'Gambar berhasil dihapus',
-    description: 'Gambar lokasi berhasil dihapus',
+    description: 'Gambar kelas berhasil dihapus',
   },
 };
 
 export const useDeleteAssetMutation = () =>
-  api.location.deleteAsset.useMutation({
+  api.class.deleteAsset.useMutation({
     onMutate: () => {
       toast.loading(TOAST_MESSAGES.loading.title, {
         description: TOAST_MESSAGES.loading.description,

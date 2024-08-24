@@ -26,6 +26,7 @@ export class KyselyMySqlClassRepository implements ClassRepository {
     const query = await this._db
       .selectFrom('classes')
       .select(({ fn }) => [fn.count<number>('classes.id').as('count')])
+      .where('deleted_at', 'is', null)
       .executeTakeFirst();
 
     return query?.count ?? 0;
@@ -49,6 +50,7 @@ export class KyselyMySqlClassRepository implements ClassRepository {
     // }
     const queryData = await query
       .selectAll()
+      .where('deleted_at', 'is', null)
       .limit(perPage)
       .offset(offset)
       .orderBy(orderBy)
@@ -98,6 +100,7 @@ export class KyselyMySqlClassRepository implements ClassRepository {
         eb.fn.max('class_assets.name').as('asset_name'),
         'class_types.type as class_type',
       ])
+      .where('deleted_at', 'is', null)
       .groupBy(['classes.id', 'class_type'])
       .limit(perPage)
       .offset(offset)
@@ -121,6 +124,7 @@ export class KyselyMySqlClassRepository implements ClassRepository {
       .selectFrom('classes')
       .selectAll()
       .where('classes.id', '=', id)
+      .where('deleted_at', 'is', null)
       .executeTakeFirst();
   }
 
@@ -134,6 +138,7 @@ export class KyselyMySqlClassRepository implements ClassRepository {
       )
       .selectAll('locations')
       .where('class_locations.class_id', '=', id)
+      .where('deleted_at', 'is', null)
       .execute();
   }
 
@@ -142,6 +147,7 @@ export class KyselyMySqlClassRepository implements ClassRepository {
       .selectFrom('classes')
       .selectAll('classes')
       .where('classes.id', '=', id)
+      .where('deleted_at', 'is', null)
       .leftJoin('class_assets', 'classes.id', 'class_assets.class_id')
       .innerJoin('class_types', 'classes.class_type_id', 'class_types.id')
       .select((eb) => [
@@ -151,7 +157,7 @@ export class KyselyMySqlClassRepository implements ClassRepository {
           .select(
             sql<
               SelectDetailClassAssetAndLocation['asset']
-            >`coalesce(json_arrayagg(json_object('name', class_assets.name, 'url', class_assets.url, 'type', class_assets.type)), '[]')`.as(
+            >`coalesce(json_arrayagg(json_object('id', class_assets.id, 'name', class_assets.name, 'url', class_assets.url, 'type', class_assets.type)), '[]')`.as(
               'asset'
             )
           )
@@ -303,15 +309,13 @@ export class KyselyMySqlClassRepository implements ClassRepository {
 
   async delete(id: SelectClass['id']) {
     try {
-      const query = this._db
-        .deleteFrom('classes')
+      const result = await this._db
+        .updateTable('classes')
+        .set({ deleted_at: new Date() })
         .where('classes.id', '=', id)
-        .returningAll()
-        .compile();
+        .executeTakeFirst();
 
-      const result = await this._db.executeQuery(query);
-
-      if (result.rows[0] === undefined) {
+      if (result.numUpdatedRows === undefined) {
         console.error('Failed to delete class', result);
         return new Error('Failed to delete class');
       }
@@ -327,7 +331,7 @@ export class KyselyMySqlClassRepository implements ClassRepository {
     try {
       const query = await this._db
         .deleteFrom('class_assets')
-        .where('class_assets.class_id', '=', id)
+        .where('class_assets.id', '=', id)
         .executeTakeFirst();
 
       if (query.numDeletedRows === undefined) {

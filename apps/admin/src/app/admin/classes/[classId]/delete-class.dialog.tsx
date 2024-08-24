@@ -29,7 +29,8 @@ export default function DeleteClass({ singleClass }: DeleteClassProps) {
       },
       {
         onSuccess: () => {
-          router.push('/classes');
+          router.push('/admin/classes');
+          router.refresh();
         },
       },
     );

@@ -18,7 +18,10 @@ export interface SelectClassWithAsset extends ClassWithoutGenerated {
   class_type: ClassTypes['type'];
 }
 
-type ClassWithoutGenerated = Omit<SelectClass, 'updated_at' | 'updated_by'>;
+type ClassWithoutGenerated = Omit<
+  SelectClass,
+  'updated_at' | 'updated_by' | 'deleted_at'
+>;
 
 export interface ClassLocationsWithName {
   name: SelectClassLocation['name'];

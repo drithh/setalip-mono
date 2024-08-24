@@ -17,34 +17,32 @@ export default function ClassAssets({ assets }: ClassAssetsProps) {
   const deleteClassAsset = useDeleteAssetMutation();
 
   return (
-    <>
-      <PhotoProvider>
-        <div className="grid grid-cols-2 gap-2" ref={parent}>
-          {assets?.map((image, index) => (
-            <FileCard
-              key={image.url}
-              file={
+    <PhotoProvider>
+      <div className="grid grid-cols-2 gap-2" ref={parent}>
+        {assets?.map((image, index) => (
+          <FileCard
+            key={image.url}
+            file={
+              {
+                preview: image.url,
+                name: image.name,
+              } as FileWithPreview
+            }
+            onDelete={() => {
+              deleteClassAsset.mutate(
                 {
-                  preview: image.url,
-                  name: image.name,
-                } as FileWithPreview
-              }
-              onDelete={() => {
-                deleteClassAsset.mutate(
-                  {
-                    assetId: image.id,
+                  id: image.id,
+                },
+                {
+                  onSuccess: () => {
+                    router.refresh();
                   },
-                  {
-                    onSuccess: () => {
-                      router.refresh();
-                    },
-                  },
-                );
-              }}
-            />
-          ))}
-        </div>
-      </PhotoProvider>
-    </>
+                },
+              );
+            }}
+          />
+        ))}
+      </div>
+    </PhotoProvider>
   );
 }

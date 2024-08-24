@@ -51,6 +51,7 @@ export interface ClassAssets {
 export interface Classes {
   class_type_id: number;
   created_at: Generated<Date>;
+  deleted_at: Generated<Date | null>;
   description: string;
   duration: number;
   id: Generated<number>;
