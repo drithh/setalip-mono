@@ -40,6 +40,10 @@ export default async function ClassDetail({
     redirect('/classes');
   }
 
+  const generateWhatsappMessage = (locationName: string) => {
+    return `https://api.whatsapp.com/send/?phone=6281511673808&text=Halo,%20saya%20ingin%20mendaftar%20kelas%20${singleClass.result?.name}%20di%20lokasi%20${locationName}`;
+  };
+
   return (
     <div>
       <div className="w-full">
@@ -115,20 +119,24 @@ export default async function ClassDetail({
                   Participants: {singleClass.result.slot}
                 </p>
               </div>
-              <Link
-                href={
-                  singleClass.result.class_type === 'Private'
-                    ? `https://api.whatsapp.com/send/?phone=6281511673808&text=Halo,%20saya%20ingin%20mendaftar%20kelas%20${singleClass.result.name}`
-                    : `/schedules?class_name=${singleClass.result.id}`
-                }
-              >
-                <Button className="w-full max-w-[200px]">Book Now</Button>
-              </Link>
+
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Available Locations:</h3>
-                <ul className="list-disc space-y-1 pl-6">
+                <ul className="flex w-fit flex-col gap-4">
                   {singleClass.result.locations?.map((location) => (
-                    <li key={location.name}>{location.name}</li>
+                    <Link
+                      key={location.location_id}
+                      href={
+                        singleClass.result?.class_type === 'Private'
+                          ? generateWhatsappMessage(location.name)
+                          : `/schedules?class_name=${singleClass.result?.id}&location_name=${location.location_id}`
+                      }
+                    >
+                      <Button className="w-full ">
+                        Book Now - {location.name}
+                      </Button>
+                    </Link>
+                    // <li key={location.name}>{location.name}</li>
                   ))}
                 </ul>
               </div>

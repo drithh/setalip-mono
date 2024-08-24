@@ -67,6 +67,7 @@ export async function editPackage(
     valid_for: parsed.data.valid_for,
     class_type_id: parsed.data.class_type_id,
     is_active: parsed.data.is_active,
+    position: parsed.data.position,
 
     discount_end_date,
     discount_percentage:

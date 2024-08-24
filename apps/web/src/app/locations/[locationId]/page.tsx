@@ -128,7 +128,7 @@ export default async function LocationDetail({
                     {singleLocation.result.name}
                   </h1>
                   <div className="flex items-center gap-3">
-                    <MapPin className="h-6 w-6 text-muted-foreground" />
+                    <MapPin className="h-6 w-6 flex-shrink-0 text-muted-foreground" />
                     <p className="text-muted-foreground md:text-xl">
                       {singleLocation.result.address}
                     </p>
@@ -139,13 +139,13 @@ export default async function LocationDetail({
                 <h1 className="text-2xl font-medium ">Contact</h1>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-3">
-                    <Mail className="h-6 w-6 text-muted-foreground" />
+                    <Mail className="h-6 w-6 flex-shrink-0 text-muted-foreground" />
                     <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
                       {singleLocation.result.email}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Phone className="h-6 w-6 text-muted-foreground" />
+                    <Phone className="h-6 w-6 flex-shrink-0 text-muted-foreground" />
                     <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
                       {singleLocation.result.phone_number}
                     </p>
