@@ -23,9 +23,18 @@ import type {
   SelectAgendaBooking,
   DeleteAgenda,
   UpdateAgendaBookingParticipant,
+  CancelAgenda,
 } from '../repository';
 import { AgendaService } from './agenda';
-import { addDays, addMinutes, isAfter, isBefore, isEqual } from 'date-fns';
+import {
+  addDays,
+  addMinutes,
+  differenceInHours,
+  format,
+  isAfter,
+  isBefore,
+  isEqual,
+} from 'date-fns';
 import { NotificationType, type NotificationService } from '../notification';
 import { PromiseResult } from '../types';
 
@@ -246,12 +255,13 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const userPackage = await this._packageRepository.findAboutToExpiredPackage(
-      user.id,
-      agendaClass.class_type_id
-    );
+    const expiringCredit =
+      await this._packageRepository.findAboutToExpiredPackage(
+        user.id,
+        agendaClass.class_type_id
+      );
 
-    if (!userPackage) {
+    if (!expiringCredit) {
       return {
         error: new Error('User does not have a package for this class'),
       };
@@ -277,8 +287,8 @@ export class AgendaServiceImpl implements AgendaService {
       user.id
     );
 
-    const creditTransaction = await this._creditRepository.findByUserPackageId(
-      userPackage.id
+    const creditTransaction = await this._creditRepository.findById(
+      expiringCredit.id
     );
 
     if (!creditTransaction) {
@@ -315,7 +325,7 @@ export class AgendaServiceImpl implements AgendaService {
       class_type_id: agendaClass.class_type_id,
       type: 'credit',
       amount: 1,
-      note: `Booked ${agendaClass.name} class on ${agenda.time}`,
+      note: `Booked ${agendaClass.name} class on ${format(agenda.time, 'dd MMM yyyy - HH:mm')}`,
     };
 
     const result = await this._agendaRepository.createAgendaBooking(inputData);
@@ -591,6 +601,57 @@ export class AgendaServiceImpl implements AgendaService {
           error: notification.error,
         };
       }
+    }
+
+    return {
+      result: result,
+    };
+  }
+
+  async cancel(data: CancelAgenda) {
+    // get agneda
+    const agendaBooking = await this._agendaRepository.findAgendaBookingById(
+      data.agenda_booking_id
+    );
+
+    if (!agendaBooking) {
+      return {
+        result: undefined,
+        error: new Error('Agenda booking not found'),
+      };
+    }
+
+    const agenda = await this._agendaRepository.findById(
+      agendaBooking.agenda_id as number
+    );
+
+    if (!agenda) {
+      return {
+        result: undefined,
+        error: new Error('Agenda not found'),
+      };
+    }
+
+    // if agenda < 24 hours, cannot cancel
+    const agendaTime = agenda.time;
+    const now = new Date();
+
+    const hoursDifference = differenceInHours(agendaTime, now);
+
+    if (hoursDifference < 24 && isBefore(now, agendaTime)) {
+      return {
+        result: undefined,
+        error: new Error('The agenda is less than 24 hours away'),
+      };
+    }
+
+    const result = await this._agendaRepository.cancel(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
     }
 
     return {

@@ -3,6 +3,7 @@ import { AgendaService } from '#dep/service/agenda';
 import { TRPCRouterRecord } from '@trpc/server';
 import { adminProcedure, protectedProcedure, publicProcedure } from '../trpc';
 import {
+  cancelAgendaSchema,
   deleteAgendaSchema,
   deleteParticipantSchema,
   findAllAgendaSchema,
@@ -187,6 +188,23 @@ export const agendaRouter = {
         status,
       });
 
+      return result;
+    }),
+  cancel: protectedProcedure
+    .input(cancelAgendaSchema)
+    .mutation(async ({ ctx, input }) => {
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+
+      const result = await agendaService.cancel({
+        agenda_booking_id: input.id,
+        user_id: ctx.session.userId,
+      });
+
+      if (result.error) {
+        throw result;
+      }
       return result;
     }),
   delete: adminProcedure

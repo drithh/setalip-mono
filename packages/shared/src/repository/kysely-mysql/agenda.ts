@@ -19,6 +19,7 @@ import {
   UpdateAgendaBookingById,
   DeleteAgenda,
   UpdateAgendaBookingParticipant,
+  CancelAgenda,
 } from '../agenda';
 import { Database, Users } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
@@ -564,6 +565,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'agendas.time',
         'agendas.location_facility_id',
         'classes.slot',
+        'agenda_bookings.id as agenda_booking_id',
         'agenda_bookings.status as agenda_booking_status',
         'agenda_bookings.created_at as agenda_booking_updated_at',
         'users.name as coach_name',
@@ -617,6 +619,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'agendas.time',
         'agendas.location_facility_id',
         'classes.slot',
+        'agenda_bookings.id as agenda_booking_id',
         'agenda_bookings.status as agenda_booking_status',
         'agenda_bookings.created_at as agenda_booking_updated_at',
         'users.name as coach_name',
@@ -708,27 +711,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
   async createAgendaBooking(data: InsertAgendaAndTransaction) {
     try {
       const result = await this._db.transaction().execute(async (trx) => {
-        const credit = trx
-          .insertInto('credit_transactions')
-          .values({
-            credit_transaction_id: data.credit_transaction_id,
-            agenda_booking_id: data.agenda_booking_id,
-            user_id: data.user_id,
-            type: data.type,
-            amount: data.amount,
-            class_type_id: data.class_type_id,
-            note: data.note,
-          })
-          .returningAll()
-          .compile();
-
-        const resultCredit = await this._db.executeQuery(credit);
-
-        if (resultCredit.rows[0] === undefined) {
-          console.error('Failed to create credit transaction', resultCredit);
-          return new Error('Failed to create credit transaction');
-        }
-
         const agendaBooking = trx
           .insertInto('agenda_bookings')
           .values({
@@ -746,6 +728,26 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
           return new Error('Failed to create agenda booking');
         }
 
+        const credit = trx
+          .insertInto('credit_transactions')
+          .values({
+            credit_transaction_id: data.credit_transaction_id,
+            agenda_booking_id: resultAgendaBooking.rows[0].id,
+            user_id: data.user_id,
+            type: data.type,
+            amount: data.amount,
+            class_type_id: data.class_type_id,
+            note: data.note,
+          })
+          .returningAll()
+          .compile();
+
+        const resultCredit = await this._db.executeQuery(credit);
+
+        if (resultCredit.rows[0] === undefined) {
+          console.error('Failed to create credit transaction', resultCredit);
+          return new Error('Failed to create credit transaction');
+        }
         return resultAgendaBooking.rows[0];
       });
       return result;
@@ -1027,6 +1029,44 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     } catch (error) {
       console.error('Error deleting agenda:', error);
       return new Error('Error deleting agenda');
+    }
+  }
+
+  async cancel(data: CancelAgenda) {
+    try {
+      const result = await this._db.transaction().execute(async (trx) => {
+        // update to canceled
+        const query = await trx
+          .updateTable('agenda_bookings')
+          .set({ status: 'cancelled' })
+          .where('id', '=', data.agenda_booking_id)
+          .executeTakeFirst();
+
+        if (query.numUpdatedRows === undefined) {
+          console.error('Failed to cancel agenda', query);
+          return new Error('Failed to cancel agenda');
+        }
+
+        // delete credit transaction
+        const creditTransaction = await trx
+          .deleteFrom('credit_transactions')
+          .where('agenda_booking_id', '=', data.agenda_booking_id)
+          .where('user_id', '=', data.user_id)
+          .where('type', '=', 'credit')
+          .executeTakeFirst();
+
+        if (creditTransaction.numDeletedRows === undefined) {
+          console.error(
+            'Failed to delete credit transaction',
+            creditTransaction
+          );
+          return new Error('Failed to delete credit transaction');
+        }
+      });
+      return result;
+    } catch (error) {
+      console.error('Error cancelling agenda:', error);
+      return new Error('Error cancelling agenda');
     }
   }
 

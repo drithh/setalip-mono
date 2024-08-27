@@ -107,6 +107,10 @@ export const deleteAgendaSchema = z.object({
   is_refund: z.boolean(),
 });
 
+export const cancelAgendaSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+});
+
 export const findAllScheduleSchema = defaultPaginationSchema.extend({
   class_type_name: z.string().optional(),
   coach_name: z.string().optional(),

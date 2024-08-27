@@ -94,7 +94,7 @@ export default function AgendaTable({
     pageCount: result?.pageCount,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: 'agenda_booking_updated_at.desc',
+    defaultSort: 'time.desc',
     visibleColumns: {
       coach_id: false,
       location_id: false,

@@ -5,11 +5,44 @@ import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-hea
 import { Badge } from '@repo/ui/components/ui/badge';
 
 import { type ColumnDef } from '@tanstack/react-table';
-import { format } from 'date-fns';
+import { differenceInHours, format, isBefore } from 'date-fns';
 import * as React from 'react';
+import DeleteAgendaDialog from './cancel-booking.dialog';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
+import { Button } from '@repo/ui/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@repo/ui/components/ui/dropdown-menu';
+import agenda from './agenda';
 
 export function getColumns(): ColumnDef<SelectAllAgendaByUser['data'][0]>[] {
   return [
+    {
+      accessorKey: 'time',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          className="w-32 justify-center"
+          column={column}
+          title="Waktu"
+        />
+      ),
+      cell: ({ row }) => {
+        return (
+          <div className="-ml-2 flex flex-col place-items-center">
+            <p className="font-semibold">
+              {format(
+                new Date(row.original.time ?? new Date()),
+                'MMM dd - HH:mm',
+              )}
+            </p>
+            <p>({row.original.class_duration} menit)</p>
+          </div>
+        );
+      },
+    },
     {
       accessorKey: 'agenda_booking_updated_at',
       header: ({ column }) => (
@@ -35,29 +68,7 @@ export function getColumns(): ColumnDef<SelectAllAgendaByUser['data'][0]>[] {
         );
       },
     },
-    {
-      accessorKey: 'time',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          className="justify-center"
-          column={column}
-          title="Waktu"
-        />
-      ),
-      cell: ({ row }) => {
-        return (
-          <div className="-ml-5 flex flex-col place-items-center">
-            <p className="font-semibold">
-              {format(
-                new Date(row.original.time ?? new Date()),
-                'MMM dd - HH:mm',
-              )}
-            </p>
-            <p>({row.original.class_duration} menit)</p>
-          </div>
-        );
-      },
-    },
+
     {
       accessorKey: 'location_name',
       header: ({ column }) => (
@@ -123,6 +134,50 @@ export function getColumns(): ColumnDef<SelectAllAgendaByUser['data'][0]>[] {
               {row.original.agenda_booking_status.split('_').join(' ')}
             </Badge>
           </div>
+        );
+      },
+    },
+
+    {
+      id: 'actions',
+      cell: function Cell({ row }) {
+        const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
+          React.useState(false);
+        const agendaTime = row.original.time ?? new Date();
+        const now = new Date();
+
+        const hoursDifference = differenceInHours(agendaTime, now);
+        const isWithin24Hours =
+          hoursDifference < 24 && isBefore(now, agendaTime);
+        return (
+          <>
+            <DeleteAgendaDialog
+              open={showDeleteTaskDialog}
+              onOpenChange={setShowDeleteTaskDialog}
+              data={row.original}
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  aria-label="Open menu"
+                  variant="ghost"
+                  className="flex size-8 p-0 data-[state=open]:bg-muted"
+                >
+                  <DotsHorizontalIcon className="size-4" aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                {/* <DropdownMenuSeparator /> */}
+                {!isWithin24Hours && (
+                  <DropdownMenuItem
+                    onSelect={() => setShowDeleteTaskDialog(true)}
+                  >
+                    Cancel booking
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
         );
       },
     },

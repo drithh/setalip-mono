@@ -21,7 +21,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "../../packages/shared/env.ts"
+    "../../packages/shared/env.ts",
+    "src/app/me/(user)/booking/_functions/cancel-booking.tsx"
   ],
   "exclude": ["node_modules"]
 }

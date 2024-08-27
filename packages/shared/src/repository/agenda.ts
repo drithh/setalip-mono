@@ -122,6 +122,7 @@ interface SelectAgendaByUser
     Nullable<SelectLocationAgenda>,
     Nullable<SelectCoachAgenda>,
     Nullable<SelectClassAgenda> {
+  agenda_booking_id: Selectable<AgendaBookings>['id'];
   agenda_booking_status: Selectable<AgendaBookings>['status'];
   agenda_booking_updated_at: Selectable<AgendaBookings>['updated_at'];
   location_facility_name: Selectable<LocationFacilities>['name'] | null;
@@ -180,6 +181,12 @@ export interface DeleteAgenda {
   id: SelectAgenda['id'];
   is_refund: boolean;
 }
+
+export interface CancelAgenda {
+  agenda_booking_id: SelectAgendaBooking['id'];
+  user_id: SelectUser['id'];
+}
+
 export interface AgendaRepository {
   count(): Promise<number>;
   countParticipant(id: SelectAgenda['id']): Promise<number>;
@@ -237,5 +244,6 @@ export interface AgendaRepository {
   ): Promise<undefined | Error>;
 
   delete(data: DeleteAgenda): Promise<undefined | Error>;
+  cancel(data: CancelAgenda): Promise<undefined | Error>;
   // deleteParticipant(id: InsertAgendaBooking['id']): Promise<undefined | Error>;
 }
