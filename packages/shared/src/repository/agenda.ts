@@ -74,6 +74,11 @@ export type SelectParticipant = {
   name: Selectable<Users>['name'];
 };
 
+export interface UpdateParticipant extends SelectParticipant {
+  id?: SelectAgendaBooking['id'];
+  delete: 'refund' | 'no_refund' | undefined;
+}
+
 export type SelectLocationAgenda = {
   location_name: SelectLocation['name'];
   location_id: SelectLocation['id'];
@@ -160,6 +165,11 @@ export interface UpdateAgendaBooking {
   agendaBookings: UpdateAgendaBookingData[];
 }
 
+export interface UpdateAgendaBookingParticipant {
+  agenda_id: SelectAgenda['id'];
+  agendaBookings: UpdateParticipant[];
+}
+
 export interface SelectBookingParticipant {
   id: SelectAgendaBooking['id'];
   status: SelectAgendaBooking['status'];
@@ -218,10 +228,13 @@ export interface AgendaRepository {
   // ): Promise<SelectAgendaBooking | Error>;
 
   update(data: UpdateAgenda): Promise<undefined | Error>;
+  updateAgendaBooking(data: UpdateAgendaBooking): Promise<undefined | Error>;
+  updateAgendaBookingParticipant(
+    data: UpdateAgendaBookingParticipant
+  ): Promise<undefined | Error>;
   updateAgendaBookingById(
     data: UpdateAgendaBookingById
   ): Promise<undefined | Error>;
-  updateAgendaBooking(data: UpdateAgendaBooking): Promise<undefined | Error>;
 
   delete(data: DeleteAgenda): Promise<undefined | Error>;
   // deleteParticipant(id: InsertAgendaBooking['id']): Promise<undefined | Error>;

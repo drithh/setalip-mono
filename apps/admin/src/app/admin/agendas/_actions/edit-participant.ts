@@ -36,11 +36,13 @@ export async function editParticipant(
 
   const agendaService = container.get<AgendaService>(TYPES.AgendaService);
 
-  const result = await agendaService.updateAgendaBooking({
+  const result = await agendaService.updateAgendaBookingParticipant({
     agenda_id: parsed.data.agenda_id,
     agendaBookings: parsed.data.participants.map((participant) => ({
       id: participant.agenda_booking_id,
       user_id: participant.user_id,
+      name: '',
+      delete: participant.delete,
     })),
   });
 

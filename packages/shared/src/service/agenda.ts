@@ -17,6 +17,7 @@ import {
   SelectBookingParticipant,
   UpdateAgendaBookingById,
   DeleteAgenda,
+  UpdateAgendaBookingParticipant,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -68,6 +69,9 @@ export interface AgendaService {
   update(data: UpdateAgenda): PromiseResult<undefined, Error>;
   updateAgendaBooking(
     data: UpdateAgendaBooking
+  ): PromiseResult<undefined, Error>;
+  updateAgendaBookingParticipant(
+    data: UpdateAgendaBookingParticipant
   ): PromiseResult<undefined, Error>;
   updateAgendaBookingById(
     data: UpdateAgendaBookingById

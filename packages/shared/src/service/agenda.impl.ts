@@ -22,6 +22,7 @@ import type {
   LoyaltyRepository,
   SelectAgendaBooking,
   DeleteAgenda,
+  UpdateAgendaBookingParticipant,
 } from '../repository';
 import { AgendaService } from './agenda';
 import { addDays, addMinutes, isAfter, isBefore, isEqual } from 'date-fns';
@@ -403,6 +404,22 @@ export class AgendaServiceImpl implements AgendaService {
 
   async updateAgendaBooking(data: UpdateAgendaBooking) {
     const result = await this._agendaRepository.updateAgendaBooking(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result: result,
+    };
+  }
+
+  async updateAgendaBookingParticipant(data: UpdateAgendaBookingParticipant) {
+    const result =
+      await this._agendaRepository.updateAgendaBookingParticipant(data);
 
     if (result instanceof Error) {
       return {

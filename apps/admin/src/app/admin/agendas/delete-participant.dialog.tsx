@@ -17,7 +17,7 @@ import { Trash2 } from 'lucide-react';
 
 interface DeleteParticipantProps {
   participant: SelectParticipant;
-  onDelete: () => void;
+  onDelete: (is_refund: boolean) => void;
 }
 
 export default function DeleteParticipantDialog({
@@ -39,15 +39,19 @@ export default function DeleteParticipantDialog({
             <span className="font-semibold">{participant.name}</span>?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Aksi ini hanya akan menghapus peserta dari agenda ketika disimpan,
-            jika ini refund, jangan lupa untuk mengembalikan kredit peserta.
+            Aksi ini hanya akan menghapus peserta dari agenda ini.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Batal</AlertDialogCancel>
           <AlertDialogAction asChild>
-            <Button variant={'destructive'} onClick={onDelete}>
-              Ya, Hapus
+            <Button variant={'destructive'} onClick={() => onDelete(true)}>
+              Hapus dan Refund
+            </Button>
+          </AlertDialogAction>
+          <AlertDialogAction asChild>
+            <Button variant={'destructive'} onClick={() => onDelete(false)}>
+              Hapus
             </Button>
           </AlertDialogAction>
         </AlertDialogFooter>

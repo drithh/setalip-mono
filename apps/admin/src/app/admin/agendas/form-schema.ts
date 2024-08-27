@@ -28,6 +28,7 @@ export const editParticipantSchema = z.object({
     z.object({
       agenda_booking_id: z.number().optional(),
       user_id: z.coerce.number(),
+      delete: z.enum(['refund', 'no_refund']).optional(),
     }),
   ),
 });

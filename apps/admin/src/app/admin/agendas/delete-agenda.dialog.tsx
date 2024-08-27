@@ -54,7 +54,7 @@ export default function DeleteAgendaDialog({
           </AlertDialogTitle>
           <AlertDialogDescription>
             Aksi ini tidak dapat dibatalkan. Ini akan menghapus kelas beserta
-            foto dari server.
+            agenda dari sistem.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -18,6 +18,7 @@ import {
   SelectScheduleByDate,
   UpdateAgendaBookingById,
   DeleteAgenda,
+  UpdateAgendaBookingParticipant,
 } from '../agenda';
 import { Database, Users } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
@@ -828,7 +829,92 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       return new Error('Error updating participant');
     }
   }
+  async updateAgendaBookingParticipant(data: UpdateAgendaBookingParticipant) {
+    try {
+      const currentClass = await this._db
+        .selectFrom('classes')
+        .innerJoin('agendas', 'agendas.class_id', 'classes.id')
+        .selectAll('classes')
+        .select(['agendas.time'])
+        .where('agendas.id', '=', data.agenda_id)
+        .executeTakeFirst();
 
+      if (currentClass === undefined) {
+        console.error('Failed to get class time', currentClass);
+        return new Error('Failed to get class time');
+      }
+
+      // Filter currentAgendaBookings based on whether the ID is not in the Set
+      const toDelete = data.agendaBookings.filter(
+        (booking) => booking.delete !== undefined && booking.id !== undefined
+      );
+
+      const toInsert = data.agendaBookings.filter(
+        (booking) => booking.id === undefined
+      );
+
+      await this._db.transaction().execute(async (trx) => {
+        await Promise.all(
+          toDelete.map(async (booking) => {
+            await trx
+              .updateTable('agenda_bookings')
+              .set({ status: 'cancelled' })
+              .where('id', '=', booking.id as number)
+              .execute();
+
+            if (booking.delete === 'refund') {
+              const tomorrow = addDays(new Date(), 1);
+              const debitCreditTransaction = await trx
+                .selectFrom('credit_transactions as ct_credit')
+                .innerJoin(
+                  'credit_transactions as ct_debit',
+                  'ct_debit.id',
+                  'ct_credit.credit_transaction_id'
+                )
+                .select(['ct_debit.user_package_id'])
+                .where('ct_credit.agenda_booking_id', '=', booking.id ?? 0)
+                .where('ct_credit.type', '=', 'credit')
+                .executeTakeFirst();
+
+              await trx
+                .insertInto('credit_transactions')
+                .values({
+                  user_id: booking.user_id,
+                  type: 'debit',
+                  expired_at: tomorrow,
+                  class_type_id: currentClass.class_type_id ?? 1,
+                  user_package_id: debitCreditTransaction?.user_package_id,
+                  amount: 1,
+                  note: `Refund for book ${currentClass.name} on ${format(
+                    currentClass.time,
+                    'yyyy-MM-dd HH:mm'
+                  )}`,
+                })
+                .execute();
+            }
+          })
+        );
+
+        await Promise.all(
+          toInsert.map((booking) =>
+            trx
+              .insertInto('agenda_bookings')
+              .values({
+                agenda_id: data.agenda_id,
+                user_id: booking.user_id,
+                status: 'booked',
+              })
+              .execute()
+          )
+        );
+      });
+
+      return;
+    } catch (error) {
+      console.error('Error updating participant:', error);
+      return new Error('Error updating participant');
+    }
+  }
   async updateAgendaBookingById(data: UpdateAgendaBookingById) {
     try {
       const query = await this._db

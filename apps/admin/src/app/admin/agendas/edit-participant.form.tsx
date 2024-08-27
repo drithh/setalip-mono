@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation';
 import {
   SelectAgendaBooking,
   SelectParticipant,
+  UpdateParticipant,
 } from '@repo/shared/repository';
 import {
   Sheet,
@@ -39,6 +40,21 @@ import {
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import DeleteParticipantDialog from './delete-participant.dialog';
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from '@repo/ui/components/ui/command';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@repo/ui/components/ui/popover';
+import { cn } from '@repo/ui/lib/utils';
+import { ChevronsUpDown, Check } from 'lucide-react';
 
 interface EditParticipantProps {
   agendaId: SelectAgendaBooking['agenda_id'];
@@ -70,11 +86,19 @@ export default function EditParticipantForm({
   const router = useRouter();
   type FormSchema = EditParticipantSchema;
 
-  const [selectedParticipants, setSelectedParticipants] =
-    useState<SelectParticipant[]>(participants);
-
+  const [selectedParticipants, setSelectedParticipants] = useState<
+    UpdateParticipant[]
+  >(
+    participants.map((participant) => ({
+      agenda_booking_id: participant.agenda_booking_id,
+      user_id: participant.user_id,
+      name: participant.name,
+      delete: undefined,
+    })),
+  );
+  const [openSelectParticipant, setOpenSelectParticipant] = useState(false);
   const [selectedParticipant, setSelectedParticipant] =
-    useState<SelectParticipant>();
+    useState<UpdateParticipant>();
 
   const [formState, formAction] = useFormState(editParticipant, {
     status: 'default',
@@ -183,17 +207,39 @@ export default function EditParticipantForm({
                                     {...field}
                                     value={participant.user_id}
                                   />
-                                  <div className="flex gap-2">
-                                    <Input readOnly value={participant.name} />
-                                    <DeleteParticipantDialog
-                                      participant={participant}
-                                      onDelete={() => {
-                                        setSelectedParticipants((prev) =>
-                                          prev.filter((_, i) => i !== index),
-                                        );
-                                      }}
-                                    />
-                                  </div>
+                                  {participant.delete === undefined && (
+                                    <div className="flex gap-2">
+                                      <Input
+                                        readOnly
+                                        value={participant.name}
+                                      />
+                                      <DeleteParticipantDialog
+                                        participant={participant}
+                                        onDelete={(is_refund) => {
+                                          const deleteParticipant: UpdateParticipant =
+                                            {
+                                              ...participant,
+                                              delete: is_refund
+                                                ? 'refund'
+                                                : 'no_refund',
+                                            };
+
+                                          form.setValue(
+                                            `participants.${index}.delete`,
+                                            deleteParticipant.delete,
+                                          );
+                                          setSelectedParticipants((prev) =>
+                                            prev.map((prevParticipant) =>
+                                              prevParticipant.user_id ===
+                                              participant.user_id
+                                                ? deleteParticipant
+                                                : prevParticipant,
+                                            ),
+                                          );
+                                        }}
+                                      />
+                                    </div>
+                                  )}
                                 </>
                               </FormControl>
                               <FormMessage />
@@ -205,6 +251,15 @@ export default function EditParticipantForm({
                           <FormField
                             control={form.control}
                             name={`participants.${index}.agenda_booking_id`}
+                            render={({ field }) => (
+                              <Input type="hidden" {...field} />
+                            )}
+                          />
+                        )}
+                        {participant.delete && (
+                          <FormField
+                            control={form.control}
+                            name={`participants.${index}.delete`}
                             render={({ field }) => (
                               <Input type="hidden" {...field} />
                             )}
@@ -224,46 +279,76 @@ export default function EditParticipantForm({
             )}
 
             <p>Tambah Peserta</p>
-            <Select
-              onValueChange={(value) => {
-                const member = members.data?.result?.find(
-                  (member) => member.id === parseInt(value),
-                );
-                if (member) {
-                  setSelectedParticipant({
-                    user_id: member.id,
-                    name: member.name,
-                  });
-                  form.setValue('participants', [
-                    ...selectedParticipants,
-                    {
-                      user_id: member.id,
-                      name: member.name,
-                    },
-                  ]);
-                }
-              }}
-              defaultValue={selectedParticipant?.user_id.toString()}
+            <Popover
+              open={openSelectParticipant}
+              onOpenChange={setOpenSelectParticipant}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Pilih peserta" />
-              </SelectTrigger>
-              <SelectContent>
-                {members.data?.result?.map((member) => (
-                  <SelectItem key={member.id} value={member.id.toString()}>
-                    {member.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {/* button to add participant */}
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className={cn(
+                    'w-full justify-between',
+                    !selectedParticipant && 'text-muted-foreground',
+                  )}
+                >
+                  {selectedParticipant
+                    ? selectedParticipant.name
+                    : 'Pilih peserta'}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[327px] p-0">
+                <Command>
+                  <CommandInput placeholder="Cari peserta" />
+                  <CommandList>
+                    <CommandEmpty>
+                      Tidak ada peserta yang ditemukan
+                    </CommandEmpty>
+                    <CommandGroup>
+                      {members.data?.result
+                        ?.filter((member) => {
+                          return !selectedParticipants.some(
+                            (participant) => participant.user_id === member.id,
+                          );
+                        })
+                        .map((member) => (
+                          <CommandItem
+                            value={member.id.toString()}
+                            key={member.id}
+                            onSelect={() => {
+                              setSelectedParticipant({
+                                user_id: member.id,
+                                name: member.name,
+                                delete: undefined,
+                              });
+                              setOpenSelectParticipant(false);
+                            }}
+                          >
+                            {member.name}
+                          </CommandItem>
+                        ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
             <Button
               onClick={() => {
                 if (selectedParticipant) {
+                  form.setValue('participants', [
+                    ...selectedParticipants,
+                    {
+                      user_id: selectedParticipant.user_id,
+                      name: selectedParticipant.name,
+                      delete: selectedParticipant.delete,
+                    },
+                  ]);
                   setSelectedParticipants((prev) => [
                     ...prev,
                     selectedParticipant,
                   ]);
+                  setSelectedParticipant(undefined);
                 }
               }}
             >

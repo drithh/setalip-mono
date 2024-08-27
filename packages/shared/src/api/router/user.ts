@@ -3,12 +3,12 @@
 import { TYPES } from '#dep/inversify/types';
 import { UserService } from '#dep/service/user';
 import { TRPCRouterRecord } from '@trpc/server';
-import { protectedProcedure } from '../trpc';
+import { adminProcedure, protectedProcedure } from '../trpc';
 import { findAllUserSchema, findCreditsByUserIdSchema } from '../schema';
 import { SelectUser } from '#dep/repository/index';
 
 export const userRouter = {
-  findAll: protectedProcedure
+  findAll: adminProcedure
     .input(findAllUserSchema)
     .query(async ({ ctx, input }) => {
       const roles = input.role
@@ -27,7 +27,7 @@ export const userRouter = {
 
       return users;
     }),
-  findAllMember: protectedProcedure.query(async ({ ctx }) => {
+  findAllMember: adminProcedure.query(async ({ ctx }) => {
     const userService = ctx.container.get<UserService>(TYPES.UserService);
 
     const users = await userService.findAllMember();
