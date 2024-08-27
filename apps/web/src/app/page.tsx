@@ -227,7 +227,7 @@ export default async function Home() {
               {locations?.result?.map((location) => (
                 <Card
                   key={location.id}
-                  className="w-full max-w-80 overflow-hidden rounded-xl border border-secondary sm:w-full"
+                  className="flex h-full  w-full max-w-80 flex-col overflow-hidden rounded-xl border border-secondary sm:w-full"
                 >
                   <div className=" relative h-56 bg-transparent p-0 md:h-56">
                     <Image
@@ -237,11 +237,11 @@ export default async function Home() {
                       src={location.asset_url ?? ''}
                     />
                   </div>
-                  <div className="flex flex-col place-content-start bg-background  px-6 py-4">
+                  <div className="flex flex-1 flex-col px-6 py-4">
                     <h4 className="mb-4 text-lg font-semibold md:text-2xl">
                       {location.name}
                     </h4>
-                    <div className="flex flex-col">
+                    <div className="flex flex-1 flex-col ">
                       <div className="flex  gap-2 text-base  text-secondary-foreground">
                         <Phone className="mt-1 h-4 w-4 flex-shrink-0" />
                         <p className="">{location.phone_number}</p>

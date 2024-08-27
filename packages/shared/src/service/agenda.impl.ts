@@ -513,7 +513,9 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const agendaClass = await this._classRepository.findById(agenda.class_id);
+    const agendaClass = await this._classRepository.findDeletedById(
+      agenda.class_id
+    );
 
     if (!agendaClass) {
       return {

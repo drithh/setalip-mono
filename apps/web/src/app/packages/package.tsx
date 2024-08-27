@@ -34,9 +34,8 @@ export default function Package({ singlePackage }: Package) {
             isDiscount,
         },
       )}
-      onMouseDown={() => setIsPressed(true)}
-      onMouseUp={() => setIsPressed(false)}
-      onMouseLeave={() => setIsPressed(false)} // Ensure it resets if mouse leaves while pressed
+      onMouseEnter={() => setIsPressed(true)}
+      onMouseLeave={() => setIsPressed(false)}
       onTouchStart={() => setIsPressed(true)}
       onTouchEnd={() => setIsPressed(false)}
     >

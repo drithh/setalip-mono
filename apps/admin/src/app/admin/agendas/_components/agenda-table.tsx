@@ -46,7 +46,13 @@ export default function AgendaTable({
   }
 
   const columns = React.useMemo(
-    () => getColumns({ locations, coaches, classes }),
+    () =>
+      getColumns({
+        locations,
+        coaches,
+        classes,
+        isRecurrence: search.is_recurrence === 1,
+      }),
     [],
   );
 
@@ -127,7 +133,7 @@ export default function AgendaTable({
         <CardContent className="flex flex-col gap-2">
           <div>Display All Recurrence Agenda</div>
           <Switch
-            checked={search.is_recurrence === 0 ? false : true}
+            checked={search.is_recurrence === 1}
             onCheckedChange={(value) => {
               const newSearchParams = new URLSearchParams(
                 searchParams.toString(),

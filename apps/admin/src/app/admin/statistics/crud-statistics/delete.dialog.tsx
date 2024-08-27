@@ -31,7 +31,7 @@ export default function DeleteDialog({
   const onDelete = () => {
     deleteMutation.mutate(
       {
-        packageId: data.id,
+        id: data.id,
       },
       {
         onSuccess: () => {

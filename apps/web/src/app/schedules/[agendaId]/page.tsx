@@ -43,6 +43,7 @@ export default async function AgendaDetail({
   if (isNaN(agendaIdNumber)) {
     redirect('/schedules');
   }
+  console.log('agendaIdNumber', agendaIdNumber);
   const agendaService = container.get<AgendaService>(TYPES.AgendaService);
   const singleAgenda = await agendaService.findScheduleById(agendaIdNumber);
 
@@ -148,6 +149,9 @@ export default async function AgendaDetail({
                     </CardTitle>
                     <CardDescription className="capitalize">
                       {singlePackage.result?.class_type}
+                      <p className="text-xs opacity-70">
+                        {singlePackage.result?.note}
+                      </p>
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="">
@@ -174,26 +178,26 @@ export default async function AgendaDetail({
               <div className="flex flex-col gap-2">
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-3">
-                    <Building className="h-6 w-6 text-muted-foreground" />
+                    <Building className="h-6 w-6 flex-shrink-0 text-muted-foreground" />
                     <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
                       {singleAgenda.result.location_name},{' '}
                       {singleAgenda.result.location_facility_name}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <MapPin className="h-6 w-6 text-muted-foreground" />
+                    <MapPin className="h-6 w-6 flex-shrink-0 text-muted-foreground" />
                     <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
                       {singleAgenda.result.location_address}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <CalendarClock className="h-6 w-6 text-muted-foreground" />
+                    <CalendarClock className="h-6 w-6 flex-shrink-0 text-muted-foreground" />
                     <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
                       {time}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <User2 className="h-6 w-6 text-muted-foreground" />
+                    <User2 className="h-6 w-6 flex-shrink-0 text-muted-foreground" />
                     <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
                       {singleAgenda.result.coach_name}
                     </p>

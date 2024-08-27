@@ -28,12 +28,14 @@ interface getColumnsProps {
   locations: SelectLocation[];
   coaches: SelectCoachWithUser[];
   classes: SelectClass[];
+  isRecurrence: boolean;
 }
 
 export function getColumns({
   locations,
   coaches,
   classes,
+  isRecurrence,
 }: getColumnsProps): ColumnDef<SelectAgendaWithCoachAndClass>[] {
   // generate random color in total of classes
   // Function to generate a random color in hexadecimal format
@@ -100,7 +102,12 @@ export function getColumns({
         <DataTableColumnHeader column={column} title="Waktu" />
       ),
       cell: ({ row }) => {
-        return (
+        return isRecurrence ? (
+          <p className="">
+            Setiap {format(row.original.time, 'EEEE - hh:mm')} (
+            {row.original.class_duration} menit)
+          </p>
+        ) : (
           <p className="">
             {`${format(new Date(row.original.time), 'MMM dd - HH:mm')} (${row.original.class_duration} menit)`}
           </p>

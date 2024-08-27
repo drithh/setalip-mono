@@ -36,6 +36,7 @@ export default async function Package({ searchParams }: { searchParams: any }) {
               </CardTitle>
               <CardDescription className="capitalize">
                 {singlePackage?.class_type}
+                <p className="text-xs opacity-70">{singlePackage?.note}</p>
               </CardDescription>
             </CardHeader>
             <CardContent className="">

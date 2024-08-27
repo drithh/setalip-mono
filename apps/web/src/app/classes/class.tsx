@@ -24,7 +24,7 @@ export default function Class({ singleClass }: Class) {
           />
         </AspectRatio>
       </div>
-      <div className="mb-12 flex h-32 flex-col place-content-between px-4 py-4">
+      <div className="flex flex-1 flex-col place-content-between px-4 py-4">
         <div className="flex flex-col gap-2">
           <div className="flex w-full place-content-between">
             <h1 className="text-xl font-semibold uppercase text-secondary-foreground">

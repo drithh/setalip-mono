@@ -18,7 +18,7 @@ const TOAST_MESSAGES = {
 };
 
 export const useDeleteMutation = () =>
-  api.package.delete.useMutation({
+  api.statistic.delete.useMutation({
     onMutate: () => {
       toast.loading(TOAST_MESSAGES.loading.title, {
         description: TOAST_MESSAGES.loading.description,

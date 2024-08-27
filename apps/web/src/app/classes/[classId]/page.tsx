@@ -23,6 +23,12 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from '@repo/ui/components/ui/breadcrumb';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@repo/ui/components/ui/alert';
+import { Info } from 'lucide-react';
 export default async function ClassDetail({
   params,
 }: {
@@ -121,6 +127,17 @@ export default async function ClassDetail({
               </div>
 
               <div className="space-y-2">
+                {singleClass.result.class_type === 'Private' && (
+                  <Alert variant="default">
+                    <Info className="h-4 w-4" />
+                    <AlertTitle>Perhatian</AlertTitle>
+                    <AlertDescription>
+                      Saat ini, pemesanan kelas privat dilakukan melalui
+                      WhatsApp. Pilih lokasi yang diinginkan dan klik tombol di
+                      bawah untuk chat langsung dengan admin.
+                    </AlertDescription>
+                  </Alert>
+                )}
                 <h3 className="text-lg font-medium">Available Locations:</h3>
                 <ul className="flex w-fit flex-col gap-4">
                   {singleClass.result.locations?.map((location) => (

@@ -1,6 +1,6 @@
 'use server';
 import { lucia } from '@repo/shared/auth';
-import { cookies , headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 

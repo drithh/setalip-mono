@@ -291,7 +291,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
         'packages.name as package_name',
         'class_types.type as class_type',
       ])
-      .orderBy('user_packages.expired_at', 'asc')
+      .orderBy('credit_transactions.expired_at', 'asc')
       .execute();
 
     const combined = query.map((userPackage) => {
@@ -367,7 +367,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
         'packages.name as package_name',
         'class_types.type as class_type',
       ])
-      .orderBy('user_packages.expired_at', 'asc')
+      .orderBy('credit_transactions.expired_at', 'asc')
       .limit(1)
       .executeTakeFirst();
 
@@ -582,7 +582,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
             .values({
               user_package_id: userPackageId,
               expired_at: expiredAt,
-              note: `Credit from package ${singlePackage.name}`,
+              note: `Purchase package ${singlePackage.name}`,
               class_type_id: singlePackage.class_type_id,
               user_id: packageTransaction.user_id,
               amount: packageTransaction.credit ?? singlePackage.credit,

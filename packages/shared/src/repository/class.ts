@@ -63,6 +63,7 @@ export interface ClassRepository {
     data: FindAllClassOptions
   ): Promise<SelectAllClassWithAsset>;
   findById(id: SelectClass['id']): Promise<SelectClass | undefined>;
+  findDeletedById(id: SelectClass['id']): Promise<SelectClass | undefined>;
   findAllLocationById(id: SelectClass['id']): Promise<SelectClassLocation[]>;
   findDetailClassAssetAndLocation(
     id: SelectClass['id']

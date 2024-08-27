@@ -894,23 +894,35 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
           if (data.is_refund) {
             const tomorrow = addDays(new Date(), 1);
             await Promise.all(
-              agendaBookings.map((booking) =>
+              agendaBookings.map(async (booking) => {
+                const debitCreditTransaction = await trx
+                  .selectFrom('credit_transactions as ct_credit')
+                  .innerJoin(
+                    'credit_transactions as ct_debit',
+                    'ct_debit.id',
+                    'ct_credit.credit_transaction_id'
+                  )
+                  .select(['ct_debit.user_package_id'])
+                  .where('ct_credit.agenda_booking_id', '=', booking.id)
+                  .where('ct_credit.type', '=', 'credit')
+                  .executeTakeFirst();
+
                 trx
                   .insertInto('credit_transactions')
                   .values({
-                    agenda_booking_id: booking.id,
                     user_id: booking.user_id,
                     type: 'debit',
                     expired_at: tomorrow,
                     class_type_id: singleClass.class_type_id,
+                    user_package_id: debitCreditTransaction?.user_package_id,
                     amount: 1,
                     note: `Refund for book ${singleClass.name} on ${format(
                       agenda.time,
                       'yyyy-MM-dd HH:mm'
                     )}`,
                   })
-                  .execute()
-              )
+                  .execute();
+              })
             );
           }
         }

@@ -128,6 +128,14 @@ export class KyselyMySqlClassRepository implements ClassRepository {
       .executeTakeFirst();
   }
 
+  findDeletedById(id: SelectClass['id']) {
+    return this._db
+      .selectFrom('classes')
+      .selectAll()
+      .where('classes.id', '=', id)
+      .executeTakeFirst();
+  }
+
   findAllLocationById(id: SelectClass['id']) {
     return this._db
       .selectFrom('locations')
