@@ -16,7 +16,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@repo/ui/components/ui/dropdown-menu';
-import agenda from './agenda';
 
 export function getColumns(): ColumnDef<SelectAllAgendaByUser['data'][0]>[] {
   return [

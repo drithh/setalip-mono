@@ -30,13 +30,8 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui/components/ui/select';
+
+
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import DeleteParticipantDialog from './delete-participant.dialog';
@@ -54,7 +49,7 @@ import {
   PopoverContent,
 } from '@repo/ui/components/ui/popover';
 import { cn } from '@repo/ui/lib/utils';
-import { ChevronsUpDown, Check } from 'lucide-react';
+import { ChevronsUpDown } from 'lucide-react';
 
 interface EditParticipantProps {
   agendaId: SelectAgendaBooking['agenda_id'];

@@ -3,7 +3,6 @@ import { AgendaService, StatisticService } from '@repo/shared/service';
 import { Card } from '@repo/ui/components/ui/card';
 
 import { validateUser } from '@/lib/auth';
-import { LockIcon, UnlockIcon } from 'lucide-react';
 import { StatisticBadge } from './_components/statistic-badge';
 
 export default async function Statistic({}: {}) {

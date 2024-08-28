@@ -3,7 +3,7 @@ import { SelectPackages } from '@repo/shared/repository';
 import { moneyFormatter } from '@repo/shared/util';
 import { Button } from '@repo/ui/components/ui/button';
 import { Card } from '@repo/ui/components/ui/card';
-import { compareAsc, format } from 'date-fns';
+import { compareAsc } from 'date-fns';
 import Link from 'next/link';
 import PulsatingButton from '@repo/ui/components/pulsating-button';
 import Countdown from 'react-countdown';

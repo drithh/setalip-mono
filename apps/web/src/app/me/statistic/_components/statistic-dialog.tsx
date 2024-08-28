@@ -1,17 +1,11 @@
 'use client';
 import { SelectStatistic } from '@repo/shared/repository';
-import { Button } from '@repo/ui/components/ui/button';
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogFooter,
 } from '@repo/ui/components/ui/dialog';
-import { Input } from '@repo/ui/components/ui/input';
-import { Label } from '@repo/ui/components/ui/label';
 import { HexagonSvg } from './hexagon';
 import { UnlockIcon } from 'lucide-react';
 import RichTextViewer from '@repo/ui/components/rich-text/viewer';
