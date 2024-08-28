@@ -6,12 +6,22 @@ import { Textarea } from '@repo/ui/components/ui/textarea';
 import { format } from 'date-fns';
 import { redirect } from 'next/navigation';
 
-import { validateUser } from '@/lib/auth';
+import { validateRequest, validateUser } from '@/lib/auth';
 
 import EditUserForm from './edit-user.form';
+import Link from 'next/link';
+import { Button } from '@repo/ui/components/ui/button';
 
 export default async function Page() {
-  const auth = await validateUser();
+  const auth = await validateRequest();
+  console.log(auth);
+  if (!auth) {
+    redirect('/login');
+  }
+
+  if (!auth.user || !auth.session) {
+    redirect('/login');
+  }
 
   const userService = container.get<UserService>(TYPES.UserService);
   const user = await userService.findById(auth.user.id);
@@ -58,7 +68,14 @@ export default async function Page() {
           <Textarea readOnly value={user.result?.address ?? ''} />
         </div>
         <div className="flex flex-col gap-2">
-          <Label className="flex flex-col gap-2">Verified At</Label>
+          <div className="flex place-content-between place-items-center">
+            <Label className="flex flex-col gap-2">Verified At</Label>
+            {user.result?.verified_at === null && (
+              <Link href={'/verification'}>
+                <Button variant={'link'}>Verifikasi User</Button>
+              </Link>
+            )}
+          </div>
           <Input
             readOnly
             value={

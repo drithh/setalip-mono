@@ -6,15 +6,25 @@ import {
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
 
-import { validateUser } from '@/lib/auth';
+import { validateRequest, validateUser } from '@/lib/auth';
 
 import { editUserSchema, FormEditUser } from '../form-schema';
+import { parsePhoneNumber } from 'libphonenumber-js';
+import { redirect } from 'next/navigation';
 
 export async function editUser(
   state: FormEditUser,
   data: FormData,
 ): Promise<FormEditUser> {
-  const auth = await validateUser();
+  const auth = await validateRequest();
+
+  if (!auth) {
+    redirect('/login');
+  }
+
+  if (!auth.user || !auth.session) {
+    redirect('/login');
+  }
 
   const formData = convertFormData(data);
   const parsed = editUserSchema.safeParse(formData);
@@ -57,11 +67,14 @@ export async function editUser(
     };
   }
 
+  const parsedPhoneNumber = parsePhoneNumber(parsed.data.phone_number);
+  const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;
+
   const result = await userService.update({
     id: parsed.data.id,
     name: parsed.data.name,
     email: parsed.data.email,
-    phone_number: parsed.data.phone_number,
+    phone_number: formattedPhoneNumber,
     address: parsed.data.address,
     location_id: parsed.data.location_id,
   });

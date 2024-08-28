@@ -132,7 +132,7 @@ export default async function ClassDetail({
                     <Info className="h-4 w-4" />
                     <AlertTitle>Perhatian</AlertTitle>
                     <AlertDescription>
-                      Saat ini, pemesanan kelas privat dilakukan melalui
+                      Saat ini, pembookingan kelas privat dilakukan melalui
                       WhatsApp. Pilih lokasi yang diinginkan dan klik tombol di
                       bawah untuk chat langsung dengan admin.
                     </AlertDescription>
