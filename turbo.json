@@ -10,8 +10,21 @@
   "globalDependencies": ["**/.env.*local"],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "@repo/ui#build",
+        "setalip-admin#build",
+        "setalip-web#build"
+      ],
       "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "setalip-admin#build": {
+      "dependsOn": ["@repo/ui#build"]
+    },
+    "setalip-web#build": {
+      "dependsOn": ["setalip-admin#build"]
+    },
+    "@repo/ui#build": {
+      "dependsOn": []
     },
     "lint": {
       "dependsOn": ["^lint"]
