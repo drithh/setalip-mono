@@ -65,7 +65,7 @@ export async function editUser(
     email: parsed.data.email,
     phone_number: formattedPhoneNumber,
     address: parsed.data.address,
-    location_id: parsed.data.location_id,
+    location_id: parsed.data.location_id !== 0 ? parsed.data.location_id : null,
   });
 
   if (result.error) {
