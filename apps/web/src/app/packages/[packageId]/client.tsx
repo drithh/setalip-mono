@@ -164,7 +164,14 @@ export default function Client({
           <CreateTransaction
             packageId={singlePackage.id}
             depositAccounts={depositAccounts?.data ?? []}
-            price={totalPrice}
+            price={{
+              price: singlePackage.price,
+              discount: discount,
+              voucher: voucherDiscount,
+              uniqueCode: packageTransaction?.unique_code ?? 0,
+              total: totalPrice,
+            }}
+            packageName={singlePackage.name}
             packageTransaction={packageTransaction}
             voucherCode={voucher?.code ?? ''}
           />

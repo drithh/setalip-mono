@@ -31,11 +31,19 @@ import {
   createTransactionSchema,
 } from './form-schema';
 
+interface Price {
+  price: number;
+  discount: number;
+  voucher: number;
+  uniqueCode: number;
+  total: number;
+}
 interface CreateTransactionProps {
   packageTransaction: SelectPackageTransactionByUser;
   packageId: SelectPackageTransaction['package_id'];
   depositAccounts: SelectAllDepositAccount['data'];
-  price: SelectPackageTransaction['amount_paid'];
+  price: Price;
+  packageName: string;
   voucherCode: SelectVoucher['code'];
 }
 
@@ -57,6 +65,7 @@ export default function CreateTransaction({
   packageId,
   depositAccounts,
   price,
+  packageName,
   voucherCode,
 }: CreateTransactionProps) {
   const router = useRouter();
@@ -260,6 +269,7 @@ export default function CreateTransaction({
               depositAccounts.find((d) => d.id === selectedDepositAccount) ??
               defaultDepositAccount
             }
+            packageName={packageName}
             price={price}
             onCreate={() =>
               form.handleSubmit(() => {

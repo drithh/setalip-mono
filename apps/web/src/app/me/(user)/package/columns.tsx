@@ -4,6 +4,7 @@ import { SelectAllPackageTransaction } from '@repo/shared/repository';
 import { moneyFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { Badge } from '@repo/ui/components/ui/badge';
+import { Button } from '@repo/ui/components/ui/button';
 import { type ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import * as React from 'react';
@@ -71,14 +72,18 @@ export function getColumns(): ColumnDef<
             <span className="inline-block font-semibold sm:hidden">
               Tanggal Expired:&ensp;
             </span>
-            <p className="font-semibold">
-              {row.original.package_expired_at
-                ? format(
-                    new Date(row.original.package_expired_at),
-                    'MMM dd - HH:mm',
-                  )
-                : '-'}
-            </p>
+            {row.original.package_expired_at ? (
+              <p className="font-semibold">
+                format( new Date(row.original.package_expired_at), 'MMM dd -
+                HH:mm', )
+              </p>
+            ) : row.original.status === 'pending' ? (
+              <Button className="w-32" size={'sm'}>
+                Bukti Bayar
+              </Button>
+            ) : (
+              '-'
+            )}
           </div>
         );
       },

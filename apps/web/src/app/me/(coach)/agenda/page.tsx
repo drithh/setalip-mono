@@ -49,6 +49,11 @@ export default async function Schedules({
     <div className="w-full p-2 md:p-6">
       <h1 className="text-3xl font-bold">Today's Schedule</h1>
       <div className="my-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
+        {agendas?.result?.length === 0 && (
+          <div className="col-span-3">
+            <p>No schedule for today</p>
+          </div>
+        )}
         {agendas?.result?.map((agenda) => (
           <Card key={agenda.id} className="sm:col-span-1">
             <CardHeader>
