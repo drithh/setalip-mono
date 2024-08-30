@@ -50,6 +50,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'admin.pilatesreform.id',
       },
+      {
+        protocol: 'https',
+        hostname: 'pilatesreform.id',
+      },
     ],
   },
   experimental: {
