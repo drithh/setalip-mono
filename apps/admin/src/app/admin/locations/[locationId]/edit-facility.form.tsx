@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
-import FileCard from './_components/file-card';
+import FileCard from '@/components/file-card';
 import { SelectDetailLocation } from '@repo/shared/repository';
 import {
   Sheet,
@@ -166,6 +166,7 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
                   <Input type="hidden" {...field} value={facility.id} />
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="locationId"

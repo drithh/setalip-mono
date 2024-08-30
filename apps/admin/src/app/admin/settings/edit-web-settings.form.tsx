@@ -29,7 +29,7 @@ import { editWebSettingSchema } from './form-schema';
 import { editWebSetting } from './_actions/edit-web-setting';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
-import FileCard from '../locations/[locationId]/_components/file-card';
+import FileCard from '@/components/file-card';
 import RichTextEditor from '@repo/ui/components/rich-text/text-editor';
 
 interface EditWebSettingFormProps {

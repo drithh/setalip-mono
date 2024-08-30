@@ -1,15 +1,14 @@
-import type { ColumnType } from 'kysely';
+import type { ColumnType } from "kysely";
 
-export type Generated<T> =
-  T extends ColumnType<infer S, infer I, infer U>
-    ? ColumnType<S, I | undefined, U>
-    : ColumnType<T, T | undefined, T>;
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>;
 
 export interface AgendaBookings {
   agenda_id: Generated<number | null>;
   created_at: Generated<Date>;
   id: Generated<number>;
-  status: 'booked' | 'cancelled' | 'checked_in' | 'no_show';
+  status: "booked" | "cancelled" | "checked_in" | "no_show";
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
   user_id: number;
@@ -93,7 +92,7 @@ export interface CreditTransactions {
   expired_at: Generated<Date | null>;
   id: Generated<number>;
   note: string;
-  type: 'credit' | 'debit';
+  type: "credit" | "debit";
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
   user_id: number;
@@ -116,7 +115,7 @@ export interface FlashSales {
   expired_at: Date;
   id: Generated<number>;
   name: string;
-  type: 'fixed' | 'percentage';
+  type: "fixed" | "percentage";
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
 }
@@ -209,7 +208,7 @@ export interface LoyaltyTransactions {
    * RewardId=1 => AgendaBookings;  RewardId=2 => Users; RewardId=3 => Reviews; RewardId=5 => UserPackages
    */
   reference_id: Generated<number | null>;
-  type: 'credit' | 'debit';
+  type: "credit" | "debit";
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
   user_id: number;
@@ -251,8 +250,9 @@ export interface PackageTransactions {
   deposit_account_id: Generated<number | null>;
   discount: Generated<number | null>;
   id: Generated<number>;
+  image_url: Generated<string | null>;
   package_id: number;
-  status: 'completed' | 'failed' | 'pending';
+  status: "completed" | "failed" | "pending";
   unique_code: number;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
@@ -289,7 +289,7 @@ export interface Statistics {
   id: Generated<number>;
   name: string;
   point: number;
-  role: 'coach' | 'user';
+  role: "coach" | "user";
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
 }
@@ -316,7 +316,7 @@ export interface Users {
   name: string;
   phone_number: string;
   referral_id: Generated<number | null>;
-  role: 'admin' | 'coach' | 'owner' | 'user';
+  role: "admin" | "coach" | "owner" | "user";
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
   verified_at: Generated<Date | null>;
@@ -337,7 +337,7 @@ export interface Vouchers {
   discount: number;
   expired_at: Date;
   id: Generated<number>;
-  type: 'fixed' | 'percentage';
+  type: "fixed" | "percentage";
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
   user_id: Generated<number | null>;

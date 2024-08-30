@@ -3,6 +3,7 @@ import PackageTransactionTable from './_components/package-transaction-table';
 import { findAllPackageTransactionSchema } from '@repo/shared/api/schema';
 import QueryResetBoundary from '@/lib/query-reset-boundary';
 import React from 'react';
+import 'react-photo-view/dist/react-photo-view.css';
 
 export interface IndexPageProps {
   searchParams: any;

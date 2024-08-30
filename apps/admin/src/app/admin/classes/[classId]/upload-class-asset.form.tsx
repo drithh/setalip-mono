@@ -17,7 +17,7 @@ import {
 } from '@repo/ui/components/ui/form';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { Input } from '@repo/ui/components/ui/input';
-import FileCard from '../../locations/[locationId]/_components/file-card';
+import FileCard from '@/components/file-card';
 
 type FileWithPreview = File & { preview: string };
 

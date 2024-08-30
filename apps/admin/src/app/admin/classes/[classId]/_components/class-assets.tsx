@@ -4,7 +4,7 @@ import { SelectDetailClassAssetAndLocation } from '@repo/shared/repository';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useDeleteAssetMutation } from '../_functions/delete-class-asset';
 import { useRouter } from 'next/navigation';
-import FileCard from '@/app/admin/locations/[locationId]/_components/file-card';
+import FileCard from '@/components/file-card';
 interface ClassAssetsProps {
   assets: SelectDetailClassAssetAndLocation['asset'];
 }

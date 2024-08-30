@@ -1,6 +1,6 @@
 'use client';
 import { PhotoProvider } from 'react-photo-view';
-import FileCard from './file-card';
+import FileCard from '@/components/file-card';
 import { SelectDetailLocation } from '@repo/shared/repository';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useDeleteAssetMutation } from '../_functions/delete-location-asset';

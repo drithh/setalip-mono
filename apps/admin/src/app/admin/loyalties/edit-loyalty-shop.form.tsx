@@ -17,9 +17,7 @@ import {
 } from '@repo/ui/components/ui/form';
 import { EditLoyaltyShopSchema, editLoyaltyShopSchema } from './form-schema';
 import { toast } from 'sonner';
-import {
-  SelectLoyaltyShop,
-} from '@repo/shared/repository';
+import { SelectLoyaltyShop } from '@repo/shared/repository';
 import {
   Sheet,
   SheetContent,
@@ -28,13 +26,12 @@ import {
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
 
-
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
-import FileCard from '../locations/[locationId]/_components/file-card';
+import FileCard from '@/components/file-card';
 
 interface EditLoyaltyShopProps {
   data: SelectLoyaltyShop;

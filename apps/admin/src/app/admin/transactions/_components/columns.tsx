@@ -19,6 +19,7 @@ import {
 import { Button } from '@repo/ui/components/ui/button';
 import EditPackageTransactionForm from '../edit-package-transactions.form';
 import { format } from 'date-fns';
+import { Badge } from '@repo/ui/components/ui/badge';
 //
 interface getColumnsProps {
   statuses: SelectPackageTransaction['status'][];
@@ -79,7 +80,11 @@ export function getColumns({
         />
       ),
       cell: ({ row }) => {
-        return <p className="-ml-5 text-center">{row.original.status}</p>;
+        return (
+          <div className="sm:-ml-5 sm:text-center">
+            <Badge className="capitalize">{row.original.status}</Badge>
+          </div>
+        );
       },
     },
     {

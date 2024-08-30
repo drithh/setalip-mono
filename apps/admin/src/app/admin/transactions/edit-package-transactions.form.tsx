@@ -38,6 +38,11 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
+import Image from 'next/image';
+import FileCard from '@/components/file-card';
+import { Label } from '@repo/ui/components/ui/label';
+import { ImageWithFallback } from '@/lib/image-with-fallback';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
 
 interface EditPackageTransactionProps {
   statuses: SelectPackageTransaction['status'][];
@@ -58,6 +63,7 @@ const TOAST_MESSAGES = {
     title: 'Transaksi berhasil diperbarui',
   },
 };
+type FileWithPreview = File & { preview: string };
 
 export default function EditPackageTransactionForm({
   statuses,
@@ -122,6 +128,10 @@ export default function EditPackageTransactionForm({
   };
 
   const formRef = useRef<HTMLFormElement>(null);
+  const file = {
+    preview: singlePackageTransaction.image_url,
+    name: singlePackageTransaction.image_url,
+  } as FileWithPreview;
 
   return (
     <Sheet
@@ -147,6 +157,24 @@ export default function EditPackageTransactionForm({
                 action={formAction}
                 onSubmit={onFormSubmit}
               >
+                <div className="flex flex-col gap-4">
+                  <Label>Bukti Transfer</Label>
+                  <div className="group relative h-40 cursor-pointer overflow-hidden">
+                    {singlePackageTransaction.image_url && (
+                      <PhotoProvider>
+                        <PhotoView src={singlePackageTransaction.image_url}>
+                          <ImageWithFallback
+                            className="aspect-square rounded-md object-contain"
+                            fill
+                            src={singlePackageTransaction.image_url}
+                            alt={file.name || 'Image'}
+                          />
+                        </PhotoView>
+                      </PhotoProvider>
+                    )}
+                  </div>
+                </div>
+
                 <FormField
                   control={form.control}
                   name="id"

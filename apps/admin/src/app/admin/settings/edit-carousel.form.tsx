@@ -31,7 +31,7 @@ import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
-import FileCard from '../locations/[locationId]/_components/file-card';
+import FileCard from '@/components/file-card';
 
 type FileWithPreview = File & { preview: string };
 
