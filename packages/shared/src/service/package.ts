@@ -14,6 +14,7 @@ import {
   UpdatePackageTransaction,
   FindAllUserPackageTransactionOption,
   SelectAllPackageTransactionWithUser,
+  UpdatePackageTransactionImage,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -49,6 +50,9 @@ export interface PackageService {
   update(data: UpdatePackage): PromiseResult<undefined, Error>;
   updatePackageTransaction(
     data: UpdatePackageTransaction
+  ): PromiseResult<undefined, Error>;
+  updatePackageTransactionImage(
+    data: UpdatePackageTransactionImage
   ): PromiseResult<undefined, Error>;
 
   delete(id: SelectPackage['id']): PromiseResult<undefined, Error>;

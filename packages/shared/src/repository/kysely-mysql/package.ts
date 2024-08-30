@@ -13,6 +13,7 @@ import {
   SelectPackageTransaction,
   UpdatePackage,
   UpdatePackageTransaction,
+  UpdatePackageTransactionImage,
 } from '../package';
 import { Database } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
@@ -658,6 +659,26 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     } catch (error) {
       console.error('Error updating package transaction:', error);
       return new Error('Failed to update package transaction');
+    }
+  }
+
+  async updatePackageTransactionImage(data: UpdatePackageTransactionImage) {
+    try {
+      const query = await this._db
+        .updateTable('package_transactions')
+        .set(data)
+        .where('id', '=', data.id)
+        .executeTakeFirst();
+
+      if (query.numUpdatedRows === undefined) {
+        console.error('Failed to update package transaction image', query);
+        return new Error('Failed to update package transaction image');
+      }
+
+      return undefined;
+    } catch (error) {
+      console.error('Error updating package transaction image:', error);
+      return new Error('Failed to update package transaction image');
     }
   }
 

@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 
 import { validateUser } from '@/lib/auth';
 
-import PackageTransactionTable from './package-transaction';
+import PackageTransactionTable from './_components/package-transaction';
 
 export default async function Package({ searchParams }: { searchParams: any }) {
   const auth = await validateUser();

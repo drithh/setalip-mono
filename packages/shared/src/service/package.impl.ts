@@ -14,12 +14,14 @@ import type {
   SelectPackageTransaction,
   UpdatePackage,
   UpdatePackageTransaction,
+  UpdatePackageTransactionImage,
   UserRepository,
   VoucherRepository,
   WebSettingRepository,
 } from '../repository';
 import { PackageService } from './package';
 import { NotificationType, type NotificationService } from '../notification';
+import { error } from 'console';
 
 @injectable()
 export class PackageServiceImpl implements PackageService {
@@ -423,6 +425,22 @@ export class PackageServiceImpl implements PackageService {
           error: notification.error,
         };
       }
+    }
+
+    return {
+      result: undefined,
+    };
+  }
+
+  async updatePackageTransactionImage(data: UpdatePackageTransactionImage) {
+    const result =
+      await this._packageRepository.updatePackageTransactionImage(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
     }
 
     return {

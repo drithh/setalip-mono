@@ -132,6 +132,10 @@ export interface UpdatePackageTransactionResult {
   expired_at: SelectCredit['expired_at'];
 }
 
+export interface UpdatePackageTransactionImage {
+  id: SelectPackageTransaction['id'];
+  image_url: SelectPackageTransaction['image_url'];
+}
 export interface PackageRepository {
   count(): Promise<number>;
 
@@ -171,6 +175,9 @@ export interface PackageRepository {
   ): Promise<SelectPackageTransaction | Error>;
 
   update(data: UpdatePackage): Promise<undefined | Error>;
+  updatePackageTransactionImage(
+    data: UpdatePackageTransactionImage
+  ): Promise<undefined | Error>;
   updatePackageTransaction(
     data: UpdatePackageTransaction
   ): Promise<UpdatePackageTransactionResult | Error>;

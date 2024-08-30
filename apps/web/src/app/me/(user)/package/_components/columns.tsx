@@ -8,6 +8,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import { type ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import * as React from 'react';
+import EditPackageTransactionForm from '../edit-package-transaction.form';
 
 export function getColumns(): ColumnDef<
   SelectAllPackageTransaction['data'][0]
@@ -78,9 +79,7 @@ export function getColumns(): ColumnDef<
                 HH:mm', )
               </p>
             ) : row.original.status === 'pending' ? (
-              <Button className="w-32" size={'sm'}>
-                Bukti Bayar
-              </Button>
+              <EditPackageTransactionForm data={row.original} />
             ) : (
               '-'
             )}

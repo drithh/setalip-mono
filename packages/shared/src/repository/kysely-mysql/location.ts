@@ -349,13 +349,13 @@ export class KyselyMySqlLocationRepository implements LocationRepository {
         .executeTakeFirst();
 
       if (query.numUpdatedRows === undefined) {
-        console.error('Error deleting facility image:', query);
+        console.error('Error deleting facility :', query);
         return new Error('Failed to delete facility');
       }
 
       return;
     } catch (error) {
-      console.error('Error deleting facility image:', error);
+      console.error('Error deleting facility :', error);
       return new Error('Failed to delete facility');
     }
   }

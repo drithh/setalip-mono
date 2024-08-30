@@ -7,6 +7,8 @@ import { S3 } from 'aws-sdk';
 import { fileUploadSchema } from '../schema';
 import { env } from '#dep/env';
 import { PutObjectRequest } from 'aws-sdk/clients/s3';
+import path from 'path';
+import { writeFile } from 'fs/promises';
 
 // Configure AWS SDK
 const s3 = new S3({
@@ -48,6 +50,41 @@ export const fileRouter = {
 
           return {
             url: url, // URL of the uploaded file in S3
+            name: file.name,
+          };
+        })
+      );
+
+      return fileInfos;
+    }),
+  uploadLocal: protectedProcedure
+    .input(fileUploadSchema)
+    .mutation(async ({ ctx, input }) => {
+      const host = env.ADMIN_URL; // Default host
+
+      let files = input.files;
+      if (!Array.isArray(files)) {
+        files = [files];
+      }
+
+      const fileInfos = await Promise.all(
+        files.map(async (file) => {
+          const buffer = Buffer.from(await file.arrayBuffer());
+          const timestamp = new Date().getTime();
+          const filename = `${timestamp}_${file.name.replaceAll(' ', '_').toLowerCase()}`;
+
+          let currentPath = process.cwd();
+
+          // Move up three directories
+          for (let i = 0; i < 2; i++) {
+            currentPath = path.dirname(currentPath);
+          }
+
+          const fullPath = path.join(currentPath, 'uploads', filename);
+          await writeFile(fullPath, buffer);
+
+          return {
+            url: `${host}/uploads/${filename}`,
             name: file.name,
           };
         })
