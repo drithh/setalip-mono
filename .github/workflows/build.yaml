@@ -28,15 +28,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Install sshpass
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y sshpass
 
-      - name: SSH into server
-        run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -L 13306:localhost:3306 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "echo 'SSH connection successful'"
+     
+        
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Setup SSH port forwarding
+        run: ssh -i {{ secrets.SSH_KEY }} -o StrictHostKeyChecking=no -N -L -L 13306:localhost:3306 -fN ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} &
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v2
@@ -51,14 +53,18 @@ jobs:
 
       - name: Run build script
         run: ./scripts/build.sh
+        env:
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
       
       - name: Run post-build script
         run: ./scripts/post-build.sh
 
-      - name: Copy files using SCP with sshpass
+      - name: Copy files using SCP
         run: |
-          sshpass -p ${{ secrets.SSH_PASSWORD }} scp ./admin.tar.gz ./web.tar.gz ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/pilates
+          scp -o StrictHostKeyChecking=no ./admin.tar.gz ./web.tar.gz ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/pilates
 
       - name: SSH into server and run deployment script
         run: |
-          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "chmod +x /home/setalip-mono/scripts/deploy.sh && /home/setalip-mono/scripts/deploy.sh"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "chmod +x /home/setalip-mono/scripts/deploy.sh && /home/setalip-mono/scripts/deploy.sh"

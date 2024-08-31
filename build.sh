@@ -10,6 +10,7 @@ PROJECTS=(
   "apps/web"
 )
 
+   
 # Function to build each project
 build_project() {
   local project_path="$1"
