@@ -9,7 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
+    environment: Production
+    env:
       DATABASE_URL: ${{ vars.DATABASE_URL }}
       WHAPIFY_ACCOUNT: ${{ vars.WHAPIFY_ACCOUNT }}
       WHAPIFY_SECRET: ${{ vars.WHAPIFY_SECRET }}
