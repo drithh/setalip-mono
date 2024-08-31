@@ -1,0 +1,49 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: Production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Install sshpass
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+
+      - name: SSH into server
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -L 13306:localhost:3306 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "echo 'SSH connection successful'"
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Ensure script is executable
+        run: chmod +x scripts/*
+
+      - name: Run build script
+        run: ./scripts/build.sh
+      
+      - name: Run post-build script
+        run: ./scripts/post-build.sh
+
+      - name: Copy files using SCP with sshpass
+        run: |
+          sshpass -p ${{ secrets.SSH_PASSWORD }} scp ./admin.tar.gz ./web.tar.gz ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/pilates
+
+      - name: SSH into server and run deployment script
+        run: |
+          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "chmod +x /home/setalip-mono/scripts/deploy.sh && /home/setalip-mono/scripts/deploy.sh"

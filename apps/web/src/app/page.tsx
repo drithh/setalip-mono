@@ -20,8 +20,8 @@ import { Review } from './_components/review';
 import { env } from '@repo/shared/env';
 
 const ImageUrl = {
-  whyUs: `${env.ADMIN_URL}/static/why-us.webp`,
-  story: `${env.ADMIN_URL}/static/story.webp`,
+  whyUs: `${env.WEB_URL}/static/why-us.webp`,
+  story: `${env.WEB_URL}/static/story.webp`,
 };
 
 const whyUs = [
