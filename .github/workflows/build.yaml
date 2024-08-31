@@ -38,7 +38,7 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: Setup SSH port forwarding
-        run: ssh -i {{ secrets.SSH_KEY }} -o StrictHostKeyChecking=no -L 13306:localhost:3306 -fvN ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} &
+        run: ssh -i ${{ secrets.SSH_KEY }} -o StrictHostKeyChecking=no -L 13306:localhost:3306 -fvN ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} &
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v2
