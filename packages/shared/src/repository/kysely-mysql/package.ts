@@ -265,11 +265,6 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
         'credit_transactions.credit_transaction_id'
       )
       .groupBy(['ct_debit.id', 'ct_debit.id'])
-      .having(
-        'ct_debit.amount',
-        '>',
-        sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`
-      )
       .execute();
 
     const query = await this._db
@@ -340,11 +335,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
         'credit_transactions.credit_transaction_id'
       )
       .groupBy(['ct_debit.id', 'ct_debit.id'])
-      .having(
-        'ct_debit.amount',
-        '>',
-        sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`
-      )
+
       .execute();
 
     const query = await this._db
@@ -508,7 +499,6 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
   async update(data: UpdatePackage) {
     try {
-      console.log('data', data);
       const query = await this._db
         .updateTable('packages')
         .set(data)
@@ -631,7 +621,8 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
           .set({
             id: data.id,
             status: data.status,
-            deposit_account_id: data.deposit_account_id,
+            deposit_account_id:
+              data.deposit_account_id ?? packageTransaction.deposit_account_id,
             amount_paid: data.amount_paid ?? packageTransaction.amount_paid,
 
             voucher_discount:

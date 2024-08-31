@@ -30,6 +30,9 @@ export async function editPackageTransaction(
 
   const packageService = container.get<PackageService>(TYPES.PackageService);
 
+  const currentPackageTransaction =
+    await packageService.findPackageTransactionById(parsed.data.id);
+
   const result = await packageService.updatePackageTransaction({
     id: parsed.data.id,
     status: parsed.data.status as SelectPackageTransaction['status'],

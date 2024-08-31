@@ -190,7 +190,7 @@ export const agendaRouter = {
       });
 
       if (result.error) {
-        throw result;
+        throw result.error;
       }
       return result;
     }),
@@ -224,11 +224,11 @@ export const agendaRouter = {
       });
 
       if (result.error) {
-        throw result;
+        throw result.error;
       }
       return result;
     }),
-  deleteAgentBooking: adminProcedure
+  deleteAgendaBooking: adminProcedure
     .input(deleteAgendaBookingSchema)
     .mutation(async ({ ctx, input }) => {
       const agendaService = ctx.container.get<AgendaService>(
@@ -241,7 +241,7 @@ export const agendaRouter = {
       });
 
       if (result.error) {
-        throw result;
+        throw result.error;
       }
       return result;
     }),
@@ -258,7 +258,7 @@ export const agendaRouter = {
       });
 
       if (result.error) {
-        throw result;
+        throw result.error;
       }
       return result;
     }),

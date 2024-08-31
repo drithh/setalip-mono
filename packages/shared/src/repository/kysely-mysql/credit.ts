@@ -85,11 +85,6 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
               'credit_transactions.credit_transaction_id'
             )
             .groupBy('ct_debit.id')
-            .having(
-              'ct_debit.amount',
-              '>',
-              sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`
-            )
         )
         .selectFrom('debit_summary')
         .select([
@@ -222,11 +217,6 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
               'credit_transactions.credit_transaction_id'
             )
             .groupBy('ct_debit.id')
-            .having(
-              'ct_debit.amount',
-              '>',
-              sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`
-            )
         )
         .selectFrom('debit_summary')
         .selectAll()

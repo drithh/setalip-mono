@@ -18,6 +18,11 @@ export type InsertUser = Insertable<Users>;
 export type UpdateUser = OptionalToRequired<Updateable<Users>, 'id'>;
 export type SelectUser = Selectable<Users>;
 
+export interface SelectMember {
+  id: SelectUser['id'];
+  name: SelectUser['name'];
+}
+
 export interface SelectUserWithCredits extends SelectUser {
   credits: SelectAmountCredit[];
 }
@@ -44,7 +49,7 @@ export interface UserRepository {
   findAllUserName(): Promise<SelectAllUserName>;
   findAllUserBirthday(): Promise<SelectUser[]>;
 
-  findAllMember(): Promise<SelectUser[]>;
+  findAllMember(): Promise<SelectMember[]>;
   findById(id: SelectUser['id']): Promise<SelectUser | undefined>;
   findByPhoneNumber(
     phoneNumber: SelectUser['phone_number']

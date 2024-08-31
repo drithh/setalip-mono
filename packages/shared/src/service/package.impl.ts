@@ -12,6 +12,7 @@ import type {
   SelectClassType,
   SelectPackage,
   SelectPackageTransaction,
+  SelectPackageTransactionWithPackage,
   UpdatePackage,
   UpdatePackageTransaction,
   UpdatePackageTransactionImage,
@@ -22,6 +23,7 @@ import type {
 import { PackageService } from './package';
 import { NotificationType, type NotificationService } from '../notification';
 import { error } from 'console';
+import { PromiseResult } from '../types';
 
 @injectable()
 export class PackageServiceImpl implements PackageService {
@@ -80,6 +82,25 @@ export class PackageServiceImpl implements PackageService {
 
     return {
       result: packages,
+      error: undefined,
+    };
+  }
+
+  async findPackageTransactionById(
+    id: SelectPackageTransaction['id']
+  ): PromiseResult<SelectPackageTransactionWithPackage | undefined, Error> {
+    const packageTransaction =
+      await this._packageRepository.findPackageTransactionById(id);
+
+    if (!packageTransaction) {
+      return {
+        result: undefined,
+        error: new Error('Package transaction not found'),
+      };
+    }
+
+    return {
+      result: packageTransaction,
       error: undefined,
     };
   }

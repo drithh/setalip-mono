@@ -19,6 +19,8 @@ import { EditParticipantSchema, editParticipantSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import {
+  DeleteParticipant,
+  InsertAgendaBookingByAdmin,
   SelectAgendaBooking,
   SelectParticipant,
   UpdateParticipant,
@@ -30,7 +32,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
-
 
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
@@ -50,9 +51,12 @@ import {
 } from '@repo/ui/components/ui/popover';
 import { cn } from '@repo/ui/lib/utils';
 import { ChevronsUpDown } from 'lucide-react';
+import { useCreateMutation } from './_functions/create-agenda-booking';
+import { useDeleteMutation } from './_functions/delete-agenda-booking';
+import { Label } from '@repo/ui/components/ui/label';
 
 interface EditParticipantProps {
-  agendaId: SelectAgendaBooking['agenda_id'];
+  agendaId: number;
   participants: SelectParticipant[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -71,6 +75,13 @@ const TOAST_MESSAGES = {
   },
 };
 
+interface Participant {
+  user_id?: number;
+  name?: string;
+  used_credit_user_id?: number;
+  used_credit_user_name?: string;
+}
+
 export default function EditParticipantForm({
   agendaId,
   participants,
@@ -78,87 +89,49 @@ export default function EditParticipantForm({
   onOpenChange,
 }: EditParticipantProps) {
   const trpcUtils = api.useUtils();
-  const router = useRouter();
-  type FormSchema = EditParticipantSchema;
+  const createAgendaBooking = useCreateMutation();
+  const deleteAgendaBooking = useDeleteMutation();
 
-  const [selectedParticipants, setSelectedParticipants] = useState<
-    UpdateParticipant[]
-  >(
-    participants.map((participant) => ({
-      agenda_booking_id: participant.agenda_booking_id,
-      user_id: participant.user_id,
-      name: participant.name,
-      delete: undefined,
-    })),
-  );
+  const onCreate = (user_id: number, used_credit_user_id: number) => {
+    createAgendaBooking.mutate(
+      {
+        agenda_id: agendaId,
+        user_id: user_id,
+        used_credit_user_id: used_credit_user_id,
+      },
+      {
+        onSuccess: () => {
+          trpcUtils.invalidate();
+        },
+      },
+    );
+  };
+
+  const onDelete = (data: DeleteParticipant) => {
+    deleteAgendaBooking.mutate(
+      {
+        id: data.id,
+        type: data.type,
+      },
+      {
+        onSuccess: () => {
+          trpcUtils.invalidate();
+        },
+      },
+    );
+  };
+
   const [openSelectParticipant, setOpenSelectParticipant] = useState(false);
-  const [selectedParticipant, setSelectedParticipant] =
-    useState<UpdateParticipant>();
-
-  const [formState, formAction] = useFormState(editParticipant, {
-    status: 'default',
-    form: {
-      agenda_id: agendaId,
-      participants: selectedParticipants.map((participant) => ({
-        agenda_booking_id: participant.agenda_booking_id,
-        user_id: participant.user_id,
-      })),
-    } as FormSchema,
-  });
+  const [openSelectUser, setOpenSelectUser] = useState(false);
+  const [selectedParticipant, setSelectedParticipant] = useState<Participant>();
 
   const members = api.user.findAllMember.useQuery();
 
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(editParticipantSchema),
-    defaultValues: formState.form,
-  });
-
-  useEffect(() => {
-    toast.dismiss();
-    if (formState.status === 'field-errors') {
-      for (const fieldName in formState.errors) {
-        if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
-          const typedFieldName = fieldName as keyof FormSchema;
-          const error = formState.errors[typedFieldName];
-          if (error) {
-            form.setError(typedFieldName, error);
-          }
-        }
-      }
-    } else if (formState.status === 'error') {
-      toast.error(TOAST_MESSAGES.error.title, {
-        description: formState.errors,
-      });
-      form.setError('root', { message: formState.errors });
-    } else {
-      form.clearErrors();
-    }
-
-    if (formState.status === 'success') {
-      toast.success(TOAST_MESSAGES.success.title);
-      router.refresh();
-      trpcUtils.invalidate();
-      onOpenChange(false);
-    }
-  }, [formState]);
-
-  const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    form.handleSubmit(() => {
-      toast.loading(TOAST_MESSAGES.loading.title, {
-        description: TOAST_MESSAGES.loading.description,
-      });
-      formAction(new FormData(formRef.current!));
-    })(event);
-  };
-
   const formRef = useRef<HTMLFormElement>(null);
-
   return (
     <Sheet
       open={open}
       onOpenChange={(ev) => {
-        form.reset();
         onOpenChange(ev);
       }}
     >
@@ -171,107 +144,26 @@ export default function EditParticipantForm({
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
-            {agendaId ? (
-              <Form {...form}>
-                <form
-                  className="grid gap-4"
-                  ref={formRef}
-                  action={formAction}
-                  onSubmit={onFormSubmit}
-                >
-                  <FormField
-                    control={form.control}
-                    name="agenda_id"
-                    render={({ field }) => (
-                      <Input type="hidden" {...field} value={agendaId} />
-                    )}
+            <Label>Peserta</Label>
+            <div className="flex w-full flex-col">
+              {participants.map((participant) => (
+                <div key={participant.agenda_booking_id} className="flex gap-2">
+                  <Input readOnly value={participant.name} />
+                  <DeleteParticipantDialog
+                    participant={participant}
+                    onDelete={(is_refund) => {
+                      if (!participant.agenda_booking_id) {
+                        return;
+                      }
+                      onDelete({
+                        id: participant.agenda_booking_id,
+                        type: is_refund ? 'refund' : 'no_refund',
+                      });
+                    }}
                   />
-                  <FormLabel>Peserta</FormLabel>
-                  <div className="flex w-full flex-col">
-                    {selectedParticipants.map((participant, index) => (
-                      <div key={participant.user_id}>
-                        <FormField
-                          control={form.control}
-                          name={`participants.${index}.user_id`}
-                          render={({ field }) => (
-                            <FormItem className="grid w-full gap-2">
-                              <FormControl>
-                                <>
-                                  <Input
-                                    type="hidden"
-                                    {...field}
-                                    value={participant.user_id}
-                                  />
-                                  {participant.delete === undefined && (
-                                    <div className="flex gap-2">
-                                      <Input
-                                        readOnly
-                                        value={participant.name}
-                                      />
-                                      <DeleteParticipantDialog
-                                        participant={participant}
-                                        onDelete={(is_refund) => {
-                                          const deleteParticipant: UpdateParticipant =
-                                            {
-                                              ...participant,
-                                              delete: is_refund
-                                                ? 'refund'
-                                                : 'no_refund',
-                                            };
-
-                                          form.setValue(
-                                            `participants.${index}.delete`,
-                                            deleteParticipant.delete,
-                                          );
-                                          setSelectedParticipants((prev) =>
-                                            prev.map((prevParticipant) =>
-                                              prevParticipant.user_id ===
-                                              participant.user_id
-                                                ? deleteParticipant
-                                                : prevParticipant,
-                                            ),
-                                          );
-                                        }}
-                                      />
-                                    </div>
-                                  )}
-                                </>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {participant.agenda_booking_id && (
-                          <FormField
-                            control={form.control}
-                            name={`participants.${index}.agenda_booking_id`}
-                            render={({ field }) => (
-                              <Input type="hidden" {...field} />
-                            )}
-                          />
-                        )}
-                        {participant.delete && (
-                          <FormField
-                            control={form.control}
-                            name={`participants.${index}.delete`}
-                            render={({ field }) => (
-                              <Input type="hidden" {...field} />
-                            )}
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  <Button type="submit" className="w-full">
-                    Simpan
-                  </Button>
-                </form>
-              </Form>
-            ) : (
-              <p>Agenda tidak ditemukan</p>
-            )}
+                </div>
+              ))}
+            </div>
 
             <p>Tambah Peserta</p>
             <Popover
@@ -303,21 +195,72 @@ export default function EditParticipantForm({
                     <CommandGroup>
                       {members.data?.result
                         ?.filter((member) => {
-                          return !selectedParticipants.some(
+                          return !participants.some(
                             (participant) => participant.user_id === member.id,
                           );
                         })
                         .map((member) => (
                           <CommandItem
-                            value={member.id.toString()}
+                            value={member.name.toLowerCase()}
                             key={member.id}
                             onSelect={() => {
                               setSelectedParticipant({
+                                ...selectedParticipant,
                                 user_id: member.id,
                                 name: member.name,
-                                delete: undefined,
                               });
                               setOpenSelectParticipant(false);
+                            }}
+                          >
+                            {member.name}
+                          </CommandItem>
+                        ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+
+            <p>Gunakan Kredit User</p>
+            <Popover open={openSelectUser} onOpenChange={setOpenSelectUser}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className={cn(
+                    'w-full justify-between',
+                    !selectedParticipant && 'text-muted-foreground',
+                  )}
+                >
+                  {selectedParticipant
+                    ? selectedParticipant.used_credit_user_name
+                    : 'Pilih user'}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[327px] p-0">
+                <Command>
+                  <CommandInput placeholder="Cari user" />
+                  <CommandList>
+                    <CommandEmpty>Tidak ada user yang ditemukan</CommandEmpty>
+                    <CommandGroup>
+                      {members.data?.result
+                        ?.filter((member) => {
+                          return !participants.some(
+                            (participant) => participant.user_id === member.id,
+                          );
+                        })
+                        .map((member) => (
+                          <CommandItem
+                            value={member.name.toLowerCase()}
+                            key={member.id}
+                            onSelect={() => {
+                              setSelectedParticipant({
+                                ...selectedParticipant,
+                                used_credit_user_id: member.id,
+                                used_credit_user_name: member.name,
+                              });
+                              setOpenSelectUser(false);
                             }}
                           >
                             {member.name}
@@ -331,19 +274,25 @@ export default function EditParticipantForm({
             <Button
               onClick={() => {
                 if (selectedParticipant) {
-                  form.setValue('participants', [
-                    ...selectedParticipants,
-                    {
-                      user_id: selectedParticipant.user_id,
-                      name: selectedParticipant.name,
-                      delete: selectedParticipant.delete,
-                    },
-                  ]);
-                  setSelectedParticipants((prev) => [
-                    ...prev,
-                    selectedParticipant,
-                  ]);
+                  if (
+                    selectedParticipant.used_credit_user_id &&
+                    selectedParticipant.user_id &&
+                    selectedParticipant.name
+                  ) {
+                    onCreate(
+                      selectedParticipant.user_id,
+                      selectedParticipant.used_credit_user_id,
+                    );
+                  } else {
+                    toast.error('Gagal menambahkan peserta', {
+                      description: 'Mohon pilih peserta yang valid',
+                    });
+                  }
                   setSelectedParticipant(undefined);
+                } else {
+                  toast.error('Gagal menambahkan peserta', {
+                    description: 'Mohon pilih peserta yang valid',
+                  });
                 }
               }}
             >

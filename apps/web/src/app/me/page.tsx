@@ -14,7 +14,6 @@ import { Button } from '@repo/ui/components/ui/button';
 
 export default async function Page() {
   const auth = await validateRequest();
-  console.log(auth);
   if (!auth) {
     redirect('/login');
   }

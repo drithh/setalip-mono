@@ -15,6 +15,7 @@ import {
   FindAllUserPackageTransactionOption,
   SelectAllPackageTransactionWithUser,
   UpdatePackageTransactionImage,
+  SelectPackageTransactionWithPackage,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -26,7 +27,9 @@ export interface PackageService {
   findAllPackageTransaction(
     data: FindAllUserPackageTransactionOption
   ): PromiseResult<SelectAllPackageTransactionWithUser, Error>;
-
+  findPackageTransactionById(
+    id: SelectPackageTransaction['id']
+  ): PromiseResult<SelectPackageTransactionWithPackage | undefined, Error>;
   findAllPackageTransactionByUserId(
     data: FindAllUserPackageOption
   ): PromiseResult<SelectAllPackageTransaction, Error>;

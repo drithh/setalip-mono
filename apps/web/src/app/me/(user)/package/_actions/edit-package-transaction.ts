@@ -53,8 +53,6 @@ export async function editPackageTransaction(
     image_url: fileUpload[0]?.url ?? null,
   });
 
-  console.log(facility);
-
   if (facility.error) {
     return {
       form: parsed.data,

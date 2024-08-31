@@ -43,7 +43,6 @@ export default async function AgendaDetail({
   if (isNaN(agendaIdNumber)) {
     redirect('/schedules');
   }
-  console.log('agendaIdNumber', agendaIdNumber);
   const agendaService = container.get<AgendaService>(TYPES.AgendaService);
   const singleAgenda = await agendaService.findScheduleById(agendaIdNumber);
 

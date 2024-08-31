@@ -75,8 +75,10 @@ export function getColumns(): ColumnDef<
             </span>
             {row.original.package_expired_at ? (
               <p className="font-semibold">
-                format( new Date(row.original.package_expired_at), 'MMM dd -
-                HH:mm', )
+                {format(
+                  new Date(row.original.package_expired_at),
+                  'MMM dd - HH:mm',
+                )}
               </p>
             ) : row.original.status === 'pending' ? (
               <EditPackageTransactionForm data={row.original} />

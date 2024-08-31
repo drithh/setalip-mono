@@ -1162,10 +1162,25 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             .where('ct_credit.type', '=', 'credit')
             .executeTakeFirst();
 
+          const currentCreditTransaction = await trx
+            .selectFrom('credit_transactions')
+            .select(['credit_transactions.user_id'])
+            .where('agenda_booking_id', '=', data.id)
+            .where('type', '=', 'credit')
+            .executeTakeFirst();
+
+          if (currentCreditTransaction === undefined) {
+            console.error(
+              'Failed to get credit transaction',
+              currentCreditTransaction
+            );
+            return new Error('Failed to get credit transaction');
+          }
+
           await trx
             .insertInto('credit_transactions')
             .values({
-              user_id: currentAgendaBooking.user_id,
+              user_id: currentCreditTransaction.user_id,
               type: 'debit',
               expired_at: tomorrow,
               class_type_id: currentAgendaBooking.class_type_id,
