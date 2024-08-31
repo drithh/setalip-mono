@@ -4,12 +4,14 @@ import { TRPCRouterRecord } from '@trpc/server';
 import { adminProcedure, protectedProcedure, publicProcedure } from '../trpc';
 import {
   cancelAgendaSchema,
+  deleteAgendaBookingSchema,
   deleteAgendaSchema,
   deleteParticipantSchema,
   findAllAgendaSchema,
   findAllCoachAgendaSchema,
   findAllScheduleSchema,
   findAllUserAgendaSchema,
+  insertAgendaBookingAdminSchema,
   updateAgendaBookingSchema,
 } from '../schema';
 import { parse } from 'date-fns';
@@ -174,6 +176,25 @@ export const agendaRouter = {
       return agendas;
     }),
 
+  createAgendaBookingAdmin: adminProcedure
+    .input(insertAgendaBookingAdminSchema)
+    .mutation(async ({ ctx, input }) => {
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+
+      const result = await agendaService.createAgendaBookingByAdmin({
+        agenda_id: input.agenda_id,
+        used_credit_user_id: input.used_credit_user_id,
+        user_id: input.user_id,
+      });
+
+      if (result.error) {
+        throw result;
+      }
+      return result;
+    }),
+
   updateAgendaBooking: protectedProcedure
     .input(updateAgendaBookingSchema)
     .mutation(async ({ ctx, input }) => {
@@ -200,6 +221,23 @@ export const agendaRouter = {
       const result = await agendaService.cancel({
         agenda_booking_id: input.id,
         user_id: ctx.session.userId,
+      });
+
+      if (result.error) {
+        throw result;
+      }
+      return result;
+    }),
+  deleteAgentBooking: adminProcedure
+    .input(deleteAgendaBookingSchema)
+    .mutation(async ({ ctx, input }) => {
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+
+      const result = await agendaService.deleteAgendaBooking({
+        id: input.id,
+        type: input.type,
       });
 
       if (result.error) {

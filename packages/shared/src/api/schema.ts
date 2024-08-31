@@ -107,6 +107,17 @@ export const deleteAgendaSchema = z.object({
   is_refund: z.boolean(),
 });
 
+export const insertAgendaBookingAdminSchema = z.object({
+  agenda_id: z.coerce.number().refine((data) => data > 0),
+  user_id: z.coerce.number().refine((data) => data > 0),
+  used_credit_user_id: z.coerce.number().refine((data) => data > 0),
+});
+
+export const deleteAgendaBookingSchema = z.object({
+  id: z.coerce.number().refine((data) => data > 0),
+  type: z.enum(['refund', 'no_refund']),
+});
+
 export const cancelAgendaSchema = z.object({
   id: z.coerce.number().refine((data) => data > 0),
 });

@@ -54,7 +54,7 @@ interface EditAgendaProps {
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal memperbaru agenda',
+    title: 'Gagal memperbarui agenda',
   },
   loading: {
     title: 'Memperbaru agenda...',

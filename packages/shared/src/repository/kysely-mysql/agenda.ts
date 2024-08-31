@@ -20,6 +20,8 @@ import {
   DeleteAgenda,
   UpdateAgendaBookingParticipant,
   CancelAgenda,
+  DeleteParticipant,
+  InsertAgendaBookingAndTransactionByAdmin,
 } from '../agenda';
 import { Database, Users } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
@@ -757,6 +759,57 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     }
   }
 
+  async createAgendaBookingByAdmin(
+    data: InsertAgendaBookingAndTransactionByAdmin
+  ) {
+    try {
+      const result = await this._db.transaction().execute(async (trx) => {
+        const agendaBooking = trx
+          .insertInto('agenda_bookings')
+          .values({
+            agenda_id: data.agenda_id,
+            user_id: data.user_id,
+            status: 'booked',
+          })
+          .returningAll()
+          .compile();
+
+        const resultAgendaBooking = await this._db.executeQuery(agendaBooking);
+
+        if (resultAgendaBooking.rows[0] === undefined) {
+          console.error('Failed to create agenda booking', resultAgendaBooking);
+          return new Error('Failed to create agenda booking');
+        }
+
+        const credit = trx
+          .insertInto('credit_transactions')
+          .values({
+            credit_transaction_id: data.credit_transaction_id,
+            agenda_booking_id: resultAgendaBooking.rows[0].id,
+            user_id: data.used_credit_user_id,
+            type: data.type,
+            amount: data.amount,
+            class_type_id: data.class_type_id,
+            note: data.note,
+          })
+          .returningAll()
+          .compile();
+
+        const resultCredit = await this._db.executeQuery(credit);
+
+        if (resultCredit.rows[0] === undefined) {
+          console.error('Failed to create credit transaction', resultCredit);
+          return new Error('Failed to create credit transaction');
+        }
+        return resultAgendaBooking.rows[0];
+      });
+      return result;
+    } catch (error) {
+      console.error('Error creating agenda booking:', error);
+      return new Error('Error creating agenda booking');
+    }
+  }
+
   async update(data: UpdateAgenda) {
     try {
       const query = await this._db
@@ -1070,6 +1123,67 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     }
   }
 
+  async deleteAgendaBooking(
+    data: DeleteParticipant
+  ): Promise<undefined | Error> {
+    try {
+      const result = await this._db.transaction().execute(async (trx) => {
+        const currentAgendaBooking = await trx
+          .selectFrom('agenda_bookings')
+          .innerJoin('agendas', 'agenda_bookings.agenda_id', 'agendas.id')
+          .innerJoin('classes', 'agendas.class_id', 'classes.id')
+          .selectAll('agenda_bookings')
+          .select(['agendas.time', 'classes.name', 'classes.class_type_id'])
+          .where('agenda_bookings.id', '=', data.id)
+          .executeTakeFirst();
+
+        if (currentAgendaBooking === undefined) {
+          console.error('Failed to get agenda booking', currentAgendaBooking);
+          return new Error('Failed to get agenda booking');
+        }
+
+        await trx
+          .updateTable('agenda_bookings')
+          .set({ status: 'cancelled' })
+          .where('id', '=', data.id)
+          .execute();
+
+        if (data.type === 'refund') {
+          const tomorrow = addDays(new Date(), 1);
+          const debitCreditTransaction = await trx
+            .selectFrom('credit_transactions as ct_credit')
+            .innerJoin(
+              'credit_transactions as ct_debit',
+              'ct_debit.id',
+              'ct_credit.credit_transaction_id'
+            )
+            .select(['ct_debit.user_package_id'])
+            .where('ct_credit.agenda_booking_id', '=', data.id)
+            .where('ct_credit.type', '=', 'credit')
+            .executeTakeFirst();
+
+          await trx
+            .insertInto('credit_transactions')
+            .values({
+              user_id: currentAgendaBooking.user_id,
+              type: 'debit',
+              expired_at: tomorrow,
+              class_type_id: currentAgendaBooking.class_type_id,
+              user_package_id: debitCreditTransaction?.user_package_id,
+              amount: 1,
+              note: `Refund for book ${currentAgendaBooking.name} on ${format(
+                currentAgendaBooking.time,
+                'yyyy-MM-dd HH:mm'
+              )}`,
+            })
+            .execute();
+        }
+      });
+    } catch (error) {
+      console.error('Error deleting participant:', error);
+      return new Error('Error deleting participant');
+    }
+  }
   // async deleteParticipant(id: SelectAgendaBooking['id']) {
   //   try {
   //     const query = await this._db

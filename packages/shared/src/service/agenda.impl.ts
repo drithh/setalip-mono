@@ -24,6 +24,9 @@ import type {
   DeleteAgenda,
   UpdateAgendaBookingParticipant,
   CancelAgenda,
+  InsertAgendaBookingByAdmin,
+  InsertAgendaBookingAndTransactionByAdmin,
+  DeleteParticipant,
 } from '../repository';
 import { AgendaService } from './agenda';
 import {
@@ -359,6 +362,173 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
+  async createAgendaBookingByAdmin(data: InsertAgendaBookingByAdmin) {
+    const user = await this._userRepository.findById(data.user_id);
+
+    if (!user) {
+      return {
+        error: new Error('Participant not found'),
+      };
+    }
+
+    const useUserCredit = await this._userRepository.findById(
+      data.used_credit_user_id
+    );
+
+    if (!useUserCredit) {
+      return {
+        error: new Error('User not found'),
+      };
+    }
+
+    const agenda = await this._agendaRepository.findById(
+      data.agenda_id as number
+    );
+    if (!agenda) {
+      return {
+        error: new Error('Agenda not found'),
+      };
+    }
+
+    const agendaClass = await this._classRepository.findById(agenda.class_id);
+
+    if (!agendaClass) {
+      return {
+        error: new Error('Class not found'),
+      };
+    }
+
+    const agendaLocation =
+      await this._locationRepository.findLocationByFacilityId(
+        agenda.location_facility_id
+      );
+
+    if (!agendaLocation) {
+      return {
+        error: new Error('Location not found'),
+      };
+    }
+
+    const countParticipant = await this._agendaRepository.countParticipant(
+      data.agenda_id as number
+    );
+
+    if (countParticipant >= agendaClass.slot) {
+      return {
+        error: new Error('Class is full'),
+      };
+    }
+
+    const expiringCredit =
+      await this._packageRepository.findAboutToExpiredPackage(
+        useUserCredit.id,
+        agendaClass.class_type_id
+      );
+
+    if (!expiringCredit) {
+      return {
+        error: new Error('User does not have a package for this class'),
+      };
+    }
+
+    const credit = await this._creditRepository.findAmountByUserId(
+      useUserCredit.id
+    );
+    if (!credit) {
+      return {
+        error: new Error('User does not have any credit'),
+      };
+    }
+
+    const currentCredit = credit.find(
+      (item) => item.class_type_id === agendaClass.class_type_id
+    );
+
+    if (!currentCredit || currentCredit.remaining_amount < 1) {
+      return {
+        error: new Error('User does not have any credit for this class'),
+      };
+    }
+
+    const creditTransaction = await this._creditRepository.findById(
+      expiringCredit.id
+    );
+
+    if (!creditTransaction) {
+      return {
+        error: new Error('Credit transaction not found'),
+      };
+    }
+
+    const userAgenda = await this._agendaRepository.findActiveAgendaByUserId(
+      user.id
+    );
+
+    // iterate over userAgenda to check if user overlaps with existing agenda
+    // const agendaEndTime = addMinutes(agenda.time, agendaClass.duration);
+
+    for (const userAgendaItem of userAgenda) {
+      const userAgendaEndTime = addMinutes(
+        userAgendaItem.time ?? new Date(),
+        userAgendaItem.class_duration ?? 0
+      );
+
+      if (
+        (isBefore(userAgendaItem.time ?? new Date(), agenda.time) ||
+          isEqual(userAgendaItem.time ?? new Date(), agenda.time)) &&
+        (isAfter(userAgendaEndTime, agenda.time) ||
+          isEqual(userAgendaEndTime, agenda.time))
+      ) {
+        return {
+          error: new Error('User already has an agenda at this time'),
+        };
+      }
+    }
+
+    const inputData: InsertAgendaBookingAndTransactionByAdmin = {
+      agenda_id: data.agenda_id,
+      user_id: data.user_id,
+      used_credit_user_id: data.used_credit_user_id,
+      status: 'booked',
+      credit_transaction_id: creditTransaction.id,
+      class_type_id: agendaClass.class_type_id,
+      type: 'credit',
+      amount: 1,
+      note: `Booked For ${user.name} in the ${agendaClass.name} class on ${format(agenda.time, 'dd MMM yyyy - HH:mm')}`,
+    };
+
+    const result =
+      await this._agendaRepository.createAgendaBookingByAdmin(inputData);
+
+    if (result instanceof Error) {
+      return {
+        error: result,
+      };
+    }
+
+    const notification = await this._notificationService.sendNotification({
+      payload: {
+        type: NotificationType.UserBookedAgenda,
+        date: agenda.time,
+        class: agendaClass.name,
+        duration: agendaClass.duration,
+        location: agendaLocation.name,
+        facility: agendaLocation.facility_name,
+      },
+      recipient: user.phone_number,
+    });
+
+    if (notification.error) {
+      return {
+        error: notification.error,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
   async createTodayRecurrence(recurrenceDay: SelectAgenda['recurrence_day']) {
     const recurrenceAgendas =
       await this._agendaRepository.findAllByRecurrenceDay(recurrenceDay);
@@ -601,6 +771,91 @@ export class AgendaServiceImpl implements AgendaService {
           error: notification.error,
         };
       }
+    }
+
+    return {
+      result: result,
+    };
+  }
+
+  async deleteAgendaBooking(data: DeleteParticipant) {
+    const agendaBooking = await this._agendaRepository.findAgendaBookingById(
+      data.id
+    );
+
+    if (!agendaBooking) {
+      return {
+        result: undefined,
+        error: new Error('Agenda booking not found'),
+      };
+    }
+
+    const agenda = await this._agendaRepository.findById(
+      agendaBooking.agenda_id as number
+    );
+
+    if (!agenda) {
+      return {
+        result: undefined,
+        error: new Error('Agenda not found'),
+      };
+    }
+
+    const agendaClass = await this._classRepository.findById(agenda.class_id);
+
+    if (!agendaClass) {
+      return {
+        result: undefined,
+        error: new Error('Class not found'),
+      };
+    }
+
+    const agendaLocation =
+      await this._locationRepository.findLocationByFacilityId(
+        agenda.location_facility_id
+      );
+
+    if (!agendaLocation) {
+      return {
+        result: undefined,
+        error: new Error('Location not found'),
+      };
+    }
+
+    const user = await this._userRepository.findById(agendaBooking.user_id);
+
+    if (!user) {
+      return {
+        result: undefined,
+        error: new Error('User not found'),
+      };
+    }
+    data;
+    const result = await this._agendaRepository.deleteAgendaBooking(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    const notification = await this._notificationService.sendNotification({
+      payload: {
+        type: NotificationType.AdminCancelledUserAgenda,
+        date: agenda.time,
+        class: agendaClass.name,
+        location: agendaLocation.name,
+        facility: agendaLocation.facility_name,
+      },
+      recipient: user.phone_number,
+    });
+
+    if (notification.error) {
+      return {
+        result: undefined,
+        error: notification.error,
+      };
     }
 
     return {

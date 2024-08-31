@@ -74,11 +74,6 @@ export type SelectParticipant = {
   name: Selectable<Users>['name'];
 };
 
-export interface UpdateParticipant extends SelectParticipant {
-  id?: SelectAgendaBooking['id'];
-  delete: 'refund' | 'no_refund' | undefined;
-}
-
 export type SelectLocationAgenda = {
   location_name: SelectLocation['name'];
   location_id: SelectLocation['id'];
@@ -147,8 +142,18 @@ export interface InsertAgendaBooking {
   agenda_id: SelectAgendaBooking['agenda_id'];
   user_id: SelectAgendaBooking['user_id'];
 }
+
+export interface InsertAgendaBookingByAdmin extends InsertAgendaBooking {
+  used_credit_user_id: SelectAgendaBooking['user_id'];
+}
+
 export type InsertAgendaAndTransaction = Insertable<AgendaBookings> &
   InsertCredit;
+
+export interface InsertAgendaBookingAndTransactionByAdmin
+  extends InsertAgendaAndTransaction {
+  used_credit_user_id: SelectAgendaBooking['user_id'];
+}
 
 export type UpdateAgenda = OptionalToRequired<Updateable<Agendas>, 'id'>;
 type UpdateAgendaBookingData = OptionalToRequired<
@@ -164,6 +169,16 @@ export type UpdateAgendaBookingById = OptionalToRequired<
 export interface UpdateAgendaBooking {
   agenda_id: SelectAgenda['id'];
   agendaBookings: UpdateAgendaBookingData[];
+}
+
+export interface UpdateParticipant extends SelectParticipant {
+  id?: SelectAgendaBooking['id'];
+  delete: 'refund' | 'no_refund' | undefined;
+}
+
+export interface DeleteParticipant {
+  id: SelectAgendaBooking['id'];
+  type: 'refund' | 'no_refund';
 }
 
 export interface UpdateAgendaBookingParticipant {
@@ -230,9 +245,9 @@ export interface AgendaRepository {
   createAgendaBooking(
     data: InsertAgendaAndTransaction
   ): Promise<SelectAgendaBooking | Error>;
-  // createParticipant(
-  //   data: InsertAgendaBooking
-  // ): Promise<SelectAgendaBooking | Error>;
+  createAgendaBookingByAdmin(
+    data: InsertAgendaBookingAndTransactionByAdmin
+  ): Promise<SelectAgendaBooking | Error>;
 
   update(data: UpdateAgenda): Promise<undefined | Error>;
   updateAgendaBooking(data: UpdateAgendaBooking): Promise<undefined | Error>;
@@ -245,5 +260,5 @@ export interface AgendaRepository {
 
   delete(data: DeleteAgenda): Promise<undefined | Error>;
   cancel(data: CancelAgenda): Promise<undefined | Error>;
-  // deleteParticipant(id: InsertAgendaBooking['id']): Promise<undefined | Error>;
+  deleteAgendaBooking(id: DeleteParticipant): Promise<undefined | Error>;
 }
