@@ -11,19 +11,19 @@ jobs:
     runs-on: ubuntu-latest
     environment: Production
     env:
-      DATABASE_URL: ${{ vars.DATABASE_URL }}
-      WHAPIFY_ACCOUNT: ${{ vars.WHAPIFY_ACCOUNT }}
-      WHAPIFY_SECRET: ${{ vars.WHAPIFY_SECRET }}
-      CRON_SECRET: ${{ vars.CRON_SECRET }}
-      ADMIN_URL: ${{ vars.ADMIN_URL }}
-      WEB_URL: ${{ vars.WEB_URL }}
-      TZ: ${{ vars.TZ }}
-      CLOUDFLARE_TOKEN: ${{ vars.CLOUDFLARE_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ vars.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ vars.AWS_REGION }}
-      AWS_S3_BUCKET: ${{ vars.AWS_S3_BUCKET }} 
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      WHAPIFY_ACCOUNT: ${{ secrets.WHAPIFY_ACCOUNT }}
+      WHAPIFY_SECRET: ${{ secrets.WHAPIFY_SECRET }}
+      CRON_SECRET: ${{ secrets.CRON_SECRET }}
+      ADMIN_URL: ${{ secrets.ADMIN_URL }}
+      WEB_URL: ${{ secrets.WEB_URL }}
+      TZ: ${{ secrets.TZ }}
+      CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }} 
 
     steps:
       - name: Checkout code
