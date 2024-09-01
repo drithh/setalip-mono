@@ -2,29 +2,14 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { editParticipant } from './_actions/edit-participant';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@repo/ui/components/ui/form';
-import { EditParticipantSchema, editParticipantSchema } from './form-schema';
+import { useRef, useState } from 'react';
+
+
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 import {
   DeleteParticipant,
-  InsertAgendaBookingByAdmin,
-  SelectAgendaBooking,
   SelectAgendaWithCoachAndClass,
   SelectParticipant,
-  UpdateParticipant,
 } from '@repo/shared/repository';
 import {
   Sheet,

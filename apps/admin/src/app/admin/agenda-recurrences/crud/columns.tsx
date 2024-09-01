@@ -15,16 +15,13 @@ import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-hea
 import {
   SelectAgendaRecurrenceWithCoachAndClass,
   SelectClass,
-  SelectClassType,
   SelectCoachWithUser,
   SelectLocation,
-  SelectStatistic,
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import EditForm from './edit.form';
 import DeleteDialog from './delete.dialog';
 import { Badge } from '@repo/ui/components/ui/badge';
-import { format } from 'date-fns';
 
 interface getColumnsProps {
   locations: SelectLocation[];

@@ -6,7 +6,7 @@ import { Textarea } from '@repo/ui/components/ui/textarea';
 import { format } from 'date-fns';
 import { redirect } from 'next/navigation';
 
-import { validateRequest, validateUser } from '@/lib/auth';
+import { validateRequest } from '@/lib/auth';
 
 import EditUserForm from './edit-user.form';
 import Link from 'next/link';

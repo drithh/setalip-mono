@@ -22,8 +22,6 @@ import CreateAgendaForm from '../create-agenda.form';
 import DayPicker from './day-picker';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { parse } from 'date-fns';
-import { Switch } from '@repo/ui/components/ui/switch';
-import { Card, CardContent } from '@repo/ui/components/ui/card';
 
 interface AgendaTableProps {
   locations: SelectLocation[];

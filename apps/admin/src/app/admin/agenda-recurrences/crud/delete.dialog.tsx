@@ -14,7 +14,6 @@ import { useDeleteMutation } from './_functions/delete';
 import { api } from '@/trpc/react';
 import {
   SelectAgendaRecurrenceWithCoachAndClass,
-  SelectStatistic,
 } from '@repo/shared/repository';
 import { CONSTANT, DAYS } from './constant';
 

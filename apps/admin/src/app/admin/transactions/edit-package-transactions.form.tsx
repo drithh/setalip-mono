@@ -38,8 +38,6 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
-import Image from 'next/image';
-import FileCard from '@/components/file-card';
 import { Label } from '@repo/ui/components/ui/label';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { PhotoProvider, PhotoView } from 'react-photo-view';

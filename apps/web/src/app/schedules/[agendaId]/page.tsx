@@ -18,7 +18,7 @@ import { cn } from '@repo/ui/lib/utils';
 import { addMinutes, format } from 'date-fns';
 import { Building, CalendarClock, MapPin, User2 } from 'lucide-react';
 import Link from 'next/link';
-import { redirect, useSearchParams } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 import { validateUser } from '@/lib/auth';
 

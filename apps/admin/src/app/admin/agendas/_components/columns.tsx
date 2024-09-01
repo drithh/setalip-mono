@@ -101,9 +101,11 @@ export function getColumns({
         <DataTableColumnHeader column={column} title="Waktu" />
       ),
       cell: ({ row }) => {
-        <p className="">
-          {`${format(new Date(row.original.time), 'MMM dd - HH:mm')} (${row.original.class_duration} menit)`}
-        </p>;
+        return (
+          <p className="">
+            {`${format(new Date(row.original.time), 'MMM dd - HH:mm')} (${row.original.class_duration} menit)`}
+          </p>
+        );
       },
     },
     {

@@ -25,7 +25,6 @@ import { useRouter } from 'next/navigation';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
 import {
-  SelectDetailLocation,
   SelectPackageTransactionWithPackage,
 } from '@repo/shared/repository';
 import {

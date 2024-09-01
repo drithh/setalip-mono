@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 
-import { validateRequest, validateUser } from '@/lib/auth';
+import { validateRequest } from '@/lib/auth';
 
 import Avatar from '../_components/avatar';
 import { menus } from '../menu';

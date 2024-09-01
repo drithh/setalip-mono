@@ -41,7 +41,6 @@ import {
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { Switch } from '@repo/ui/components/ui/switch';
-import { format } from 'date-fns';
 
 interface CreateAgendaProps {
   locations: SelectLocation[];

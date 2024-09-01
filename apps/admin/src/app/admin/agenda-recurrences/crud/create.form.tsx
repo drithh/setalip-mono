@@ -35,7 +35,6 @@ import {
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { CONSTANT, DAYS } from './constant';
-import RichTextEditor from '@repo/ui/components/rich-text/text-editor';
 import {
   SelectLocation,
   SelectCoachWithUser,

@@ -6,7 +6,7 @@ import {
   convertZodErrorsToFieldErrors,
 } from '@repo/shared/util';
 
-import { validateRequest, validateUser } from '@/lib/auth';
+import { validateRequest } from '@/lib/auth';
 
 import { editUserSchema, FormEditUser } from '../form-schema';
 import { parsePhoneNumber } from 'libphonenumber-js';

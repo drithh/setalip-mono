@@ -1,4 +1,3 @@
-import { SelectStatistic } from '@repo/shared/repository';
 
 export const CONSTANT = {
   Item: 'Agenda Mingguan',

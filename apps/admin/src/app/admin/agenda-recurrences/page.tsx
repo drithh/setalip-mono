@@ -4,7 +4,6 @@ import AgendaRecurrenceTable from './crud/table';
 import { TYPES, container } from '@repo/shared/inversify';
 import {
   ClassService,
-  ClassTypeService,
   CoachService,
   LocationService,
 } from '@repo/shared/service';

@@ -9,19 +9,15 @@ import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './columns';
 import {
-  SelectAgendaRecurrence,
   SelectAgendaRecurrenceWithCoachAndClass,
   SelectClass,
-  SelectClassType,
   SelectCoachWithUser,
   SelectLocation,
-  SelectStatistic,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllStatisticSchema } from '@repo/shared/api/schema';
 import CreateForm from './create.form';
-import { DAYS } from './constant';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import DayPicker from './_components/day-picker';
 
