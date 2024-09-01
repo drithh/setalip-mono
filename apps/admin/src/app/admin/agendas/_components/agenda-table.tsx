@@ -129,21 +129,6 @@ export default function AgendaTable({
   return (
     <DataTable table={table}>
       <DayPicker date={date} setDate={onDateChange} />
-      <Card className="w-fit pt-4">
-        <CardContent className="flex flex-col gap-2">
-          <div>Display All Recurrence Agenda</div>
-          <Switch
-            checked={search.is_recurrence === 1}
-            onCheckedChange={(value) => {
-              const newSearchParams = new URLSearchParams(
-                searchParams.toString(),
-              );
-              newSearchParams.set('is_recurrence', value ? '1' : '0');
-              router.push(`${pathname}?${newSearchParams.toString()}`);
-            }}
-          />
-        </CardContent>
-      </Card>
 
       <DataTableToolbar table={table} filterFields={filterFields}>
         <DatePicker

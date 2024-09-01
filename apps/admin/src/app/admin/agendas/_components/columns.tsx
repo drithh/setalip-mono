@@ -23,6 +23,7 @@ import EditParticipantForm from '../edit-participant.form';
 import EditAgendaForm from '../edit-agenda.form';
 import { format } from 'date-fns';
 import DeleteAgendaDialog from '../delete-agenda.dialog';
+import { Badge } from '@repo/ui/components/ui/badge';
 
 interface getColumnsProps {
   locations: SelectLocation[];
@@ -163,7 +164,21 @@ export function getColumns({
           <span className="inline-block font-semibold sm:hidden">
             Tipe :&ensp;
           </span>
-          {row.original.class_type_name}
+          <Badge>{row.original.class_type_name}</Badge>
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'is_show',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Publik" />
+      ),
+      cell: ({ row }) => (
+        <div className="capitalize">
+          <span className="inline-block font-semibold sm:hidden">
+            Publik :&ensp;
+          </span>
+          <Badge>{row.original.is_show === 1 ? 'Ya' : 'Tidak'}</Badge>
         </div>
       ),
     },

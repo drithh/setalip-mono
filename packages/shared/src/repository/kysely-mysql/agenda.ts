@@ -105,6 +105,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
           .selectFrom('agendas')
           .select([
             sql<number | null>`agendas.id`.as('id'),
+            'agendas.is_show',
             'agendas.coach_id',
             'agendas.class_id',
             'agendas.location_facility_id',
@@ -118,6 +119,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
           .selectFrom('agenda_recurrences')
           .select([
             sql<null>`null`.as('id'),
+            sql<number>`1`.as('is_show'),
             'agenda_recurrences.coach_id',
             'agenda_recurrences.class_id',
             'agenda_recurrences.location_facility_id',
@@ -932,18 +934,60 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
   async update(data: UpdateAgenda) {
     try {
-      const query = await this._db
-        .updateTable('agendas')
-        .set(data)
-        .where('id', '=', data.id)
-        .executeTakeFirst();
+      // if data.id is undefined, create a new agenda
+      if (!data.id) {
+        if (data.time === undefined) {
+          console.error('Time is required');
+          return new Error('Time is required');
+        }
+        if (!data.class_id) {
+          console.error('Class ID is required');
+          return new Error('Class ID is required');
+        }
+        if (data.coach_id === undefined) {
+          console.error('Coach ID is required');
+          return new Error('Coach ID is required');
+        }
+        if (data.location_facility_id === undefined) {
+          console.error('Location Facility ID is required');
+          return new Error('Location Facility ID is required');
+        }
+        console.log('data asidjasidjasijdija', data);
+        const query = await this._db
+          .insertInto('agendas')
+          .values({
+            is_show: data.is_show,
+            class_id: data.class_id,
+            coach_id: data.coach_id,
+            location_facility_id: data.location_facility_id,
+            time: data.time,
+            agenda_recurrence_id: data.agenda_recurrence_id,
+          })
+          .executeTakeFirst();
 
-      if (query.numUpdatedRows === undefined) {
-        console.error('Failed to update agenda', query.numUpdatedRows);
-        return new Error('Failed to update agenda');
+        if (query.numInsertedOrUpdatedRows === undefined) {
+          console.error(
+            'Failed to create agenda',
+            query.numInsertedOrUpdatedRows
+          );
+          return new Error('Failed to create agenda');
+        }
+
+        return;
+      } else {
+        const query = await this._db
+          .updateTable('agendas')
+          .set(data)
+          .where('id', '=', data.id)
+          .executeTakeFirst();
+
+        if (query.numUpdatedRows === undefined) {
+          console.error('Failed to update agenda', query.numUpdatedRows);
+          return new Error('Failed to update agenda');
+        }
+
+        return;
       }
-
-      return;
     } catch (error) {
       console.error('Error updating agenda:', error);
       return new Error('Error updating agenda');

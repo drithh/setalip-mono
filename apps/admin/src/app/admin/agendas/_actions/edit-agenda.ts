@@ -27,15 +27,14 @@ export async function editAgenda(
   const agendaService = container.get<AgendaService>(TYPES.AgendaService);
 
   const result = await agendaService.update({
-    id: parsed.data.id,
+    id: parsed.data.id === 0 ? undefined : parsed.data.id,
     time: parsed.data.time,
     class_id: parsed.data.class_id,
     coach_id: parsed.data.coach_id,
     location_facility_id: parsed.data.location_facility_id,
+    agenda_recurrence_id: parsed.data.agenda_recurrence_id,
 
-    weekly_recurrence: parsed.data.weekly_recurrence,
     is_show: parsed.data.is_show,
-    recurrence_day: parsed.data.time.getDay(),
   });
 
   if (result.error) {

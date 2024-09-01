@@ -68,9 +68,9 @@ export interface AgendaService {
   createAgendaBookingByAdmin(
     data: InsertAgendaBookingByAdmin
   ): PromiseResult<SelectAgendaBooking, Error>;
-  createTodayRecurrence(
-    recurrence_day: SelectAgenda['recurrence_day']
-  ): PromiseResult<(SelectAgenda | Error)[], Error>;
+  // createTodayRecurrence(
+  //   recurrence_day: SelectAgenda['recurrence_day']
+  // ): PromiseResult<(SelectAgenda | Error)[], Error>;
 
   update(data: UpdateAgenda): PromiseResult<undefined, Error>;
   updateAgendaBooking(

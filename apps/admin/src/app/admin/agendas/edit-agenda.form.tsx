@@ -84,9 +84,9 @@ export default function EditAgendaForm({
       time: agenda.time,
       class_id: agenda.class_id,
       coach_id: agenda.coach_id,
+      agenda_recurrence_id: agenda.agenda_recurrence_id,
       location_facility_id: agenda.location_facility_id,
       is_show: agenda.is_show,
-      weekly_recurrence: agenda.weekly_recurrence,
     } as FormSchema,
   });
 
@@ -162,13 +162,29 @@ export default function EditAgendaForm({
                 action={formAction}
                 onSubmit={onFormSubmit}
               >
-                <FormField
-                  control={form.control}
-                  name="id"
-                  render={({ field }) => (
-                    <Input type="hidden" {...field} value={agenda.id} />
-                  )}
-                />
+                {agenda.id && (
+                  <FormField
+                    control={form.control}
+                    name="id"
+                    render={({ field }) => (
+                      <Input type="hidden" {...field} value={agenda.id} />
+                    )}
+                  />
+                )}
+
+                {agenda.agenda_recurrence_id !== null && (
+                  <FormField
+                    control={form.control}
+                    name="agenda_recurrence_id"
+                    render={({ field }) => (
+                      <Input
+                        type="hidden"
+                        {...field}
+                        value={agenda.agenda_recurrence_id ?? ''}
+                      />
+                    )}
+                  />
+                )}
 
                 <FormField
                   control={form.control}
@@ -280,40 +296,6 @@ export default function EditAgendaForm({
 
                 <FormField
                   control={form.control}
-                  name="weekly_recurrence"
-                  render={({ field }) => (
-                    <FormItem className="grid w-full gap-2">
-                      <FormLabel>Weekly Recurrence</FormLabel>
-                      <FormControl>
-                        <>
-                          <Input type="hidden" {...field} />
-                          <Switch
-                            checked={field.value === 1}
-                            onCheckedChange={(e) => {
-                              field.onChange(e ? 1 : 0);
-                            }}
-                          />
-                        </>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {form.watch('weekly_recurrence') === 1 && (
-                  <FormItem className="grid w-full gap-2">
-                    <FormLabel>Recurrence Day</FormLabel>
-                    <FormControl>
-                      <Input
-                        readOnly
-                        value={`Setiap ${format(form.watch('time'), 'EEEE')}`}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-
-                <FormField
-                  control={form.control}
                   name="coach_id"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
@@ -357,7 +339,6 @@ export default function EditAgendaForm({
                       );
                       if (location) {
                         setSelectedLocation(location);
-                        form.setValue('location_facility_id', 0);
                       }
                     }}
                     defaultValue={selectedLocation?.id.toString() ?? ''}

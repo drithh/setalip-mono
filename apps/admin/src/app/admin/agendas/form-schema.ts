@@ -8,7 +8,6 @@ export const createAgendaSchema = z.object({
   coach_id: z.coerce.number(),
   location_facility_id: z.coerce.number(),
 
-  weekly_recurrence: z.coerce.number().refine((v) => v === 0 || v === 1),
   is_show: z.coerce.number().refine((v) => v === 0 || v === 1),
 }) satisfies ZodType<InsertAgenda>;
 
@@ -16,7 +15,8 @@ export type CreateAgendaSchema = z.infer<typeof createAgendaSchema>;
 export type FormCreateAgenda = FormState<CreateAgendaSchema>;
 
 export const editAgendaSchema = createAgendaSchema.extend({
-  id: z.coerce.number(),
+  id: z.coerce.number().optional(),
+  agenda_recurrence_id: z.coerce.number().optional(),
 });
 
 export type EditAgendaSchema = z.infer<typeof editAgendaSchema>;

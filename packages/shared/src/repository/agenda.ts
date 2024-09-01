@@ -149,7 +149,8 @@ export interface InsertAgendaBookingAndTransactionByAdmin
   used_credit_user_id: SelectAgendaBooking['user_id'];
 }
 
-export type UpdateAgenda = OptionalToRequired<Updateable<Agendas>, 'id'>;
+export type UpdateAgenda = Updateable<Agendas>;
+
 type UpdateAgendaBookingData = OptionalToRequired<
   Updateable<AgendaBookings>,
   'user_id'

@@ -89,7 +89,6 @@ export const agendaRouter = {
         classTypes: classTypes,
         classNames: classNames,
         date: getDate(input.date),
-        is_show: true,
       });
 
       return schedules;
