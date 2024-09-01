@@ -1,7 +1,11 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SelectAgenda, SelectClass } from '@repo/shared/repository';
+import {
+  SelectAgenda,
+  SelectClass,
+  SelectScheduleByDate,
+} from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   Form,
@@ -27,6 +31,7 @@ import {
 interface CreateAgendaBookingProps {
   id: SelectAgenda['id'];
   time: string;
+  agenda: SelectScheduleByDate;
   class_name: SelectClass['name'];
 }
 
@@ -46,6 +51,7 @@ const TOAST_MESSAGES = {
 export default function CreateAgendaBooking({
   id,
   time,
+  agenda,
   class_name,
 }: CreateAgendaBookingProps) {
   const [open, setOpen] = useState(false);
@@ -56,6 +62,8 @@ export default function CreateAgendaBooking({
     status: 'default',
     form: {
       agenda_id: id,
+      time: agenda.time,
+      agenda_recurrence_id: agenda.agenda_recurrence_id,
     } as FormSchema,
   });
 
@@ -118,6 +126,40 @@ export default function CreateAgendaBooking({
             <FormItem className="grid w-full gap-2">
               <FormControl>
                 <Input type="hidden" {...field} value={id} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="time"
+          render={({ field }) => (
+            <FormItem className="grid w-full gap-2">
+              <FormControl>
+                <Input
+                  type="hidden"
+                  {...field}
+                  value={agenda.time.toString()}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="agenda_recurrence_id"
+          render={({ field }) => (
+            <FormItem className="grid w-full gap-2">
+              <FormControl>
+                <Input
+                  type="hidden"
+                  {...field}
+                  value={agenda.agenda_recurrence_id ?? 0}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

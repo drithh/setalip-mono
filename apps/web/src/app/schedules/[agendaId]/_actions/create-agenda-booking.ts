@@ -34,11 +34,22 @@ export async function createAgendaBooking(
 
   const agendaService = container.get<AgendaService>(TYPES.AgendaService);
 
-  const voucher = 0;
+  if (
+    parsed.data.agenda_id === undefined &&
+    parsed.data.agenda_recurrence_id === 0
+  ) {
+    return {
+      form: parsed.data,
+      status: 'error',
+      errors: 'Agenda and time are required',
+    };
+  }
 
   const result = await agendaService.createAgendaBooking({
     user_id: auth.user.id,
     agenda_id: parsed.data.agenda_id,
+    time: parsed.data.time,
+    agenda_recurrence_id: parsed.data.agenda_recurrence_id,
   });
 
   if (result.error) {

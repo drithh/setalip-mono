@@ -5,7 +5,6 @@ import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-hea
 import { Badge } from '@repo/ui/components/ui/badge';
 import { Button } from '@repo/ui/components/ui/button';
 
-
 import { type ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import Link from 'next/link';
@@ -125,7 +124,9 @@ export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
             Full
           </Button>
         ) : (
-          <Link href={`/schedules/${row.original.id}`}>
+          <Link
+            href={`/schedules/${row.original.id ?? 0}?agenda_recurrence_id=${row.original.agenda_recurrence_id}&time=${row.original.time}`}
+          >
             <Button className="w-full" variant="default">
               Join Class
             </Button>

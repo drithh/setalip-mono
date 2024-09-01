@@ -227,7 +227,7 @@ export function getColumns({
                 open={showEditParticipantSheet}
                 onOpenChange={setShowEditParticipantSheet}
                 participants={row.original.participants ?? []}
-                agendaId={row.original.id}
+                agenda={row.original}
               />
             )}
             <DeleteAgendaDialog

@@ -27,6 +27,8 @@ import type {
   InsertAgendaBookingByAdmin,
   InsertAgendaBookingAndTransactionByAdmin,
   DeleteParticipant,
+  SelectAgendaRecurrence,
+  FindScheduleByIdOptions,
 } from '../repository';
 import { AgendaService } from './agenda';
 import {
@@ -121,6 +123,25 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
+  async findAgendaRecurrenceById(
+    id: SelectAgendaRecurrence['id']
+  ): PromiseResult<SelectAgendaRecurrence, Error> {
+    const agendaRecurrence =
+      await this._agendaRepository.findAgendaRecurrenceById(id);
+
+    if (!agendaRecurrence) {
+      return {
+        result: undefined,
+        error: new Error('Agenda recurrence not found'),
+      };
+    }
+
+    return {
+      result: agendaRecurrence,
+      error: undefined,
+    };
+  }
+
   async findAgendaBookingById(id: SelectAgendaBooking['id']) {
     const agendaBooking =
       await this._agendaRepository.findAgendaBookingById(id);
@@ -174,8 +195,8 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
-  async findScheduleById(id: SelectAgenda['id']) {
-    const singleSchedule = await this._agendaRepository.findScheduleById(id);
+  async findScheduleById(data: FindScheduleByIdOptions) {
+    const singleSchedule = await this._agendaRepository.findScheduleById(data);
 
     if (!singleSchedule) {
       return {
@@ -220,13 +241,48 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const agenda = await this._agendaRepository.findById(
-      data.agenda_id as number
-    );
-    if (!agenda) {
-      return {
-        error: new Error('Agenda not found'),
-      };
+    let agenda: SelectAgenda | undefined;
+    if (data.agenda_id) {
+      agenda = await this._agendaRepository.findById(data.agenda_id as number);
+      if (!agenda) {
+        return {
+          error: new Error('Agenda not found'),
+        };
+      }
+    } else {
+      if (!data.agenda_recurrence_id) {
+        return {
+          error: new Error('Agenda recurrence not found'),
+        };
+      }
+
+      const agendaRecurrence =
+        await this._agendaRepository.findAgendaRecurrenceById(
+          data.agenda_recurrence_id
+        );
+
+      if (agendaRecurrence === undefined) {
+        console.error('Failed to get agenda recurrence', agendaRecurrence);
+        return {
+          error: new Error('Failed to get agenda recurrence'),
+        };
+      }
+
+      const createAgenda = await this._agendaRepository.create({
+        is_show: 1,
+        class_id: agendaRecurrence.class_id,
+        coach_id: agendaRecurrence.coach_id,
+        location_facility_id: agendaRecurrence.location_facility_id,
+        time: data.time,
+        agenda_recurrence_id: agendaRecurrence.id,
+      });
+
+      if (createAgenda instanceof Error) {
+        return {
+          error: createAgenda,
+        };
+      }
+      agenda = createAgenda;
     }
 
     const agendaClass = await this._classRepository.findById(agenda.class_id);
@@ -249,7 +305,7 @@ export class AgendaServiceImpl implements AgendaService {
     }
 
     const countParticipant = await this._agendaRepository.countParticipant(
-      data.agenda_id as number
+      agenda.id
     );
 
     if (countParticipant >= agendaClass.slot) {
@@ -323,6 +379,7 @@ export class AgendaServiceImpl implements AgendaService {
 
     const inputData: InsertAgendaAndTransaction = {
       ...data,
+      agenda_id: agenda.id,
       status: 'booked',
       credit_transaction_id: creditTransaction.id,
       class_type_id: agendaClass.class_type_id,
@@ -380,14 +437,48 @@ export class AgendaServiceImpl implements AgendaService {
         error: new Error('User not found'),
       };
     }
+    let agenda: SelectAgenda | undefined;
+    if (data.agenda_id) {
+      agenda = await this._agendaRepository.findById(data.agenda_id as number);
+      if (!agenda) {
+        return {
+          error: new Error('Agenda not found'),
+        };
+      }
+    } else {
+      if (!data.agenda_recurrence_id) {
+        return {
+          error: new Error('Agenda recurrence not found'),
+        };
+      }
 
-    const agenda = await this._agendaRepository.findById(
-      data.agenda_id as number
-    );
-    if (!agenda) {
-      return {
-        error: new Error('Agenda not found'),
-      };
+      const agendaRecurrence =
+        await this._agendaRepository.findAgendaRecurrenceById(
+          data.agenda_recurrence_id
+        );
+
+      if (agendaRecurrence === undefined) {
+        console.error('Failed to get agenda recurrence', agendaRecurrence);
+        return {
+          error: new Error('Failed to get agenda recurrence'),
+        };
+      }
+
+      const createAgenda = await this._agendaRepository.create({
+        is_show: 1,
+        class_id: agendaRecurrence.class_id,
+        coach_id: agendaRecurrence.coach_id,
+        location_facility_id: agendaRecurrence.location_facility_id,
+        time: data.time,
+        agenda_recurrence_id: agendaRecurrence.id,
+      });
+
+      if (createAgenda instanceof Error) {
+        return {
+          error: createAgenda,
+        };
+      }
+      agenda = createAgenda;
     }
 
     const agendaClass = await this._classRepository.findById(agenda.class_id);
@@ -410,7 +501,7 @@ export class AgendaServiceImpl implements AgendaService {
     }
 
     const countParticipant = await this._agendaRepository.countParticipant(
-      data.agenda_id as number
+      agenda.id
     );
 
     if (countParticipant >= agendaClass.slot) {
@@ -464,9 +555,6 @@ export class AgendaServiceImpl implements AgendaService {
       user.id
     );
 
-    // iterate over userAgenda to check if user overlaps with existing agenda
-    // const agendaEndTime = addMinutes(agenda.time, agendaClass.duration);
-
     for (const userAgendaItem of userAgenda) {
       const userAgendaEndTime = addMinutes(
         userAgendaItem.time ?? new Date(),
@@ -486,7 +574,7 @@ export class AgendaServiceImpl implements AgendaService {
     }
 
     const inputData: InsertAgendaBookingAndTransactionByAdmin = {
-      agenda_id: data.agenda_id,
+      agenda_id: agenda.id,
       user_id: data.user_id,
       used_credit_user_id: data.used_credit_user_id,
       status: 'booked',
@@ -527,44 +615,6 @@ export class AgendaServiceImpl implements AgendaService {
     return {
       result,
     };
-  }
-
-  async createTodayRecurrence(recurrenceDay: SelectAgenda['recurrence_day']) {
-    const recurrenceAgendas =
-      await this._agendaRepository.findAllByRecurrenceDay(recurrenceDay);
-
-    // insert all recurrence agenda for next week
-    try {
-      const result = await Promise.all(
-        recurrenceAgendas.map(async (agenda) => {
-          const nextWeekAgenda: InsertAgenda = {
-            ...agenda,
-            id: undefined,
-            weekly_recurrence: 0,
-            recurrence_day: 0,
-            time: addDays(agenda.time, 7),
-          };
-
-          const createAgenda =
-            await this._agendaRepository.create(nextWeekAgenda);
-
-          if (createAgenda instanceof Error) {
-            console.error('Failed to create recurrence agenda', createAgenda);
-          }
-          return createAgenda;
-        })
-      );
-      return {
-        result: result,
-        error: undefined,
-      };
-    } catch (error) {
-      console.error('Failed to create recurrence agenda', error);
-      return {
-        result: undefined,
-        error: new Error('Failed to create recurrence agenda'),
-      };
-    }
   }
 
   async update(data: UpdateAgenda) {

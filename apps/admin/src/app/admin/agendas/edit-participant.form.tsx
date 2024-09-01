@@ -22,6 +22,7 @@ import {
   DeleteParticipant,
   InsertAgendaBookingByAdmin,
   SelectAgendaBooking,
+  SelectAgendaWithCoachAndClass,
   SelectParticipant,
   UpdateParticipant,
 } from '@repo/shared/repository';
@@ -56,7 +57,7 @@ import { useDeleteMutation } from './_functions/delete-agenda-booking';
 import { Label } from '@repo/ui/components/ui/label';
 
 interface EditParticipantProps {
-  agendaId: number;
+  agenda: SelectAgendaWithCoachAndClass;
   participants: SelectParticipant[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -83,7 +84,7 @@ interface Participant {
 }
 
 export default function EditParticipantForm({
-  agendaId,
+  agenda,
   participants,
   open,
   onOpenChange,
@@ -95,9 +96,11 @@ export default function EditParticipantForm({
   const onCreate = (user_id: number, used_credit_user_id: number) => {
     createAgendaBooking.mutate(
       {
-        agenda_id: agendaId,
+        agenda_id: agenda.id,
         user_id: user_id,
         used_credit_user_id: used_credit_user_id,
+        time: agenda.time,
+        agenda_recurrence_id: agenda.agenda_recurrence_id ?? 0,
       },
       {
         onSuccess: () => {

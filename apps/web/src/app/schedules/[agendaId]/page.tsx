@@ -18,7 +18,7 @@ import { cn } from '@repo/ui/lib/utils';
 import { addMinutes, format } from 'date-fns';
 import { Building, CalendarClock, MapPin, User2 } from 'lucide-react';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 
 import { validateUser } from '@/lib/auth';
 
@@ -34,17 +34,30 @@ import {
 } from '@repo/ui/components/ui/breadcrumb';
 export default async function AgendaDetail({
   params,
+  searchParams,
 }: {
   params: { agendaId: string };
+  searchParams: { agenda_recurrence_id: string; time: string };
 }) {
   const auth = await validateUser();
 
   const agendaIdNumber = parseInt(params.agendaId);
-  if (isNaN(agendaIdNumber)) {
+  const agendaRecurrenceId = parseInt(searchParams.agenda_recurrence_id);
+  const time = new Date(searchParams.time);
+
+  if (
+    isNaN(agendaIdNumber) ||
+    (agendaIdNumber === 0 && isNaN(agendaRecurrenceId) && isNaN(time.getTime()))
+  ) {
     redirect('/schedules');
   }
+
   const agendaService = container.get<AgendaService>(TYPES.AgendaService);
-  const singleAgenda = await agendaService.findScheduleById(agendaIdNumber);
+  const singleAgenda = await agendaService.findScheduleById({
+    id: agendaIdNumber,
+    agendaRecurrenceId: agendaRecurrenceId,
+    time: time,
+  });
 
   if (!singleAgenda.result) {
     redirect('/schedules');
@@ -64,7 +77,7 @@ export default async function AgendaDetail({
     singleClass.result.class_type_id,
   );
 
-  const time = `${format(singleAgenda.result.time, 'dd MMM yyyy')} at ${format(singleAgenda.result.time, 'HH:mm')} - ${format(
+  const textTime = `${format(singleAgenda.result.time, 'dd MMM yyyy')} at ${format(singleAgenda.result.time, 'HH:mm')} - ${format(
     addMinutes(singleAgenda.result.time, singleClass.result.duration),
     'HH:mm',
   )}`;
@@ -192,7 +205,7 @@ export default async function AgendaDetail({
                   <div className="flex items-center gap-3">
                     <CalendarClock className="h-6 w-6 flex-shrink-0 text-muted-foreground" />
                     <p className="max-w-[600px] text-base/relaxed text-muted-foreground md:text-lg/relaxed">
-                      {time}
+                      {textTime}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
@@ -212,7 +225,8 @@ export default async function AgendaDetail({
                 ></iframe>
               </div>
               <CreateAgendaBooking
-                time={time}
+                time={textTime}
+                agenda={singleAgenda.result}
                 class_name={singleClass.result.name}
                 id={singleAgenda.result.id}
               />

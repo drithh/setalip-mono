@@ -108,9 +108,11 @@ export const deleteAgendaSchema = z.object({
 });
 
 export const insertAgendaBookingAdminSchema = z.object({
-  agenda_id: z.coerce.number().refine((data) => data > 0),
+  agenda_id: z.coerce.number().optional(),
   user_id: z.coerce.number().refine((data) => data > 0),
   used_credit_user_id: z.coerce.number().refine((data) => data > 0),
+  time: z.coerce.date(),
+  agenda_recurrence_id: z.coerce.number(),
 });
 
 export const deleteAgendaBookingSchema = z.object({

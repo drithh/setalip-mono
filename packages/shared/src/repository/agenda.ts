@@ -133,16 +133,19 @@ export type SelectAgendaBooking = Selectable<AgendaBookings>;
 export type InsertAgenda = Insertable<Agendas>;
 
 export interface InsertAgendaBooking {
-  agenda_id: SelectAgendaBooking['agenda_id'];
+  agenda_id?: SelectAgendaBooking['agenda_id'];
   user_id: SelectAgendaBooking['user_id'];
+  time: SelectAgenda['time'];
+  agenda_recurrence_id?: SelectAgenda['agenda_recurrence_id'];
 }
 
 export interface InsertAgendaBookingByAdmin extends InsertAgendaBooking {
   used_credit_user_id: SelectAgendaBooking['user_id'];
 }
 
-export type InsertAgendaAndTransaction = Insertable<AgendaBookings> &
-  InsertCredit;
+export interface InsertAgendaAndTransaction
+  extends Insertable<AgendaBookings>,
+    InsertCredit {}
 
 export interface InsertAgendaBookingAndTransactionByAdmin
   extends InsertAgendaAndTransaction {
@@ -204,6 +207,12 @@ export type UpdateAgendaRecurrence = OptionalToRequired<
   'id'
 >;
 
+export interface FindScheduleByIdOptions {
+  id?: SelectAgenda['id'];
+  agendaRecurrenceId?: SelectAgenda['agenda_recurrence_id'];
+  time?: SelectAgenda['time'];
+}
+
 export interface AgendaRepository {
   count(): Promise<number>;
   countParticipant(id: SelectAgenda['id']): Promise<number>;
@@ -212,9 +221,9 @@ export interface AgendaRepository {
 
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;
-  // findAllByRecurrenceDay(
-  //   day: SelectAgenda['recurrence_day']
-  // ): Promise<SelectAgenda[]>;
+  findAgendaRecurrenceById(
+    id: SelectAgendaRecurrence['id']
+  ): Promise<SelectAgendaRecurrence | undefined>;
   findAllAgendaRecurrence(
     id: SelectAgenda['id']
   ): Promise<SelectAgendaRecurrence[]>;
@@ -237,7 +246,7 @@ export interface AgendaRepository {
     data: FindAllAgendaByCoachOptions
   ): Promise<SelectAllSchedule>;
   findScheduleById(
-    id: SelectAgenda['id']
+    data: FindScheduleByIdOptions
   ): Promise<SelectScheduleByDate | undefined>;
   findScheduleByDate(
     data: FindScheduleByDateOptions

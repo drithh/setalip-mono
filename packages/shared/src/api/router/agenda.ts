@@ -177,6 +177,10 @@ export const agendaRouter = {
   createAgendaBookingAdmin: adminProcedure
     .input(insertAgendaBookingAdminSchema)
     .mutation(async ({ ctx, input }) => {
+      if (input.agenda_id === undefined && input.agenda_recurrence_id === 0) {
+        throw new Error('Agenda id is required');
+      }
+
       const agendaService = ctx.container.get<AgendaService>(
         TYPES.AgendaService
       );
@@ -185,6 +189,8 @@ export const agendaRouter = {
         agenda_id: input.agenda_id,
         used_credit_user_id: input.used_credit_user_id,
         user_id: input.user_id,
+        time: input.time,
+        agenda_recurrence_id: input.agenda_recurrence_id,
       });
 
       if (result.error) {

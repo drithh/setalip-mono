@@ -21,6 +21,8 @@ import {
   CancelAgenda,
   DeleteParticipant,
   InsertAgendaBookingByAdmin,
+  SelectAgendaRecurrence,
+  FindScheduleByIdOptions,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -51,11 +53,14 @@ export interface AgendaService {
   findAllByCoachId(
     data: FindAllAgendaByCoachOptions
   ): PromiseResult<SelectAllSchedule, Error>;
+  findAgendaRecurrenceById(
+    id: SelectAgendaRecurrence['id']
+  ): PromiseResult<SelectAgendaRecurrence, Error>;
   findScheduleByDate(
     data: FindScheduleByDateOptions
   ): PromiseResult<SelectAllSchedule, Error>;
   findScheduleById(
-    id: SelectAgenda['id']
+    data: FindScheduleByIdOptions
   ): PromiseResult<SelectScheduleByDate, Error>;
   findAgendaByUserId(
     data: FindAgendaByUserOptions
