@@ -13,17 +13,18 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import {
-  SelectAgendaWithCoachAndClass,
+  SelectAgendaRecurrenceWithCoachAndClass,
   SelectClass,
+  SelectClassType,
   SelectCoachWithUser,
   SelectLocation,
+  SelectStatistic,
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
-import EditParticipantForm from '../edit-participant.form';
-import EditAgendaForm from '../edit-agenda.form';
-import { format } from 'date-fns';
-import DeleteAgendaDialog from '../delete-agenda.dialog';
+import EditForm from './edit.form';
+import DeleteDialog from './delete.dialog';
 import { Badge } from '@repo/ui/components/ui/badge';
+import { format } from 'date-fns';
 
 interface getColumnsProps {
   locations: SelectLocation[];
@@ -35,7 +36,7 @@ export function getColumns({
   locations,
   coaches,
   classes,
-}: getColumnsProps): ColumnDef<SelectAgendaWithCoachAndClass>[] {
+}: getColumnsProps): ColumnDef<SelectAgendaRecurrenceWithCoachAndClass>[] {
   // generate random color in total of classes
   // Function to generate a random color in hexadecimal format
   const generateColorFromName = (name: string) => {
@@ -101,9 +102,11 @@ export function getColumns({
         <DataTableColumnHeader column={column} title="Waktu" />
       ),
       cell: ({ row }) => {
-        <p className="">
-          {`${format(new Date(row.original.time), 'MMM dd - HH:mm')} (${row.original.class_duration} menit)`}
-        </p>;
+        return (
+          <p className="">
+            {`${row.original.time} (${row.original.class_duration} menit)`}
+          </p>
+        );
       },
     },
     {
@@ -138,11 +141,7 @@ export function getColumns({
       ),
 
       cell: ({ row }) => {
-        return (
-          <p className="-ml-5 text-center">
-            {row.original.participants?.length ?? 0} / {row.original.slot}
-          </p>
-        );
+        return <p className="-ml-5 text-center">{row.original.slot}</p>;
       },
     },
     {
@@ -160,70 +159,35 @@ export function getColumns({
       ),
     },
     {
-      accessorKey: 'is_show',
+      accessorKey: 'day_of_week',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Publik" />
-      ),
-      cell: ({ row }) => (
-        <div className="capitalize">
-          <span className="inline-block font-semibold sm:hidden">
-            Publik :&ensp;
-          </span>
-          <Badge>{row.original.is_show === 1 ? 'Ya' : 'Tidak'}</Badge>
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'updated_at',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Updated At" />
+        <DataTableColumnHeader column={column} title="Hari" />
       ),
       cell: ({ row }) => {
-        return <span>{row.original.updated_at.toDateString()}</span>;
-      },
-    },
-    {
-      accessorKey: 'updated_by',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Updated By" />
-      ),
-      cell: ({ row }) => {
-        return <span>{row.original.updated_by}</span>;
+        return <p className="">{row.original.day_of_week}</p>;
       },
     },
     {
       id: 'actions',
       cell: function Cell({ row }) {
-        const [showEditAgendaSheet, setShowEditAgendaSheet] =
+        const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
           React.useState(false);
-        const [showEditParticipantSheet, setShowEditParticipantSheet] =
-          React.useState(false);
-        const [showDeleteAgendaDialog, setShowDeleteAgendaDialog] =
+        const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
           React.useState(false);
 
         return (
           <>
-            {showEditAgendaSheet && (
-              <EditAgendaForm
-                open={showEditAgendaSheet}
-                onOpenChange={setShowEditAgendaSheet}
-                agenda={row.original}
-                classes={classes}
-                locations={locations}
-                coaches={coaches}
-              />
-            )}
-            {showEditParticipantSheet && (
-              <EditParticipantForm
-                open={showEditParticipantSheet}
-                onOpenChange={setShowEditParticipantSheet}
-                participants={row.original.participants ?? []}
-                agenda={row.original}
-              />
-            )}
-            <DeleteAgendaDialog
-              open={showDeleteAgendaDialog}
-              onOpenChange={setShowDeleteAgendaDialog}
+            <EditForm
+              locations={locations}
+              coaches={coaches}
+              classes={classes}
+              open={showUpdateTaskSheet}
+              onOpenChange={setShowUpdateTaskSheet}
+              data={row.original}
+            />
+            <DeleteDialog
+              open={showDeleteTaskDialog}
+              onOpenChange={setShowDeleteTaskDialog}
               data={row.original}
             />
             <DropdownMenu>
@@ -233,31 +197,18 @@ export function getColumns({
                   variant="ghost"
                   className="flex size-8 p-0 data-[state=open]:bg-muted"
                 >
-                  <DotsHorizontalIcon
-                    // onClick={() => }
-                    className="size-4"
-                    aria-hidden="true"
-                  />
+                  <DotsHorizontalIcon className="size-4" aria-hidden="true" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem
-                  onSelect={() => {
-                    setShowEditAgendaSheet(true);
-                  }}
-                >
-                  Edit Agenda
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onSelect={() => setShowEditParticipantSheet(true)}
-                >
-                  Manage Participants
+                <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
+                  Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onSelect={() => setShowDeleteAgendaDialog(true)}
+                  onSelect={() => setShowDeleteTaskDialog(true)}
                 >
-                  Delete Agenda
+                  Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

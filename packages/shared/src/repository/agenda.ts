@@ -48,6 +48,12 @@ export interface FindAgendaByUserOptions extends DefaultPagination {
   userId: Selectable<Users>['id'];
 }
 
+export interface FindAllAgendaRecurrenceOption extends DefaultPagination {
+  coaches?: number[];
+  locations?: number[];
+  day_of_week: number;
+}
+
 export interface SelectAllAgenda {
   data: SelectAgendaWithCoachAndClass[];
   pageCount: number;
@@ -206,6 +212,16 @@ export type UpdateAgendaRecurrence = OptionalToRequired<
   Updateable<AgendaRecurrences>,
   'id'
 >;
+export interface SelectAgendaRecurrenceWithCoachAndClass
+  extends SelectAgendaRecurrence,
+    SelectCoachAgenda,
+    SelectClassAgenda,
+    SelectLocationAgenda {}
+
+export interface SelectAllAgendaRecurrence {
+  data: SelectAgendaRecurrenceWithCoachAndClass[];
+  pageCount: number;
+}
 
 export interface FindScheduleByIdOptions {
   id?: SelectAgenda['id'];
@@ -225,8 +241,8 @@ export interface AgendaRepository {
     id: SelectAgendaRecurrence['id']
   ): Promise<SelectAgendaRecurrence | undefined>;
   findAllAgendaRecurrence(
-    id: SelectAgenda['id']
-  ): Promise<SelectAgendaRecurrence[]>;
+    data: FindAllAgendaRecurrenceOption
+  ): Promise<SelectAllAgendaRecurrence>;
   findAllAgendaRecurrenceByDay(
     day: SelectAgendaRecurrence['day_of_week']
   ): Promise<SelectAgendaRecurrence[]>;

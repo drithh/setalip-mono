@@ -29,6 +29,10 @@ import type {
   DeleteParticipant,
   SelectAgendaRecurrence,
   FindScheduleByIdOptions,
+  UpdateAgendaRecurrence,
+  InsertAgendaRecurrence,
+  FindAllAgendaRecurrenceOption,
+  SelectAllAgendaRecurrence,
 } from '../repository';
 import { AgendaService } from './agenda';
 import {
@@ -95,6 +99,18 @@ export class AgendaServiceImpl implements AgendaService {
 
     return {
       result: agendas,
+      error: undefined,
+    };
+  }
+
+  async findAllAgendaRecurrence(
+    data: FindAllAgendaRecurrenceOption
+  ): PromiseResult<SelectAllAgendaRecurrence, Error> {
+    const agendaRecurrence =
+      await this._agendaRepository.findAllAgendaRecurrence(data);
+
+    return {
+      result: agendaRecurrence,
       error: undefined,
     };
   }
@@ -220,6 +236,20 @@ export class AgendaServiceImpl implements AgendaService {
 
   async create(data: InsertAgenda) {
     const result = await this._agendaRepository.create(data);
+
+    if (result instanceof Error) {
+      return {
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
+  async createAgendaRecurrence(data: InsertAgendaRecurrence) {
+    const result = await this._agendaRepository.createAgendaRecurrence(data);
 
     if (result instanceof Error) {
       return {
@@ -632,6 +662,21 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
+  async updateAgendaRecurrence(data: UpdateAgendaRecurrence) {
+    const result = await this._agendaRepository.updateAgendaRecurrence(data);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result: result,
+    };
+  }
+
   async updateAgendaBooking(data: UpdateAgendaBooking) {
     const result = await this._agendaRepository.updateAgendaBooking(data);
 
@@ -821,6 +866,21 @@ export class AgendaServiceImpl implements AgendaService {
           error: notification.error,
         };
       }
+    }
+
+    return {
+      result: result,
+    };
+  }
+
+  async deleteAgendaRecurrence(id: SelectAgendaRecurrence['id']) {
+    const result = await this._agendaRepository.deleteAgendaRecurrence(id);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
     }
 
     return {

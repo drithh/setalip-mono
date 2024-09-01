@@ -59,7 +59,7 @@ interface TimePickerProps {
   setDate: (date: Date) => void;
 }
 
-function TimePicker({ date, setDate }: TimePickerProps) {
+export function TimePicker({ date, setDate }: TimePickerProps) {
   const minuteRef = React.useRef<HTMLInputElement>(null);
   const hourRef = React.useRef<HTMLInputElement>(null);
   return (

@@ -5,8 +5,10 @@ import { adminProcedure, protectedProcedure, publicProcedure } from '../trpc';
 import {
   cancelAgendaSchema,
   deleteAgendaBookingSchema,
+  deleteAgendaRecurrenceSchema,
   deleteAgendaSchema,
   deleteParticipantSchema,
+  findAllAgendaRecurrenceSchema,
   findAllAgendaSchema,
   findAllCoachAgendaSchema,
   findAllScheduleSchema,
@@ -47,6 +49,31 @@ export const agendaRouter = {
         locations: locations,
         coaches: coaches,
         date: getDate(input.date),
+      });
+
+      return agendas;
+    }),
+  findAllAgendaRecurrence: adminProcedure
+    .input(findAllAgendaRecurrenceSchema)
+    .query(async ({ ctx, input }) => {
+      const coaches =
+        input.coach_name?.split('.').map((coach) => parseInt(coach)) ?? [];
+
+      const locations =
+        input.location_name?.split('.').map((location) => parseInt(location)) ??
+        [];
+
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+
+      const agendas = await agendaService.findAllAgendaRecurrence({
+        page: input.page,
+        perPage: input.per_page,
+        sort: input.sort,
+        locations: locations,
+        coaches: coaches,
+        day_of_week: input.day_of_week ?? 0,
       });
 
       return agendas;
@@ -260,6 +287,21 @@ export const agendaRouter = {
         id: input.id,
         is_refund: input.is_refund,
       });
+
+      if (result.error) {
+        throw result.error;
+      }
+      return result;
+    }),
+
+  deleteAgendaRecurrence: adminProcedure
+    .input(deleteAgendaRecurrenceSchema)
+    .mutation(async ({ ctx, input }) => {
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+
+      const result = await agendaService.deleteAgendaRecurrence(input.id);
 
       if (result.error) {
         throw result.error;

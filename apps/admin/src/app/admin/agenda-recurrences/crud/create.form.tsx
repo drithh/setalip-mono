@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { createAgenda } from './_actions/create-agenda';
+import { create } from './_actions/create';
 import { useFormState } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -15,14 +15,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { CreateAgendaSchema, createAgendaSchema } from './form-schema';
+import { CreateSchema, createSchema } from './form-schema';
 import { toast } from 'sonner';
-import { DatetimePicker } from '@repo/ui/components/datetime-picker';
-import {
-  SelectClass,
-  SelectCoachWithUser,
-  SelectLocation,
-} from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,
@@ -40,10 +34,17 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
-import { Switch } from '@repo/ui/components/ui/switch';
-import { format } from 'date-fns';
+import { CONSTANT, DAYS } from './constant';
+import RichTextEditor from '@repo/ui/components/rich-text/text-editor';
+import {
+  SelectLocation,
+  SelectCoachWithUser,
+  SelectClass,
+} from '@repo/shared/repository';
+import { TimePicker } from '@repo/ui/components/datetime-picker';
+import { format, parse } from 'date-fns';
 
-interface CreateAgendaProps {
+interface CreateProps {
   locations: SelectLocation[];
   coaches: SelectCoachWithUser[];
   classes: SelectClass[];
@@ -51,46 +52,44 @@ interface CreateAgendaProps {
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal membuat agenda',
+    title: `Gagal membuat ${CONSTANT.Item}`,
   },
   loading: {
-    title: 'Membuat agenda...',
+    title: `Membuat ${CONSTANT.Item}...`,
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Agenda berhasil dibuat',
+    title: `${CONSTANT.Item} berhasil dibuat`,
   },
 };
 
-export default function CreateAgendaForm({
+export default function CreateForm({
   locations,
   coaches,
   classes,
-}: CreateAgendaProps) {
+}: CreateProps) {
   const [openSheet, setOpenSheet] = useState(false);
 
-  const [selectedLocation, setSelectedLocation] = useState<SelectLocation>();
   const trpcUtils = api.useUtils();
-  type FormSchema = CreateAgendaSchema;
+  type FormSchema = CreateSchema;
 
-  const [formState, formAction] = useFormState(createAgenda, {
+  const [formState, formAction] = useFormState(create, {
     status: 'default',
     form: {
-      time: new Date(),
+      time: '00:00:00',
+      day_of_week: 0,
       class_id: 0,
       coach_id: 0,
       location_facility_id: 0,
-
-      is_show: 1,
-      weekly_recurrence: 0,
     } as FormSchema,
   });
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(createAgendaSchema),
+    resolver: zodResolver(createSchema),
     defaultValues: formState.form,
   });
 
+  const [selectedLocation, setSelectedLocation] = useState<SelectLocation>();
   const locationFacilities = api.location.findAllFacilityById.useQuery(
     {
       id: selectedLocation?.id ?? -1,
@@ -148,9 +147,11 @@ export default function CreateAgendaForm({
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">Buat Agenda</SheetTitle>
+            <SheetTitle className="text-left capitalize">
+              Buat {CONSTANT.Item}
+            </SheetTitle>
             <SheetDescription className="text-left">
-              Buat agenda baru. Pastikan klik simpan ketika selesai.
+              Buat {CONSTANT.Item} baru. Pastikan klik simpan ketika selesai.
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -198,19 +199,29 @@ export default function CreateAgendaForm({
 
                 <FormField
                   control={form.control}
-                  name="is_show"
+                  name="day_of_week"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
-                      <FormLabel>Show agenda</FormLabel>
+                      <FormLabel>Hari</FormLabel>
                       <FormControl>
                         <>
                           <Input type="hidden" {...field} />
-                          <Switch
-                            checked={field.value === 1}
-                            onCheckedChange={(e) => {
-                              field.onChange(e ? 1 : 0);
-                            }}
-                          />
+
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value.toString()}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih hari" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {DAYS.map((day, index) => (
+                                <SelectItem key={day} value={index.toString()}>
+                                  {day}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </>
                       </FormControl>
                       <FormMessage />
@@ -231,17 +242,11 @@ export default function CreateAgendaForm({
                             {...field}
                             value={field.value.toString()}
                           />
-                          <DatetimePicker
-                            value={field.value}
-                            onChange={(value) => {
-                              field.onChange(value);
+                          <TimePicker
+                            date={parse(field.value, 'HH:mm:ss', new Date())}
+                            setDate={(value) => {
+                              field.onChange(format(value, 'HH:mm:ss'));
                             }}
-                            disabled={(date) =>
-                              date <
-                              new Date(
-                                new Date().setDate(new Date().getDate() - 1),
-                              )
-                            }
                           />
                         </>
                       </FormControl>

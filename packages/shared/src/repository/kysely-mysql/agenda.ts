@@ -25,6 +25,7 @@ import {
   InsertAgendaRecurrence,
   SelectAgendaRecurrence,
   FindScheduleByIdOptions,
+  FindAllAgendaRecurrenceOption,
 } from '../agenda';
 import { Database, db, Users } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
@@ -224,13 +225,72 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .executeTakeFirst();
   }
 
-  async findAllAgendaRecurrence() {
-    const query = await this._db
+  async findAllAgendaRecurrence(data: FindAllAgendaRecurrenceOption) {
+    const {
+      page = 1,
+      perPage = 10,
+      sort,
+      day_of_week,
+      coaches,
+      locations,
+    } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['agenda_recurrences.time', 'asc']
+    ).join(' ') as `${keyof SelectAgendaRecurrence} ${'asc' | 'desc'}`;
+
+    let query = this._db
       .selectFrom('agenda_recurrences')
-      .selectAll()
+      .innerJoin('coaches', 'agenda_recurrences.coach_id', 'coaches.id')
+      .innerJoin('users', 'coaches.user_id', 'users.id')
+      .innerJoin('classes', 'agenda_recurrences.class_id', 'classes.id')
+      .innerJoin(
+        'location_facilities',
+        'agenda_recurrences.location_facility_id',
+        'location_facilities.id'
+      )
+      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id');
+
+    if (coaches?.length && coaches.length > 0) {
+      query = query.where('coaches.id', 'in', coaches);
+    }
+
+    if (locations?.length && locations.length > 0) {
+      query = query.where('locations.id', 'in', locations);
+    }
+
+    const queryData = await query
+      .selectAll('agenda_recurrences')
+      .select((eb) => [
+        'users.name as coach_name',
+        'coaches.id as coach_id',
+        'classes.id as class_id',
+        'classes.name as class_name',
+        'classes.duration as class_duration',
+        'classes.slot',
+        'class_types.id as class_type_id',
+        'class_types.type as class_type_name',
+        'locations.name as location_name',
+        'locations.id as location_id',
+      ])
+      .where('agenda_recurrences.day_of_week', '=', day_of_week)
+      .limit(perPage)
+      .offset(offset)
+      .orderBy(orderBy)
       .execute();
 
-    return query;
+    const queryCount = await query
+      .select(({ fn }) => [
+        fn.count<number>('agenda_recurrences.id').as('count'),
+      ])
+      .executeTakeFirst();
+
+    return {
+      data: queryData,
+      pageCount: Math.ceil((queryCount?.count ?? 0) / perPage),
+    };
   }
 
   async findAllAgendaRecurrenceByDay(

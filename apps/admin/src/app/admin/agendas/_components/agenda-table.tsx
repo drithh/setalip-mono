@@ -51,7 +51,6 @@ export default function AgendaTable({
         locations,
         coaches,
         classes,
-        isRecurrence: search.is_recurrence === 1,
       }),
     [],
   );

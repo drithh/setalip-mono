@@ -23,6 +23,10 @@ import {
   InsertAgendaBookingByAdmin,
   SelectAgendaRecurrence,
   FindScheduleByIdOptions,
+  FindAllAgendaRecurrenceOption,
+  SelectAllAgendaRecurrence,
+  UpdateAgendaRecurrence,
+  InsertAgendaRecurrence,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -41,6 +45,9 @@ export interface AgendaService {
   findAllAgendaBookingByAgendaId(
     id: SelectAgenda['id']
   ): PromiseResult<SelectAgendaBooking[], Error>;
+  findAllAgendaRecurrence(
+    data: FindAllAgendaRecurrenceOption
+  ): PromiseResult<SelectAllAgendaRecurrence, Error>;
   findAgendaBookingById(
     id: SelectAgendaBooking['id']
   ): PromiseResult<SelectAgendaBooking | undefined, Error>;
@@ -73,15 +80,17 @@ export interface AgendaService {
   createAgendaBookingByAdmin(
     data: InsertAgendaBookingByAdmin
   ): PromiseResult<SelectAgendaBooking, Error>;
-  // createTodayRecurrence(
-  //   recurrence_day: SelectAgenda['recurrence_day']
-  // ): PromiseResult<(SelectAgenda | Error)[], Error>;
+  createAgendaRecurrence(
+    data: InsertAgendaRecurrence
+  ): PromiseResult<SelectAgendaRecurrence, Error>;
 
   update(data: UpdateAgenda): PromiseResult<undefined, Error>;
   updateAgendaBooking(
     data: UpdateAgendaBooking
   ): PromiseResult<undefined, Error>;
-
+  updateAgendaRecurrence(
+    data: UpdateAgendaRecurrence
+  ): PromiseResult<undefined, Error>;
   updateAgendaBookingParticipant(
     data: UpdateAgendaBookingParticipant
   ): PromiseResult<undefined, Error>;
@@ -90,6 +99,9 @@ export interface AgendaService {
   ): PromiseResult<undefined, Error>;
 
   delete(data: DeleteAgenda): PromiseResult<undefined, Error>;
+  deleteAgendaRecurrence(
+    id: SelectAgendaRecurrence['id']
+  ): PromiseResult<undefined, Error>;
   deleteAgendaBooking(data: DeleteParticipant): PromiseResult<undefined, Error>;
   cancel(data: CancelAgenda): PromiseResult<undefined, Error>;
 }
