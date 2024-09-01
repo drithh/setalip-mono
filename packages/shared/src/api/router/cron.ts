@@ -74,30 +74,30 @@ export const cronRouter = {
           );
         }
 
-        const agendaService = ctx.container.get<AgendaService>(
-          TYPES.AgendaService
-        );
+        // const agendaService = ctx.container.get<AgendaService>(
+        //   TYPES.AgendaService
+        // );
 
-        const createRecurrence = await agendaService.createTodayRecurrence(
-          currentDate.getDay()
-        );
+        // const createRecurrence = await agendaService.createTodayRecurrence(
+        //   currentDate.getDay()
+        // );
 
-        if (createRecurrence.error) {
-          cronRun.push('Job: Create today recurrence failed to run');
-        } else {
-          for (const recurrence of createRecurrence.result) {
-            if (recurrence instanceof Error) {
-              cronRun.push(
-                `Job: Create today recurrence failed to run for ${recurrence}`
-              );
-            } else {
-              cronRun.push(
-                `Job: Create today recurrence successfully run for ${recurrence.class_id}`
-              );
-            }
-          }
-          cronRun.push('Job: Create today recurrence successfully run');
-        }
+        // if (createRecurrence.error) {
+        //   cronRun.push('Job: Create today recurrence failed to run');
+        // } else {
+        //   for (const recurrence of createRecurrence.result) {
+        //     if (recurrence instanceof Error) {
+        //       cronRun.push(
+        //         `Job: Create today recurrence failed to run for ${recurrence}`
+        //       );
+        //     } else {
+        //       cronRun.push(
+        //         `Job: Create today recurrence successfully run for ${recurrence.class_id}`
+        //       );
+        //     }
+        //   }
+        //   cronRun.push('Job: Create today recurrence successfully run');
+        // }
       }
 
       // notification agenda if less than 3 hours
