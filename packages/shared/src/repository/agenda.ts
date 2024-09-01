@@ -1,6 +1,7 @@
 import { Insertable, Selectable, Updateable } from 'kysely';
 import {
   AgendaBookings,
+  AgendaRecurrences,
   Agendas,
   ClassTypes,
   Classes,
@@ -22,8 +23,7 @@ export interface FindAllAgendaOptions extends DefaultPagination {
   className?: string;
   coaches?: number[];
   locations: number[];
-  is_recurrence?: boolean;
-  date?: Date;
+  date: Date;
 }
 
 export interface FindScheduleByDateOptions extends DefaultPagination {
@@ -31,7 +31,6 @@ export interface FindScheduleByDateOptions extends DefaultPagination {
   locations?: number[];
   classTypes?: number[];
   classNames?: number[];
-  is_show?: boolean;
   date?: Date;
 }
 
@@ -81,12 +80,7 @@ export type SelectLocationAgenda = {
 
 type SelectAgendaWithoutGenerated = Omit<
   SelectAgenda,
-  | 'created_at'
-  | 'updated_at'
-  | 'updated_by'
-  | 'weekly_recurrence'
-  | 'recurrence_day'
-  | 'is_show'
+  'created_at' | 'updated_at' | 'updated_by' | 'is_show'
 >;
 
 export interface SelectAgendaWithCoachAndClass
@@ -202,6 +196,13 @@ export interface CancelAgenda {
   user_id: SelectUser['id'];
 }
 
+export type SelectAgendaRecurrence = Selectable<AgendaRecurrences>;
+export type InsertAgendaRecurrence = Insertable<AgendaRecurrences>;
+export type UpdateAgendaRecurrence = OptionalToRequired<
+  Updateable<AgendaRecurrences>,
+  'id'
+>;
+
 export interface AgendaRepository {
   count(): Promise<number>;
   countParticipant(id: SelectAgenda['id']): Promise<number>;
@@ -210,9 +211,15 @@ export interface AgendaRepository {
 
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;
-  findAllByRecurrenceDay(
-    day: SelectAgenda['recurrence_day']
-  ): Promise<SelectAgenda[]>;
+  // findAllByRecurrenceDay(
+  //   day: SelectAgenda['recurrence_day']
+  // ): Promise<SelectAgenda[]>;
+  findAllAgendaRecurrence(
+    id: SelectAgenda['id']
+  ): Promise<SelectAgendaRecurrence[]>;
+  findAllAgendaRecurrenceByDay(
+    day: SelectAgendaRecurrence['day_of_week']
+  ): Promise<SelectAgendaRecurrence[]>;
   findAllAgendaBookingByAgendaId(
     id: SelectAgenda['id']
   ): Promise<SelectAgendaBooking[]>;
@@ -242,6 +249,9 @@ export interface AgendaRepository {
   ): Promise<SelectAgendaByUser[]>;
 
   create(data: InsertAgenda): Promise<SelectAgenda | Error>;
+  createAgendaRecurrence(
+    data: InsertAgendaRecurrence
+  ): Promise<SelectAgendaRecurrence | Error>;
   createAgendaBooking(
     data: InsertAgendaAndTransaction
   ): Promise<SelectAgendaBooking | Error>;
@@ -250,6 +260,9 @@ export interface AgendaRepository {
   ): Promise<SelectAgendaBooking | Error>;
 
   update(data: UpdateAgenda): Promise<undefined | Error>;
+  updateAgendaRecurrence(
+    data: UpdateAgendaRecurrence
+  ): Promise<undefined | Error>;
   updateAgendaBooking(data: UpdateAgendaBooking): Promise<undefined | Error>;
   updateAgendaBookingParticipant(
     data: UpdateAgendaBookingParticipant
@@ -259,6 +272,9 @@ export interface AgendaRepository {
   ): Promise<undefined | Error>;
 
   delete(data: DeleteAgenda): Promise<undefined | Error>;
+  deleteAgendaRecurrence(
+    id: SelectAgendaRecurrence['id']
+  ): Promise<undefined | Error>;
   cancel(data: CancelAgenda): Promise<undefined | Error>;
   deleteAgendaBooking(id: DeleteParticipant): Promise<undefined | Error>;
 }

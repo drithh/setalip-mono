@@ -14,7 +14,7 @@ import {
   insertAgendaBookingAdminSchema,
   updateAgendaBookingSchema,
 } from '../schema';
-import { parse } from 'date-fns';
+import { parse, startOfToday } from 'date-fns';
 import { SelectAgendaBooking } from '#dep/repository/agenda';
 
 export const agendaRouter = {
@@ -32,6 +32,13 @@ export const agendaRouter = {
         TYPES.AgendaService
       );
 
+      const convertDate = (date: string) =>
+        parse(date, 'yyyy-MM-dd', new Date());
+
+      const getDate = (date?: string) => {
+        return date ? convertDate(date) : startOfToday();
+      };
+
       const agendas = await agendaService.findAll({
         page: input.page,
         perPage: input.per_page,
@@ -39,10 +46,7 @@ export const agendaRouter = {
         className: input.class_name,
         locations: locations,
         coaches: coaches,
-        is_recurrence: input.is_recurrence === 1,
-        date: !input.is_recurrence
-          ? new Date(input.date ?? new Date())
-          : undefined,
+        date: getDate(input.date),
       });
 
       return agendas;
@@ -69,16 +73,11 @@ export const agendaRouter = {
         input.class_name?.split('.').map((className) => parseInt(className)) ??
         [];
 
-      const today = () => {
-        const date = new Date();
-        date.setHours(0, 0, 0, 0);
-        return date;
-      };
       const convertDate = (date: string) =>
         parse(date, 'yyyy-MM-dd', new Date());
 
       const getDate = (date?: string) => {
-        return date ? convertDate(date) : today();
+        return date ? convertDate(date) : startOfToday();
       };
 
       const schedules = await agendaService.findScheduleByDate({

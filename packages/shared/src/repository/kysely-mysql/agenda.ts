@@ -22,8 +22,10 @@ import {
   CancelAgenda,
   DeleteParticipant,
   InsertAgendaBookingAndTransactionByAdmin,
+  InsertAgendaRecurrence,
+  SelectAgendaRecurrence,
 } from '../agenda';
-import { Database, Users } from '#dep/db/index';
+import { Database, db, Users } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/mysql';
 import { Selectable, sql } from 'kysely';
@@ -88,17 +90,60 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       sort,
       className,
       coaches,
-      is_recurrence,
       locations,
       date,
     } = data;
 
     const offset = (page - 1) * perPage;
     const orderBy = (
-      sort?.split('.').filter(Boolean) ?? ['agendas.created_at', 'desc']
+      sort?.split('.').filter(Boolean) ?? ['agendas.time', 'asc']
     ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
 
     let query = this._db
+      .with('agenda_data', (eb) =>
+        eb
+          .selectFrom('agendas')
+          .select([
+            sql<number | null>`agendas.id`.as('id'),
+            'agendas.coach_id',
+            'agendas.class_id',
+            'agendas.location_facility_id',
+            'agendas.agenda_recurrence_id',
+            'agendas.time',
+          ])
+          .where(sql`DATE(agendas.time)`, '=', date)
+      )
+      .with('missing_recurrences', (eb) =>
+        eb
+          .selectFrom('agenda_recurrences')
+          .select([
+            sql<null>`null`.as('id'),
+            'agenda_recurrences.coach_id',
+            'agenda_recurrences.class_id',
+            'agenda_recurrences.location_facility_id',
+            'agenda_recurrences.id as agenda_recurrence_id',
+            sql<Date>`ADDDATE(${date} - INTERVAL (DAYOFWEEK(${date}) - 1) DAY, INTERVAL TIME_TO_SEC(agenda_recurrences.time) / 60 MINUTE)`.as(
+              'time'
+            ),
+          ])
+          .leftJoin(
+            'agenda_data',
+            'agenda_data.agenda_recurrence_id',
+            'agenda_recurrences.id'
+          )
+          .where('agenda_data.id', 'is', null)
+          .where(
+            'agenda_recurrences.day_of_week',
+            '=',
+            sql<number>`DAYOFWEEK(${date}) - 1`
+          )
+      )
+      .with('agendas', (eb) =>
+        eb
+          .selectFrom('agenda_data')
+          .selectAll()
+          .unionAll(eb.selectFrom('missing_recurrences').selectAll())
+      )
       .selectFrom('agendas')
       .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
       .innerJoin('users', 'coaches.user_id', 'users.id')
@@ -111,10 +156,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
       .innerJoin('class_types', 'classes.class_type_id', 'class_types.id');
 
-    if (is_recurrence !== undefined && is_recurrence === true) {
-      query = query.where('agendas.weekly_recurrence', '=', 1);
-    }
-
     if (className) {
       query = query.where('classes.name', 'like', `%${className}%`);
     }
@@ -125,14 +166,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
     if (locations?.length && locations.length > 0) {
       query = query.where('locations.id', 'in', locations);
-    }
-
-    if (date) {
-      const today = startOfDay(new Date(date));
-      const tomorrow = endOfDay(today);
-      query = query
-        .where('agendas.time', '>=', today)
-        .where('agendas.time', '<=', tomorrow);
     }
 
     const queryData = await query
@@ -188,11 +221,22 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .executeTakeFirst();
   }
 
-  async findAllByRecurrenceDay(day: number): Promise<SelectAgenda[]> {
+  async findAllAgendaRecurrence() {
     const query = await this._db
-      .selectFrom('agendas')
+      .selectFrom('agenda_recurrences')
       .selectAll()
-      .where('recurrence_day', '=', day)
+      .execute();
+
+    return query;
+  }
+
+  async findAllAgendaRecurrenceByDay(
+    day: SelectAgendaRecurrence['day_of_week']
+  ): Promise<SelectAgendaRecurrence[]> {
+    const query = await this._db
+      .selectFrom('agenda_recurrences')
+      .selectAll()
+      .where('day_of_week', '=', day)
       .execute();
 
     return query;
@@ -242,6 +286,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'agendas.class_id',
         'agendas.id',
         'agendas.time',
+        'agendas.agenda_recurrence_id',
         'agendas.location_facility_id',
         'classes.slot',
         'users.name as coach_name',
@@ -327,6 +372,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'agendas.id',
         'agendas.time',
         'agendas.location_facility_id',
+        'agendas.agenda_recurrence_id',
         'classes.slot',
         'users.name as coach_name',
         'coaches.id as coach_id',
@@ -374,7 +420,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       classTypes,
       coaches,
       locations,
-      is_show,
       classNames,
       date,
     } = data;
@@ -385,6 +430,59 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
 
     let query = this._db
+      .with('agenda_data', (eb) =>
+        eb
+          .selectFrom('agendas')
+          .select([
+            sql<number | null>`agendas.id`.as('id'),
+            'agendas.coach_id',
+            'agendas.class_id',
+            'agendas.location_facility_id',
+            'agendas.agenda_recurrence_id',
+            'agendas.time',
+            'agendas.is_show',
+          ])
+          .where(sql`DATE(agendas.time)`, '=', date)
+      )
+      .with('missing_recurrences', (eb) =>
+        eb
+          .selectFrom('agenda_recurrences')
+          .select([
+            sql<null>`null`.as('id'),
+            'agenda_recurrences.coach_id',
+            'agenda_recurrences.class_id',
+            'agenda_recurrences.location_facility_id',
+            'agenda_recurrences.id as agenda_recurrence_id',
+            sql<Date>`ADDDATE(${date} - INTERVAL (DAYOFWEEK(${date}) - 1) DAY, INTERVAL TIME_TO_SEC(agenda_recurrences.time) / 60 MINUTE)`.as(
+              'time'
+            ),
+          ])
+          .leftJoin(
+            'agenda_data',
+            'agenda_data.agenda_recurrence_id',
+            'agenda_recurrences.id'
+          )
+          .where('agenda_data.id', 'is', null)
+          .where(
+            'agenda_recurrences.day_of_week',
+            '=',
+            sql<number>`DAYOFWEEK(${date}) - 1`
+          )
+      )
+      .with('agendas', (eb) =>
+        eb
+          .selectFrom('agenda_data')
+          .select([
+            'id',
+            'coach_id',
+            'class_id',
+            'location_facility_id',
+            'agenda_recurrence_id',
+            'time',
+          ])
+          .where('is_show', '=', 1)
+          .unionAll(eb.selectFrom('missing_recurrences').selectAll())
+      )
       .selectFrom('agendas')
       .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
       .innerJoin('users', 'coaches.user_id', 'users.id')
@@ -396,10 +494,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       )
       .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
       .innerJoin('class_types', 'classes.class_type_id', 'class_types.id');
-
-    if (is_show) {
-      query = query.where('agendas.is_show', '=', is_show ? 1 : 0);
-    }
 
     if (classTypes?.length && classTypes.length > 0) {
       query = query.where('class_types.id', 'in', classTypes);
@@ -419,7 +513,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
     if (date) {
       const today = new Date(date);
-      const tomorrow = addDays(today, 1);
+      const tomorrow = endOfDay(today);
 
       query = query
         .where('agendas.time', '>=', today)
@@ -432,6 +526,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'agendas.id',
         'agendas.time',
         'agendas.location_facility_id',
+        'agendas.agenda_recurrence_id',
         'classes.slot',
         'users.name as coach_name',
         'coaches.id as coach_id',
@@ -489,6 +584,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'agendas.id',
         'agendas.time',
         'agendas.location_facility_id',
+        'agendas.agenda_recurrence_id',
         'classes.slot',
         'users.name as coach_name',
         'coaches.id as coach_id',
@@ -566,6 +662,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'agendas.id',
         'agendas.time',
         'agendas.location_facility_id',
+        'agendas.agenda_recurrence_id',
         'classes.slot',
         'agenda_bookings.id as agenda_booking_id',
         'agenda_bookings.status as agenda_booking_status',
@@ -620,6 +717,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'agendas.id',
         'agendas.time',
         'agendas.location_facility_id',
+        'agendas.agenda_recurrence_id',
         'classes.slot',
         'agenda_bookings.id as agenda_booking_id',
         'agenda_bookings.status as agenda_booking_status',
@@ -707,6 +805,28 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     } catch (error) {
       console.error('Error creating agenda:', error);
       return new Error('Error creating agenda');
+    }
+  }
+
+  async createAgendaRecurrence(data: InsertAgendaRecurrence) {
+    try {
+      const query = this._db
+        .insertInto('agenda_recurrences')
+        .values(data)
+        .returningAll()
+        .compile();
+
+      const result = await this._db.executeQuery(query);
+
+      if (result.rows[0] === undefined) {
+        console.error('Failed to create agenda recurrence', result);
+        return new Error('Failed to create agenda recurrence');
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating agenda recurrence:', error);
+      return new Error('Error creating agenda recurrence');
     }
   }
 
@@ -827,6 +947,29 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     } catch (error) {
       console.error('Error updating agenda:', error);
       return new Error('Error updating agenda');
+    }
+  }
+
+  async updateAgendaRecurrence(data: SelectAgendaRecurrence) {
+    try {
+      const query = await this._db
+        .updateTable('agenda_recurrences')
+        .set(data)
+        .where('id', '=', data.id)
+        .executeTakeFirst();
+
+      if (query.numUpdatedRows === undefined) {
+        console.error(
+          'Failed to update agenda recurrence',
+          query.numUpdatedRows
+        );
+        return new Error('Failed to update agenda recurrence');
+      }
+
+      return;
+    } catch (error) {
+      console.error('Error updating agenda recurrence:', error);
+      return new Error('Error updating agenda recurrence');
     }
   }
 
@@ -1082,6 +1225,37 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     } catch (error) {
       console.error('Error deleting agenda:', error);
       return new Error('Error deleting agenda');
+    }
+  }
+
+  async deleteAgendaRecurrence(id: SelectAgendaRecurrence['id']) {
+    try {
+      const result = await this._db.transaction().execute(async (trx) => {
+        const agendaRecurrence = await trx
+          .selectFrom('agenda_recurrences')
+          .selectAll()
+          .where('id', '=', id)
+          .executeTakeFirst();
+
+        if (agendaRecurrence === undefined) {
+          console.error('Failed to get agenda recurrence', agendaRecurrence);
+          return new Error('Failed to get agenda recurrence');
+        }
+
+        const result = await trx
+          .deleteFrom('agenda_recurrences')
+          .where('id', '=', id)
+          .executeTakeFirst();
+
+        if (result.numDeletedRows === undefined) {
+          console.error('Failed to delete agenda recurrence', result);
+          return new Error('Failed to delete agenda recurrence');
+        }
+      });
+      return result;
+    } catch (error) {
+      console.error('Error deleting agenda recurrence:', error);
+      return new Error('Error deleting agenda recurrence');
     }
   }
 

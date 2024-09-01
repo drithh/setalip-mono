@@ -14,18 +14,26 @@ export interface AgendaBookings {
   user_id: number;
 }
 
+export interface AgendaRecurrences {
+  class_id: number;
+  coach_id: number;
+  day_of_week: number;
+  id: Generated<number>;
+  location_facility_id: number;
+  time: string;
+}
+
 export interface Agendas {
+  agenda_recurrence_id: Generated<number | null>;
   class_id: number;
   coach_id: number;
   created_at: Generated<Date>;
   id: Generated<number>;
   is_show: Generated<number | null>;
   location_facility_id: number;
-  recurrence_day: Generated<number | null>;
   time: Date;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
-  weekly_recurrence: Generated<number | null>;
 }
 
 export interface Carousels {
@@ -354,6 +362,7 @@ export interface WebSettings {
 
 export interface DB {
   agenda_bookings: AgendaBookings;
+  agenda_recurrences: AgendaRecurrences;
   agendas: Agendas;
   carousels: Carousels;
   class_assets: ClassAssets;
