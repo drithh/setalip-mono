@@ -60,7 +60,7 @@ export const fileRouter = {
   uploadLocal: protectedProcedure
     .input(fileUploadSchema)
     .mutation(async ({ ctx, input }) => {
-      const host = env.WEB_URL; // Default host
+      // const host = ; // Default host
 
       let files = input.files;
       if (!Array.isArray(files)) {
@@ -73,18 +73,20 @@ export const fileRouter = {
           const timestamp = new Date().getTime();
           const filename = `${timestamp}_${file.name.replaceAll(' ', '_').toLowerCase()}`;
 
-          let currentPath = process.cwd();
-
-          // Move up three directories
-          for (let i = 0; i < 2; i++) {
-            currentPath = path.dirname(currentPath);
+          let currentPath = '/home/uploads/';
+          if (env.WEB_URL === 'http://localhost:3001') {
+            // Move up three directories
+            currentPath = process.cwd();
+            for (let i = 0; i < 2; i++) {
+              currentPath = path.dirname(currentPath);
+            }
           }
 
           const fullPath = path.join(currentPath, 'uploads', filename);
           await writeFile(fullPath, buffer);
 
           return {
-            url: `${host}/uploads/${filename}`,
+            url: `${env.WEB_URL}/uploads/${filename}`,
             name: file.name,
           };
         })

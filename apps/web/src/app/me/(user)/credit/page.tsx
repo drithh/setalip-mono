@@ -1,9 +1,14 @@
 import { findAllUserCreditSchema } from '@repo/shared/api/schema';
 import { container, TYPES } from '@repo/shared/inversify';
-import { ClassTypeService, CreditService } from '@repo/shared/service';
+import {
+  ClassTypeService,
+  CreditService,
+  PackageService,
+} from '@repo/shared/service';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui/card';
@@ -11,14 +16,17 @@ import {
 import { validateUser } from '@/lib/auth';
 
 import CreditTransactionTable from './credit-transaction';
+import { format } from 'date-fns';
 
 export default async function Credit({ searchParams }: { searchParams: any }) {
   const auth = await validateUser();
 
   const search = findAllUserCreditSchema.parse(searchParams);
 
-  const creditService = container.get<CreditService>(TYPES.CreditService);
-  const credits = await creditService.findAmountByUserId(auth.user.id);
+  const packageService = container.get<PackageService>(TYPES.PackageService);
+  const packages = await packageService.findAllActivePackageByUserId(
+    auth.user.id,
+  );
 
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,
@@ -28,16 +36,30 @@ export default async function Credit({ searchParams }: { searchParams: any }) {
   return (
     <div className="w-full p-2 md:p-6">
       <h1 className="text-3xl font-bold">Credit</h1>
-      <div className="my-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {credits?.result?.map((credit) => (
-          <Card key={credit?.class_type_id} className="sm:col-span-1">
+      <div className="my-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
+        {packages?.result?.map((singlePackage) => (
+          <Card key={singlePackage?.id} className="sm:col-span-1">
             <CardHeader>
               <CardTitle className="capitalize">
-                {credit?.class_type_name} Class
+                {singlePackage?.package_name ?? singlePackage.note}
               </CardTitle>
+              <CardDescription className="capitalize">
+                {singlePackage?.class_type}
+                <p className="text-xs opacity-70">{singlePackage?.note}</p>
+              </CardDescription>
             </CardHeader>
             <CardContent className="">
-              <p>{credit?.remaining_amount} credit remaining</p>
+              <p>
+                Sessions Remaining:{' '}
+                {singlePackage?.amount - (singlePackage?.credit_used ?? 0)}
+              </p>
+              <p>
+                Expired At:{' '}
+                {format(
+                  new Date(singlePackage?.expired_at ?? new Date()),
+                  'dd MMM yyyy',
+                )}
+              </p>
             </CardContent>
           </Card>
         ))}

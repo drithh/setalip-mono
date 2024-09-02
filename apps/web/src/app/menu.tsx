@@ -5,6 +5,7 @@ import {
   CreditCard,
   HandHeart,
   LogOut,
+  Receipt,
   Sparkles,
   Trophy,
   User2,
@@ -41,8 +42,8 @@ export const menus: Menu[] = [
     role: 'user',
   },
   {
-    icon: <HandHeart className="h-5 w-5" />,
-    label: 'My Package',
+    icon: <Receipt className="h-5 w-5" />,
+    label: 'My Billing',
     path: '/me/package',
     role: 'user',
   },
