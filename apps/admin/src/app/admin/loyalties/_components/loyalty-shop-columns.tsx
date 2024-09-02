@@ -16,13 +16,19 @@ import {
 import DeleteLoyaltyShopDialog from '../delete-loyalty-shop.dialog';
 import EditLoyaltyShopForm from '../edit-loyalty-shop.form';
 import { moneyFormatter } from '@repo/shared/util';
-import { SelectAllLoyaltyShop } from '@repo/shared/repository';
+import {
+  SelectAllLoyaltyShop,
+  SelectAllPackage,
+} from '@repo/shared/repository';
+import { Badge } from '@repo/ui/components/ui/badge';
 
-interface getColumnsProps {}
+interface getColumnsProps {
+  packages: SelectAllPackage['data'];
+}
 
-export function getColumns({}: getColumnsProps): ColumnDef<
-  SelectAllLoyaltyShop['data'][0]
->[] {
+export function getColumns({
+  packages,
+}: getColumnsProps): ColumnDef<SelectAllLoyaltyShop['data'][0]>[] {
   return [
     {
       accessorKey: 'name',
@@ -37,16 +43,23 @@ export function getColumns({}: getColumnsProps): ColumnDef<
         <DataTableColumnHeader column={column} title="Point" />
       ),
       cell: ({ row }) => {
-        return <span>{moneyFormatter.format(row.original.price ?? 0)}</span>;
+        return <span>{row.original.price ?? 0}</span>;
       },
     },
     {
-      accessorKey: 'description',
+      accessorKey: 'type',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Description" />
+        <DataTableColumnHeader column={column} title="Type" />
       ),
       cell: ({ row }) => {
-        return <span>{row.original.description}</span>;
+        return (
+          <div className="capitalize">
+            <span className="inline-block font-semibold sm:hidden">
+              Publik :&ensp;
+            </span>
+            <Badge>{row.original.type}</Badge>
+          </div>
+        );
       },
     },
     {
@@ -78,6 +91,7 @@ export function getColumns({}: getColumnsProps): ColumnDef<
         return (
           <>
             <EditLoyaltyShopForm
+              packages={packages}
               data={row.original}
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}

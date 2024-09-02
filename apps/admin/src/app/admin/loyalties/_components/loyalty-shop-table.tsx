@@ -10,19 +10,23 @@ import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 import { getColumns } from './loyalty-shop-columns';
 import {
   SelectAllLoyaltyShop,
+  SelectAllPackage,
+  SelectPackages,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
-import {
-  findAllLoyaltyShopSchema,
-} from '@repo/shared/api/schema';
+import { findAllLoyaltyShopSchema } from '@repo/shared/api/schema';
 import CreateLoyaltyShopForm from '../create-loyalty-shop.form';
 
 interface LoyaltyShopTableProps {
+  packages: SelectPackages[];
   search: z.infer<typeof findAllLoyaltyShopSchema>;
 }
 
-export default function LoyaltyShopTable({ search }: LoyaltyShopTableProps) {
+export default function LoyaltyShopTable({
+  packages,
+  search,
+}: LoyaltyShopTableProps) {
   const [{ result, error }] = api.loyalty.findAllShop.useSuspenseQuery(
     search,
     {},
@@ -31,7 +35,13 @@ export default function LoyaltyShopTable({ search }: LoyaltyShopTableProps) {
     throw new Error('Error fetching data', error);
   }
 
-  const columns = React.useMemo(() => getColumns({}), []);
+  const columns = React.useMemo(
+    () =>
+      getColumns({
+        packages,
+      }),
+    [],
+  );
 
   const filterFields: DataTableFilterField<
     SelectAllLoyaltyShop['data'][number]
@@ -68,7 +78,7 @@ export default function LoyaltyShopTable({ search }: LoyaltyShopTableProps) {
   return (
     <DataTable table={table} pagination={false}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <CreateLoyaltyShopForm />
+        <CreateLoyaltyShopForm packages={packages} />
       </DataTableToolbar>
     </DataTable>
   );

@@ -251,7 +251,8 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'location_facilities.id'
       )
       .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
-      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id');
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id')
+      .where('agenda_recurrences.day_of_week', '=', day_of_week);
 
     if (coaches?.length && coaches.length > 0) {
       query = query.where('coaches.id', 'in', coaches);
@@ -275,7 +276,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         'locations.name as location_name',
         'locations.id as location_id',
       ])
-      .where('agenda_recurrences.day_of_week', '=', day_of_week)
       .limit(perPage)
       .offset(offset)
       .orderBy(orderBy)

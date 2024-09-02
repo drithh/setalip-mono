@@ -35,8 +35,20 @@ import { Textarea } from '@repo/ui/components/ui/textarea';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
 import FileCard from '@/components/file-card';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@repo/ui/components/ui/select';
+import { DAYS } from '../agenda-recurrences/crud/constant';
+import { LOYALTY_SHOP_TYPES } from './constant';
+import { SelectPackages } from '@repo/shared/repository';
 
-interface CreateLoyaltyShopProps {}
+interface CreateLoyaltyShopProps {
+  packages: SelectPackages[];
+}
 
 const TOAST_MESSAGES = {
   error: {
@@ -51,7 +63,9 @@ const TOAST_MESSAGES = {
   },
 };
 
-export default function CreateLoyaltyShopForm({}: CreateLoyaltyShopProps) {
+export default function CreateLoyaltyShopForm({
+  packages,
+}: CreateLoyaltyShopProps) {
   const [openSheet, setOpenSheet] = useState(false);
 
   const trpcUtils = api.useUtils();
@@ -64,6 +78,8 @@ export default function CreateLoyaltyShopForm({}: CreateLoyaltyShopProps) {
       file: null,
       description: '',
       price: 0,
+      type: 'item',
+      package_id: 0,
     } as FormSchema,
   });
 
@@ -163,6 +179,78 @@ export default function CreateLoyaltyShopForm({}: CreateLoyaltyShopProps) {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Tipe</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value.toString()}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih hari" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {LOYALTY_SHOP_TYPES.map((type, index) => (
+                                <SelectItem key={type} value={type}>
+                                  {type}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {form.watch('type') === 'package' && (
+                  <FormField
+                    control={form.control}
+                    name="package_id"
+                    render={({ field }) => (
+                      <FormItem className="grid w-full gap-2">
+                        <FormLabel>Paket</FormLabel>
+                        <FormControl>
+                          <>
+                            <Input
+                              type="hidden"
+                              {...field}
+                              value={field.value?.toString() ?? ''}
+                            />
+
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value?.toString() ?? ''}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Pilih paket" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {packages.map((singlePackage) => (
+                                  <SelectItem
+                                    key={singlePackage.id}
+                                    value={singlePackage.id.toString()}
+                                  >
+                                    {singlePackage.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <FormField
                   control={form.control}

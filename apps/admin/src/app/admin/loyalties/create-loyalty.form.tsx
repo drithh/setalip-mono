@@ -18,7 +18,11 @@ import {
 } from '@repo/ui/components/ui/form';
 import { CreateLoyaltySchema, createLoyaltySchema } from './form-schema';
 import { toast } from 'sonner';
-import { SelectAllUserName } from '@repo/shared/repository';
+import {
+  SelectAllLoyaltyReward,
+  SelectAllLoyaltyShop,
+  SelectAllUserName,
+} from '@repo/shared/repository';
 import {
   Sheet,
   SheetTrigger,
@@ -36,9 +40,11 @@ import {
 } from '@repo/ui/components/ui/select';
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
+import { AddonInput } from '@repo/ui/components/addon-input';
 
 interface CreateLoyaltyProps {
   users: SelectAllUserName;
+  loyalty_shops: SelectAllLoyaltyShop['data'];
 }
 
 const TOAST_MESSAGES = {
@@ -54,7 +60,10 @@ const TOAST_MESSAGES = {
   },
 };
 
-export default function CreateLoyaltyForm({ users }: CreateLoyaltyProps) {
+export default function CreateLoyaltyForm({
+  loyalty_shops,
+  users,
+}: CreateLoyaltyProps) {
   const [openSheet, setOpenSheet] = useState(false);
 
   const trpcUtils = api.useUtils();
@@ -63,9 +72,8 @@ export default function CreateLoyaltyForm({ users }: CreateLoyaltyProps) {
   const [formState, formAction] = useFormState(createLoyalty, {
     status: 'default',
     form: {
-      amount: 0,
       user_id: 0,
-      note: '',
+      shop_id: 0,
     } as FormSchema,
   });
 
@@ -115,17 +123,28 @@ export default function CreateLoyaltyForm({ users }: CreateLoyaltyProps) {
 
   const formRef = useRef<HTMLFormElement>(null);
 
+  const [price, setPrice] = useState(0);
+  useEffect(() => {
+    const currentPrice =
+      loyalty_shops.find(
+        (shop) => shop.id === parseInt(form.watch('shop_id').toString()),
+      )?.price ?? 0;
+    setPrice(currentPrice);
+  }, [form.watch('shop_id')]);
+
   return (
     <Sheet open={openSheet} onOpenChange={setOpenSheet}>
       <SheetTrigger asChild>
-        <Button variant={'outline'}>Tambah</Button>
+        <Button variant={'outline'}>Buat Transaksi</Button>
       </SheetTrigger>
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
-            <SheetTitle className="text-left">Tambah Loyalty point</SheetTitle>
+            <SheetTitle className="text-left">
+              Buat Transaksi Loyalty
+            </SheetTitle>
             <SheetDescription className="text-left">
-              Tambah loyalty point user. Pastikan klik simpan ketika selesai.
+              Buat transaksi menggunakan loyalty point pengguna
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
@@ -170,6 +189,48 @@ export default function CreateLoyaltyForm({ users }: CreateLoyaltyProps) {
 
                 <FormField
                   control={form.control}
+                  name="shop_id"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Item</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+
+                          <Select onValueChange={field.onChange}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih item" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {loyalty_shops.map((shop) => (
+                                <SelectItem
+                                  key={shop.id}
+                                  value={shop.id.toString()}
+                                >
+                                  {shop.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormItem className="grid w-full gap-2">
+                  <FormLabel>Price</FormLabel>
+                  <AddonInput
+                    type="number"
+                    readOnly
+                    value={price}
+                    endAdornment="Point"
+                  />
+                </FormItem>
+
+                {/* <FormField
+                  control={form.control}
                   name="amount"
                   render={({ field }) => (
                     <FormItem className="grid w-full gap-2">
@@ -199,7 +260,7 @@ export default function CreateLoyaltyForm({ users }: CreateLoyaltyProps) {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 <Button type="submit" className="w-full">
                   Simpan

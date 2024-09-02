@@ -2,7 +2,11 @@ import { FindAllLoyaltyOptions } from '@repo/shared/repository';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import LoyaltyTable from './_components/loyalty-table';
 import { TYPES, container } from '@repo/shared/inversify';
-import { UserService } from '@repo/shared/service';
+import {
+  LoyaltyService,
+  PackageService,
+  UserService,
+} from '@repo/shared/service';
 import { findAllLoyaltySchema } from '@repo/shared/api/schema';
 import QueryResetBoundary from '@/lib/query-reset-boundary';
 import React from 'react';
@@ -21,6 +25,16 @@ export interface IndexPageProps {
 
 export default async function Loyaltys({ searchParams }: IndexPageProps) {
   const search = findAllLoyaltySchema.parse(searchParams);
+  const packageService = container.get<PackageService>(TYPES.PackageService);
+  const packages = await packageService.findAll({
+    is_active: 0,
+    perPage: 100,
+  });
+
+  const loyaltyService = container.get<LoyaltyService>(TYPES.LoyaltyService);
+  const loyaltyShops = await loyaltyService.findAllShop({
+    perPage: 100,
+  });
 
   const userService = container.get<UserService>(TYPES.UserService);
   const users = await userService.findAllUserName();
@@ -44,7 +58,10 @@ export default async function Loyaltys({ searchParams }: IndexPageProps) {
                 />
               }
             >
-              <LoyaltyShopTable search={search} />
+              <LoyaltyShopTable
+                packages={packages.result?.data ?? []}
+                search={search}
+              />
             </React.Suspense>
           </QueryResetBoundary>
         </CardContent>
@@ -95,7 +112,11 @@ export default async function Loyaltys({ searchParams }: IndexPageProps) {
                 />
               }
             >
-              <LoyaltyTable users={users.result ?? []} search={search} />
+              <LoyaltyTable
+                users={users.result ?? []}
+                shops={loyaltyShops.result?.data ?? []}
+                search={search}
+              />
             </React.Suspense>
           </QueryResetBoundary>
         </CardContent>

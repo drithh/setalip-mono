@@ -1,7 +1,5 @@
 'use server';
-import {
-  LoyaltyService,
-} from '@repo/shared/service';
+import { LoyaltyService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { createLoyaltySchema, FormCreateLoyalty } from '../form-schema';
 import {
@@ -28,9 +26,9 @@ export async function createLoyalty(
 
   const loyaltyService = container.get<LoyaltyService>(TYPES.LoyaltyService);
 
-  const result = await loyaltyService.create({
-    ...parsed.data,
-    type: 'debit',
+  const result = await loyaltyService.createFromShop({
+    user_id: parsed.data.user_id,
+    shop_id: parsed.data.shop_id,
   });
 
   if (result.error) {

@@ -6,9 +6,8 @@ import {
 import { z, ZodType } from 'zod';
 
 export const createLoyaltySchema = z.object({
-  amount: z.coerce.number(),
-  note: z.string().min(3).max(255),
   user_id: z.coerce.number(),
+  shop_id: z.coerce.number(),
 });
 
 export type CreateLoyaltySchema = z.infer<typeof createLoyaltySchema>;
@@ -41,6 +40,8 @@ export type FormEditLoyaltyReward = FormState<EditLoyaltyRewardSchema>;
 export const createLoyaltyShopSchema = z.object({
   name: z.string().min(3).max(255),
   description: z.string().min(3).max(255),
+  type: z.enum(['item', 'package']),
+  package_id: z.coerce.number().optional(),
   price: z.coerce.number(),
   file: z.custom<File | null>(
     (data) => data === null || data instanceof File,

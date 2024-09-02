@@ -200,7 +200,9 @@ export interface LoyaltyShops {
   id: Generated<number>;
   image_url: Generated<string | null>;
   name: string;
+  package_id: Generated<number | null>;
   price: Generated<number | null>;
+  type: "item" | "package";
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
 }

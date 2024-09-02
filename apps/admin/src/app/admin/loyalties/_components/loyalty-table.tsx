@@ -12,6 +12,7 @@ import {
   SelectAllLoyalty,
   SelectAllUserName,
   SelectLoyalty,
+  SelectLoyaltyShopWithPackage,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
@@ -21,10 +22,15 @@ import DeleteLoyaltyForm from '../delete-loyalty.form';
 
 interface PackageTableProps {
   users: SelectAllUserName;
+  shops: SelectLoyaltyShopWithPackage[];
   search: z.infer<typeof findAllLoyaltySchema>;
 }
 
-export default function PackageTable({ users, search }: PackageTableProps) {
+export default function PackageTable({
+  users,
+  shops,
+  search,
+}: PackageTableProps) {
   const [{ result, error }] = api.loyalty.findAll.useSuspenseQuery(search, {});
   if (error) {
     throw new Error('Error fetching data', error);
@@ -68,8 +74,8 @@ export default function PackageTable({ users, search }: PackageTableProps) {
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <CreateLoyaltyForm users={users} />
-        <DeleteLoyaltyForm users={users} />
+        <CreateLoyaltyForm users={users} loyalty_shops={shops} />
+        {/* <DeleteLoyaltyForm users={users} /> */}
       </DataTableToolbar>
     </DataTable>
   );

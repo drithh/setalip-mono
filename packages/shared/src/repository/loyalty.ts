@@ -4,6 +4,7 @@ import {
   DefaultPagination,
   OptionalToRequired,
   SelectClassType,
+  SelectPackage,
   SelectUser,
 } from '.';
 
@@ -69,6 +70,9 @@ export interface SelectAllLoyaltyReward {
 }
 
 export type SelectLoyaltyShop = Selectable<LoyaltyShops>;
+export interface SelectLoyaltyShopWithPackage extends SelectLoyaltyShop {
+  package_name: SelectPackage['name'] | null;
+}
 export type InsertLoyaltyShop = Insertable<LoyaltyShops>;
 export type UpdateLoyaltyShop = OptionalToRequired<
   Updateable<LoyaltyShops>,
@@ -80,7 +84,7 @@ export interface FindAllLoyaltyShopOptions extends DefaultPagination {
 }
 
 export interface SelectAllLoyaltyShop {
-  data: SelectLoyaltyShop[];
+  data: SelectLoyaltyShopWithPackage[];
   pageCount: number;
 }
 
@@ -90,6 +94,12 @@ export interface InsertLoyaltyOnReward {
   note: SelectLoyalty['note'];
   reference_id?: SelectLoyalty['reference_id'];
 }
+
+export interface InsertLoyaltyFromShop {
+  user_id: SelectUser['id'];
+  shop_id: SelectLoyaltyShop['id'];
+}
+
 export interface LoyaltyRepository {
   count(): Promise<number>;
 
@@ -117,6 +127,9 @@ export interface LoyaltyRepository {
   findRewardByName(
     name: SelectLoyaltyReward['name']
   ): Promise<SelectLoyaltyReward | undefined>;
+  findShopById(
+    id: SelectLoyaltyShop['id']
+  ): Promise<SelectLoyaltyShop | undefined>;
   findShopByName(
     name: SelectLoyaltyShop['name']
   ): Promise<SelectLoyaltyShop | undefined>;
@@ -125,6 +138,7 @@ export interface LoyaltyRepository {
   ): Promise<SelectAmountLoyalty | undefined>;
 
   create(data: InsertLoyalty): Promise<SelectLoyalty | Error>;
+  createFromShop(data: InsertLoyaltyFromShop): Promise<SelectLoyalty | Error>;
   createOnReward(data: InsertLoyaltyOnReward): Promise<undefined | Error>;
   createReward(data: InsertLoyaltyReward): Promise<SelectLoyaltyReward | Error>;
   createShop(data: InsertLoyaltyShop): Promise<SelectLoyaltyShop | Error>;

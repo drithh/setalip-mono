@@ -17,7 +17,7 @@ import {
 } from '@repo/ui/components/ui/form';
 import { EditLoyaltyShopSchema, editLoyaltyShopSchema } from './form-schema';
 import { toast } from 'sonner';
-import { SelectLoyaltyShop } from '@repo/shared/repository';
+import { SelectLoyaltyShop, SelectPackages } from '@repo/shared/repository';
 import {
   Sheet,
   SheetContent,
@@ -32,8 +32,17 @@ import { Textarea } from '@repo/ui/components/ui/textarea';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
 import FileCard from '@/components/file-card';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@repo/ui/components/ui/select';
+import { LOYALTY_SHOP_TYPES } from './constant';
 
 interface EditLoyaltyShopProps {
+  packages: SelectPackages[];
   data: SelectLoyaltyShop;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -55,6 +64,7 @@ const TOAST_MESSAGES = {
 };
 
 export default function EditLoyaltyShopForm({
+  packages,
   data,
   open,
   onOpenChange,
@@ -71,6 +81,8 @@ export default function EditLoyaltyShopForm({
       description: data.description,
       image_url: data.image_url,
       file: null,
+      type: data.type,
+      package_id: data.package_id,
     } as FormSchema,
   });
 
@@ -102,7 +114,6 @@ export default function EditLoyaltyShopForm({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
-      form.reset();
       trpcUtils.invalidate();
       onOpenChange(false);
     }
@@ -139,7 +150,13 @@ export default function EditLoyaltyShopForm({
   const [imageRemoved, setImageRemoved] = useState(false);
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet
+      open={open}
+      onOpenChange={(ev) => {
+        form.reset();
+        onOpenChange(ev);
+      }}
+    >
       <SheetContent className="p-0">
         <ScrollArea className="h-screen px-6 pt-6">
           <SheetHeader>
@@ -182,6 +199,79 @@ export default function EditLoyaltyShopForm({
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Tipe</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value.toString()}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih hari" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {LOYALTY_SHOP_TYPES.map((type, index) => (
+                                <SelectItem key={type} value={type}>
+                                  {type}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {form.watch('type') === 'package' && (
+                  <FormField
+                    control={form.control}
+                    name="package_id"
+                    render={({ field }) => (
+                      <FormItem className="grid w-full gap-2">
+                        <FormLabel>Paket</FormLabel>
+                        <FormControl>
+                          <>
+                            <Input
+                              type="hidden"
+                              {...field}
+                              value={field.value?.toString() ?? ''}
+                            />
+
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value?.toString() ?? ''}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Pilih paket" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {packages.map((singlePackage) => (
+                                  <SelectItem
+                                    key={singlePackage.id}
+                                    value={singlePackage.id.toString()}
+                                  >
+                                    {singlePackage.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <FormField
                   control={form.control}

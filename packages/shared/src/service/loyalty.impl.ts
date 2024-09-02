@@ -20,6 +20,7 @@ import type {
   UpdateLoyaltyReward,
   UpdateLoyaltyShop,
   InsertLoyaltyOnReward,
+  InsertLoyaltyFromShop,
 } from '../repository';
 import { LoyaltyService } from './loyalty';
 import { PromiseResult } from '../types';
@@ -149,6 +150,21 @@ export class LoyaltyServiceImpl implements LoyaltyService {
     } satisfies InsertLoyalty;
 
     const result = await this._loyaltyRepository.create(insertedData);
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result,
+    };
+  }
+
+  async createFromShop(data: InsertLoyaltyFromShop) {
+    const result = await this._loyaltyRepository.createFromShop(data);
 
     if (result instanceof Error) {
       return {

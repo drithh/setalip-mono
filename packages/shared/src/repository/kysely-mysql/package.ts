@@ -57,7 +57,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       query = query.where('class_type_id', 'in', types);
     }
 
-    if (is_active) {
+    if (is_active !== undefined) {
       query = query.where('is_active', '=', is_active);
     }
 

@@ -20,16 +20,25 @@ import {
   InsertLoyaltyShop,
   UpdateLoyaltyReward,
   InsertLoyaltyOnReward,
+  UpdateLoyaltyShop,
+  InsertLoyaltyFromShop,
 } from '../loyalty';
 import { sql } from 'kysely';
 import { SelectUser } from '../user';
+import type { PackageRepository } from '../package';
+import { addDays } from 'date-fns';
 
 @injectable()
 export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
   private _db: Database;
+  private _packageRepository: PackageRepository;
 
-  constructor(@inject(TYPES.Database) db: Database) {
+  constructor(
+    @inject(TYPES.Database) db: Database,
+    @inject(TYPES.PackageRepository) packageRepository: PackageRepository
+  ) {
     this._db = db;
+    this._packageRepository = packageRepository;
   }
 
   async count() {
@@ -124,14 +133,17 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
       sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
     ).join(' ') as `${keyof SelectLoyaltyShop} ${'asc' | 'desc'}`;
 
-    let query = this._db.selectFrom('loyalty_shops');
+    let query = this._db
+      .selectFrom('loyalty_shops')
+      .leftJoin('packages', 'loyalty_shops.package_id', 'packages.id');
 
     if (name) {
       query = query.where('loyalty_shops.name', 'like', `%${name}%`);
     }
 
     const queryData = await query
-      .selectAll()
+      .selectAll('loyalty_shops')
+      .select(['packages.name as package_name'])
       .limit(perPage)
       .offset(offset)
       .orderBy(orderBy)
@@ -226,6 +238,16 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
       .executeTakeFirst();
   }
 
+  async findShopById(
+    id: SelectLoyaltyShop['id']
+  ): Promise<SelectLoyaltyShop | undefined> {
+    return this._db
+      .selectFrom('loyalty_shops')
+      .selectAll()
+      .where('loyalty_shops.id', '=', id)
+      .executeTakeFirst();
+  }
+
   async findShopByName(
     name: SelectLoyaltyShop['name']
   ): Promise<SelectLoyaltyShop | undefined> {
@@ -282,6 +304,144 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
       }
 
       return result.rows[0];
+    } catch (error) {
+      console.error('Error creating loyalty:', error);
+      return new Error('Failed to create loyalty');
+    }
+  }
+
+  async createFromShop(
+    data: InsertLoyaltyFromShop
+  ): Promise<SelectLoyalty | Error> {
+    try {
+      const result = await this._db.transaction().execute(async (trx) => {
+        const shop = await this.findShopById(data.shop_id);
+
+        if (shop === undefined) {
+          console.error('Shop not found:', data.shop_id);
+          return new Error('Shop not found');
+        }
+
+        const userCredit = await this.findAmountByUserId(data.user_id);
+
+        if (userCredit === undefined) {
+          console.error('User not found:', data.user_id);
+          return new Error('User not found');
+        }
+
+        const currentCredit = userCredit.total_debit - userCredit.total_credit;
+        if (currentCredit < (shop.price ?? 0)) {
+          console.error('Insufficient loyalty:', currentCredit, shop.price);
+          return new Error(`Insufficient loyalty, user has ${currentCredit}`);
+        }
+
+        if (shop.type === 'package') {
+          if (shop.package_id === null) {
+            console.error('Package not found:', shop.package_id);
+            return new Error('Package not found');
+          }
+
+          const singlePackage = await this._packageRepository.findById(
+            shop.package_id
+          );
+
+          if (singlePackage === undefined) {
+            console.error('Package not found:', shop.package_id);
+            return new Error('Package not found');
+          }
+
+          const expiredAt = addDays(new Date(), singlePackage.valid_for);
+
+          const userPackage = trx
+            .insertInto('user_packages')
+            .values({
+              user_id: data.user_id,
+              package_id: singlePackage.id,
+              expired_at: expiredAt,
+              credit: singlePackage.credit,
+            })
+            .returningAll()
+            .compile();
+
+          const resultUserPackage = await trx.executeQuery(userPackage);
+
+          if (resultUserPackage.rows[0] === undefined) {
+            console.error('Failed to create user package', resultUserPackage);
+            return new Error('Failed to create user package');
+          }
+
+          const userPackageId = resultUserPackage.rows[0].id;
+
+          const creditTransaction = await trx
+            .insertInto('credit_transactions')
+            .values({
+              user_package_id: userPackageId,
+              expired_at: expiredAt,
+              note: `Purchase package ${singlePackage.name} with loyalty points`,
+              class_type_id: singlePackage.class_type_id,
+              user_id: data.user_id,
+              amount: singlePackage.credit,
+              type: 'debit',
+            })
+            .returningAll()
+            .compile();
+
+          const resultCreditTransaction =
+            await trx.executeQuery(creditTransaction);
+
+          if (resultCreditTransaction.rows[0] === undefined) {
+            console.error(
+              'Failed to create credit transaction',
+              resultCreditTransaction
+            );
+            return new Error('Failed to create credit transaction');
+          }
+
+          const query = this._db
+            .insertInto('loyalty_transactions')
+            .values({
+              user_id: data.user_id,
+              amount: shop.price ?? 0,
+              type: 'credit' as const,
+              loyalty_shop_id: data.shop_id,
+              note: `You have purchased ${shop.name}`,
+            })
+            .returningAll()
+            .compile();
+
+          const result = await this._db.executeQuery(query);
+
+          if (result.rows[0] === undefined) {
+            console.error('Failed to create loyalty', result);
+            return new Error('Failed to create loyalty');
+          }
+
+          return result.rows[0];
+        }
+
+        const query = this._db
+          .insertInto('loyalty_transactions')
+          .values({
+            user_id: data.user_id,
+            amount: shop.price ?? 0,
+            type: 'credit' as const,
+            loyalty_shop_id: data.shop_id,
+            note: `You have purchased ${shop.name}`,
+          })
+          .returningAll()
+          .compile();
+
+        const result = await this._db.executeQuery(query);
+
+        if (result.rows[0] === undefined) {
+          console.error('Failed to create loyalty', result);
+          return new Error('Failed to create loyalty');
+        }
+
+        return result.rows[0];
+      });
+
+      return result;
     } catch (error) {
       console.error('Error creating loyalty:', error);
       return new Error('Failed to create loyalty');
@@ -417,7 +577,7 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
     }
   }
 
-  async updateShop(data: UpdateLoyalty) {
+  async updateShop(data: UpdateLoyaltyShop) {
     try {
       const query = await this._db
         .updateTable('loyalty_shops')

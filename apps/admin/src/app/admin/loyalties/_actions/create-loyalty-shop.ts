@@ -50,6 +50,8 @@ export async function createLoyaltyShop(
     description: parsed.data.description,
     price: parsed.data.price,
     image_url: fileUpload[0]?.url ?? null,
+    type: parsed.data.type,
+    package_id: parsed.data.package_id !== 0 ? parsed.data.package_id : null,
   });
 
   if (result.error) {

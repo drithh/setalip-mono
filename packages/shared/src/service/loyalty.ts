@@ -19,6 +19,7 @@ import {
   UpdateLoyaltyReward,
   UpdateLoyaltyShop,
   InsertLoyaltyOnReward,
+  InsertLoyaltyFromShop,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -48,6 +49,9 @@ export interface LoyaltyService {
   ): PromiseResult<SelectAllLoyaltyByUserId, Error>;
 
   create(data: InsertLoyalty): PromiseResult<SelectLoyalty, Error>;
+  createFromShop(
+    data: InsertLoyaltyFromShop
+  ): PromiseResult<SelectLoyalty, Error>;
   createOnReward(data: InsertLoyaltyOnReward): PromiseResult<undefined, Error>;
   createReward(
     data: InsertLoyaltyReward
