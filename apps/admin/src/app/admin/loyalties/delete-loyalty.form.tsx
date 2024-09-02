@@ -58,64 +58,62 @@ const TOAST_MESSAGES = {
 export default function DeleteLoyaltyForm({ users }: DeleteLoyaltyProps) {
   const [openSheet, setOpenSheet] = useState(false);
 
-  const trpcUtils = api.useUtils();
-  const router = useRouter();
-  type FormSchema = DeleteLoyaltySchema;
+  // const trpcUtils = api.useUtils();
+  // const router = useRouter();
+  // type FormSchema = DeleteLoyaltySchema;
 
-  const [formState, formAction] = useFormState(deleteLoyalty, {
-    status: 'default',
-    form: {
-      amount: 0,
-      user_id: 0,
-      note: '',
-    } as FormSchema,
-  });
+  // const [formState, formAction] = useFormState(deleteLoyalty, {
+  //   status: 'default',
+  //   form: {
+  //     amount: 0,
+  //   } as FormSchema,
+  // });
 
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(deleteLoyaltySchema),
-    defaultValues: formState.form,
-  });
+  // const form = useForm<FormSchema>({
+  //   resolver: zodResolver(deleteLoyaltySchema),
+  //   defaultValues: formState.form,
+  // });
 
-  useEffect(() => {
-    toast.dismiss();
-    if (formState.status === 'field-errors') {
-      for (const fieldName in formState.errors) {
-        if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
-          const typedFieldName = fieldName as keyof FormSchema;
-          const error = formState.errors[typedFieldName];
-          if (error) {
-            form.setError(typedFieldName, error);
-          }
-        }
-      }
-    } else if (formState.status === 'error') {
-      toast.error(TOAST_MESSAGES.error.title, {
-        description: formState.errors,
-      });
-      form.setError('root', { message: formState.errors });
-    } else {
-      form.clearErrors();
-    }
+  // useEffect(() => {
+  //   toast.dismiss();
+  //   if (formState.status === 'field-errors') {
+  //     for (const fieldName in formState.errors) {
+  //       if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
+  //         const typedFieldName = fieldName as keyof FormSchema;
+  //         const error = formState.errors[typedFieldName];
+  //         if (error) {
+  //           form.setError(typedFieldName, error);
+  //         }
+  //       }
+  //     }
+  //   } else if (formState.status === 'error') {
+  //     toast.error(TOAST_MESSAGES.error.title, {
+  //       description: formState.errors,
+  //     });
+  //     form.setError('root', { message: formState.errors });
+  //   } else {
+  //     form.clearErrors();
+  //   }
 
-    if (formState.status === 'success') {
-      toast.success(TOAST_MESSAGES.success.title);
-      form.reset();
-      trpcUtils.invalidate();
-      setOpenSheet(false);
-    }
-  }, [formState]);
+  //   if (formState.status === 'success') {
+  //     toast.success(TOAST_MESSAGES.success.title);
+  //     form.reset();
+  //     trpcUtils.invalidate();
+  //     setOpenSheet(false);
+  //   }
+  // }, [formState]);
 
-  const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    form.handleSubmit(() => {
-      toast.loading(TOAST_MESSAGES.loading.title, {
-        description: TOAST_MESSAGES.loading.description,
-      });
-      formAction(new FormData(formRef.current!));
-    })(event);
-  };
+  // const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   form.handleSubmit(() => {
+  //     toast.loading(TOAST_MESSAGES.loading.title, {
+  //       description: TOAST_MESSAGES.loading.description,
+  //     });
+  //     formAction(new FormData(formRef.current!));
+  //   })(event);
+  // };
 
-  const formRef = useRef<HTMLFormElement>(null);
+  // const formRef = useRef<HTMLFormElement>(null);
 
   return (
     <Sheet open={openSheet} onOpenChange={setOpenSheet}>
@@ -131,7 +129,7 @@ export default function DeleteLoyaltyForm({ users }: DeleteLoyaltyProps) {
             </SheetDescription>
           </SheetHeader>
           <div className="l mb-6 grid gap-4 px-1 py-4">
-            <Form {...form}>
+            {/* <Form {...form}>
               <form
                 className="grid gap-4"
                 ref={formRef}
@@ -210,7 +208,7 @@ export default function DeleteLoyaltyForm({ users }: DeleteLoyaltyProps) {
                   Simpan
                 </Button>
               </form>
-            </Form>
+            </Form> */}
           </div>
         </ScrollArea>
       </SheetContent>

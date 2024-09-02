@@ -1,7 +1,5 @@
 'use server';
-import {
-  LoyaltyService,
-} from '@repo/shared/service';
+import { LoyaltyService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { deleteLoyaltySchema, FormDeleteLoyalty } from '../form-schema';
 import {

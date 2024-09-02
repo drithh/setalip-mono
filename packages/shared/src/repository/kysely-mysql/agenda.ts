@@ -574,15 +574,6 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       query = query.where('classes.id', 'in', classNames);
     }
 
-    if (date) {
-      const today = new Date(date);
-      const tomorrow = endOfDay(today);
-
-      query = query
-        .where('agendas.time', '>=', today)
-        .where('agendas.time', '<=', tomorrow);
-    }
-
     const queryData = await query
       .select((eb) => [
         'agendas.class_id',
@@ -616,7 +607,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .offset(offset)
       .orderBy(orderBy)
       .execute();
-    const test = queryData[0];
+
     const queryCount = await query
       .select(({ fn }) => [fn.count<number>('agendas.id').as('count')])
       .executeTakeFirst();

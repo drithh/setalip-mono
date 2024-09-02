@@ -1,7 +1,5 @@
 'use server';
-import {
-  LoyaltyService,
-} from '@repo/shared/service';
+import { LoyaltyService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { deleteLoyaltySchema, FormDeleteLoyalty } from '../form-schema';
 import {
@@ -28,17 +26,17 @@ export async function deleteLoyalty(
 
   const loyaltyService = container.get<LoyaltyService>(TYPES.LoyaltyService);
 
-  const result = await loyaltyService.delete({
-    ...parsed.data,
-  });
+  // const result = await loyaltyService.delete({
+  //   ...parsed.data,
+  // });
 
-  if (result.error) {
-    return {
-      form: parsed.data,
-      status: 'error',
-      errors: result.error.message,
-    };
-  }
+  // if (result.error) {
+  //   return {
+  //     form: parsed.data,
+  //     status: 'error',
+  //     errors: result.error.message,
+  //   };
+  // }
 
   return {
     form: undefined,
