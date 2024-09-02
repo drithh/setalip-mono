@@ -101,4 +101,5 @@ export interface SendNotification {
 
 export interface NotificationService {
   sendNotification(data: SendNotification): PromiseResult<string, Error>;
+  sendInvoice(data: SendNotification): PromiseResult<string, Error>;
 }

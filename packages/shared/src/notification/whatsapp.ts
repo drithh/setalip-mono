@@ -9,6 +9,7 @@ import { env } from '#dep/env';
 import { injectable } from 'inversify';
 import { addMinutes, format } from 'date-fns';
 import { moneyFormatter } from '../util';
+import { PromiseResult } from '../types';
 
 interface PostBody {
   secret: string;
@@ -129,6 +130,22 @@ export class WhatsappNotificationService implements NotificationService {
         message: message,
       });
       return { result: 'Notification sent' };
+    } catch (error) {
+      return { error: error as Error };
+    }
+  }
+
+  async sendInvoice(data: SendNotification) {
+    const message = parseNotification(data.payload);
+    try {
+      const result = await this.sendWhatsappMessage({
+        secret: env.WHAPIFY_SECRET,
+        account: env.WHAPIFY_ACCOUNT,
+        recipient: data.recipient,
+        type: 'document',
+        message: message,
+      });
+      return { result: 'Invoice sent' };
     } catch (error) {
       return { error: error as Error };
     }

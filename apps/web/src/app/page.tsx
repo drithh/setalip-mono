@@ -18,7 +18,7 @@ import Link from 'next/link';
 
 import { Review } from './_components/review';
 import { env } from '@repo/shared/env';
-
+import { InvoiceViewer } from '@repo/shared/pdf';
 const ImageUrl = {
   whyUs: `${env.WEB_URL}/uploads/static/why-us.webp`,
   story: `${env.WEB_URL}/uploads/static/story.webp`,
@@ -60,7 +60,7 @@ export default async function Home() {
   return (
     <main className="relative z-0 mx-auto w-full">
       <div className="">
-        <Carousel className="w-full overflow-x-hidden">
+        <Carousel className="grid w-full grid-cols-4 overflow-x-hidden">
           <CarouselPrevious
             variant={'ghost'}
             className="border-0 bg-transparent text-white hover:bg-transparent"

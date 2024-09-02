@@ -4,6 +4,7 @@
   "exports": {
     "./env": "./src/env.ts",
     "./api": "./src/api/index.ts",
+    "./pdf": "./src/pdf/index.ts",
     "./api/schema": "./src/api/schema.ts",
     "./schema": "./src/schema/index.ts",
     "./auth": "./src/auth/index.ts",
@@ -31,6 +32,7 @@
     "@commander-js/extra-typings": "^12.0.1",
     "@lucia-auth/adapter-mysql": "^3.0.2",
     "@node-rs/argon2": "^1.8.3",
+    "@react-pdf/renderer": "^3.4.4",
     "@t3-oss/env-core": "^0.10.1",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tiptap/core": "2.6.0",
@@ -47,7 +49,9 @@
     "kysely": "^0.27.3",
     "lucia": "^3.2.0",
     "mysql2": "^3.9.7",
+    "react": "^18",
     "react-hook-form": "^7.51.4",
+    "react-pdf-tailwind": "^2.3.0",
     "reflect-metadata": "^0.2.2",
     "superjson": "^2.2.1",
     "typescript": "^5.4.5",
@@ -56,6 +60,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@types/node": "^20.12.11",
+    "@types/react": "^18",
     "esbuild-register": "^3.5.0",
     "kysely-codegen": "^0.15.0",
     "kysely-migration-cli": "^0.4.0"
