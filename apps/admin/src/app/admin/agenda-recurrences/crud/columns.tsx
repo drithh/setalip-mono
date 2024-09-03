@@ -22,6 +22,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import EditForm from './edit.form';
 import DeleteDialog from './delete.dialog';
 import { Badge } from '@repo/ui/components/ui/badge';
+import { format } from 'date-fns';
 
 interface getColumnsProps {
   locations: SelectLocation[];
@@ -92,6 +93,24 @@ export function getColumns({
           </div>
         );
       },
+    },
+    {
+      accessorKey: 'start_date',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Start Date" />
+      ),
+      cell: ({ row }) => (
+        <div>{format(row.original.start_date, 'yyyy-MM-dd')}</div>
+      ),
+    },
+    {
+      accessorKey: 'end_date',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="End Date" />
+      ),
+      cell: ({ row }) => (
+        <div>{format(row.original.end_date, 'yyyy-MM-dd')}</div>
+      ),
     },
     {
       accessorKey: 'time',
@@ -174,19 +193,23 @@ export function getColumns({
 
         return (
           <>
-            <EditForm
-              locations={locations}
-              coaches={coaches}
-              classes={classes}
-              open={showUpdateTaskSheet}
-              onOpenChange={setShowUpdateTaskSheet}
-              data={row.original}
-            />
-            <DeleteDialog
-              open={showDeleteTaskDialog}
-              onOpenChange={setShowDeleteTaskDialog}
-              data={row.original}
-            />
+            {showUpdateTaskSheet && (
+              <EditForm
+                locations={locations}
+                coaches={coaches}
+                classes={classes}
+                open={showUpdateTaskSheet}
+                onOpenChange={setShowUpdateTaskSheet}
+                data={row.original}
+              />
+            )}
+            {showDeleteTaskDialog && (
+              <DeleteDialog
+                open={showDeleteTaskDialog}
+                onOpenChange={setShowDeleteTaskDialog}
+                data={row.original}
+              />
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button

@@ -12,9 +12,7 @@ import {
 import { Button } from '@repo/ui/components/ui/button';
 import { useDeleteMutation } from './_functions/delete';
 import { api } from '@/trpc/react';
-import {
-  SelectAgendaRecurrenceWithCoachAndClass,
-} from '@repo/shared/repository';
+import { SelectAgendaRecurrenceWithCoachAndClass } from '@repo/shared/repository';
 import { CONSTANT, DAYS } from './constant';
 
 interface DeleteProps {
@@ -31,16 +29,13 @@ export default function DeleteDialog({
   const trpcUtils = api.useUtils();
   const deleteMutation = useDeleteMutation();
   const onDelete = () => {
-    deleteMutation.mutate(
-      {
+    deleteMutation
+      .mutateAsync({
         id: data.id,
-      },
-      {
-        onSuccess: () => {
-          trpcUtils.invalidate();
-        },
-      },
-    );
+      })
+      .then(() => {
+        trpcUtils.invalidate();
+      });
   };
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>

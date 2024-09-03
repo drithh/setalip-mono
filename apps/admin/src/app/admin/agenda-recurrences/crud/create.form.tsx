@@ -41,7 +41,8 @@ import {
   SelectClass,
 } from '@repo/shared/repository';
 import { TimePicker } from '@repo/ui/components/datetime-picker';
-import { format, parse } from 'date-fns';
+import { addDays, format, parse } from 'date-fns';
+import { DatePicker } from '@repo/ui/components/date-picker';
 
 interface CreateProps {
   locations: SelectLocation[];
@@ -80,6 +81,8 @@ export default function CreateForm({
       class_id: 0,
       coach_id: 0,
       location_facility_id: 0,
+      start_date: new Date(),
+      end_date: addDays(new Date(), 7),
     } as FormSchema,
   });
 
@@ -368,6 +371,67 @@ export default function CreateForm({
                               )}
                             </SelectContent>
                           </Select>
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="start_date"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Tanggal Mulai</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input
+                            type="hidden"
+                            {...field}
+                            value={field.value.toString()}
+                          />
+
+                          <DatePicker
+                            className="w-full"
+                            selected={field.value}
+                            setSelected={field.onChange}
+                            disabled={(date) => {
+                              const now = new Date();
+                              const endDate = form.getValues('end_date');
+                              return !endDate || date > endDate || date < now;
+                            }}
+                          />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="end_date"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Tanggal Selesai</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input
+                            type="hidden"
+                            {...field}
+                            value={field.value.toString()}
+                          />
+
+                          <DatePicker
+                            className="w-full"
+                            selected={field.value}
+                            setSelected={field.onChange}
+                            disabled={(date) => {
+                              const startDate = form.getValues('start_date');
+                              return !startDate || date < startDate;
+                            }}
+                          />
                         </>
                       </FormControl>
                       <FormMessage />

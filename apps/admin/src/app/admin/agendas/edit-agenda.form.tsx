@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import { DatetimePicker } from '@repo/ui/components/datetime-picker';
 import {
   SelectAgenda,
+  SelectAgendaWithCoachAndClass,
   SelectClass,
   SelectCoachWithUser,
   SelectLocation,
@@ -46,7 +47,7 @@ interface EditAgendaProps {
   locations: SelectLocation[];
   coaches: SelectCoachWithUser[];
   classes: SelectClass[];
-  agenda: SelectAgenda;
+  agenda: SelectAgendaWithCoachAndClass;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -72,7 +73,10 @@ export default function EditAgendaForm({
   open,
   onOpenChange,
 }: EditAgendaProps) {
-  const [selectedLocation, setSelectedLocation] = useState<SelectLocation>();
+  const [selectedLocation, setSelectedLocation] =
+    useState<SelectLocation | null>(
+      locations.find((location) => location.id === agenda.location_id) ?? null,
+    );
   const trpcUtils = api.useUtils();
   type FormSchema = EditAgendaSchema;
 
@@ -126,7 +130,9 @@ export default function EditAgendaForm({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
-      trpcUtils.invalidate();
+      trpcUtils.invalidate().then(() => {
+        form.reset();
+      });
       onOpenChange(false);
     }
   }, [formState]);

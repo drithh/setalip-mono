@@ -43,6 +43,7 @@ import { api } from '@/trpc/react';
 import { CONSTANT, DAYS } from './constant';
 import { TimePicker } from '@repo/ui/components/datetime-picker';
 import { parse, format } from 'date-fns';
+import { DatePicker } from '@repo/ui/components/date-picker';
 
 interface EditProps {
   locations: SelectLocation[];
@@ -86,6 +87,8 @@ export default function EditForm({
       class_id: data.class_id,
       coach_id: data.coach_id,
       location_facility_id: data.location_facility_id,
+      start_date: data.start_date,
+      end_date: data.end_date,
       id: data.id,
     } as FormSchema,
   });
@@ -95,7 +98,10 @@ export default function EditForm({
     defaultValues: formState.form,
   });
 
-  const [selectedLocation, setSelectedLocation] = useState<SelectLocation>();
+  const [selectedLocation, setSelectedLocation] =
+    useState<SelectLocation | null>(
+      locations.find((location) => location.id === data.location_id) ?? null,
+    );
   const locationFacilities = api.location.findAllFacilityById.useQuery(
     {
       id: selectedLocation?.id ?? -1,
@@ -128,8 +134,8 @@ export default function EditForm({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
-      router.refresh();
       trpcUtils.invalidate();
+      router.refresh();
       onOpenChange(false);
     }
   }, [formState]);
@@ -150,7 +156,6 @@ export default function EditForm({
     <Sheet
       open={open}
       onOpenChange={(ev) => {
-        form.reset();
         onOpenChange(ev);
       }}
     >
@@ -392,6 +397,70 @@ export default function EditForm({
                               )}
                             </SelectContent>
                           </Select>
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="start_date"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Tanggal Mulai</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input
+                            type="hidden"
+                            {...field}
+                            value={field.value.toString()}
+                          />
+
+                          <DatePicker
+                            className="w-full"
+                            selected={field.value}
+                            setSelected={field.onChange}
+                            disabled={(date) => {
+                              const endDate = form.getValues('end_date');
+                              return (
+                                !endDate ||
+                                date > endDate ||
+                                date < data.start_date
+                              );
+                            }}
+                          />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="end_date"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Tanggal Selesai</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input
+                            type="hidden"
+                            {...field}
+                            value={field.value.toString()}
+                          />
+
+                          <DatePicker
+                            className="w-full"
+                            selected={field.value}
+                            setSelected={field.onChange}
+                            disabled={(date) => {
+                              const startDate = form.getValues('start_date');
+                              return !startDate || date < startDate;
+                            }}
+                          />
                         </>
                       </FormControl>
                       <FormMessage />

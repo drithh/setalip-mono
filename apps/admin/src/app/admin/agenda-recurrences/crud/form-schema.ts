@@ -1,7 +1,5 @@
 import { FormState } from '@repo/shared/form';
-import {
-  InsertAgendaRecurrence,
-} from '@repo/shared/repository';
+import { InsertAgendaRecurrence } from '@repo/shared/repository';
 import { ZodType, z } from 'zod';
 
 export const createSchema = z.object({
@@ -10,6 +8,8 @@ export const createSchema = z.object({
   class_id: z.coerce.number(),
   coach_id: z.coerce.number(),
   location_facility_id: z.coerce.number(),
+  start_date: z.coerce.date(),
+  end_date: z.coerce.date(),
 }) satisfies ZodType<InsertAgendaRecurrence>;
 
 export type CreateSchema = z.infer<typeof createSchema>;
