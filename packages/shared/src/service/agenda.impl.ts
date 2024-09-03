@@ -796,6 +796,21 @@ export class AgendaServiceImpl implements AgendaService {
   }
 
   async delete(data: DeleteAgenda) {
+    if (data.id === undefined || data.id === null || data.id === 0) {
+      const result = await this._agendaRepository.delete(data);
+
+      if (result instanceof Error) {
+        return {
+          result: undefined,
+          error: result,
+        };
+      }
+
+      return {
+        result: result,
+      };
+    }
+
     const agenda = await this._agendaRepository.findById(data.id);
 
     if (!agenda) {

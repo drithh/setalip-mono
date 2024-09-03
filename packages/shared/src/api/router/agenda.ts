@@ -41,6 +41,8 @@ export const agendaRouter = {
         return date ? convertDate(date) : startOfToday();
       };
 
+      console.log('input.date', input.date, new Date(), process.env.TZ);
+
       const agendas = await agendaService.findAll({
         page: input.page,
         perPage: input.per_page,
@@ -285,6 +287,11 @@ export const agendaRouter = {
 
       const result = await agendaService.delete({
         id: input.id,
+        time: input.time,
+        class_id: input.class_id,
+        coach_id: input.coach_id,
+        location_facility_id: input.location_facility_id,
+        agenda_recurrence_id: input.agenda_recurrence_id,
         is_refund: input.is_refund,
       });
 

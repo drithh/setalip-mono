@@ -18,8 +18,10 @@ export interface AgendaRecurrences {
   class_id: number;
   coach_id: number;
   day_of_week: number;
+  end_date: Date;
   id: Generated<number>;
   location_facility_id: number;
+  start_date: Date;
   time: string;
 }
 
@@ -28,6 +30,7 @@ export interface Agendas {
   class_id: number;
   coach_id: number;
   created_at: Generated<Date>;
+  deleted_at: Generated<Date | null>;
   id: Generated<number>;
   is_show: Generated<number | null>;
   location_facility_id: number;

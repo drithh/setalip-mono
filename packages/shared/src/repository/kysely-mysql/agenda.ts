@@ -32,7 +32,7 @@ import { TYPES } from '#dep/inversify/types';
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/mysql';
 import { Selectable, SelectQueryBuilder, sql } from 'kysely';
 import { SelectCoach } from '../coach';
-import { addDays, endOfDay, format, startOfDay } from 'date-fns';
+import { addDays, addMinutes, endOfDay, format, startOfDay } from 'date-fns';
 import { SelectUser } from '../user';
 
 @injectable()
@@ -47,6 +47,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     const query = await this._db
       .selectFrom('agendas')
       .select(({ fn }) => [fn.count<number>('agendas.id').as('count')])
+      .where('deleted_at', 'is', null)
       .executeTakeFirst();
 
     return query?.count ?? 0;
@@ -77,6 +78,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
   async countCoachAgenda(userId: SelectCoach['user_id']) {
     const query = await this._db
       .selectFrom('agendas')
+      .where('deleted_at', 'is', null)
       .select(({ fn }) => [fn.count<number>('agendas.id').as('count')])
       .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
       .where('coaches.user_id', '=', userId)
@@ -95,12 +97,11 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       locations,
       date,
     } = data;
-
+    const localDate = format(date, 'yyyy-MM-dd');
     const offset = (page - 1) * perPage;
     const orderBy = (
       sort?.split('.').filter(Boolean) ?? ['agendas.time', 'asc']
     ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
-
     let query = this._db
       .with('agenda_data', (eb) =>
         eb
@@ -113,39 +114,49 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             'agendas.location_facility_id',
             'agendas.agenda_recurrence_id',
             'agendas.time',
+            'agendas.deleted_at',
           ])
-          .where(sql`DATE(agendas.time)`, '=', date)
+          .where(sql`DATE(agendas.time)`, '=', localDate)
       )
       .with('missing_recurrences', (eb) =>
         eb
           .selectFrom('agenda_recurrences')
           .select([
             sql<null>`null`.as('id'),
-            sql<number>`1`.as('is_show'),
             'agenda_recurrences.coach_id',
             'agenda_recurrences.class_id',
             'agenda_recurrences.location_facility_id',
             'agenda_recurrences.id as agenda_recurrence_id',
-            sql<Date>`ADDDATE(${date} - INTERVAL (DAYOFWEEK(${date}) - 1) DAY, INTERVAL TIME_TO_SEC(agenda_recurrences.time) / 60 MINUTE)`.as(
+            sql<Date>`ADDDATE(${localDate} - INTERVAL (DAYOFWEEK(${localDate}) - 1) DAY, INTERVAL TIME_TO_SEC(agenda_recurrences.time) / 60 MINUTE)`.as(
               'time'
             ),
+            sql<number>`1`.as('is_show'),
           ])
           .leftJoin(
             'agenda_data',
             'agenda_data.agenda_recurrence_id',
             'agenda_recurrences.id'
           )
-          .where('agenda_data.id', 'is', null)
           .where(
             'agenda_recurrences.day_of_week',
             '=',
-            sql<number>`DAYOFWEEK(${date}) - 1`
+            sql<number>`DAYOFWEEK(${localDate}) - 1`
           )
+          .where('agenda_data.id', 'is', null)
       )
       .with('agendas', (eb) =>
         eb
           .selectFrom('agenda_data')
-          .selectAll()
+          .select([
+            'id',
+            'coach_id',
+            'class_id',
+            'location_facility_id',
+            'agenda_recurrence_id',
+            'time',
+            'is_show',
+          ])
+          .where('deleted_at', 'is', null)
           .unionAll(eb.selectFrom('missing_recurrences').selectAll())
       )
       .selectFrom('agendas')
@@ -222,6 +233,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .selectFrom('agendas')
       .selectAll()
       .where('agendas.id', '=', id)
+      .where('deleted_at', 'is', null)
       .executeTakeFirst();
   }
 
@@ -373,8 +385,8 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
           .as('participant'),
       ])
       .where('coaches.user_id', '=', coachUserId)
-      .where('agendas.time', '>=', new Date())
-      .where('agendas.time', '<', addDays(new Date(), 1))
+      .where(sql`DATE(agendas.time)`, '=', format(new Date(), 'yyyy-MM-dd'))
+      .where('agendas.deleted_at', 'is', null)
       .execute()) satisfies SelectScheduleByDate[];
 
     return query;
@@ -410,6 +422,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       )
       .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
       .innerJoin('class_types', 'classes.class_type_id', 'class_types.id')
+      .where('agendas.deleted_at', 'is', null)
       .where('coaches.user_id', '=', coachUserId);
 
     if (classTypes?.length && classTypes.length > 0) {
@@ -486,6 +499,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       classNames,
       date,
     } = data;
+    const localDate = format(date, 'yyyy-MM-dd');
 
     const offset = (page - 1) * perPage;
     const orderBy = (
@@ -504,8 +518,9 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             'agendas.agenda_recurrence_id',
             'agendas.time',
             'agendas.is_show',
+            'agendas.deleted_at',
           ])
-          .where(sql`DATE(agendas.time)`, '=', date)
+          .where(sql`DATE(agendas.time)`, '=', localDate)
       )
       .with('missing_recurrences', (eb) =>
         eb
@@ -516,7 +531,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             'agenda_recurrences.class_id',
             'agenda_recurrences.location_facility_id',
             'agenda_recurrences.id as agenda_recurrence_id',
-            sql<Date>`ADDDATE(${date} - INTERVAL (DAYOFWEEK(${date}) - 1) DAY, INTERVAL TIME_TO_SEC(agenda_recurrences.time) / 60 MINUTE)`.as(
+            sql<Date>`ADDDATE(${localDate} - INTERVAL (DAYOFWEEK(${localDate}) - 1) DAY, INTERVAL TIME_TO_SEC(agenda_recurrences.time) / 60 MINUTE)`.as(
               'time'
             ),
           ])
@@ -529,7 +544,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
           .where(
             'agenda_recurrences.day_of_week',
             '=',
-            sql<number>`DAYOFWEEK(${date}) - 1`
+            sql<number>`DAYOFWEEK(${localDate}) - 1`
           )
       )
       .with('agendas', (eb) =>
@@ -543,6 +558,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             'agenda_recurrence_id',
             'time',
           ])
+          .where('deleted_at', 'is', null)
           .where('is_show', '=', 1)
           .unionAll(eb.selectFrom('missing_recurrences').selectAll())
       )
@@ -621,6 +637,8 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
   }
 
   async findScheduleById(data: FindScheduleByIdOptions) {
+    const localDate = format(data.time || new Date(), 'yyyy-MM-dd HH:mm:ss');
+
     const schedule = await this._db
       .with('agenda_data', (eb) =>
         eb
@@ -633,6 +651,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             'agendas.agenda_recurrence_id',
             'agendas.time',
             'agendas.is_show',
+            'agendas.deleted_at',
           ])
           .where('agendas.id', '=', data.id ?? 0)
       )
@@ -645,7 +664,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             'agenda_recurrences.class_id',
             'agenda_recurrences.location_facility_id',
             'agenda_recurrences.id as agenda_recurrence_id',
-            sql<Date>`${data.time}`.as('time'),
+            sql<Date>`${localDate}`.as('time'),
           ])
           .leftJoin(
             'agenda_data',
@@ -666,6 +685,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             'agenda_recurrence_id',
             'time',
           ])
+          .where('deleted_at', 'is', null)
           .where('is_show', '=', 1)
           .unionAll(eb.selectFrom('missing_recurrences').selectAll())
       )
@@ -752,6 +772,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       )
       .leftJoin('locations', 'location_facilities.location_id', 'locations.id')
       .leftJoin('class_types', 'classes.class_type_id', 'class_types.id')
+      .where('agendas.deleted_at', 'is', null)
       .where('agenda_bookings.user_id', '=', userId);
 
     if (classTypes?.length && classTypes.length > 0) {
@@ -845,6 +866,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       ])
       .where('agenda_bookings.user_id', '=', data)
       .where('agenda_bookings.status', '=', 'booked')
+      .where('agendas.deleted_at', 'is', null)
       .execute();
 
     return query;
@@ -863,39 +885,62 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         console.error('Failed to get class duration', duration);
         return new Error('Failed to get class duration');
       }
-      const startTime = new Date(data.time);
-      const endTime = new Date(data.time);
-      endTime.setMinutes(endTime.getMinutes() + duration.duration);
-
-      const coachAvailability = await this._db
+      const startTime = format(data.time, 'yyyy-MM-dd HH:mm:ss');
+      const endTime = format(
+        addMinutes(data.time, duration.duration),
+        'yyyy-MM-dd HH:mm:ss'
+      );
+      const coachAgendaAvailability = await this._db
         .selectFrom('agendas')
-        .select(['agendas.id'])
         .innerJoin('classes', 'agendas.class_id', 'classes.id')
+        .select(['agendas.id', 'agendas.time', 'classes.name'])
         .where('coach_id', '=', data.coach_id)
-        .where((eb) =>
-          // if there are start agenda time between the new agenda time
-          eb.or([
-            eb('agendas.time', '>', startTime).and(
-              'agendas.time',
-              '<',
-              endTime
-            ),
-            eb(
-              sql`ADDTIME(agendas.time, SEC_TO_TIME(classes.duration * 60))`,
-              '>',
-              startTime
-            ).and(
-              sql`ADDTIME(agendas.time, SEC_TO_TIME(classes.duration * 60))`,
-              '<',
-              endTime
-            ),
-          ])
+        .where('agendas.deleted_at', 'is', null)
+        .where(sql`agendas.time`, '<', endTime)
+        .where(
+          sql`ADDDATE(agendas.time, INTERVAL classes.duration MINUTE)`,
+          '>',
+          startTime
         )
         .executeTakeFirst();
 
-      if (coachAvailability !== undefined) {
-        console.error('Coach is not available', coachAvailability);
-        return new Error('Coach is not available');
+      if (coachAgendaAvailability !== undefined) {
+        console.error('Coach is not available', coachAgendaAvailability);
+        return new Error(
+          `Coach is not available, ${coachAgendaAvailability?.name} at ${format(coachAgendaAvailability?.time ?? new Date(), 'HH:mm')}`
+        );
+      }
+
+      const coachAgendaRecurrenceAvailability = await this._db
+        .selectFrom('agenda_recurrences')
+        .innerJoin('classes', 'agenda_recurrences.class_id', 'classes.id')
+        .select([
+          'agenda_recurrences.id',
+          'agenda_recurrences.time',
+          'classes.name',
+        ])
+        .where('coach_id', '=', data.coach_id)
+        .where(
+          'agenda_recurrences.day_of_week',
+          '=',
+          sql<number>`DAYOFWEEK(${startTime}) - 1`
+        )
+        .where(sql`agenda_recurrences.time`, '<', endTime)
+        .where(
+          sql`ADDTIME(agenda_recurrences.time, SEC_TO_TIME(classes.duration * 60))`,
+          '>',
+          startTime
+        )
+        .executeTakeFirst();
+
+      if (coachAgendaRecurrenceAvailability !== undefined) {
+        console.error(
+          'Coach is not available',
+          coachAgendaRecurrenceAvailability
+        );
+        return new Error(
+          `Coach is not available, ${coachAgendaRecurrenceAvailability?.name} at ${coachAgendaRecurrenceAvailability?.time}`
+        );
       }
 
       const query = this._db
@@ -920,6 +965,51 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
   async createAgendaRecurrence(data: InsertAgendaRecurrence) {
     try {
+      // check if class
+      const duration = await this._db
+        .selectFrom('classes')
+        .select(['duration'])
+        .where('id', '=', data.class_id)
+        .executeTakeFirst();
+
+      if (duration === undefined) {
+        console.error('Failed to get class duration', duration);
+        return new Error('Failed to get class duration');
+      }
+
+      const endTime = format(
+        addMinutes(`2000-01-01 ${data.time}`, duration.duration),
+        'HH:mm:ss'
+      );
+      console.log('endTime', endTime, data.time, duration.duration);
+      const coachAgendaRecurrenceAvailability = await this._db
+        .selectFrom('agenda_recurrences')
+        .innerJoin('classes', 'agenda_recurrences.class_id', 'classes.id')
+        .select([
+          'agenda_recurrences.id',
+          'agenda_recurrences.time',
+          'classes.name',
+        ])
+        .where('coach_id', '=', data.coach_id)
+        .where('agenda_recurrences.day_of_week', '=', data.day_of_week)
+        .where(sql`agenda_recurrences.time`, '<', endTime)
+        .where(
+          sql`ADDTIME(agenda_recurrences.time, SEC_TO_TIME(classes.duration * 60))`,
+          '>',
+          data.time
+        )
+        .executeTakeFirst();
+
+      if (coachAgendaRecurrenceAvailability !== undefined) {
+        console.error(
+          'Coach is not available',
+          coachAgendaRecurrenceAvailability
+        );
+        return new Error(
+          `Coach is not available, ${coachAgendaRecurrenceAvailability?.name} at ${coachAgendaRecurrenceAvailability?.time}`
+        );
+      }
+
       const query = this._db
         .insertInto('agenda_recurrences')
         .values(data)
@@ -1179,6 +1269,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         .selectAll('classes')
         .select(['agendas.time'])
         .where('agendas.id', '=', data.agenda_id)
+        .where('agendas.deleted_at', 'is', null)
         .executeTakeFirst();
 
       if (currentClass === undefined) {
@@ -1280,10 +1371,37 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
   async delete(data: DeleteAgenda) {
     try {
       const result = await this._db.transaction().execute(async (trx) => {
+        if (!data.id) {
+          if (data.time === undefined) {
+            console.error('Time is required');
+            return new Error('Time is required');
+          }
+          if (!data.agenda_recurrence_id || data.agenda_recurrence_id === 0) {
+            console.error('Class ID is required');
+            return new Error('Class ID is required');
+          }
+
+          const createAgenda = await this.create({
+            is_show: 0,
+            class_id: data.class_id,
+            coach_id: data.coach_id,
+            location_facility_id: data.location_facility_id,
+            time: data.time,
+            agenda_recurrence_id: data.agenda_recurrence_id,
+            deleted_at: new Date(),
+          });
+
+          if (createAgenda instanceof Error) {
+            return createAgenda;
+          }
+
+          return;
+        }
         const agenda = await trx
           .selectFrom('agendas')
           .selectAll()
           .where('id', '=', data.id)
+          .where('agendas.deleted_at', 'is', null)
           .executeTakeFirst();
 
         if (agenda === undefined) {
@@ -1356,11 +1474,12 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         }
 
         const query = await trx
-          .deleteFrom('agendas')
+          .updateTable('agendas')
           .where('id', '=', data.id)
+          .set({ deleted_at: new Date() })
           .executeTakeFirst();
 
-        if (query.numDeletedRows === undefined) {
+        if (query.numUpdatedRows === undefined) {
           console.error('Failed to delete agenda', query);
           return new Error('Failed to delete agenda');
         }
@@ -1453,6 +1572,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
           .selectAll('agenda_bookings')
           .select(['agendas.time', 'classes.name', 'classes.class_type_id'])
           .where('agenda_bookings.id', '=', data.id)
+          .where('agendas.deleted_at', 'is', null)
           .executeTakeFirst();
 
         if (currentAgendaBooking === undefined) {

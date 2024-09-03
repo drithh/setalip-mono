@@ -202,7 +202,6 @@ export function getColumns({
           React.useState(false);
         const [showDeleteAgendaDialog, setShowDeleteAgendaDialog] =
           React.useState(false);
-
         return (
           <>
             {showEditAgendaSheet && (

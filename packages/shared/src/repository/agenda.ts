@@ -31,7 +31,7 @@ export interface FindScheduleByDateOptions extends DefaultPagination {
   locations?: number[];
   classTypes?: number[];
   classNames?: number[];
-  date?: Date;
+  date: Date;
 }
 
 export interface FindAllAgendaByCoachOptions extends DefaultPagination {
@@ -86,7 +86,7 @@ export type SelectLocationAgenda = {
 
 type SelectAgendaWithoutGenerated = Omit<
   SelectAgenda,
-  'created_at' | 'updated_at' | 'updated_by' | 'is_show'
+  'created_at' | 'updated_at' | 'updated_by' | 'is_show' | 'deleted_at'
 >;
 
 export interface SelectAgendaWithCoachAndClass
@@ -197,7 +197,12 @@ export interface SelectBookingParticipant {
 }
 
 export interface DeleteAgenda {
-  id: SelectAgenda['id'];
+  id?: SelectAgenda['id'];
+  agenda_recurrence_id: SelectAgenda['agenda_recurrence_id'] | null;
+  time: SelectAgenda['time'];
+  coach_id: SelectCoach['id'];
+  location_facility_id: SelectLocation['id'];
+  class_id: SelectClassAgenda['class_id'];
   is_refund: boolean;
 }
 

@@ -1,3 +1,4 @@
+import { DeleteAgenda } from '#dep/repository/agenda';
 import { z } from 'zod';
 
 export const cronSchema = z.object({
@@ -105,9 +106,14 @@ export const deleteParticipantSchema = z.object({
 });
 
 export const deleteAgendaSchema = z.object({
-  id: z.coerce.number().refine((data) => data > 0),
+  id: z.coerce.number().optional(),
+  agenda_recurrence_id: z.coerce.number().nullable(),
+  time: z.coerce.date(),
+  coach_id: z.coerce.number(),
+  location_facility_id: z.coerce.number(),
+  class_id: z.coerce.number(),
   is_refund: z.boolean(),
-});
+}) satisfies z.ZodType<DeleteAgenda>;
 
 export const deleteAgendaRecurrenceSchema = z.object({
   id: z.coerce.number().refine((data) => data > 0),

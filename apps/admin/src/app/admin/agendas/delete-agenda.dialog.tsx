@@ -28,10 +28,16 @@ export default function DeleteAgendaDialog({
 }: DeleteAgendaProps) {
   const trpcUtils = api.useUtils();
   const deleteAgenda = useDeleteMutation();
+  console.log(data.time);
   const onDelete = (is_refund: boolean) => {
     deleteAgenda.mutate(
       {
         id: data.id,
+        time: data.time,
+        coach_id: data.coach_id,
+        location_facility_id: data.location_facility_id,
+        class_id: data.class_id,
+        agenda_recurrence_id: data.agenda_recurrence_id,
         is_refund,
       },
       {
