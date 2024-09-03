@@ -6,10 +6,11 @@ WEB="web"
 move_static_folder_and_compress() {
     local APP_NAME=$1
 
-    echo "Moving directory $APP_NAME"
-
-    # Move the directory
+    echo "Moving static directory $APP_NAME"
     mv "./apps/$APP_NAME/.next/static" "./apps/$APP_NAME/.next/standalone/apps/$APP_NAME/.next/static"
+
+    echo "Moving public directory $APP_NAME"
+    mv "./apps/$APP_NAME/public" "./apps/$APP_NAME/.next/standalone/apps/$APP_NAME/public"
 
     echo "Move completed successfully."
 
