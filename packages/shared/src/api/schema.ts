@@ -17,6 +17,9 @@ export const fileUploadSchema = z.object({
     }
     return true;
   }, 'Data is not an instance of a File'),
+});
+
+export const fileUploadLocalSchema = fileUploadSchema.extend({
   folder: z.string(),
 });
 

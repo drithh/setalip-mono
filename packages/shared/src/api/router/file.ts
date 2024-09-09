@@ -4,7 +4,7 @@ import type { TRPCRouterRecord } from '@trpc/server';
 import { protectedProcedure } from '../trpc';
 import { z } from 'zod';
 import { S3 } from 'aws-sdk';
-import { fileUploadSchema } from '../schema';
+import { fileUploadLocalSchema, fileUploadSchema } from '../schema';
 import { env } from '#dep/env';
 import { PutObjectRequest } from 'aws-sdk/clients/s3';
 import path from 'path';
@@ -58,7 +58,7 @@ export const fileRouter = {
       return fileInfos;
     }),
   uploadLocal: protectedProcedure
-    .input(fileUploadSchema)
+    .input(fileUploadLocalSchema)
     .mutation(async ({ ctx, input }) => {
       // const host = ; // Default host
 
