@@ -30,7 +30,10 @@ export async function editPackageTransaction(
 
   const fileUpload =
     parsed.data.file?.size && parsed.data.file?.size > 0
-      ? await api.file.uploadLocal({ files: parsed.data.file })
+      ? await api.file.uploadLocal({
+          files: parsed.data.file,
+          folder: 'transactions',
+        })
       : [{ url: parsed.data.image_url ?? '', name: 'logo' }];
 
   if (fileUpload.length === 0) {

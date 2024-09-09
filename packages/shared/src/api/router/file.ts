@@ -82,11 +82,11 @@ export const fileRouter = {
             }
           }
 
-          const fullPath = path.join(currentPath, 'uploads', filename);
+          const fullPath = path.join(currentPath, input.folder, filename);
           await writeFile(fullPath, buffer);
 
           return {
-            url: `${env.WEB_URL}/uploads/${filename}`,
+            url: `${env.WEB_URL}/uploads/${input.folder}/${filename}`,
             name: file.name,
           };
         })

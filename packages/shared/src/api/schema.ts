@@ -17,6 +17,7 @@ export const fileUploadSchema = z.object({
     }
     return true;
   }, 'Data is not an instance of a File'),
+  folder: z.string(),
 });
 
 export const findAllFacilityByIdSchema = z.object({

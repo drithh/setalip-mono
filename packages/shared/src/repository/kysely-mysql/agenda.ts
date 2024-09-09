@@ -135,7 +135,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             'agenda_recurrences.class_id',
             'agenda_recurrences.location_facility_id',
             'agenda_recurrences.id as agenda_recurrence_id',
-            sql<Date>`ADDDATE(${localDate} - INTERVAL (DAYOFWEEK(${localDate}) - 1) DAY, INTERVAL TIME_TO_SEC(agenda_recurrences.time) / 60 MINUTE)`.as(
+            sql<Date>`ADDDATE(${localDate}, INTERVAL TIME_TO_SEC(agenda_recurrences.time) / 60 MINUTE)`.as(
               'time'
             ),
             sql<number>`1`.as('is_show'),
@@ -556,7 +556,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             'agenda_recurrences.class_id',
             'agenda_recurrences.location_facility_id',
             'agenda_recurrences.id as agenda_recurrence_id',
-            sql<Date>`ADDDATE(${localDate} - INTERVAL (DAYOFWEEK(${localDate}) - 1) DAY, INTERVAL TIME_TO_SEC(agenda_recurrences.time) / 60 MINUTE)`.as(
+            sql<Date>`ADDDATE(${localDate}, INTERVAL TIME_TO_SEC(agenda_recurrences.time) / 60 MINUTE)`.as(
               'time'
             ),
             'agenda_recurrences.start_date',
