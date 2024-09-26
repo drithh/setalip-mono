@@ -27,6 +27,9 @@ import {
   SelectAllAgendaRecurrence,
   UpdateAgendaRecurrence,
   InsertAgendaRecurrence,
+  FindAllAgendaBookingByMonthAndLocation,
+  SelectAgendaBookingWithIncome,
+  SelectCoachAgendaBooking,
 } from '../repository';
 import { PromiseResult } from '../types';
 
@@ -42,6 +45,12 @@ export interface AgendaService {
   findById(
     id: SelectAgenda['id']
   ): PromiseResult<SelectAgenda | undefined, Error>;
+  findAllAgendaBookingByMonthAndLocation(
+    data: FindAllAgendaBookingByMonthAndLocation
+  ): PromiseResult<SelectAgendaBookingWithIncome[], Error>;
+  findAllCoachAgendaByMonthAndLocation(
+    data: FindAllAgendaBookingByMonthAndLocation
+  ): PromiseResult<SelectCoachAgendaBooking[], Error>;
   findAllAgendaBookingByAgendaId(
     id: SelectAgenda['id']
   ): PromiseResult<SelectAgendaBooking[], Error>;

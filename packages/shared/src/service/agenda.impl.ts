@@ -33,6 +33,8 @@ import type {
   InsertAgendaRecurrence,
   FindAllAgendaRecurrenceOption,
   SelectAllAgendaRecurrence,
+  FindAllAgendaBookingByMonthAndLocation,
+  SelectAgendaBookingWithIncome,
 } from '../repository';
 import { AgendaService } from './agenda';
 import {
@@ -126,6 +128,30 @@ export class AgendaServiceImpl implements AgendaService {
 
     return {
       result: singleAgenda,
+    };
+  }
+
+  async findAllAgendaBookingByMonthAndLocation(
+    data: FindAllAgendaBookingByMonthAndLocation
+  ) {
+    const agendaBooking =
+      await this._agendaRepository.findAllAgendaBookingByMonthAndLocation(data);
+
+    return {
+      result: agendaBooking,
+      error: undefined,
+    };
+  }
+
+  async findAllCoachAgendaByMonthAndLocation(
+    data: FindAllAgendaBookingByMonthAndLocation
+  ) {
+    const agendaBooking =
+      await this._agendaRepository.findAllCoachAgendaByMonthAndLocation(data);
+
+    return {
+      result: agendaBooking,
+      error: undefined,
     };
   }
 

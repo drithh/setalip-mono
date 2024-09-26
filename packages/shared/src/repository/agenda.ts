@@ -14,6 +14,7 @@ import {
   DefaultPagination,
   InsertCredit,
   OptionalToRequired,
+  SelectClassType,
   SelectCoach,
   SelectLocation,
   SelectUser,
@@ -234,6 +235,29 @@ export interface FindScheduleByIdOptions {
   time?: SelectAgenda['time'];
 }
 
+export interface FindAllAgendaBookingByMonthAndLocation {
+  date: Date;
+  location_id: number;
+}
+export interface SelectAgendaBookingWithIncome {
+  class_type_id: SelectClassType['id'];
+  class_type_name: SelectClassType['type'];
+  participant: number;
+  income: number;
+}
+
+export interface TotalCoachAgenda {
+  class_type_id: SelectClassType['id'];
+  class_type_name: SelectClassType['type'];
+  total: number;
+}
+
+export interface SelectCoachAgendaBooking {
+  coach_id: SelectCoach['id'];
+  coach_name: SelectUser['name'];
+  agenda: TotalCoachAgenda[];
+}
+
 export interface AgendaRepository {
   count(): Promise<number>;
   countParticipant(id: SelectAgenda['id']): Promise<number>;
@@ -242,6 +266,12 @@ export interface AgendaRepository {
 
   findAll(data: FindAllAgendaOptions): Promise<SelectAllAgenda>;
   findById(id: SelectAgenda['id']): Promise<SelectAgenda | undefined>;
+  findAllAgendaBookingByMonthAndLocation(
+    data: FindAllAgendaBookingByMonthAndLocation
+  ): Promise<SelectAgendaBookingWithIncome[]>;
+  findAllCoachAgendaByMonthAndLocation(
+    data: FindAllAgendaBookingByMonthAndLocation
+  ): Promise<SelectCoachAgendaBooking[]>;
   findAgendaRecurrenceById(
     id: SelectAgendaRecurrence['id']
   ): Promise<SelectAgendaRecurrence | undefined>;

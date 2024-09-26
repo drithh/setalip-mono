@@ -13,6 +13,7 @@ import {
   Trophy,
   Users2,
   CalendarDays,
+  FileBarChart,
 } from 'lucide-react';
 
 export const menus: Menu[] = [
@@ -75,6 +76,11 @@ export const menus: Menu[] = [
     icon: <MessageCircleHeart className="h-5 w-5" />,
     label: 'Reviews',
     path: '/admin/reviews',
+  },
+  {
+    icon: <FileBarChart className="h-5 w-5" />,
+    label: 'Report',
+    path: '/admin/reports',
   },
   {
     icon: <Settings className="h-5 w-5" />,

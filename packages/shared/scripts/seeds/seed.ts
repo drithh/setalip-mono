@@ -59,20 +59,6 @@ export async function up(): Promise<void> {
         .selectAll()
         .execute();
 
-      const frequently_asked_questions: Insertable<FrequentlyAskedQuestions>[] =
-        Array.from({
-          length: 10,
-        }).map((_, index) => ({
-          id: index + 1,
-          question: faker.lorem.sentence(),
-          answer: faker.lorem.paragraph(),
-        }));
-
-      await trx
-        .insertInto('frequently_asked_questions')
-        .values(frequently_asked_questions)
-        .execute();
-
       const deposit_accounts: Insertable<DepositAccounts>[] = Array.from({
         length: 2,
       }).map((_, index) => ({
@@ -364,7 +350,7 @@ export async function up(): Promise<void> {
 
       await trx.insertInto('user_packages').values(user_packages).execute();
 
-      const agendas: Insertable<Agendas>[] = Array.from({ length: 30 }).map(
+      const agendas: Insertable<Agendas>[] = Array.from({ length: 150 }).map(
         (_, index) => {
           const userPackage = user_packages[Math.floor(Math.random() * 30)];
           return {
@@ -384,11 +370,20 @@ export async function up(): Promise<void> {
       await trx.insertInto('agendas').values(agendas).execute();
 
       const agendaBookings: Insertable<AgendaBookings>[] = Array.from({
-        length: 30,
+        length: 2000,
       }).map((_, index) => {
-        const agenda = agendas[Math.floor(Math.random() * 30)];
-        const status = ['booked', 'cancelled', 'checked_in', 'no_show'];
-        const statusRandom = status[Math.floor(Math.random() * 4)] ?? 'booked';
+        const agenda = agendas[Math.floor(Math.random() * 150)];
+        const status = [
+          'booked',
+          'cancelled',
+          'no_show',
+          'checked_in',
+          'checked_in',
+          'checked_in',
+          'checked_in',
+          'checked_in',
+        ];
+        const statusRandom = status[Math.floor(Math.random() * 8)] ?? 'booked';
         return {
           id: index + 1,
           user_id: users[Math.floor(Math.random() * 10)]?.id ?? 1,
@@ -416,6 +411,7 @@ export async function up(): Promise<void> {
           name: faker.commerce.productName(),
           description: faker.lorem.sentence(),
           image_url: faker.image.urlPlaceholder(),
+          type: 'item',
           price: faker.number.int({ min: 10000, max: 100000 }),
         };
       });
@@ -427,6 +423,9 @@ export async function up(): Promise<void> {
 
       for (let userId = 1; userId <= 10; userId++) {
         for (let i = 0; i < 20; i++) {
+          const userPackages = user_packages.filter(
+            (up) => up.user_id === userId
+          );
           creditDebitTransactions.push({
             id: (userId - 1) * 50 + i + 1,
             user_id: userId,
@@ -439,7 +438,9 @@ export async function up(): Promise<void> {
             }),
             class_type_id: class_types[Math.floor(Math.random() * 3)]?.id ?? 1,
             user_package_id:
-              user_packages[Math.floor(Math.random() * 30)]?.id ?? 1,
+              userPackages[Math.floor(Math.random() * userPackages.length)]
+                ?.id ?? 1,
+
             created_at: faker.date.between({
               from: faker.date.past({ years: 4 }),
               to: faker.date.recent(),
@@ -453,27 +454,25 @@ export async function up(): Promise<void> {
         .values(creditDebitTransactions)
         .execute();
 
-      for (let userId = 1; userId <= 10; userId++) {
-        for (let i = 0; i < 100; i++) {
-          const randomIndex = Math.floor(Math.random() * 50);
-          creditCreditTransactions.push({
-            user_id: userId,
-            type: 'credit',
-            amount: 1,
-            note: faker.lorem.sentence(),
-            class_type_id: class_types[Math.floor(Math.random() * 3)]?.id ?? 1,
-            agenda_booking_id:
-              agendaBookings[Math.floor(Math.random() * 30)]?.id ?? 1,
-            credit_transaction_id:
-              // random
-              creditDebitTransactions.reduce((acc: number[], t) => {
-                if (t.user_id === userId) {
-                  acc.push(t.id ?? 1);
-                }
-                return acc;
-              }, [])[randomIndex] ?? 1,
-          });
-        }
+      for (let i = 0; i < 2000; i++) {
+        const randomIndex = Math.floor(Math.random() * 50);
+        const userId = users[Math.floor(Math.random() * 10)]?.id ?? 1;
+        creditCreditTransactions.push({
+          user_id: userId,
+          type: 'credit',
+          amount: 1,
+          note: faker.lorem.sentence(),
+          class_type_id: class_types[Math.floor(Math.random() * 3)]?.id ?? 1,
+          agenda_booking_id: agendaBookings[i]?.id ?? 1,
+          credit_transaction_id:
+            // random
+            creditDebitTransactions.reduce((acc: number[], t) => {
+              if (t.user_id === userId) {
+                acc.push(t.id ?? 1);
+              }
+              return acc;
+            }, [])[randomIndex] ?? 1,
+        });
       }
 
       await trx
@@ -481,31 +480,30 @@ export async function up(): Promise<void> {
         .values(creditCreditTransactions)
         .execute();
 
-      const packageTransactions: Insertable<PackageTransactions>[] = Array.from(
-        {
-          length: 100,
-        }
-      ).map((_, index) => {
-        const status = ['pending', 'completed', 'failed'];
-        const statusRandom = status[Math.floor(Math.random() * 3)] ?? 'pending';
-        const userPackage = user_packages[Math.floor(Math.random() * 30)];
-        return {
-          id: index + 1,
-          user_id: users[Math.floor(Math.random() * 10)]?.id ?? 1,
-          status: statusRandom as 'pending' | 'completed' | 'failed',
-          discount: faker.number.int({ min: 1, max: 10 }),
-          unique_code: faker.number.int({ min: 0, max: 1000 }),
-          amount_paid: faker.number.int({ min: 100000, max: 1000000 }),
-          deposit_account_id:
-            deposit_accounts[Math.floor(Math.random() * 2)]?.id ?? 1,
-          user_package_id: userPackage?.id ?? 1,
-          package_id: userPackage?.package_id ?? 1,
-          created_at: faker.date.between({
-            from: faker.date.past({ years: 4 }),
-            to: faker.date.recent(),
-          }),
-        };
-      });
+      const packageTransactions: Insertable<PackageTransactions>[] =
+        users.flatMap((user) => {
+          const usersPackages = user_packages.filter(
+            (up) => up.user_id === user?.id
+          );
+          return usersPackages.map((up) => {
+            return {
+              user_id: user?.id ?? 1,
+              status: 'completed',
+              discount: faker.number.int({ min: 1, max: 10 }),
+              unique_code: faker.number.int({ min: 0, max: 1000 }),
+              amount_paid: faker.number.int({ min: 100000, max: 1000000 }),
+              deposit_account_id:
+                deposit_accounts[Math.floor(Math.random() * 2)]?.id ?? 1,
+              user_package_id: up.id,
+              package_id: up.package_id,
+              credit: up.credit,
+              created_at: faker.date.between({
+                from: faker.date.past({ years: 4 }),
+                to: faker.date.recent(),
+              }),
+            };
+          });
+        });
 
       await trx
         .insertInto('package_transactions')
@@ -525,10 +523,10 @@ export async function up(): Promise<void> {
           amount: faker.number.int({ min: 1, max: 8 }),
           note: faker.lorem.sentence(),
           loyalty_reward_id: !isDebit
-            ? loyaltyRewards[Math.floor(Math.random() * 5)]?.id ?? 1
+            ? (loyaltyRewards[Math.floor(Math.random() * 5)]?.id ?? 1)
             : null,
           loyalty_shop_id: isDebit
-            ? loyaltyShops[Math.floor(Math.random() * 10)]?.id ?? 1
+            ? (loyaltyShops[Math.floor(Math.random() * 10)]?.id ?? 1)
             : null,
           created_at: faker.date.between({
             from: faker.date.past({ years: 4 }),
@@ -580,6 +578,8 @@ export async function down(): Promise<void> {
         .where('type', '=', 'debit')
         .execute();
       await trx.deleteFrom('user_packages').execute();
+      await trx.deleteFrom('agenda_recurrences').execute();
+      await trx.deleteFrom('otp').execute();
       await trx.deleteFrom('agenda_bookings').execute();
       await trx.deleteFrom('agendas').execute();
       await trx.deleteFrom('loyalty_shops').execute();

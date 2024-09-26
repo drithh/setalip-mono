@@ -52,6 +52,20 @@ const db = new Kysely<any>({
 export async function up(): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
+      const frequently_asked_questions: Insertable<FrequentlyAskedQuestions>[] =
+        Array.from({
+          length: 10,
+        }).map((_, index) => ({
+          id: index + 1,
+          question: faker.lorem.sentence(),
+          answer: faker.lorem.paragraph(),
+        }));
+
+      await trx
+        .insertInto('frequently_asked_questions')
+        .values(frequently_asked_questions)
+        .execute();
+
       const class_names = ['Private', 'Semi', 'Group'];
       const class_types: Insertable<ClassTypes>[] = Array.from({
         length: 3,

@@ -92,6 +92,11 @@ export const findCreditsByUserIdSchema = z.object({
   id: z.coerce.number().refine((data) => data > 0),
 });
 
+export const findAllAgendaBookingByMonthAndLocationSchema = z.object({
+  location_id: z.coerce.number().default(1),
+  date: z.coerce.date().default(new Date()),
+});
+
 export const findAllAgendaSchema = defaultPaginationSchema.extend({
   class_name: z.string().optional(),
   coach_name: z.string().optional(),

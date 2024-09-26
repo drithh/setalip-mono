@@ -26,6 +26,9 @@ import {
   SelectAgendaRecurrence,
   FindScheduleByIdOptions,
   FindAllAgendaRecurrenceOption,
+  FindAllAgendaBookingByMonthAndLocation,
+  SelectAgendaBookingWithIncome,
+  SelectCoachAgendaBooking,
 } from '../agenda';
 import { Database, db, Users } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
@@ -260,6 +263,121 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .where('agendas.id', '=', id)
       .where('deleted_at', 'is', null)
       .executeTakeFirst();
+  }
+
+  findAllAgendaBookingByMonthAndLocation(
+    data: FindAllAgendaBookingByMonthAndLocation
+  ) {
+    const { date, location_id } = data;
+    const query = this._db
+      .selectFrom('agenda_bookings')
+      .innerJoin('agendas', 'agenda_bookings.agenda_id', 'agendas.id')
+      .innerJoin('class_types', 'agendas.class_id', 'class_types.id')
+      .innerJoin(
+        'location_facilities',
+        'agendas.location_facility_id',
+        'location_facilities.id'
+      )
+      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .innerJoin(
+        'credit_transactions as ct_credit',
+        'agenda_bookings.id',
+        'ct_credit.agenda_booking_id'
+      )
+      .innerJoin(
+        'credit_transactions as ct_debit',
+        'ct_credit.credit_transaction_id',
+        'ct_debit.id'
+      )
+      .innerJoin(
+        'user_packages',
+        'ct_debit.user_package_id',
+        'user_packages.id'
+      )
+      .innerJoin(
+        'package_transactions',
+        'user_packages.id',
+        'package_transactions.user_package_id'
+      )
+      .select([
+        'class_types.id as class_type_id',
+        'class_types.type as class_type_name',
+        sql<number>`count(agenda_bookings.id)`.as('participant'),
+        sql<number>`sum(IFNULL(package_transactions.amount_paid / package_transactions.credit, 0))`.as(
+          'income'
+        ),
+      ])
+      .where('locations.id', '=', location_id)
+      .where('agenda_bookings.status', '=', 'checked_in')
+      .where(sql`MONTH(agendas.time)`, '=', format(date, 'MM'))
+      .where(sql`YEAR(agendas.time)`, '=', format(date, 'yyyy'))
+      .groupBy('class_types.id')
+      .execute();
+
+    return query;
+  }
+
+  async findAllCoachAgendaByMonthAndLocation(
+    data: FindAllAgendaBookingByMonthAndLocation
+  ) {
+    const { date, location_id } = data;
+    const month = format(date, 'MM');
+    const query = await this._db
+      .selectFrom('agendas')
+      .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
+      .innerJoin('users', 'coaches.user_id', 'users.id')
+      .innerJoin('class_types', 'agendas.class_id', 'class_types.id')
+      .innerJoin(
+        'location_facilities',
+        'agendas.location_facility_id',
+        'location_facilities.id'
+      )
+      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .select([
+        'users.id as coach_id',
+        'users.name as coach_name',
+        'class_types.id as class_type_id',
+        'class_types.type as class_type_name',
+        sql<number>`count(agendas.id)`.as('total'),
+      ])
+      .where('locations.id', '=', location_id)
+      .where(sql`MONTH(agendas.time)`, '=', format(date, 'MM'))
+      .where(sql`YEAR(agendas.time)`, '=', format(date, 'yyyy'))
+      .groupBy('users.id')
+      .groupBy('class_types.id')
+      .execute();
+
+    // transform data
+    const transformedData = query.reduce<SelectCoachAgendaBooking[]>(
+      (acc, item) => {
+        const coach = acc.find((coach) => coach.coach_id === item.coach_id);
+
+        if (coach === undefined) {
+          acc.push({
+            coach_id: item.coach_id,
+            coach_name: item.coach_name,
+            agenda: [
+              {
+                class_type_id: item.class_type_id,
+                class_type_name: item.class_type_name,
+                total: item.total,
+              },
+            ],
+          });
+        } else {
+          coach.agenda.push({
+            class_type_id: item.class_type_id,
+            class_type_name: item.class_type_name,
+            total: item.total,
+          });
+        }
+
+        return acc;
+      },
+      []
+    );
+
+    return transformedData;
   }
 
   async findAllAgendaRecurrence(data: FindAllAgendaRecurrenceOption) {
