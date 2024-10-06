@@ -8,6 +8,7 @@ import {
   deleteAgendaRecurrenceSchema,
   deleteAgendaSchema,
   deleteParticipantSchema,
+  findAllAgendaBookingByMonthAndLocationSchema,
   findAllAgendaRecurrenceSchema,
   findAllAgendaSchema,
   findAllCoachAgendaSchema,
@@ -40,8 +41,6 @@ export const agendaRouter = {
       const getDate = (date?: string) => {
         return date ? convertDate(date) : startOfToday();
       };
-
-      console.log('input.date', input.date, new Date(), process.env.TZ);
 
       const agendas = await agendaService.findAll({
         page: input.page,
@@ -79,6 +78,26 @@ export const agendaRouter = {
       });
 
       return agendas;
+    }),
+  findAllAgendaBookingByMonthAndLocation: adminProcedure
+    .input(findAllAgendaBookingByMonthAndLocationSchema)
+    .query(async ({ ctx, input }) => {
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+      const result =
+        await agendaService.findAllAgendaBookingByMonthAndLocation(input);
+      return result;
+    }),
+  findAllCoachAgendaByMonthAndLocation: adminProcedure
+    .input(findAllAgendaBookingByMonthAndLocationSchema)
+    .query(async ({ ctx, input }) => {
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+      const result =
+        await agendaService.findAllCoachAgendaByMonthAndLocation(input);
+      return result;
     }),
   findAllSchedule: publicProcedure
     .input(findAllScheduleSchema)

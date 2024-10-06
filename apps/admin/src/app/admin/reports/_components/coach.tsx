@@ -43,12 +43,11 @@ interface ExpenseProps {
 export default function Coach(data: ExpenseProps) {
   const addEmptyExpense = () => {
     const expenses = data.form.getValues('expense');
-    console.log(expenses);
     data.form.setValue(`expense`, [...expenses, { text: '', expense: 0 }]);
   };
 
   return (
-    <Table>
+    <Table className="table-fixed">
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>

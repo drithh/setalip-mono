@@ -28,7 +28,6 @@ export default function DeleteAgendaDialog({
 }: DeleteAgendaProps) {
   const trpcUtils = api.useUtils();
   const deleteAgenda = useDeleteMutation();
-  console.log(data.time);
   const onDelete = (is_refund: boolean) => {
     deleteAgenda.mutate(
       {

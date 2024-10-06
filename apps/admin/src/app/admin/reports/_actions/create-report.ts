@@ -24,8 +24,6 @@ export async function expense(
     };
   }
 
-  console.log('parsed', parsed);
-
   return {
     form: undefined,
     status: 'success',

@@ -45,6 +45,7 @@ const TOAST_MESSAGES = {
 
 export default function FormWrapper(data: ExpenseProps) {
   const [coachExpense, setCoachExpense] = useState(0);
+  coachExpense;
 
   const [formState, formAction] = useFormState(expense, {
     status: 'default',
@@ -74,24 +75,26 @@ export default function FormWrapper(data: ExpenseProps) {
 
   useEffect(() => {
     const coachRate = form.getValues('coach');
-    const coachTotal = coachRate.reduce((acc, coach) => {
-      const currentCoach = data.coachAgenda.find(
-        (agenda) => agenda.coach_id === coach.id,
-      );
-      // sum per classType * coachAgenda
-      const classTypeTotal =
-        currentCoach?.agenda.reduce((acc, agenda) => {
-          const currentClassType = coach.classType.find(
-            (classType) => classType.id === agenda.class_type_id,
-          );
+    const coachTotal =
+      coachRate?.reduce((acc, coach) => {
+        const currentCoach = data.coachAgenda.find(
+          (agenda) => agenda.coach_id === coach.id,
+        );
+        // sum per classType * coachAgenda
+        const classTypeTotal =
+          currentCoach?.agenda.reduce((acc, agenda) => {
+            const currentClassType = coach.classType.find(
+              (classType) => classType.id === agenda.class_type_id,
+            );
 
-          return acc + agenda.total * (currentClassType?.total ?? 0);
-        }, 0) ?? 0;
-      const transportTotal =
-        coach.transport * (currentCoach?.agenda_count ?? 0);
-      return acc + transportTotal + classTypeTotal;
-    }, 0);
-    setCoachExpense(coachTotal);
+            return acc + agenda.total * (currentClassType?.total ?? 0);
+          }, 0) ?? 0;
+        const transportTotal =
+          coach.transport * (currentCoach?.agenda_count ?? 0);
+        console.log(acc, transportTotal, classTypeTotal);
+        return acc + transportTotal + classTypeTotal;
+      }, 0) ?? 0;
+    setCoachExpense(isNaN(coachTotal) ? 0 : coachTotal);
   }, [coachForm]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -106,11 +109,6 @@ export default function FormWrapper(data: ExpenseProps) {
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  const addEmptyExpense = () => {
-    const expenses = form.getValues('expense');
-    console.log(expenses);
-    form.setValue(`expense`, [...expenses, { text: '', expense: 0 }]);
-  };
   return (
     <Form {...form}>
       <form
