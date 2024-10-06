@@ -22,6 +22,7 @@ const MoneyInput = React.forwardRef<HTMLInputElement, InputProps>(
     ) {
       const digits = formattedValue.replace(/\D/g, '');
       const realValue = Number(digits) / 100;
+      console.log(digits, realValue);
       if (realChangeFn) {
         realChangeFn(realValue);
       }

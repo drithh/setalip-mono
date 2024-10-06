@@ -20,7 +20,8 @@ export default function Income(data: IncomeProps) {
         <TableRow>
           <TableHead>Class Type</TableHead>
           <TableHead>Participant</TableHead>
-          <TableHead>Income</TableHead>
+          <TableHead className="w-72">Income</TableHead>
+          <TableHead className="w-72"></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

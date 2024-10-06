@@ -1,20 +1,20 @@
 import { CreateTableBuilder, Kysely, sql } from 'kysely';
 
+export const addDefaultColumns = <T extends string, C extends string = never>(
+  builder: CreateTableBuilder<T, C>
+) => {
+  return builder
+    .addColumn('created_at', 'datetime', (col) =>
+      col.notNull().defaultTo(sql`now()`)
+    )
+    .addColumn('updated_at', 'datetime', (col) =>
+      col.notNull().defaultTo(sql`now()`)
+    )
+    .addColumn('updated_by', 'bigint', (col) =>
+      col.notNull().defaultTo(sql`0`)
+    );
+};
 export async function up(db: Kysely<any>): Promise<void> {
-  const addDefaultColumns = <T extends string, C extends string = never>(
-    builder: CreateTableBuilder<T, C>
-  ) => {
-    return builder
-      .addColumn('created_at', 'datetime', (col) =>
-        col.notNull().defaultTo(sql`now()`)
-      )
-      .addColumn('updated_at', 'datetime', (col) =>
-        col.notNull().defaultTo(sql`now()`)
-      )
-      .addColumn('updated_by', 'bigint', (col) =>
-        col.notNull().defaultTo(sql`0`)
-      );
-  };
   try {
     await db.transaction().execute(async (trx) => {
       await trx.schema

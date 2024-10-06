@@ -256,6 +256,7 @@ export interface SelectCoachAgendaBooking {
   coach_id: SelectCoach['id'];
   coach_name: SelectUser['name'];
   agenda: TotalCoachAgenda[];
+  agenda_count: number;
 }
 
 export interface AgendaRepository {

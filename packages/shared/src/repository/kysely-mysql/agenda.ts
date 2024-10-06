@@ -321,12 +321,12 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     data: FindAllAgendaBookingByMonthAndLocation
   ) {
     const { date, location_id } = data;
-    const month = format(date, 'MM');
-    const query = await this._db
+    const queryAgenda = await this._db
       .selectFrom('agendas')
       .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
       .innerJoin('users', 'coaches.user_id', 'users.id')
-      .innerJoin('class_types', 'agendas.class_id', 'class_types.id')
+      .innerJoin('classes', 'agendas.class_id', 'classes.id')
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id')
       .innerJoin(
         'location_facilities',
         'agendas.location_facility_id',
@@ -334,7 +334,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       )
       .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
       .select([
-        'users.id as coach_id',
+        'coaches.id as coach_id',
         'users.name as coach_name',
         'class_types.id as class_type_id',
         'class_types.type as class_type_name',
@@ -348,7 +348,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .execute();
 
     // transform data
-    const transformedData = query.reduce<SelectCoachAgendaBooking[]>(
+    const transformedAgenda = queryAgenda.reduce<SelectCoachAgendaBooking[]>(
       (acc, item) => {
         const coach = acc.find((coach) => coach.coach_id === item.coach_id);
 
@@ -363,6 +363,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
                 total: item.total,
               },
             ],
+            agenda_count: 0,
           });
         } else {
           coach.agenda.push({
@@ -376,6 +377,34 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       },
       []
     );
+
+    const queryDays = await this._db
+      .selectFrom('agendas')
+      .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
+      .innerJoin(
+        'location_facilities',
+        'agendas.location_facility_id',
+        'location_facilities.id'
+      )
+      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .select([
+        'coaches.id',
+        sql<number>`COUNT(DISTINCT DAY(agendas.time))`.as('days_with_agendas'),
+      ])
+      .where('locations.id', '=', location_id)
+      .where(sql`MONTH(agendas.time)`, '=', format(date, 'MM'))
+      .where(sql`YEAR(agendas.time)`, '=', format(date, 'yyyy'))
+      .groupBy('coaches.id')
+      .execute();
+
+    const transformedData = transformedAgenda.map((coach) => {
+      const days = queryDays.find((day) => day.id === coach.coach_id);
+
+      return {
+        ...coach,
+        agenda_count: days?.days_with_agendas ?? 0,
+      };
+    });
 
     return transformedData;
   }
