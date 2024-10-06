@@ -6,7 +6,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
       await trx.schema
-        .createTable('report_form')
+        .createTable('report_forms')
         .addColumn('input', 'text')
         .$call(addDefaultColumns)
         .execute();
@@ -19,7 +19,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 export async function down(db: Kysely<any>): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
-      await trx.schema.dropTable('report_form').execute();
+      await trx.schema.dropTable('report_forms').execute();
     });
   } catch (error) {
     console.error(error);

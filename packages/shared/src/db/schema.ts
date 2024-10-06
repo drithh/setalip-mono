@@ -275,6 +275,13 @@ export interface PackageTransactions {
   voucher_id: Generated<number | null>;
 }
 
+export interface ReportForms {
+  created_at: Generated<Date>;
+  input: Generated<string | null>;
+  updated_at: Generated<Date>;
+  updated_by: Generated<number>;
+}
+
 export interface ResetPassword {
   created_at: Generated<Date>;
   expired_at: Date;
@@ -389,6 +396,7 @@ export interface DB {
   otp: Otp;
   package_transactions: PackageTransactions;
   packages: Packages;
+  report_forms: ReportForms;
   reset_password: ResetPassword;
   reviews: Reviews;
   statistics: Statistics;

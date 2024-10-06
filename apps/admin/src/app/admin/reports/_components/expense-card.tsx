@@ -67,16 +67,7 @@ export default function ExpenseCard({
     date: selectedDate,
   });
 
-  const reportForms = [
-    {
-      text: 'Income From Classes',
-      expense: 0,
-    },
-    {
-      text: 'Expense',
-      expense: 0,
-    },
-  ];
+  const reportForms = api.reportForm.findAll.useQuery();
 
   return (
     <Card className="mb-8">
@@ -121,7 +112,7 @@ export default function ExpenseCard({
         </div>
 
         <FormWrapper
-          expense={reportForms}
+          reportForms={reportForms.data?.result ?? []}
           coachAgenda={coachAgenda.data?.result ?? []}
           classTypes={classTypes}
         />

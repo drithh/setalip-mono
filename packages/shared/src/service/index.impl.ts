@@ -14,3 +14,4 @@ export * from '#dep/service/web-setting.impl';
 export * from '#dep/service/dashboard.impl';
 export * from '#dep/service/voucher.impl';
 export * from '#dep/service/statistic.impl';
+export * from '#dep/service/report-form.impl';

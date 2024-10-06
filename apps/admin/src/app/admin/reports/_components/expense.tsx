@@ -36,6 +36,7 @@ interface ExpenseProps {
 }
 
 export default function Expense(data: ExpenseProps) {
+  console.log(data.form.getValues('expense'));
   const addEmptyExpense = () => {
     const expenses = data.form.getValues('expense');
     data.form.setValue(`expense`, [...expenses, { text: '', expense: 0 }]);

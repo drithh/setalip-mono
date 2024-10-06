@@ -17,6 +17,7 @@ import {
   WebSettingRepository,
   VoucherRepository,
   StatisticRepository,
+  ReportFormRepository,
 } from '#dep/repository/index';
 import {
   KyselyMySqlUserRepository,
@@ -33,6 +34,7 @@ import {
   KyselyMySqlWebSettingRepository,
   KyselyMySqlVoucherRepository,
   KyselyMySqlStatisticRepository,
+  KyselyMySqlReportFormRepository,
 } from '#dep/repository/kysely-mysql/index';
 import {
   NotificationService,
@@ -55,6 +57,7 @@ import {
   DashboardServiceImpl,
   VoucherServiceImpl,
   StatisticServiceImpl,
+  ReportFormServiceImpl,
 } from '#dep/service/index.impl';
 import {
   AuthService,
@@ -73,6 +76,7 @@ import {
   DashboardService,
   VoucherService,
   StatisticService,
+  ReportFormService,
 } from '#dep/service/index';
 
 const container = new Container();
@@ -147,6 +151,12 @@ container
 container
   .bind<StatisticService>(TYPES.StatisticService)
   .to(StatisticServiceImpl);
+container
+  .bind<ReportFormRepository>(TYPES.ReportFormRepository)
+  .to(KyselyMySqlReportFormRepository);
+container
+  .bind<ReportFormService>(TYPES.ReportFormService)
+  .to(ReportFormServiceImpl);
 
 export { container };
 

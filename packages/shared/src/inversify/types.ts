@@ -1,4 +1,3 @@
-import { OtpService } from './../service/otp';
 const TYPES = {
   Auth: Symbol.for('Auth'),
   NotificationService: Symbol.for('NotificationService'),
@@ -33,6 +32,8 @@ const TYPES = {
   VoucherService: Symbol.for('VoucherService'),
   StatisticRepository: Symbol.for('StatisticRepository'),
   StatisticService: Symbol.for('StatisticService'),
+  ReportFormRepository: Symbol.for('ReportFormRepository'),
+  ReportFormService: Symbol.for('ReportFormService'),
 };
 
 export { TYPES };

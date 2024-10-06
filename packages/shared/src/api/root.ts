@@ -12,6 +12,7 @@ import { voucherRouter } from './router/voucher';
 import { webSettingRouter } from './router/web-settings';
 import { createTRPCRouter } from './trpc';
 import { classRouter } from './router/class';
+import { reportFormRouter } from './router/report-form';
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -27,6 +28,7 @@ export const appRouter = createTRPCRouter({
   voucher: voucherRouter,
   statistic: statisticRouter,
   cron: cronRouter,
+  reportForm: reportFormRouter,
 });
 
 // export type definition of API

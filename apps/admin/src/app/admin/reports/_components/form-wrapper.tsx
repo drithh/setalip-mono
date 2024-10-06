@@ -20,12 +20,13 @@ import Expense from './expense';
 import {
   SelectClassType,
   SelectCoachAgendaBooking,
+  SelectReportForm,
 } from '@repo/shared/repository';
 import Coach from './coach';
 import { Separator } from '@repo/ui/components/ui/separator';
 
 interface ExpenseProps {
-  expense: ExpenseSchema['expense'];
+  reportForms: SelectReportForm[];
   coachAgenda: SelectCoachAgendaBooking[];
   classTypes: SelectClassType[];
 }
@@ -45,12 +46,15 @@ const TOAST_MESSAGES = {
 
 export default function FormWrapper(data: ExpenseProps) {
   const [coachExpense, setCoachExpense] = useState(0);
-  coachExpense;
+  const defaultExpense = data.reportForms.map((reportForm) => ({
+    text: reportForm.input ?? '',
+    expense: 0,
+  }));
 
   const [formState, formAction] = useFormState(expense, {
     status: 'default',
     form: {
-      expense: data.expense,
+      expense: [],
       coach: data.coachAgenda.map((coach) => ({
         id: coach.coach_id,
         transport: 0,
@@ -66,6 +70,16 @@ export default function FormWrapper(data: ExpenseProps) {
     resolver: zodResolver(expenseSchema),
     defaultValues: formState.form,
   });
+
+  useEffect(() => {
+    form.setValue(
+      'expense',
+      data.reportForms.map((reportForm) => ({
+        text: reportForm.input ?? '',
+        expense: 0,
+      })),
+    );
+  }, [data.reportForms]);
 
   const coachForm = form.watch(
     data.coachAgenda.map(
@@ -91,7 +105,6 @@ export default function FormWrapper(data: ExpenseProps) {
           }, 0) ?? 0;
         const transportTotal =
           coach.transport * (currentCoach?.agenda_count ?? 0);
-        console.log(acc, transportTotal, classTypeTotal);
         return acc + transportTotal + classTypeTotal;
       }, 0) ?? 0;
     setCoachExpense(isNaN(coachTotal) ? 0 : coachTotal);
@@ -122,7 +135,7 @@ export default function FormWrapper(data: ExpenseProps) {
         <div className="ml-4">
           <Expense
             coachExpense={coachExpense}
-            expense={data.expense}
+            expense={defaultExpense}
             form={form}
           />
         </div>
