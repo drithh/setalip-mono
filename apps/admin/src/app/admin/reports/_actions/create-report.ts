@@ -1,6 +1,4 @@
 'use server';
-import { AgendaService } from '@repo/shared/service';
-import { container, TYPES } from '@repo/shared/inversify';
 import { expenseSchema, FormExpense } from '../_components/form-schema';
 import {
   convertFormData,

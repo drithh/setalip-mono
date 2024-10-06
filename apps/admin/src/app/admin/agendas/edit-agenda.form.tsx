@@ -19,7 +19,6 @@ import { EditAgendaSchema, editAgendaSchema } from './form-schema';
 import { toast } from 'sonner';
 import { DatetimePicker } from '@repo/ui/components/datetime-picker';
 import {
-  SelectAgenda,
   SelectAgendaWithCoachAndClass,
   SelectClass,
   SelectCoachWithUser,

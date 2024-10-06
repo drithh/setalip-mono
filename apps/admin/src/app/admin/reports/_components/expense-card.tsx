@@ -2,29 +2,19 @@
 
 import {
   FindAllAgendaBookingByMonthAndLocation,
-  SelectAgendaBookingWithIncome,
   SelectClassType,
-  SelectCoachAgendaBooking,
   SelectLocation,
 } from '@repo/shared/repository';
-import { TYPES, container } from '@repo/shared/inversify';
-import {
-  AgendaService,
-  ClassTypeService,
-  LocationService,
-} from '@repo/shared/service';
-import { findAllAgendaBookingByMonthAndLocationSchema } from '@repo/shared/api/schema';
+
+
 import React, { useState } from 'react';
 import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
 } from '@repo/ui/components/ui/card';
 
 import Income from './income';
-import { Separator } from '@repo/ui/components/ui/separator';
-import Expense from './expense';
 import FormWrapper from './form-wrapper';
 import { MonthPicker } from '@repo/ui/components/month-picker';
 import { Button } from '@repo/ui/components/ui/button';
@@ -35,7 +25,6 @@ import {
   SelectContent,
   SelectItem,
 } from '@repo/ui/components/ui/select';
-import router from 'next/router';
 import { api } from '@/trpc/react';
 
 export interface ExpenseCardProps {

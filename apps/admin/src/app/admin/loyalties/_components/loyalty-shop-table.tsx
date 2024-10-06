@@ -10,7 +10,6 @@ import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 import { getColumns } from './loyalty-shop-columns';
 import {
   SelectAllLoyaltyShop,
-  SelectAllPackage,
   SelectPackages,
 } from '@repo/shared/repository';
 import { api } from '@/trpc/react';

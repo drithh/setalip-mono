@@ -42,7 +42,6 @@ import {
   SelectContent,
   SelectItem,
 } from '@repo/ui/components/ui/select';
-import { DAYS } from '../agenda-recurrences/crud/constant';
 import { LOYALTY_SHOP_TYPES } from './constant';
 import { SelectPackages } from '@repo/shared/repository';
 

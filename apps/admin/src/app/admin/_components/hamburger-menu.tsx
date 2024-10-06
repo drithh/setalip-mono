@@ -8,7 +8,6 @@ import {
   CalendarCheck,
   CalendarClock,
   CreditCard,
-  HandHeart,
   LogOut,
   Menu,
   Phone,

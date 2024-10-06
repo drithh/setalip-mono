@@ -15,7 +15,6 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import DeleteLoyaltyShopDialog from '../delete-loyalty-shop.dialog';
 import EditLoyaltyShopForm from '../edit-loyalty-shop.form';
-import { moneyFormatter } from '@repo/shared/util';
 import {
   SelectAllLoyaltyShop,
   SelectAllPackage,

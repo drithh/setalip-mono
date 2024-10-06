@@ -1,24 +1,9 @@
 'use client';
 
 import { Button } from '@repo/ui/components/ui/button';
-import { Input } from '@repo/ui/components/ui/input';
-import { deleteLoyalty } from './_actions/delete-loyalty';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@repo/ui/components/ui/form';
-import { DeleteLoyaltySchema, deleteLoyaltySchema } from './form-schema';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+
 import { SelectAllUserName } from '@repo/shared/repository';
 import {
   Sheet,
@@ -28,15 +13,9 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui/components/ui/select';
+
+
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
-import { api } from '@/trpc/react';
 
 interface DeleteLoyaltyProps {
   users: SelectAllUserName;

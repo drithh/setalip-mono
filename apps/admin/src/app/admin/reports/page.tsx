@@ -1,18 +1,13 @@
 import { FindAllAgendaBookingByMonthAndLocation } from '@repo/shared/repository';
 import { TYPES, container } from '@repo/shared/inversify';
 import {
-  AgendaService,
   ClassTypeService,
   LocationService,
 } from '@repo/shared/service';
 import { findAllAgendaBookingByMonthAndLocationSchema } from '@repo/shared/api/schema';
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@repo/ui/components/ui/card';
+
+
 
 import ExpenseCard from './_components/expense-card';
 
@@ -20,15 +15,9 @@ export interface IndexPageProps {
   searchParams: FindAllAgendaBookingByMonthAndLocation;
 }
 
-const getSleep = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 60000));
-};
-
 export default async function Reports({ searchParams }: IndexPageProps) {
   const search =
     findAllAgendaBookingByMonthAndLocationSchema.parse(searchParams);
-
-  await getSleep();
 
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,

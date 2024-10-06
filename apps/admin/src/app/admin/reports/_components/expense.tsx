@@ -1,7 +1,6 @@
 'use client';
 
 // import { SelectAgendaBookingWithExpense } from '@repo/shared/repository';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { moneyFormatter } from '@repo/shared/util';
 import {
   Table,
@@ -11,11 +10,8 @@ import {
   TableBody,
   TableCell,
 } from '@repo/ui/components/ui/table';
-import { useFormState } from 'react-dom';
-import { useForm, UseFormReturn } from 'react-hook-form';
-import { expense } from '../_actions/create-report';
-import { ExpenseSchema, expenseSchema, FormExpense } from './form-schema';
-import { useEffect, useRef, useState } from 'react';
+import { UseFormReturn } from 'react-hook-form';
+import { ExpenseSchema } from './form-schema';
 import { Button } from '@repo/ui/components/ui/button';
 import { Trash } from 'lucide-react';
 import { MoneyInput } from '@repo/ui/components/money-input';
@@ -25,9 +21,7 @@ import {
   FormItem,
   FormControl,
   FormMessage,
-  Form,
 } from '@repo/ui/components/ui/form';
-import { toast } from 'sonner';
 
 interface ExpenseProps {
   coachExpense: number;

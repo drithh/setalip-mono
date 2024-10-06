@@ -18,7 +18,6 @@ import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllLoyaltySchema } from '@repo/shared/api/schema';
 import CreateLoyaltyForm from '../create-loyalty.form';
-import DeleteLoyaltyForm from '../delete-loyalty.form';
 
 interface PackageTableProps {
   users: SelectAllUserName;

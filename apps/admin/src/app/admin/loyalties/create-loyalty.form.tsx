@@ -10,7 +10,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,7 +18,6 @@ import {
 import { CreateLoyaltySchema, createLoyaltySchema } from './form-schema';
 import { toast } from 'sonner';
 import {
-  SelectAllLoyaltyReward,
   SelectAllLoyaltyShop,
   SelectAllUserName,
 } from '@repo/shared/repository';

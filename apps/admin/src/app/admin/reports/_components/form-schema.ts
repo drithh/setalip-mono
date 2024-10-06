@@ -1,7 +1,5 @@
 import { FormState } from '@repo/shared/form';
-import { InsertAgendaRecurrence } from '@repo/shared/repository';
-import { ZodType, z } from 'zod';
-import { expense } from '../_actions/create-report';
+import { z } from 'zod';
 
 export const expenseSchema = z.object({
   expense: z.array(
