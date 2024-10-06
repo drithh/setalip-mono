@@ -20,9 +20,15 @@ export interface IndexPageProps {
   searchParams: FindAllAgendaBookingByMonthAndLocation;
 }
 
+const getSleep = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 60000));
+};
+
 export default async function Reports({ searchParams }: IndexPageProps) {
   const search =
     findAllAgendaBookingByMonthAndLocationSchema.parse(searchParams);
+
+  await getSleep();
 
   const classTypeService = container.get<ClassTypeService>(
     TYPES.ClassTypeService,
@@ -39,7 +45,7 @@ export default async function Reports({ searchParams }: IndexPageProps) {
       <ExpenseCard
         locations={locations.result ?? []}
         classTypes={classTypes.result ?? []}
-        searchParams={searchParams}
+        searchParams={search}
       />
     </main>
   );

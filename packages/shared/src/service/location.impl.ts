@@ -14,6 +14,7 @@ import type {
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
 import { LocationService } from './location';
+import { unstable_cache } from 'next/cache';
 
 @injectable()
 export class LocationServiceImpl implements LocationService {
@@ -26,7 +27,12 @@ export class LocationServiceImpl implements LocationService {
   }
 
   async findAll() {
-    const locations = await this._locationRepository.findAll();
+    const getCacchedLocations = unstable_cache(
+      async () => await this._locationRepository.findAll(),
+      ['locations-cache']
+    );
+
+    const locations = await getCacchedLocations();
 
     return {
       result: locations,

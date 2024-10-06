@@ -7,7 +7,7 @@ import type {
   SelectClassType,
   UpdateClassType,
 } from '../repository';
-
+import { unstable_cache } from 'next/cache';
 @injectable()
 export class ClassTypeServiceImpl implements ClassTypeService {
   private _classTypeRepository: ClassTypeRepository;
@@ -20,7 +20,12 @@ export class ClassTypeServiceImpl implements ClassTypeService {
   }
 
   async findAll() {
-    const classTypes = await this._classTypeRepository.findAll();
+    const getCachedClassTypes = unstable_cache(
+      async () => await this._classTypeRepository.findAll(),
+      ['class-types-cache']
+    );
+
+    const classTypes = await getCachedClassTypes();
 
     return {
       result: classTypes,
