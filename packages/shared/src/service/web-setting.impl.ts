@@ -21,6 +21,7 @@ import type {
   findAllReviewOption,
 } from '../repository';
 import { WebSettingService } from './web-setting';
+import { unstable_cache } from 'next/cache';
 
 @injectable()
 export class WebSettingServiceImpl implements WebSettingService {
@@ -51,12 +52,19 @@ export class WebSettingServiceImpl implements WebSettingService {
   }
 
   async findLogo() {
-    const logo = await this._webSettingRepository.findLogo();
+    const getCachedLogo = unstable_cache(
+      async () => await this._webSettingRepository.findLogo(),
+      ['logo-cache']
+    );
+
+    const logo = await getCachedLogo();
+
     if (!logo) {
       return {
         error: new Error('Logo not found'),
       };
     }
+
     return {
       result: logo,
     };
@@ -75,8 +83,11 @@ export class WebSettingServiceImpl implements WebSettingService {
   }
 
   async findAllDepositAccount(data: findAllDepositAccountOption) {
-    const depositAccounts =
-      await this._webSettingRepository.findAllDepositAccount(data);
+    const getCachedDepositAccounts = unstable_cache(
+      async () => await this._webSettingRepository.findAllDepositAccount(data),
+      ['deposit-accounts-cache']
+    );
+    const depositAccounts = await getCachedDepositAccounts();
 
     return {
       result: depositAccounts,
@@ -113,7 +124,11 @@ export class WebSettingServiceImpl implements WebSettingService {
   }
 
   async findAllCarousel() {
-    const carousels = await this._webSettingRepository.findAllCarousel();
+    const getCachedCarousel = unstable_cache(
+      async () => await this._webSettingRepository.findAllCarousel(),
+      ['carousel-cache']
+    );
+    const carousels = await getCachedCarousel();
 
     return {
       result: carousels,
