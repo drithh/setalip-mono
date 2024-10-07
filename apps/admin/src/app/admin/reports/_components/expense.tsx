@@ -25,7 +25,6 @@ import {
 
 interface ExpenseProps {
   coachExpense: number;
-  expense: ExpenseSchema['expense'];
   form: UseFormReturn<ExpenseSchema>;
 }
 

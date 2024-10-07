@@ -61,11 +61,11 @@ export default function ExpenseCard({
     date: selectedDate,
   });
 
-  const reportForms = api.reportForm.findAll.useQuery();
-  const defaultExpense = reportForms.data?.result?.map((reportForm) => ({
-    text: reportForm.input ?? '',
-    expense: 0,
-  }));
+  // const reportForms = api.reportForm.findAll.useQuery();
+  // const defaultExpense = reportForms.data?.result?.map((reportForm) => ({
+  //   text: reportForm.input ?? '',
+  //   expense: 0,
+  // }));
 
   const [coachExpense, setCoachExpense] = useState(0);
 
@@ -96,15 +96,15 @@ export default function ExpenseCard({
     );
   }, [coachAgenda.data?.result]);
 
-  useEffect(() => {
-    form.setValue(
-      'expense',
-      reportForms.data?.result?.map((reportForm) => ({
-        text: reportForm.input ?? '',
-        expense: 0,
-      })) ?? [],
-    );
-  }, [reportForms.data?.result]);
+  // useEffect(() => {
+  //   form.setValue(
+  //     'expense',
+  //     reportForms.data?.result?.map((reportForm) => ({
+  //       text: reportForm.input ?? '',
+  //       expense: 0,
+  //     })) ?? [],
+  //   );
+  // }, [reportForms.data?.result]);
 
   const coachForm = form.watch(
     coachAgenda.data?.result?.map(
@@ -145,6 +145,60 @@ export default function ExpenseCard({
 
   const formRef = useRef<HTMLFormElement>(null);
 
+  const onExport = async () => {
+    {
+      const agendaIncome = monthlyIncome.data?.result?.map((item) => {
+        return {
+          name: item.class_type_name,
+          total: item.participant,
+          amount: item.income,
+        };
+      });
+      const coaches = form.getValues('coach');
+      const outcomeCoach = coachAgenda.data?.result?.map((item) => {
+        const coach = coaches.find((coach) => coach.id === item.coach_id);
+        return {
+          name: item.coach_name,
+          transport: {
+            amount: item.agenda_count,
+            rate: coach?.transport ?? 0,
+          },
+          classType: item.agenda.map((agenda) => {
+            const coachRate = coach?.classType.find(
+              (classType) => classType.id === agenda.class_type_id,
+            );
+            return {
+              name: agenda.class_type_name,
+              rate: coachRate?.total ?? 0,
+              amount: agenda.total,
+            };
+          }),
+        };
+      });
+      const customOutcome = form.getValues('expense').map((item) => {
+        return {
+          name: item.text,
+          total: item.expense,
+        };
+      });
+      await openReportPDF({
+        report: {
+          locationName:
+            locations.find((location) => location.id === selectedLocation)
+              ?.name ?? '',
+          date: selectedDate,
+        },
+        income: {
+          agenda: agendaIncome ?? [],
+        },
+        outcome: {
+          coach: outcomeCoach ?? [],
+          custom: customOutcome,
+        },
+      });
+    }
+  };
+
   return (
     <Card className="mb-8">
       <CardHeader>
@@ -175,64 +229,7 @@ export default function ExpenseCard({
             <MonthPicker onDateChange={(value) => setSelectedDate(value)} />
           </div>
           <div className="flex gap-2">
-            <Button
-              onClick={async () => {
-                const agendaIncome = monthlyIncome.data?.result?.map((item) => {
-                  return {
-                    name: item.class_type_name,
-                    total: item.participant,
-                    amount: item.income,
-                  };
-                });
-                const coaches = form.getValues('coach');
-                const outcomeCoach = coachAgenda.data?.result?.map((item) => {
-                  const coach = coaches.find(
-                    (coach) => coach.id === item.coach_id,
-                  );
-                  return {
-                    name: item.coach_name,
-                    transport: {
-                      amount: item.agenda_count,
-                      rate: coach?.transport ?? 0,
-                    },
-                    classType: item.agenda.map((agenda) => {
-                      const coachRate = coach?.classType.find(
-                        (classType) => classType.id === agenda.class_type_id,
-                      );
-                      return {
-                        name: agenda.class_type_name,
-                        rate: coachRate?.total ?? 0,
-                        amount: agenda.total,
-                      };
-                    }),
-                  };
-                });
-                const customOutcome = form.getValues('expense').map((item) => {
-                  return {
-                    name: item.text,
-                    total: item.expense,
-                  };
-                });
-                await openReportPDF({
-                  report: {
-                    locationName:
-                      locations.find(
-                        (location) => location.id === selectedLocation,
-                      )?.name ?? '',
-                    date: selectedDate,
-                  },
-                  income: {
-                    agenda: agendaIncome ?? [],
-                  },
-                  outcome: {
-                    coach: outcomeCoach ?? [],
-                    custom: customOutcome,
-                  },
-                });
-              }}
-            >
-              Export
-            </Button>
+            <Button onClick={onExport}>Export</Button>
           </div>
         </div>
       </CardHeader>
@@ -254,11 +251,7 @@ export default function ExpenseCard({
             <Separator className="my-4" />
             <p className="font-medium">Expense:</p>
             <div className="ml-4">
-              <Expense
-                coachExpense={coachExpense}
-                expense={defaultExpense ?? []}
-                form={form}
-              />
+              <Expense coachExpense={coachExpense} form={form} />
             </div>
             <Separator className="my-4" />
             <p className="font-medium">Coach:</p>

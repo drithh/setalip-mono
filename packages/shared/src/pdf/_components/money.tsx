@@ -9,7 +9,7 @@ interface MoneyProps {
 
 export const Money = ({ amount, tw }: MoneyProps) => {
   return (
-    <View style={tw('text-sm font-medium w-40 flex flex-row justify-between')}>
+    <View style={tw('text-sm font-medium w-36 flex flex-row justify-between')}>
       <Text>Rp</Text>
       <Text>{decimalFormatter.format(amount)}</Text>
     </View>
