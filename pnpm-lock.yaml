@@ -78,8 +78,8 @@ importers:
         specifier: 11.0.0-rc.394
         version: 11.0.0-rc.394
       date-fns:
-        specifier: 4.1.0
-        version: 4.1.0
+        specifier: 3.6.0
+        version: 3.6.0
       inversify:
         specifier: ^6.0.2
         version: 6.0.2
@@ -226,8 +226,8 @@ importers:
         specifier: 11.0.0-rc.394
         version: 11.0.0-rc.394
       date-fns:
-        specifier: 4.1.0
-        version: 4.1.0
+        specifier: 3.6.0
+        version: 3.6.0
       inversify:
         specifier: ^6.0.2
         version: 6.0.2
@@ -407,11 +407,11 @@ importers:
         specifier: ^1.6.8
         version: 1.7.3
       date-fns:
-        specifier: 4.1.0
-        version: 4.1.0
+        specifier: 3.6.0
+        version: 3.6.0
       date-fns-tz:
-        specifier: ^3.2
-        version: 3.2.0(date-fns@4.1.0)
+        specifier: 3.1.3
+        version: 3.1.3(date-fns@3.6.0)
       db:
         specifier: ^3.3.0
         version: 3.9.2
@@ -575,8 +575,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       date-fns:
-        specifier: 4.1.0
-        version: 4.1.0
+        specifier: 3.6.0
+        version: 3.6.0
       embla-carousel:
         specifier: ^8.1.3
         version: 8.1.8
@@ -600,7 +600,7 @@ importers:
         version: 0.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-day-picker:
         specifier: ^8.10.1
-        version: 8.10.1(date-fns@4.1.0)(react@18.3.1)
+        version: 8.10.1(date-fns@3.6.0)(react@18.3.1)
       react-hook-form:
         specifier: ^7.51.4
         version: 7.52.2(react@18.3.1)
@@ -4026,13 +4026,13 @@ packages:
     resolution: {integrity: sha512-t/Ygsytq+R995EJ5PZlD4Cu56sWa8InXySaViRzw9apusqsOO2bQP+SbYzAhR0pFKoB+43lYy8rWban9JSuXnA==}
     engines: {node: '>= 0.4'}
 
-  date-fns-tz@3.2.0:
-    resolution: {integrity: sha512-sg8HqoTEulcbbbVXeg84u5UnlsQa8GS5QXMqjjYIhS4abEVVKIUwe0/l/UhrZdKaL/W5eWZNlbTeEIiOXTcsBQ==}
+  date-fns-tz@3.1.3:
+    resolution: {integrity: sha512-ZfbMu+nbzW0mEzC8VZrLiSWvUIaI3aRHeq33mTe7Y38UctKukgqPR4nTDwcwS4d64Gf8GghnVsroBuMY3eiTeA==}
     peerDependencies:
-      date-fns: ^3.0.0 || ^4.0.0
+      date-fns: ^3.0.0
 
-  date-fns@4.1.0:
-    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
+  date-fns@3.6.0:
+    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
 
   db@3.9.2:
     resolution: {integrity: sha512-Qd1wopvVWc/hFOiA0AFHSudW061ztmwOHHEnbTJck6cDQUtGSsNhDiEEE/h99l/Zjn3T7CsEBFOD0tSOKzRJCg==}
@@ -10874,11 +10874,11 @@ snapshots:
       es-errors: 1.3.0
       is-data-view: 1.0.1
 
-  date-fns-tz@3.2.0(date-fns@4.1.0):
+  date-fns-tz@3.1.3(date-fns@3.6.0):
     dependencies:
-      date-fns: 4.1.0
+      date-fns: 3.6.0
 
-  date-fns@4.1.0: {}
+  date-fns@3.6.0: {}
 
   db@3.9.2:
     dependencies:
@@ -13334,9 +13334,9 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  react-day-picker@8.10.1(date-fns@4.1.0)(react@18.3.1):
+  react-day-picker@8.10.1(date-fns@3.6.0)(react@18.3.1):
     dependencies:
-      date-fns: 4.1.0
+      date-fns: 3.6.0
       react: 18.3.1
 
   react-dom@18.3.1(react@18.3.1):
