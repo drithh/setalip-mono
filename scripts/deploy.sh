@@ -35,7 +35,9 @@ extract_and_reload() {
   chmod +x "$DEST_DIR/main/$APP_NAME/apps/$APP_NAME/server.js"
 
   echo "Reloading $APP_NAME with PM2"
-  /run/user/0/fnm_multishells/416608_1728265258979/bin/pm2 reload $APP_NAME --update-env
+  echo which pm2
+  echo $PATH
+  /root/.local/share/fnm/node-versions/v21.7.3/installation/bin/pm2 reload $APP_NAME --update-env
 }
 
 # removeing backup
