@@ -8,6 +8,16 @@
     "moduleResolution": "Bundler",
     "allowJs": true,
     "jsx": "preserve",
-    "noEmit": true
-  }
+    "noEmit": true,
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"], 
+      "rules": {
+        "no-unused-vars": "off",  
+        "unused-imports/no-unused-imports": "off",
+        "unused-imports/no-unused-vars": "off"
+      }
+    }
+  ]
 }
