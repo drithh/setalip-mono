@@ -9,11 +9,11 @@ import PulsatingButton from '@repo/ui/components/pulsating-button';
 import Countdown from 'react-countdown';
 import { useState } from 'react';
 import { cn } from '@repo/ui/lib/utils';
-interface Package {
+interface PackageProps {
   singlePackage: SelectPackages;
 }
 
-export default function Package({ singlePackage }: Package) {
+export default function Package({ singlePackage }: PackageProps) {
   const [isPressed, setIsPressed] = useState(false);
   const isDiscount =
     singlePackage.discount_end_date &&

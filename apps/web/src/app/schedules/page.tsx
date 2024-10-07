@@ -1,5 +1,6 @@
 import { findAllScheduleSchema } from '@repo/shared/api/schema';
 import { container, TYPES } from '@repo/shared/inversify';
+import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import {
   ClassService,
   ClassTypeService,
@@ -10,6 +11,8 @@ import {
 import { validateRequest } from '@/lib/auth';
 
 import AgendaTable from './agenda';
+import QueryResetBoundary from '@/lib/query-reset-boundary';
+import React from 'react';
 
 export default async function Schedules({
   searchParams,
@@ -39,15 +42,34 @@ export default async function Schedules({
   return (
     <div className="">
       <div className="mx-auto flex min-h-screen w-full max-w-[95vw] flex-col gap-24 py-4 sm:py-32 md:max-w-screen-xl">
-        <AgendaTable
-          locations={locations.result || []}
-          coaches={coaches.result || []}
-          classTypes={classTypes.result || []}
-          classes={classes.result?.data || []}
-          search={{
-            ...search,
-          }}
-        />
+        <QueryResetBoundary>
+          <React.Suspense
+            fallback={
+              <DataTableSkeleton
+                columnCount={7}
+                filterableColumnCount={4}
+                cellWidths={[
+                  '114px',
+                  '334px',
+                  '216px',
+                  '122px',
+                  '174px',
+                  '119px',
+                  '167px',
+                ]}
+                shrinkZero
+              />
+            }
+          >
+            <AgendaTable
+              locations={locations.result || []}
+              coaches={coaches.result || []}
+              classTypes={classTypes.result || []}
+              classes={classes.result?.data || []}
+              search={search}
+            />
+          </React.Suspense>
+        </QueryResetBoundary>
       </div>
     </div>
   );

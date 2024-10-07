@@ -35,7 +35,7 @@ extract_and_reload() {
   chmod +x "$DEST_DIR/main/$APP_NAME/apps/$APP_NAME/server.js"
 
   echo "Reloading $APP_NAME with PM2"
-  pm2 reload $APP_NAME --update-env
+  /run/user/0/fnm_multishells/416608_1728265258979/bin/pm2 reload $APP_NAME --update-env
 }
 
 # removeing backup
