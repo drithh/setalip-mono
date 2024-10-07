@@ -284,15 +284,13 @@ export default function EditAgendaForm({
                   <FormControl>
                     <Input
                       readOnly
-                      value={
-                        `${
-                          classes.find(
-                            (singleClass) =>
-                              singleClass.id ===
-                              parseInt(form.getValues('class_id').toString()),
-                          )?.duration
-                        } menit` ?? ''
-                      }
+                      value={`${
+                        classes.find(
+                          (singleClass) =>
+                            singleClass.id ===
+                            parseInt(form.getValues('class_id').toString()),
+                        )?.duration ?? 0
+                      } menit`}
                     />
                   </FormControl>
                   <FormMessage />
