@@ -191,7 +191,7 @@ export default function EditUserForm({
                             }
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Pilih tipe kelas" />
+                              <SelectValue placeholder="Pilih lokasi" />
                             </SelectTrigger>
                             <SelectContent>
                               {locations.map((location) => (

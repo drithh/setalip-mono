@@ -69,7 +69,7 @@ const nextConfig = {
     serverComponentsExternalPackages: ['@node-rs/argon2'],
     outputFileTracingRoot: path.join(__dirname, '../../'),
   },
-  output: 'standalone',
+  // output: 'standalone',
   transpilePackages: ['@repo/ui'],
 };
 

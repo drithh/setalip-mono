@@ -63,17 +63,12 @@ export async function Review() {
   const secondRow = reviews.slice(reviews.length / 2);
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg  py-2">
-      <Marquee pauseOnHover className="hidden [--duration:40s] md:inline-flex ">
-        {reviews.map((review) => (
-          <ReviewCard key={review.id} review={review} />
-        ))}
-      </Marquee>
-      <Marquee pauseOnHover className="[--duration:40s] md:hidden">
+      <Marquee pauseOnHover className="[--duration:40s]">
         {firstRow.map((review) => (
           <ReviewCard key={review.id} review={review} />
         ))}
       </Marquee>
-      <Marquee reverse pauseOnHover className="[--duration:40s] md:hidden">
+      <Marquee reverse pauseOnHover className="[--duration:40s]">
         {secondRow.map((review) => (
           <ReviewCard key={review.id} review={review} />
         ))}
