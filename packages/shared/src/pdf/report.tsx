@@ -77,8 +77,11 @@ export function ReportPdf(report: Report) {
           <HeaderPdf tw={tw} />
           <View style={tw('flex flex-row justify-between mt-8')}>
             <View>
-              <Text style={tw('text-xl text-[#738864] font-bold')}>
+              <Text style={tw('text-xl leading-2 text-[#738864] font-bold')}>
                 Coach {coach.name}
+              </Text>
+              <Text style={tw('text-lg font-semibold text-gray-500 ')}>
+                {report.report.locationName}
               </Text>
             </View>
           </View>
