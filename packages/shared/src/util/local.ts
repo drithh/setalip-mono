@@ -12,3 +12,9 @@ export const moneyFormatter = Intl.NumberFormat('id-ID', {
   currencySign: 'standard',
   style: 'currency',
 });
+
+export const decimalFormatter = Intl.NumberFormat('id-ID', {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+  style: 'decimal',
+});

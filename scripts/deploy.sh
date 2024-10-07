@@ -35,8 +35,6 @@ extract_and_reload() {
   chmod +x "$DEST_DIR/main/$APP_NAME/apps/$APP_NAME/server.js"
 
   echo "Reloading $APP_NAME with PM2"
-  echo which pm2
-  echo $PATH
   /root/.local/share/fnm/node-versions/v21.7.3/installation/bin/pm2 reload $APP_NAME --update-env
 }
 

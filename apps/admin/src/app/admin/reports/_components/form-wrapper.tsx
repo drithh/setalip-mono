@@ -7,9 +7,7 @@ import { useForm } from 'react-hook-form';
 import { expense } from '../_actions/create-report';
 import { ExpenseSchema, expenseSchema } from './form-schema';
 import { useEffect, useRef, useState } from 'react';
-import {
-  Form,
-} from '@repo/ui/components/ui/form';
+import { Form } from '@repo/ui/components/ui/form';
 import { toast } from 'sonner';
 import Expense from './expense';
 import {
@@ -50,14 +48,7 @@ export default function FormWrapper(data: ExpenseProps) {
     status: 'default',
     form: {
       expense: [],
-      coach: data.coachAgenda.map((coach) => ({
-        id: coach.coach_id,
-        transport: 0,
-        classType: data.classTypes.map((classType) => ({
-          id: classType.id,
-          total: 0,
-        })),
-      })),
+      coach: [],
     },
   });
 
@@ -66,6 +57,19 @@ export default function FormWrapper(data: ExpenseProps) {
     defaultValues: formState.form,
   });
 
+  useEffect(() => {
+    form.setValue(
+      'coach',
+      data.coachAgenda.map((coach) => ({
+        id: coach.coach_id,
+        transport: 0,
+        classType: data.classTypes.map((classType) => ({
+          id: classType.id,
+          total: 0,
+        })),
+      })),
+    );
+  }, [data.coachAgenda]);
   useEffect(() => {
     form.setValue(
       'expense',
@@ -84,25 +88,26 @@ export default function FormWrapper(data: ExpenseProps) {
 
   useEffect(() => {
     const coachRate = form.getValues('coach');
-    const coachTotal =
-      coachRate?.reduce((acc, coach) => {
-        const currentCoach = data.coachAgenda.find(
-          (agenda) => agenda.coach_id === coach.id,
-        );
-        // sum per classType * coachAgenda
-        const classTypeTotal =
-          currentCoach?.agenda.reduce((acc, agenda) => {
-            const currentClassType = coach.classType.find(
-              (classType) => classType.id === agenda.class_type_id,
-            );
+    const coachTotal = coachRate.reduce((acc, coach) => {
+      const currentCoach = data.coachAgenda.find(
+        (agenda) => agenda.coach_id === coach.id,
+      );
+      if (!currentCoach) return acc;
+      // sum per classType * coachAgenda
+      const classTypeTotal =
+        currentCoach?.agenda.reduce((acc, agenda) => {
+          const currentClassType = coach.classType.find(
+            (classType) => classType.id === agenda.class_type_id,
+          );
 
-            return acc + agenda.total * (currentClassType?.total ?? 0);
-          }, 0) ?? 0;
-        const transportTotal =
-          coach.transport * (currentCoach?.agenda_count ?? 0);
-        return acc + transportTotal + classTypeTotal;
-      }, 0) ?? 0;
-    setCoachExpense(isNaN(coachTotal) ? 0 : coachTotal);
+          return acc + agenda.total * (currentClassType?.total ?? 0);
+        }, 0) ?? 0;
+      const transportTotal =
+        coach.transport * (currentCoach?.agenda_count ?? 0);
+
+      return acc + transportTotal + classTypeTotal;
+    }, 0);
+    setCoachExpense(coachTotal);
   }, [coachForm]);
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
