@@ -73,4 +73,4 @@ const nextConfig = {
   transpilePackages: ['@repo/ui'],
 };
 
-export default withPWA(nextConfig);
+export default nextConfig;
