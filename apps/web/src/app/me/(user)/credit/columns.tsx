@@ -1,6 +1,9 @@
 'use client';
 
-import { SelectAllCredit, SelectClassType } from '@repo/shared/repository';
+import {
+  SelectCreditPagination,
+  SelectClassType,
+} from '@repo/shared/repository';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { Badge } from '@repo/ui/components/ui/badge';
 import { type ColumnDef } from '@tanstack/react-table';
@@ -13,7 +16,7 @@ interface getColumnsProps {
 
 export function getColumns(
   data: getColumnsProps,
-): ColumnDef<SelectAllCredit['data'][0]>[] {
+): ColumnDef<SelectCreditPagination['data'][0]>[] {
   return [
     {
       accessorKey: 'updated_at',

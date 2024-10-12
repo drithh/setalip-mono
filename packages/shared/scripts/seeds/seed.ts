@@ -418,60 +418,20 @@ export async function up(): Promise<void> {
 
       await trx.insertInto('loyalty_shops').values(loyaltyShops).execute();
 
-      const creditDebitTransactions: Insertable<CreditTransactions>[] = [];
       const creditCreditTransactions: Insertable<CreditTransactions>[] = [];
-
-      for (let userId = 1; userId <= 10; userId++) {
-        for (let i = 0; i < 20; i++) {
-          const userPackages = user_packages.filter(
-            (up) => up.user_id === userId
-          );
-          creditDebitTransactions.push({
-            id: (userId - 1) * 50 + i + 1,
-            user_id: userId,
-            type: 'debit',
-            amount: faker.number.int({ min: 3, max: 8 }),
-            note: faker.lorem.sentence(),
-            expired_at: faker.date.between({
-              from: faker.date.past({ years: 1 }),
-              to: faker.date.future(),
-            }),
-            class_type_id: class_types[Math.floor(Math.random() * 3)]?.id ?? 1,
-            user_package_id:
-              userPackages[Math.floor(Math.random() * userPackages.length)]
-                ?.id ?? 1,
-
-            created_at: faker.date.between({
-              from: faker.date.past({ years: 4 }),
-              to: faker.date.recent(),
-            }),
-          });
-        }
-      }
-
-      await trx
-        .insertInto('credit_transactions')
-        .values(creditDebitTransactions)
-        .execute();
 
       for (let i = 0; i < 2000; i++) {
         const randomIndex = Math.floor(Math.random() * 50);
         const userId = users[Math.floor(Math.random() * 10)]?.id ?? 1;
+        const userPackage = user_packages.filter((up) => up.user_id === userId);
         creditCreditTransactions.push({
           user_id: userId,
-          type: 'credit',
-          amount: 1,
           note: faker.lorem.sentence(),
           class_type_id: class_types[Math.floor(Math.random() * 3)]?.id ?? 1,
           agenda_booking_id: agendaBookings[i]?.id ?? 1,
-          credit_transaction_id:
-            // random
-            creditDebitTransactions.reduce((acc: number[], t) => {
-              if (t.user_id === userId) {
-                acc.push(t.id ?? 1);
-              }
-              return acc;
-            }, [])[randomIndex] ?? 1,
+          user_package_id:
+            userPackage[Math.floor(Math.random() * userPackage.length)]?.id ??
+            1,
         });
       }
 
@@ -569,14 +529,8 @@ export async function down(): Promise<void> {
       await trx.deleteFrom('reviews').execute();
       await trx.deleteFrom('loyalty_transactions').execute();
       await trx.deleteFrom('package_transactions').execute();
-      await trx
-        .deleteFrom('credit_transactions')
-        .where('type', '=', 'credit')
-        .execute();
-      await trx
-        .deleteFrom('credit_transactions')
-        .where('type', '=', 'debit')
-        .execute();
+
+      await trx.deleteFrom('credit_transactions').execute();
       await trx.deleteFrom('user_packages').execute();
       await trx.deleteFrom('agenda_recurrences').execute();
       await trx.deleteFrom('otp').execute();

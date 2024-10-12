@@ -2,7 +2,12 @@ import 'reflect-metadata';
 
 import { injectable } from 'inversify';
 import { DB } from '@repo/shared/db';
-import { Kysely, MysqlDialect, ParseJSONResultsPlugin } from 'kysely';
+import {
+  Kysely,
+  MysqlDialect,
+  ParseJSONResultsPlugin,
+  Transaction,
+} from 'kysely';
 import { env } from '#dep/env';
 import { createPool } from 'mysql2/promise';
 export * from '#dep/db/schema';
@@ -25,3 +30,17 @@ export const db = new Database({
     }
   },
 });
+
+export type DBTransaction = Transaction<DB>;
+
+export interface Command {
+  trx?: DBTransaction;
+}
+
+export interface Query<T> {
+  filters?: Partial<T>;
+  perPage?: number;
+  offset?: number;
+  limit?: number;
+  orderBy?: `${Extract<keyof T, string>} ${'asc' | 'desc'}`; // Extracts only string keys
+}

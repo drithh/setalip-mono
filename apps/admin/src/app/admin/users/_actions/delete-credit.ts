@@ -1,7 +1,5 @@
 'use server';
-import {
-  CreditService,
-} from '@repo/shared/service';
+import { CreditService } from '@repo/shared/service';
 import { container, TYPES } from '@repo/shared/inversify';
 import { deleteCreditSchema, FormDeleteCredit } from '../form-schema';
 import {
@@ -27,25 +25,31 @@ export async function deleteCredit(
     };
   }
 
-  const insertData = {
-    ...parsed.data,
-    type: 'credit' as const,
-  } satisfies InsertCredit;
+  // const insertData = {
+  //   ...parsed.data,
+  //   // type: 'credit' as const,
+  // } satisfies InsertCredit;
 
-  const creditService = container.get<CreditService>(TYPES.CreditService);
+  // const creditService = container.get<CreditService>(TYPES.CreditService);
 
-  const deleteCredit = await creditService.delete(insertData);
+  // const deleteCredit = await creditService.delete(insertData);
 
-  if (deleteCredit.error) {
-    return {
-      form: parsed.data,
-      status: 'error',
-      errors: deleteCredit.error.message,
-    };
-  }
+  // if (deleteCredit.error) {
+  //   return {
+  //     form: parsed.data,
+  //     status: 'error',
+  //     errors: deleteCredit.error.message,
+  //   };
+  // }
+
+  // return {
+  //   form: undefined,
+  //   status: 'success',
+  // };
 
   return {
-    form: undefined,
-    status: 'success',
+    form: parsed.data,
+    errors: 'This feature is not implemented yet',
+    status: 'error',
   };
 }

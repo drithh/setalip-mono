@@ -382,36 +382,35 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const credit = await this._creditRepository.findAmountByUserId(user.id);
-    if (!credit) {
-      return {
-        error: new Error('User does not have any credit'),
-      };
-    }
+    // const credit = await this._creditRepository.findAmountByUserId(user.id);
+    // if (!credit) {
+    //   return {
+    //     error: new Error('User does not have any credit'),
+    //   };
+    // }
 
-    const currentCredit = credit.find(
-      (item) => item.class_type_id === agendaClass.class_type_id
-    );
+    // const currentCredit = credit.find(
+    //   (item) => item.class_type_id === agendaClass.class_type_id
+    // );
 
-    if (!currentCredit || currentCredit.remaining_amount < 1) {
-      return {
-        error: new Error('User does not have any credit for this class'),
-      };
-    }
+    // if (!currentCredit || currentCredit.remaining_amount < 1) {
+    //   return {
+    //     error: new Error('User does not have any credit for this class'),
+    //   };
+    // }
+
+    // const creditTransaction = await this._creditRepository.findById(
+    //   expiringCredit.id
+    // );
+
+    // if (!creditTransaction) {
+    //   return {
+    //     error: new Error('Credit transaction not found'),
+    //   };
+    // }
     const userAgenda = await this._agendaRepository.findActiveAgendaByUserId(
       user.id
     );
-
-    const creditTransaction = await this._creditRepository.findById(
-      expiringCredit.id
-    );
-
-    if (!creditTransaction) {
-      return {
-        error: new Error('Credit transaction not found'),
-      };
-    }
-
     // iterate over userAgenda to check if user overlaps with existing agenda
     // const agendaEndTime = addMinutes(agenda.time, agendaClass.duration);
 
@@ -437,10 +436,8 @@ export class AgendaServiceImpl implements AgendaService {
       ...data,
       agenda_id: agenda.id,
       status: 'booked',
-      credit_transaction_id: creditTransaction.id,
+      user_package_id: expiringCredit.id,
       class_type_id: agendaClass.class_type_id,
-      type: 'credit',
-      amount: 1,
       note: `Booked ${agendaClass.name} class on ${format(agenda.time, 'dd MMM yyyy - HH:mm')}`,
     };
 
@@ -578,34 +575,34 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const credit = await this._creditRepository.findAmountByUserId(
-      useUserCredit.id
-    );
-    if (!credit) {
-      return {
-        error: new Error('User does not have any credit'),
-      };
-    }
+    // const credit = await this._creditRepository.findAmountByUserId(
+    //   useUserCredit.id
+    // );
+    // if (!credit) {
+    //   return {
+    //     error: new Error('User does not have any credit'),
+    //   };
+    // }
 
-    const currentCredit = credit.find(
-      (item) => item.class_type_id === agendaClass.class_type_id
-    );
+    // const currentCredit = credit.find(
+    //   (item) => item.class_type_id === agendaClass.class_type_id
+    // );
 
-    if (!currentCredit || currentCredit.remaining_amount < 1) {
-      return {
-        error: new Error('User does not have any credit for this class'),
-      };
-    }
+    // if (!currentCredit || currentCredit.remaining_amount < 1) {
+    //   return {
+    //     error: new Error('User does not have any credit for this class'),
+    //   };
+    // }
 
-    const creditTransaction = await this._creditRepository.findById(
-      expiringCredit.id
-    );
+    // const creditTransaction = await this._creditRepository.findById(
+    //   expiringCredit.id
+    // );
 
-    if (!creditTransaction) {
-      return {
-        error: new Error('Credit transaction not found'),
-      };
-    }
+    // if (!creditTransaction) {
+    //   return {
+    //     error: new Error('Credit transaction not found'),
+    //   };
+    // }
 
     const userAgenda = await this._agendaRepository.findActiveAgendaByUserId(
       user.id
@@ -634,10 +631,8 @@ export class AgendaServiceImpl implements AgendaService {
       user_id: data.user_id,
       used_credit_user_id: data.used_credit_user_id,
       status: 'booked',
-      credit_transaction_id: creditTransaction.id,
+      user_package_id: expiringCredit.id,
       class_type_id: agendaClass.class_type_id,
-      type: 'credit',
-      amount: 1,
       note: `Booked For ${user.name} in the ${agendaClass.name} class on ${format(agenda.time, 'dd MMM yyyy - HH:mm')}`,
     };
 

@@ -1,6 +1,7 @@
 export * from '#dep/notification/whatsapp';
 import { PromiseResult } from '#dep/types/index';
-import { LocationFacilities } from '../db';
+import { Selectable } from 'kysely';
+import { LocationFacilities, UserPackages } from '../db';
 import {
   SelectAgenda,
   SelectClass,
@@ -63,9 +64,9 @@ interface AdminConfirmedUserPackagePayload {
   type: NotificationType.AdminConfirmedUserPackage;
   package: SelectPackage['name'];
   class_type: SelectClassType['type'];
-  credit: SelectCredit['amount'];
+  credit: SelectPackageTransaction['credit'];
   status: 'completed';
-  expired_at: SelectCredit['expired_at'];
+  expired_at: Selectable<UserPackages>['expired_at'];
 }
 
 interface AdminDeletedAgendaPayload {

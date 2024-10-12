@@ -1,7 +1,12 @@
+import type { Entries } from 'type-fest';
 import { isValid, parseISO } from 'date-fns';
 
 export * from '#dep/util/zod';
 export * from '#dep/util/local';
+
+export function entriesFromObject<T extends object>(object: T): Entries<T> {
+  return Object.entries(object) as Entries<T>;
+}
 
 function isNumber(value: FormDataEntryValue): value is string {
   return !isNaN(Number(value));

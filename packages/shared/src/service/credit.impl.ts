@@ -6,7 +6,6 @@ import type {
   CreditRepository,
   SelectCredit,
   UpdateCredit,
-  DeleteCredit,
   ClassTypeRepository,
   UserRepository,
   FindAllCreditOptions,
@@ -30,53 +29,45 @@ export class CreditServiceImpl implements CreditService {
   }
 
   async findAll() {
-    const credites = await this._creditRepository.findAll();
+    const credits = await this._creditRepository.find();
 
     return {
-      result: credites,
+      result: credits,
       error: undefined,
     };
   }
 
   async findById(id: SelectCredit['id']) {
-    const credit = await this._creditRepository.findById(id);
+    const filters = {
+      id,
+    };
+    const credit = await this._creditRepository.find({ filters, limit: 1 });
 
-    if (!credit) {
+    if (credit.length < 0) {
       return {
         error: new Error('Credit not found'),
       };
     }
 
     return {
-      result: credit,
+      result: credit[0],
     };
   }
 
   async findByUserPackageId(id: SelectCredit['user_package_id']) {
-    const credit = await this._creditRepository.findByUserPackageId(id);
-
-    if (!credit) {
-      return {
-        error: new Error('Credit not found'),
-      };
-    }
-
-    return {
-      result: credit,
+    const filters = {
+      user_package_id: id,
     };
-  }
+    const credit = await this._creditRepository.find({ filters, limit: 1 });
 
-  async findAmountByUserId(userId: SelectCredit['user_id']) {
-    const credit = await this._creditRepository.findAmountByUserId(userId);
-
-    if (!credit) {
+    if (credit.length < 0) {
       return {
         error: new Error('Credit not found'),
       };
     }
 
     return {
-      result: credit,
+      result: credit[0],
     };
   }
 
@@ -148,8 +139,14 @@ export class CreditServiceImpl implements CreditService {
     };
   }
 
-  async delete(data: InsertCredit) {
-    const result = await this._creditRepository.delete(data);
+  async deleteByAgendaBookingId(
+    agendaBookingId: SelectCredit['agenda_booking_id']
+  ) {
+    const result = await this._creditRepository.delete({
+      filters: {
+        agenda_booking_id: agendaBookingId,
+      },
+    });
 
     if (result instanceof Error) {
       return {

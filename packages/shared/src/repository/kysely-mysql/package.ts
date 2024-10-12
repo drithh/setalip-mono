@@ -17,7 +17,7 @@ import {
 } from '../package';
 import { Database } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
-import { ColumnType, sql } from 'kysely';
+import { ColumnType, Expression, sql, SqlBool } from 'kysely';
 import { addDays } from 'date-fns';
 
 @injectable()
@@ -213,15 +213,15 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       .selectFrom('package_transactions')
       .innerJoin('packages', 'package_transactions.package_id', 'packages.id')
       .leftJoin(
-        'credit_transactions',
+        'user_packages',
         'package_transactions.user_package_id',
-        'credit_transactions.user_package_id'
+        'user_packages.id'
       )
       .selectAll('package_transactions')
       .select([
         'packages.name as package_name',
         'packages.credit',
-        'credit_transactions.expired_at as package_expired_at',
+        'user_packages.expired_at as package_expired_at',
       ])
       .where('package_transactions.id', '=', id)
       .executeTakeFirst();
@@ -242,140 +242,44 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
   async findAllActivePackageByUserId(
     user_id: SelectPackageTransaction['user_id']
   ) {
-    const packageSession = await this._db
-      .with('ct_debit', (q) =>
-        q
-          .selectFrom('credit_transactions')
-          .selectAll('credit_transactions')
-          .where('credit_transactions.user_id', '=', user_id)
-          .where('credit_transactions.expired_at', '>', new Date())
-      )
-      .selectFrom('ct_debit')
-      .select([
-        'ct_debit.class_type_id',
-        'ct_debit.id',
-        'ct_debit.amount',
-        sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`.as(
-          'amount_used'
-        ),
-      ])
-      .leftJoin(
-        'credit_transactions',
-        'ct_debit.id',
-        'credit_transactions.credit_transaction_id'
-      )
-      .groupBy(['ct_debit.id', 'ct_debit.id'])
-      .execute();
-
-    const query = await this._db
+    const activePackages = await this._db
       .selectFrom('credit_transactions')
-      .leftJoin(
+
+      .innerJoin(
         'user_packages',
         'credit_transactions.user_package_id',
         'user_packages.id'
       )
-      .leftJoin('packages', 'user_packages.package_id', 'packages.id')
+      .innerJoin('packages', 'user_packages.package_id', 'packages.id')
       .innerJoin(
         'class_types',
         'credit_transactions.class_type_id',
         'class_types.id'
       )
-      .where('credit_transactions.user_id', '=', user_id)
-      .where('credit_transactions.expired_at', '>', new Date())
-      .selectAll('credit_transactions')
       .select([
-        'packages.name as package_name',
         'class_types.type as class_type',
+        sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`.as(
+          'credit_used'
+        ),
       ])
-      .orderBy('credit_transactions.expired_at', 'asc')
+      .selectAll('packages')
+      .where('user_packages.user_id', '=', user_id)
+      .where('user_packages.expired_at', '>', new Date())
+      .orderBy('user_packages.expired_at', 'asc')
+      .where(sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`, '>', 0)
       .execute();
 
-    const combined = query.map((userPackage) => {
-      const packageTransaction = packageSession.find(
-        (session) => session.id === userPackage.id
-      );
-
-      if (packageTransaction) {
-        return {
-          ...userPackage,
-          credit_used: packageTransaction.amount_used,
-        };
-      } else {
-        return {
-          ...userPackage,
-          credit_used: 0,
-        };
-      }
-    });
-
-    return combined;
+    return activePackages;
   }
 
   async findAboutToExpiredPackage(user_id: number, class_type: number) {
-    const creditUsages = await this._db
-      .with('ct_debit', (q) =>
-        q
-          .selectFrom('credit_transactions')
-          .selectAll('credit_transactions')
-          .where('credit_transactions.user_id', '=', user_id)
-          .where('credit_transactions.expired_at', '>', new Date())
-      )
-      .selectFrom('ct_debit')
-      .select([
-        'ct_debit.class_type_id',
-        'ct_debit.id',
-        'ct_debit.amount',
-        sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`.as(
-          'amount_used'
-        ),
-      ])
-      .leftJoin(
-        'credit_transactions',
-        'ct_debit.id',
-        'credit_transactions.credit_transaction_id'
-      )
-      .groupBy(['ct_debit.id', 'ct_debit.id'])
+    const activePackages = await this.findAllActivePackageByUserId(user_id);
 
-      .execute();
-
-    const query = await this._db
-      .selectFrom('credit_transactions')
-      .leftJoin(
-        'user_packages',
-        'credit_transactions.user_package_id',
-        'user_packages.id'
-      )
-      .leftJoin('packages', 'user_packages.package_id', 'packages.id')
-      .innerJoin(
-        'class_types',
-        'credit_transactions.class_type_id',
-        'class_types.id'
-      )
-      .where('credit_transactions.user_id', '=', user_id)
-      .where('credit_transactions.expired_at', '>', new Date())
-      .where('class_types.id', '=', class_type)
-      .selectAll('credit_transactions')
-      .select([
-        'packages.name as package_name',
-        'class_types.type as class_type',
-      ])
-      .orderBy('credit_transactions.expired_at', 'asc')
-      .limit(1)
-      .executeTakeFirst();
-
-    if (!query) {
-      return undefined;
-    }
-
-    const expiringCredit = creditUsages.find(
-      (credit) => credit.id === query.id
+    const creditUsages = activePackages.find(
+      (singlePackage) => singlePackage.class_type_id === class_type
     );
 
-    return {
-      ...query,
-      credit: expiringCredit?.amount ?? 0,
-      credit_used: expiringCredit?.amount_used ?? 0,
-    };
+    return creditUsages;
   }
 
   async findPackageTransactionByUserIdAndPackageId(
@@ -568,30 +472,30 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
           userPackageId = resultUserPackage.rows[0].id;
 
-          const creditTransaction = await trx
-            .insertInto('credit_transactions')
-            .values({
-              user_package_id: userPackageId,
-              expired_at: expiredAt,
-              note: `Purchase package ${singlePackage.name}`,
-              class_type_id: singlePackage.class_type_id,
-              user_id: packageTransaction.user_id,
-              amount: packageTransaction.credit ?? singlePackage.credit,
-              type: 'debit',
-            })
-            .returningAll()
-            .compile();
+          // const creditTransaction = await trx
+          //   .insertInto('credit_transactions')
+          //   .values({
+          //     user_package_id: userPackageId,
+          //     expired_at: expiredAt,
+          //     note: `Purchase package ${singlePackage.name}`,
+          //     class_type_id: singlePackage.class_type_id,
+          //     user_id: packageTransaction.user_id,
+          //     amount: packageTransaction.credit ?? singlePackage.credit,
+          //     type: 'debit',
+          //   })
+          //   .returningAll()
+          //   .compile();
 
-          const resultCreditTransaction =
-            await trx.executeQuery(creditTransaction);
+          // const resultCreditTransaction =
+          //   await trx.executeQuery(creditTransaction);
 
-          if (resultCreditTransaction.rows[0] === undefined) {
-            console.error(
-              'Failed to create credit transaction',
-              resultCreditTransaction
-            );
-            return new Error('Failed to create credit transaction');
-          }
+          // if (resultCreditTransaction.rows[0] === undefined) {
+          //   console.error(
+          //     'Failed to create credit transaction',
+          //     resultCreditTransaction
+          //   );
+          //   return new Error('Failed to create credit transaction');
+          // }
 
           const loyaltyTransaction = await trx
             .insertInto('loyalty_transactions')

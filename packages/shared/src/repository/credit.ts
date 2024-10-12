@@ -1,5 +1,12 @@
-import { Insertable, Selectable, Updateable } from 'kysely';
-import { CreditTransactions } from '../db';
+import {
+  ExpressionBuilder,
+  Insertable,
+  Selectable,
+  SelectQueryBuilder,
+  Transaction,
+  Updateable,
+} from 'kysely';
+import { Command, CreditTransactions, DB, Query } from '../db';
 import {
   DefaultPagination,
   OptionalToRequired,
@@ -8,49 +15,49 @@ import {
 } from '.';
 
 export type SelectCredit = Selectable<CreditTransactions>;
+export interface FindAllCreditOptions extends DefaultPagination {
+  user_id: SelectUser['id'];
+}
+export interface SelectCreditPagination {
+  data: SelectCredit[];
+  pageCount: number;
+}
+
+export interface SelectCreditQuery extends Query<SelectCredit> {}
+
 export type InsertCredit = Insertable<CreditTransactions>;
+
+export interface InsertCreditCommand extends Command {
+  data: InsertCredit;
+}
+
 export type UpdateCredit = OptionalToRequired<
   Updateable<CreditTransactions>,
   'id'
 >;
-export interface DeleteCredit {
-  user_id: SelectCredit['user_id'];
-  class_type_id: SelectCredit['class_type_id'];
-  amount: SelectCredit['amount'];
-  note: SelectCredit['note'];
-}
-export interface SelectAmountCredit {
-  class_type_id: SelectCredit['class_type_id'];
-  class_type_name: SelectClassType['type'];
-  remaining_amount: SelectCredit['amount'];
+
+export interface UpdateCreditCommand extends Command {
+  data: UpdateCredit;
 }
 
-export interface FindAllCreditOptions extends DefaultPagination {
-  types?: SelectCredit['type'][];
-  user_id: SelectUser['id'];
-}
-
-export interface SelectAllCredit {
-  data: SelectCredit[];
-  pageCount: number;
+export interface DeleteCreditCommand extends Command {
+  filters: Partial<SelectCredit>;
 }
 
 export interface CreditRepository {
   count(): Promise<number>;
 
-  findAll(): Promise<SelectCredit[]>;
-  findById(id: SelectCredit['id']): Promise<SelectCredit | undefined>;
-  findByUserPackageId(
-    id: SelectCredit['user_package_id']
-  ): Promise<SelectCredit | undefined>;
-  findAmountByUserId(
-    userId: SelectCredit['user_id']
-  ): Promise<SelectAmountCredit[]>;
-  findAllByUserId(data: FindAllCreditOptions): Promise<SelectAllCredit>;
+  find(data?: SelectCreditQuery): Promise<SelectCredit[]>;
+  findWithCount(data?: SelectCreditQuery): Promise<SelectCredit[]>;
+  // findById(id: SelectCredit['id']): Promise<SelectCredit | undefined>;
+  // findByUserPackageId(
+  //   id: SelectCredit['user_package_id']
+  // ): Promise<SelectCredit | undefined>;
+  // findAllByUserId(data: FindAllCreditOptions): Promise<SelectCreditPagination>;
 
-  create(data: InsertCredit): Promise<SelectCredit | Error>;
+  create(data: InsertCreditCommand): Promise<SelectCredit | Error>;
 
-  update(data: UpdateCredit): Promise<undefined | Error>;
+  update(data: UpdateCreditCommand): Promise<undefined | Error>;
 
-  delete(id: DeleteCredit): Promise<undefined | Error>;
+  delete(data: DeleteCreditCommand): Promise<undefined | Error>;
 }

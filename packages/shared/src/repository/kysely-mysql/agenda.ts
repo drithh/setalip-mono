@@ -45,13 +45,16 @@ import {
   subDays,
 } from 'date-fns';
 import { SelectUser } from '../user';
+import type { CreditRepository } from '../credit';
 
 @injectable()
 export class KyselyMySqlAgendaRepository implements AgendaRepository {
   private _db: Database;
+  private _creditRepository: CreditRepository;
 
-  constructor(@inject(TYPES.Database) db: Database) {
+  constructor(@inject(TYPES.Database) db: Database, @inject(TYPES.CreditRepository) creditRepository: CreditRepository) {
     this._db = db;
+    this._creditRepository = creditRepository;
   }
 
   async count() {
@@ -1269,11 +1272,9 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         const credit = trx
           .insertInto('credit_transactions')
           .values({
-            credit_transaction_id: data.credit_transaction_id,
+            user_package_id: data.user_package_id,
             agenda_booking_id: resultAgendaBooking.rows[0].id,
             user_id: data.user_id,
-            type: data.type,
-            amount: data.amount,
             class_type_id: data.class_type_id,
             note: data.note,
           })
@@ -1320,11 +1321,9 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         const credit = trx
           .insertInto('credit_transactions')
           .values({
-            credit_transaction_id: data.credit_transaction_id,
+            user_package_id: data.user_package_id,
             agenda_booking_id: resultAgendaBooking.rows[0].id,
             user_id: data.used_credit_user_id,
-            type: data.type,
-            amount: data.amount,
             class_type_id: data.class_type_id,
             note: data.note,
           })
@@ -1631,34 +1630,37 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
               .execute();
 
             if (booking.delete === 'refund') {
-              const tomorrow = addDays(new Date(), 1);
-              const debitCreditTransaction = await trx
-                .selectFrom('credit_transactions as ct_credit')
-                .innerJoin(
-                  'credit_transactions as ct_debit',
-                  'ct_debit.id',
-                  'ct_credit.credit_transaction_id'
-                )
-                .select(['ct_debit.user_package_id'])
-                .where('ct_credit.agenda_booking_id', '=', booking.id ?? 0)
-                .where('ct_credit.type', '=', 'credit')
-                .executeTakeFirst();
-
-              await trx
-                .insertInto('credit_transactions')
-                .values({
-                  user_id: booking.user_id,
-                  type: 'debit',
-                  expired_at: tomorrow,
-                  class_type_id: currentClass.class_type_id ?? 1,
-                  user_package_id: debitCreditTransaction?.user_package_id,
-                  amount: 1,
-                  note: `Refund for book ${currentClass.name} on ${format(
-                    currentClass.time,
-                    'yyyy-MM-dd HH:mm'
-                  )}`,
-                })
-                .execute();
+              sampe sini
+              await this._creditRepository.deleteByAgendaBookingId(
+                booking.agenda_booking_id
+              )
+              // const tomorrow = addDays(new Date(), 1);
+              // const debitCreditTransaction = await trx
+              //   .selectFrom('credit_transactions as ct_credit')
+              //   .innerJoin(
+              //     'credit_transactions as ct_debit',
+              //     'ct_debit.id',
+              //     'ct_credit.credit_transaction_id'
+              //   )
+              //   .select(['ct_debit.user_package_id'])
+              //   .where('ct_credit.agenda_booking_id', '=', booking.id ?? 0)
+              //   .where('ct_credit.type', '=', 'credit')
+              //   .executeTakeFirst();
+              // await trx
+              //   .insertInto('credit_transactions')
+              //   .values({
+              //     user_id: booking.user_id,
+              //     type: 'debit',
+              //     expired_at: tomorrow,
+              //     class_type_id: currentClass.class_type_id ?? 1,
+              //     user_package_id: debitCreditTransaction?.user_package_id,
+              //     amount: 1,
+              //     note: `Refund for book ${currentClass.name} on ${format(
+              //       currentClass.time,
+              //       'yyyy-MM-dd HH:mm'
+              //     )}`,
+              //   })
+              //   .execute();
             }
           })
         );

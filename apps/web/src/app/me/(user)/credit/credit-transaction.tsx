@@ -1,7 +1,10 @@
 'use client';
 
 import { findAllUserCreditSchema } from '@repo/shared/api/schema';
-import { SelectAllCredit, SelectClassType } from '@repo/shared/repository';
+import {
+  SelectCreditPagination,
+  SelectClassType,
+} from '@repo/shared/repository';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 import type { DataTableFilterField } from '@repo/ui/types';
@@ -47,9 +50,11 @@ export default function CreditTransactionTable({
   const creditTypes = [
     'credit',
     'debit',
-  ] satisfies SelectAllCredit['data'][0]['type'][];
+  ] satisfies SelectCreditPagination['data'][0]['type'][];
 
-  const filterFields: DataTableFilterField<SelectAllCredit['data'][0]>[] = [
+  const filterFields: DataTableFilterField<
+    SelectCreditPagination['data'][0]
+  >[] = [
     {
       label: 'Type',
       value: 'type',

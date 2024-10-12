@@ -95,19 +95,15 @@ export interface Coaches {
 }
 
 export interface CreditTransactions {
-  agenda_booking_id: Generated<number | null>;
-  amount: number;
+  agenda_booking_id: number;
   class_type_id: number;
   created_at: Generated<Date>;
-  credit_transaction_id: Generated<number | null>;
-  expired_at: Generated<Date | null>;
   id: Generated<number>;
   note: string;
-  type: "credit" | "debit";
   updated_at: Generated<Date>;
   updated_by: Generated<number>;
   user_id: number;
-  user_package_id: Generated<number | null>;
+  user_package_id: number;
 }
 
 export interface DepositAccounts {

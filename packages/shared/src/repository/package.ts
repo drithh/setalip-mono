@@ -115,9 +115,8 @@ export interface SelectAllPackageTransaction {
   pageCount: number;
 }
 
-export interface SelectAllActivePackage extends Selectable<CreditTransactions> {
+export interface SelectAllActivePackage extends Selectable<SelectPackage> {
   credit_used: Selectable<UserPackages>['credit'];
-  package_name: Selectable<Packages>['name'] | null;
   class_type: ClassTypes['type'];
 }
 
@@ -128,8 +127,8 @@ export interface SelectAllUserPackage extends Selectable<UserPackages> {
 
 export interface UpdatePackageTransactionResult {
   status: SelectPackageTransaction['status'];
-  credit: SelectCredit['amount'];
-  expired_at: SelectCredit['expired_at'];
+  credit: SelectPackageTransaction['credit'];
+  expired_at: Selectable<UserPackages>['expired_at'];
 }
 
 export interface UpdatePackageTransactionImage {
