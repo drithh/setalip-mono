@@ -7,14 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@repo/ui/lib/utils';
 import React from 'react';
-
-export type Menu = {
-  icon: React.ReactNode;
-  label: string;
-  path: string;
-  isBottom?: boolean;
-  children?: React.ReactNode;
-};
+import { Menu } from './menu';
 
 export default function NavLink({ icon, label, path, isBottom }: Menu) {
   const pathname = usePathname();

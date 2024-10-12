@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
 } from '@repo/ui/components/ui/dropdown-menu';
 import Link from 'next/link';
-import { menus } from './navigation';
+import { menus } from './menu';
 import { usePathname } from 'next/navigation';
 import { Session, User } from 'lucia';
 
