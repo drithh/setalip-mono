@@ -40,16 +40,18 @@ export class CreditServiceImpl implements CreditService {
     const filters = {
       id,
     };
-    const credit = await this._creditRepository.find({ filters, limit: 1 });
+    const credit = (
+      await this._creditRepository.find({ filters, perPage: 1 })
+    )?.[0];
 
-    if (credit.length < 0) {
+    if (!credit) {
       return {
         error: new Error('Credit not found'),
       };
     }
 
     return {
-      result: credit[0],
+      result: credit,
     };
   }
 
@@ -57,16 +59,18 @@ export class CreditServiceImpl implements CreditService {
     const filters = {
       user_package_id: id,
     };
-    const credit = await this._creditRepository.find({ filters, perPage: 1 });
+    const credit = (
+      await this._creditRepository.find({ filters, perPage: 1 })
+    )?.[0];
 
-    if (credit.length < 0) {
+    if (!credit) {
       return {
         error: new Error('Credit not found'),
       };
     }
 
     return {
-      result: credit[0],
+      result: credit,
     };
   }
 
@@ -81,7 +85,7 @@ export class CreditServiceImpl implements CreditService {
     };
     const credit = await this._creditRepository.findWithPagination({
       filters,
-      limit: perPage,
+      perPage,
       offset,
       orderBy,
     });
@@ -98,9 +102,14 @@ export class CreditServiceImpl implements CreditService {
   }
 
   async create(data: InsertCredit) {
-    const classType = await this._classTypeRepository.findById(
-      data.class_type_id
-    );
+    const classType = (
+      await this._classTypeRepository.find({
+        filters: {
+          id: data.class_type_id,
+        },
+        perPage: 1,
+      })
+    )?.[0];
 
     if (!classType) {
       return {
@@ -141,6 +150,9 @@ export class CreditServiceImpl implements CreditService {
   async update(data: UpdateCredit) {
     const result = await this._creditRepository.update({
       data,
+      filters: {
+        id: data.id,
+      },
     });
 
     if (result instanceof Error) {

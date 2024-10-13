@@ -21,7 +21,7 @@ export interface CreditService {
   ): PromiseResult<SelectCredit | undefined, Error>;
   findAllByUserId(
     data: FindAllCreditOptions
-  ): PromiseResult<SelectCreditPagination, Error>;
+  ): PromiseResult<SelectCreditPagination<SelectCredit>, Error>;
 
   create(data: InsertCredit): PromiseResult<SelectCredit, Error>;
 

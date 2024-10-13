@@ -14,6 +14,7 @@ import {
 } from '..';
 import { entriesFromObject } from '#dep/util/index';
 import { ExpressionBuilder } from 'kysely';
+import { applyFilters } from './util';
 
 @injectable()
 export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
@@ -31,20 +32,12 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
 
     return query?.count ?? 0;
   }
-  private compileFilters(filters: Partial<SelectClassType>) {
-    return (eb: ExpressionBuilder<DB, 'class_types'>) => {
-      const compiledFilters = entriesFromObject(filters).flatMap(
-        ([key, value]) => (value !== undefined ? eb(key, '=', value) : [])
-      );
-      return eb.and(compiledFilters);
-    };
-  }
 
   async find(data?: SelectClassTypeQuery) {
     let baseQuery = this._db.selectFrom('class_types');
 
     if (data?.filters) {
-      baseQuery = baseQuery.where(this.compileFilters(data.filters));
+      baseQuery = baseQuery.where(applyFilters(data.filters));
     }
 
     if (data?.orderBy) {
@@ -87,7 +80,7 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
       const query = db
         .updateTable('class_types')
         .set(data)
-        .where('class_types.id', '=', data.id)
+        .where(applyFilters({ id: data.id }))
         .returningAll()
         .compile();
 
@@ -110,7 +103,7 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
       const db = trx ?? this._db;
       const query = db
         .deleteFrom('class_types')
-        .where(this.compileFilters(filters))
+        .where(applyFilters(filters))
         .execute();
 
       return;

@@ -16,40 +16,35 @@ import {
 
 export type SelectCredit = Selectable<CreditTransactions>;
 
-export interface SelectCreditPagination {
-  data: SelectCredit[];
+export interface SelectCreditPagination<T extends SelectCredit> {
+  data: T[];
   pageCount: number;
 }
-export type SelectCreditPick<
-  T extends keyof CreditTransactions = keyof CreditTransactions,
-> = Pick<CreditTransactions, T>;
+
 export interface SelectCreditQuery extends Query<SelectCredit> {}
 
 export type InsertCredit = Insertable<CreditTransactions>;
 
-export interface InsertCreditCommand extends Command {
+export interface InsertCreditCommand extends Command<SelectCredit> {
   data: InsertCredit;
 }
 
-export type UpdateCredit = OptionalToRequired<
-  Updateable<CreditTransactions>,
-  'id'
->;
+export type UpdateCredit = Updateable<CreditTransactions>;
 
-export interface UpdateCreditCommand extends Command {
+export interface UpdateCreditCommand extends Command<SelectCredit> {
   data: UpdateCredit;
 }
 
-export interface DeleteCreditCommand extends Command {
+export interface DeleteCreditCommand extends Command<SelectCredit> {
   filters: Partial<SelectCredit>;
 }
 
 export interface CreditRepository {
   count(): Promise<number>;
-  find<T extends keyof CreditTransactions>(
+  find<T extends SelectCredit>(data?: SelectCreditQuery): Promise<T[]>;
+  findWithPagination<T extends SelectCredit>(
     data?: SelectCreditQuery
-  ): Promise<SelectCredit[]>;
-  findWithPagination(data?: SelectCreditQuery): Promise<SelectCreditPagination>;
+  ): Promise<SelectCreditPagination<T>>;
 
   create(data: InsertCreditCommand): Promise<SelectCredit | Error>;
 

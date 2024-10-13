@@ -8,17 +8,17 @@ export interface SelectClassTypeQuery extends Query<SelectClassType> {}
 
 export type InsertClassType = Insertable<ClassTypes>;
 
-export interface InsertClassTypeCommand extends Command {
+export interface InsertClassTypeCommand extends Command<SelectClassType> {
   data: InsertClassType;
 }
 
-export type UpdateClassType = OptionalToRequired<Updateable<ClassTypes>, 'id'>;
+export type UpdateClassType = Updateable<ClassTypes>;
 
-export interface UpdateClassTypeCommand extends Command {
+export interface UpdateClassTypeCommand extends Command<SelectClassType> {
   data: UpdateClassType;
 }
 
-export interface DeleteClassTypeCommand extends Command {
+export interface DeleteClassTypeCommand extends Command<SelectClassType> {
   filters: Partial<SelectClassType>;
 }
 
