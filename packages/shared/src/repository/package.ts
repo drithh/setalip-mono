@@ -1,11 +1,19 @@
-import { Insertable, Selectable, Updateable } from 'kysely';
+import {
+  Expression,
+  Insertable,
+  Selectable,
+  SqlBool,
+  Updateable,
+} from 'kysely';
 import {
   ClassTypes,
   Classes,
+  Command,
   CreditTransactions,
   DepositAccounts,
   PackageTransactions,
   Packages,
+  Query,
   UserPackages,
   Users,
 } from '../db';
@@ -33,13 +41,13 @@ export interface SelectAllPackage {
   pageCount: number;
 }
 
-export type SelectPackage = Selectable<Packages>;
-export type InsertPackage = Insertable<Packages>;
-export type UpdatePackage = OptionalToRequired<Updateable<Packages>, 'id'>;
+// export type SelectPackage = Selectable<Packages>;
+// export type InsertPackage = Insertable<Packages>;
+// export type UpdatePackage = OptionalToRequired<Updateable<Packages>, 'id'>;
 
-export type SelectPackageTransaction = Selectable<PackageTransactions>;
+// export type SelectPackageTransaction = Selectable<PackageTransactions>;
 
-export interface InsertPackageTransaction {
+export interface InsertPackageTransactionWW {
   user_id: SelectPackageTransaction['user_id'];
   package_id: SelectPackage['id'];
   deposit_account_id: SelectDepositAccount['id'];
@@ -52,7 +60,7 @@ export interface InsertPackageTransaction {
   voucher_discount: SelectPackageTransaction['voucher_discount'];
 }
 
-export interface UpdatePackageTransaction {
+export interface UpdatePackageTransactionWW {
   id: SelectPackageTransaction['id'];
   status: SelectPackageTransaction['status'];
   deposit_account_id?: SelectPackageTransaction['deposit_account_id'];
@@ -135,54 +143,123 @@ export interface UpdatePackageTransactionImage {
   id: SelectPackageTransaction['id'];
   image_url: SelectPackageTransaction['image_url'];
 }
+
+// dasdasdas
+
+export type SelectPackage = Selectable<Packages>;
+export type SelectPackageTransaction = Selectable<PackageTransactions>;
+
+export interface SelectPackagePagination<T extends SelectPackage> {
+  data: T[];
+  pageCount: number;
+}
+
+export interface SelectPackageTransactionPagination {
+  data: SelectPackageTransaction[];
+  pageCount: number;
+}
+
+export interface SelectPackageQuery extends Query<SelectPackage> {
+  withClassType?: boolean;
+}
+export interface SelectPackageTransactionQuery
+  extends Query<SelectPackageTransaction> {}
+
+export type InsertPackage = Insertable<PackageTransactions>;
+export type InsertPackageTransaction = Insertable<PackageTransactions>;
+export interface InsertPackageCommand extends Command {
+  data: InsertPackage;
+}
+export interface InsertPackageTransactionCommand extends Command {
+  data: InsertPackageTransaction;
+}
+
+export type UpdatePackage = OptionalToRequired<
+  Updateable<PackageTransactions>,
+  'id'
+>;
+export type UpdatePackageTransaction = OptionalToRequired<
+  Updateable<PackageTransactions>,
+  'id'
+>;
+
+export interface UpdatePackageCommand extends Command {
+  data: UpdatePackage;
+}
+export interface UpdatePackageTransactionCommand extends Command {
+  data: UpdatePackageTransaction;
+}
+
+export interface DeletePackageCommand extends Command {
+  filters: Partial<SelectPackage>;
+}
+
+export interface DeletePackageTranscationCommand extends Command {
+  filters: Partial<SelectPackageTransaction>;
+}
 export interface PackageRepository {
   count(): Promise<number>;
 
-  findAll(data: FindAllPackageOptions): Promise<SelectAllPackage>;
-  findById(id: SelectPackage['id']): Promise<SelectPackage | undefined>;
-  findAllPackageTransaction(
-    data: FindAllUserPackageTransactionOption
-  ): Promise<SelectAllPackageTransactionWithUser>;
-  findPackageTransactionById(
-    id: SelectPackageTransaction['id']
-  ): Promise<SelectPackageTransactionWithPackage | undefined>;
-  findAllPackageByUserId(
-    user_id: SelectPackageTransaction['user_id']
-  ): Promise<SelectAllUserPackage[]>;
-  findAllPackageTransactionByUserId(
-    data: FindAllUserPackageOption
-  ): Promise<SelectAllPackageTransaction>;
-  findPackageTransactionByVoucherIdAndUserId(
-    voucher_id: SelectPackageTransaction['voucher_id'],
-    user_id: SelectPackageTransaction['user_id']
-  ): Promise<SelectPackageTransaction | undefined>;
-  findAllActivePackageByUserId(
-    user_id: SelectPackageTransaction['user_id']
-  ): Promise<SelectAllActivePackage[]>;
-  findAboutToExpiredPackage(
-    user_id: SelectPackageTransaction['user_id'],
-    class_type: SelectClassType['id']
-  ): Promise<SelectAllActivePackage | undefined>;
-  findPackageTransactionByUserIdAndPackageId(
-    user_id: SelectPackageTransaction['user_id'],
-    package_id: SelectPackage['id']
-  ): Promise<SelectPackageTransactionByUser>;
+  find(data?: SelectPackageQuery): Promise<SelectPackage[]>;
+  findWithPagination<T extends SelectPackage>(
+    data?: SelectPackageQuery
+  ): Promise<SelectPackagePagination<T>>;
 
-  create(data: InsertPackage): Promise<SelectPackage | Error>;
+  findPackageTransaction(
+    data?: SelectPackageTransactionQuery
+  ): Promise<SelectPackageTransaction[]>;
+  findPackageTransactionWithPagination(
+    data?: SelectPackageTransactionQuery
+  ): Promise<SelectPackageTransactionPagination>;
+
+  // findAll(data: FindAllPackageOptions): Promise<SelectAllPackage>;
+  // findById(id: SelectPackage['id']): Promise<SelectPackage | undefined>;
+  // findAllPackageTransaction(
+  //   data: FindAllUserPackageTransactionOption
+  // ): Promise<SelectAllPackageTransactionWithUser>;
+  // findPackageTransactionById(
+  //   id: SelectPackageTransaction['id']
+  // ): Promise<SelectPackageTransactionWithPackage | undefined>;
+  // findAllPackageByUserId(
+  //   user_id: SelectPackageTransaction['user_id']
+  // ): Promise<SelectAllUserPackage[]>;
+  // findAllPackageTransactionByUserId(
+  //   data: FindAllUserPackageOption
+  // ): Promise<SelectAllPackageTransaction>;
+  // findPackageTransactionByVoucherIdAndUserId(
+  //   voucher_id: SelectPackageTransaction['voucher_id'],
+  //   user_id: SelectPackageTransaction['user_id']
+  // ): Promise<SelectPackageTransaction | undefined>;
+  // findAllActivePackageByUserId(
+  //   user_id: SelectPackageTransaction['user_id']
+  // ): Promise<SelectAllActivePackage[]>;
+  // findAboutToExpired(
+  //   user_id: SelectPackageTransaction['user_id'],
+  //   class_type: SelectClassType['id']
+  // ): Promise<SelectAllActivePackage | undefined>;
+  // findPackageTransactionByUserIdAndPackageId(
+  //   user_id: SelectPackageTransaction['user_id'],
+  //   package_id: SelectPackage['id']
+  // ): Promise<SelectPackageTransactionByUser>;
+
+  create(data: InsertPackageCommand): Promise<SelectPackage | Error>;
   createPackageTransaction(
-    data: InsertPackageTransaction
+    data: InsertPackageTransactionCommand
   ): Promise<SelectPackageTransaction | Error>;
 
-  update(data: UpdatePackage): Promise<undefined | Error>;
-  updatePackageTransactionImage(
-    data: UpdatePackageTransactionImage
-  ): Promise<undefined | Error>;
+  update(data: UpdatePackageCommand): Promise<undefined | Error>;
+  // updatePackageTransactionImage(
+  //   data: UpdatePackageTransactionImage
+  // ): Promise<undefined | Error>;
   updatePackageTransaction(
-    data: UpdatePackageTransaction
+    data: UpdatePackageTransactionCommand
   ): Promise<UpdatePackageTransactionResult | Error>;
 
-  delete(id: SelectPackage['id']): Promise<undefined | Error>;
-  deleteExpiredPackageTransaction(): Promise<
-    SelectPackageTransaction[] | Error
-  >;
+  delete(data: DeletePackageCommand): Promise<undefined | Error>;
+  // deletePackageTransaction(
+  //   data: DeletePackageTranscationCommand
+  // ): Promise<undefined | Error>;
+  // deleteExpiredPackageTransaction(): Promise<
+  // SelectPackageTransaction[] | Error
+  // >;
 }

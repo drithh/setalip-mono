@@ -8,9 +8,8 @@ import type {
   UpdateCredit,
   ClassTypeRepository,
   UserRepository,
-  FindAllCreditOptions,
 } from '../repository';
-import { CreditService } from './credit';
+import { FindAllCreditOptions, CreditService } from './credit';
 
 @injectable()
 export class CreditServiceImpl implements CreditService {
@@ -72,7 +71,20 @@ export class CreditServiceImpl implements CreditService {
   }
 
   async findAllByUserId(data: FindAllCreditOptions) {
-    const credit = await this._creditRepository.findAllByUserId(data);
+    const { page = 1, perPage = 10, sort } = data;
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+    ).join(' ') as `${keyof SelectCredit} ${'asc' | 'desc'}`;
+    const filters = {
+      user_id: data.user_id,
+    };
+    const credit = await this._creditRepository.findWithPagination({
+      filters,
+      limit: perPage,
+      offset,
+      orderBy,
+    });
 
     if (!credit) {
       return {
@@ -110,7 +122,9 @@ export class CreditServiceImpl implements CreditService {
       ...data,
     } satisfies InsertCredit;
 
-    const result = await this._creditRepository.create(insertedData);
+    const result = await this._creditRepository.create({
+      data: insertedData,
+    });
 
     if (result instanceof Error) {
       return {
@@ -125,7 +139,9 @@ export class CreditServiceImpl implements CreditService {
   }
 
   async update(data: UpdateCredit) {
-    const result = await this._creditRepository.update(data);
+    const result = await this._creditRepository.update({
+      data,
+    });
 
     if (result instanceof Error) {
       return {

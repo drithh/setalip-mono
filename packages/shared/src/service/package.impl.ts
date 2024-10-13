@@ -24,6 +24,19 @@ import { PackageService } from './package';
 import { NotificationType, type NotificationService } from '../notification';
 import { error } from 'console';
 import { PromiseResult } from '../types';
+import {
+  createSelectQueryBuilder,
+  Expression,
+  expressionBuilder,
+  ExpressionBuilder,
+  SelectQueryBuilder,
+  SqlBool,
+} from 'kysely';
+import { Database, db, DB, Packages } from '../db';
+
+interface FindAllPackage extends SelectPackage {
+  class_type: string;
+}
 
 @injectable()
 export class PackageServiceImpl implements PackageService {
@@ -54,60 +67,53 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async findAll(data: FindAllPackageOptions) {
-    const packages = await this._packageRepository.findAll(data);
+    const { page = 1, perPage = 10, sort, name, types, is_active } = data;
 
-    return {
-      result: packages,
-      error: undefined,
-    };
-  }
+    const offset = (page - 1) * perPage;
+    const orderBy = sort?.split(',').map((part) => {
+      const [field, direction] = part.split('.');
+      return `${field?.trim()} ${direction?.toLowerCase()}` as `${keyof SelectPackage} ${'asc' | 'desc'}`;
+    }) ?? ['created_at desc'];
 
-  async findById(id: SelectPackage['id']) {
-    const singlePackage = await this._packageRepository.findById(id);
-
-    if (!singlePackage) {
-      return {
-        error: new Error('Package not found'),
-      };
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<DB, 'packages'>();
+    if (name) {
+      customFilters.push(eb('name', 'like', `%${name}%`));
+    }
+    if (types && types.length > 0) {
+      customFilters.push(eb('class_type_id', 'in', types));
     }
 
-    return {
-      result: singlePackage,
-    };
-  }
-
-  async findAllPackageTransaction(data: FindAllUserPackageTransactionOption) {
-    const packages =
-      await this._packageRepository.findAllPackageTransaction(data);
-
-    return {
-      result: packages,
-      error: undefined,
-    };
-  }
-
-  async findPackageTransactionById(
-    id: SelectPackageTransaction['id']
-  ): PromiseResult<SelectPackageTransactionWithPackage | undefined, Error> {
-    const packageTransaction =
-      await this._packageRepository.findPackageTransactionById(id);
-
-    if (!packageTransaction) {
-      return {
-        result: undefined,
-        error: new Error('Package transaction not found'),
-      };
+    if (is_active !== undefined) {
+      customFilters.push(eb('is_active', '=', is_active));
     }
 
-    return {
-      result: packageTransaction,
-      error: undefined,
-    };
-  }
+    // function lateralJoinClassType<
+    //   T extends SelectQueryBuilder<DB, 'packages', {}>,
+    // >(
+    //   qb: T
+    // ): SelectQueryBuilder<DB, 'packages' | 'class_types', SelectClassType> {
+    //   return qb
+    //     .innerJoinLateral(
+    //       (eb) =>
+    //         eb
+    //           .selectFrom('class_types')
+    //           .selectAll()
+    //           .whereRef('class_types.id', '=', 'packages.class_type_id')
+    //           .as('class_types'),
+    //       (join) => join.onTrue()
+    //     )
+    //     .selectAll();
+    // }
 
-  async findAllPackageTransactionByUserId(data: FindAllUserPackageOption) {
     const packages =
-      await this._packageRepository.findAllPackageTransactionByUserId(data);
+      await this._packageRepository.findWithPagination<FindAllPackage>({
+        customFilters: customFilters,
+        withClassType: true,
+        perPage: perPage,
+        offset: offset,
+        orderBy: orderBy,
+      });
 
     return {
       result: packages,
@@ -127,18 +133,75 @@ export class PackageServiceImpl implements PackageService {
     };
   }
 
-  async findAboutToExpiredPackage(
+  async findById(id: SelectPackage['id']) {
+    const singlePackage = await this._packageRepository.find({
+      filters: { id },
+      limit: 1,
+    });
+
+    if (singlePackage.length < 0) {
+      return {
+        error: new Error('Package not found'),
+      };
+    }
+
+    return {
+      result: singlePackage[0],
+    };
+  }
+
+  async findAboutToExpired(
     user_id: SelectPackageTransaction['user_id'],
     class_type: SelectClassType['id']
   ) {
-    const singlePackage =
-      await this._packageRepository.findAboutToExpiredPackage(
-        user_id,
-        class_type
-      );
+    const singlePackage = await this._packageRepository.findAboutToExpired(
+      user_id,
+      class_type
+    );
 
     return {
       result: singlePackage,
+      error: undefined,
+    };
+  }
+
+  async findAllPackageTransaction(data: FindAllUserPackageTransactionOption) {
+    const packages =
+      await this._packageRepository.findAllPackageTransaction(data);
+
+    return {
+      result: packages,
+      error: undefined,
+    };
+  }
+
+  async findAllPackageTransactionByUserId(data: FindAllUserPackageOption) {
+    const packages =
+      await this._packageRepository.findAllPackageTransactionByUserId(data);
+
+    return {
+      result: packages,
+      error: undefined,
+    };
+  }
+
+  async findPackageTransactionById(
+    id: SelectPackageTransaction['id']
+  ): PromiseResult<SelectPackageTransactionWithPackage, Error> {
+    const packageTransaction = await this._packageRepository.find({
+      filters: { id },
+      limit: 1,
+    });
+
+    if (packageTransaction.length < 0) {
+      return {
+        result: undefined,
+        error: new Error('Package transaction not found'),
+      };
+    }
+
+    return {
+      result: packageTransaction[0],
       error: undefined,
     };
   }
@@ -470,7 +533,7 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async delete(id: SelectPackage['id']) {
-    const result = await this._packageRepository.delete(id);
+    const result = await this._packageRepository.delete({ filters: { id } });
 
     if (result instanceof Error) {
       return {
@@ -485,8 +548,9 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async deleteExpiredPackageTransaction() {
-    const result =
-      await this._packageRepository.deleteExpiredPackageTransaction();
+    const result = await this._packageRepository.deletePackageTransaction({
+      filters: {},
+    });
 
     if (result instanceof Error) {
       return {

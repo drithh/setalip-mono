@@ -2,11 +2,14 @@ import {
   SelectCredit,
   InsertCredit,
   UpdateCredit,
-  FindAllCreditOptions,
   SelectCreditPagination,
+  SelectUser,
+  DefaultPagination,
 } from '../repository';
 import { PromiseResult } from '../types';
-
+export interface FindAllCreditOptions extends DefaultPagination {
+  user_id: SelectUser['id'];
+}
 export interface CreditService {
   findAll(): PromiseResult<SelectCredit[], Error>;
   findById(

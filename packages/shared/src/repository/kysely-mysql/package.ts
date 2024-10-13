@@ -1,5 +1,7 @@
 import { id, inject, injectable } from 'inversify';
 import {
+  DeletePackageCommand,
+  DeletePackageTranscationCommand,
   FindAllPackageOptions,
   FindAllUserPackageOption,
   FindAllUserPackageTransactionOption,
@@ -10,15 +12,28 @@ import {
   SelectAllPackage,
   SelectAllPackageTransactionWithUser,
   SelectPackage,
+  SelectPackageQuery,
   SelectPackageTransaction,
+  SelectPackageTransactionQuery,
   UpdatePackage,
   UpdatePackageTransaction,
   UpdatePackageTransactionImage,
 } from '../package';
-import { Database } from '#dep/db/index';
+import { Database, DB, Packages, Query } from '#dep/db/index';
 import { TYPES } from '#dep/inversify/types';
-import { ColumnType, Expression, sql, SqlBool } from 'kysely';
+import {
+  ColumnType,
+  Expression,
+  ExpressionBuilder,
+  OrderByExpression,
+  ReferenceExpression,
+  SelectQueryBuilder,
+  sql,
+  SqlBool,
+} from 'kysely';
 import { addDays } from 'date-fns';
+import { entriesFromObject } from '#dep/util/index';
+import { applyFilters, applyModifiers } from './util';
 
 @injectable()
 export class KyselyMySqlPackageRepository implements PackageRepository {
@@ -37,56 +52,79 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     return query?.count ?? 0;
   }
 
-  async findAll(data: FindAllPackageOptions) {
-    const { page = 1, perPage = 10, sort, name, types, is_active } = data;
-
-    const offset = (page - 1) * perPage;
-    const orderBy = sort?.split(',').map((part) => {
-      const [field, direction] = part.split('.');
-      return `${field?.trim()} ${direction?.toLowerCase()}` as `${keyof SelectPackage} ${'asc' | 'desc'}`;
-    }) ?? ['created_at desc'];
-
-    let query = this._db
-      .selectFrom('packages')
-      .innerJoin('class_types', 'packages.class_type_id', 'class_types.id');
-
-    if (name) {
-      query = query.where('name', 'like', `%${name}%`);
+  async find(data?: SelectPackageQuery) {
+    let baseQuery = this._db.selectFrom('packages');
+    if (data?.filters) {
+      baseQuery = baseQuery.where(applyFilters(data.filters));
     }
-    if (types && types.length > 0) {
-      query = query.where('class_type_id', 'in', types);
+    baseQuery.$call((qb) => applyModifiers(qb, data));
+
+    return baseQuery.selectAll().execute();
+  }
+
+  async findWithPagination<T extends SelectPackage>(data?: SelectPackageQuery) {
+    let baseQuery = this._db.selectFrom('packages');
+    if (data?.filters) {
+      baseQuery = baseQuery.where(applyFilters(data.filters));
     }
 
-    if (is_active !== undefined) {
-      query = query.where('is_active', '=', is_active);
+    if (data?.withClassType) {
+      baseQuery = baseQuery
+        .innerJoin('class_types', 'packages.class_type_id', 'class_types.id')
+        .select('class_types.type as class_type');
     }
 
-    const queryData = await query
-      .selectAll('packages')
-      .select('class_types.type as class_type')
-      .limit(perPage)
-      .offset(offset)
-      .orderBy(orderBy)
-      .execute();
-
-    const queryCount = await query
+    const queryCount = await baseQuery
       .select(({ fn }) => [fn.count<number>('packages.id').as('count')])
       .executeTakeFirst();
 
-    const pageCount = Math.ceil((queryCount?.count ?? 0) / perPage);
+    const pageCount = Math.ceil(
+      (queryCount?.count ?? 0) / (data?.perPage ?? 10)
+    );
+
+    baseQuery = applyModifiers(baseQuery, data);
+    const queryData = await baseQuery.selectAll().execute();
+
+    return {
+      data: queryData as T[],
+      pageCount: pageCount,
+    };
+  }
+
+  async findPackageTransaction(data?: SelectPackageTransactionQuery) {
+    let baseQuery = this._db.selectFrom('package_transactions');
+    if (data?.filters) {
+      baseQuery = baseQuery.where(applyFilters(data.filters));
+    }
+    baseQuery = applyModifiers(baseQuery, data);
+    return baseQuery.selectAll().execute();
+  }
+
+  async findPackageTransactionWithPagination(
+    data?: SelectPackageTransactionQuery
+  ) {
+    let baseQuery = this._db.selectFrom('package_transactions');
+    if (data?.filters) {
+      baseQuery = baseQuery.where(applyFilters(data.filters));
+    }
+
+    const queryCount = await baseQuery
+      .select(({ fn }) => [
+        fn.count<number>('package_transactions.id').as('count'),
+      ])
+      .executeTakeFirst();
+
+    baseQuery = applyModifiers(baseQuery, data);
+    const queryData = await baseQuery.selectAll().execute();
+
+    const pageCount = Math.ceil(
+      (queryCount?.count ?? 0) / (data?.perPage ?? 10)
+    );
 
     return {
       data: queryData,
       pageCount: pageCount,
     };
-  }
-
-  findById(id: SelectPackage['id']) {
-    return this._db
-      .selectFrom('packages')
-      .selectAll()
-      .where('packages.id', '=', id)
-      .executeTakeFirst();
   }
 
   async findAllPackageTransaction(data: FindAllUserPackageTransactionOption) {
@@ -272,7 +310,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     return activePackages;
   }
 
-  async findAboutToExpiredPackage(user_id: number, class_type: number) {
+  async findAboutToExpired(user_id: number, class_type: number) {
     const activePackages = await this.findAllActivePackageByUserId(user_id);
 
     const creditUsages = activePackages.find(
@@ -338,7 +376,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
         .insertInto('packages')
         .values(data)
         .returningAll()
-        .compile();
+        .apply();
 
       const result = await this._db.executeQuery(query);
 
@@ -383,7 +421,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
             voucher_discount: data.voucher_discount,
           })
           .returningAll()
-          .compile();
+          .apply();
 
         const resultUserPackage = await trx.executeQuery(queryUserPackage);
 
@@ -461,7 +499,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
               credit: singlePackage.credit,
             })
             .returningAll()
-            .compile();
+            .apply();
 
           const resultUserPackage = await trx.executeQuery(userPackage);
 
@@ -484,7 +522,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
           //     type: 'debit',
           //   })
           //   .returningAll()
-          //   .compile();
+          //   .apply();
 
           // const resultCreditTransaction =
           //   await trx.executeQuery(creditTransaction);
@@ -506,7 +544,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
               type: 'debit',
             })
             .returningAll()
-            .compile();
+            .apply();
 
           const resultLoyaltyTransaction =
             await trx.executeQuery(loyaltyTransaction);
@@ -577,21 +615,19 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     }
   }
 
-  async delete(id: SelectPackage['id']) {
+  async delete({ filters, trx }: DeletePackageCommand) {
     try {
-      const query = this._db
+      const db = trx ?? this._db;
+
+      const query = await db
         .deleteFrom('packages')
-        .where('packages.id', '=', id)
-        .returningAll()
-        .compile();
+        .where(this.applyPackageFilters(filters))
+        .executeTakeFirst();
 
-      const result = await this._db.executeQuery(query);
-
-      if (result.rows[0] === undefined) {
-        console.error('Failed to delete package', result);
+      if (query.numDeletedRows === undefined) {
+        console.error('Failed to delete package', query);
         return new Error('Failed to delete package');
       }
-
       return;
     } catch (error) {
       console.error('Error deleting package:', error);
@@ -599,7 +635,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     }
   }
 
-  async deleteExpiredPackageTransaction() {
+  async deletePexackageTransaction() {
     try {
       const packageTransactions = await this._db
         .selectFrom('package_transactions')

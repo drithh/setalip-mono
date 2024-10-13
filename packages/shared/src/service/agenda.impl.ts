@@ -370,11 +370,10 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const expiringCredit =
-      await this._packageRepository.findAboutToExpiredPackage(
-        user.id,
-        agendaClass.class_type_id
-      );
+    const expiringCredit = await this._packageRepository.findAboutToExpired(
+      user.id,
+      agendaClass.class_type_id
+    );
 
     if (!expiringCredit) {
       return {
@@ -563,11 +562,10 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const expiringCredit =
-      await this._packageRepository.findAboutToExpiredPackage(
-        useUserCredit.id,
-        agendaClass.class_type_id
-      );
+    const expiringCredit = await this._packageRepository.findAboutToExpired(
+      useUserCredit.id,
+      agendaClass.class_type_id
+    );
 
     if (!expiringCredit) {
       return {

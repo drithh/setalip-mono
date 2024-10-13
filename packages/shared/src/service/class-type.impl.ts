@@ -21,7 +21,7 @@ export class ClassTypeServiceImpl implements ClassTypeService {
 
   async findAll() {
     const getCachedClassTypes = unstable_cache(
-      async () => await this._classTypeRepository.findAll(),
+      async () => await this._classTypeRepository.find(),
       ['class-types-cache']
     );
 
@@ -34,21 +34,25 @@ export class ClassTypeServiceImpl implements ClassTypeService {
   }
 
   async findById(id: SelectClassType['id']) {
-    const classType = await this._classTypeRepository.findById(id);
+    const classType = await this._classTypeRepository.find({
+      filters: { id },
+    });
 
-    if (!classType) {
+    if (classType.length === 0) {
       return {
         error: new Error('Class type not found'),
       };
     }
 
     return {
-      result: classType,
+      result: classType[0],
     };
   }
 
   async create(data: InsertClassType) {
-    const result = await this._classTypeRepository.create(data);
+    const result = await this._classTypeRepository.create({
+      data,
+    });
 
     if (result instanceof Error) {
       return {
@@ -62,7 +66,7 @@ export class ClassTypeServiceImpl implements ClassTypeService {
   }
 
   async update(data: UpdateClassType) {
-    const result = await this._classTypeRepository.update(data);
+    const result = await this._classTypeRepository.update({ data });
 
     if (result instanceof Error) {
       return {
@@ -77,7 +81,9 @@ export class ClassTypeServiceImpl implements ClassTypeService {
   }
 
   async delete(id: SelectClassType['id']) {
-    const result = await this._classTypeRepository.delete(id);
+    const result = await this._classTypeRepository.delete({
+      filters: { id },
+    });
 
     if (result instanceof Error) {
       return {

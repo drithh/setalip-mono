@@ -72,7 +72,7 @@ export default async function AgendaDetail({
   }
 
   const packageService = container.get<PackageService>(TYPES.PackageService);
-  const singlePackage = await packageService.findAboutToExpiredPackage(
+  const singlePackage = await packageService.findAboutToExpired(
     auth.user.id,
     singleClass.result.class_type_id,
   );

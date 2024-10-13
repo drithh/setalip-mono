@@ -3,9 +3,12 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { DB } from '@repo/shared/db';
 import {
+  Expression,
   Kysely,
   MysqlDialect,
   ParseJSONResultsPlugin,
+  SelectQueryBuilder,
+  SqlBool,
   Transaction,
 } from 'kysely';
 import { env } from '#dep/env';
@@ -41,6 +44,7 @@ export interface Query<T> {
   filters?: Partial<T>;
   perPage?: number;
   offset?: number;
-  limit?: number;
-  orderBy?: `${Extract<keyof T, string>} ${'asc' | 'desc'}`; // Extracts only string keys
+  orderBy?: `${Extract<keyof T, string>} ${'asc' | 'desc'}`[];
+  customFilters?: Expression<SqlBool>[];
+  compile?: boolean;
 }

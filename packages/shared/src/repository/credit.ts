@@ -15,14 +15,14 @@ import {
 } from '.';
 
 export type SelectCredit = Selectable<CreditTransactions>;
-export interface FindAllCreditOptions extends DefaultPagination {
-  user_id: SelectUser['id'];
-}
+
 export interface SelectCreditPagination {
   data: SelectCredit[];
   pageCount: number;
 }
-
+export type SelectCreditPick<
+  T extends keyof CreditTransactions = keyof CreditTransactions,
+> = Pick<CreditTransactions, T>;
 export interface SelectCreditQuery extends Query<SelectCredit> {}
 
 export type InsertCredit = Insertable<CreditTransactions>;
@@ -46,14 +46,10 @@ export interface DeleteCreditCommand extends Command {
 
 export interface CreditRepository {
   count(): Promise<number>;
-
-  find(data?: SelectCreditQuery): Promise<SelectCredit[]>;
-  findWithCount(data?: SelectCreditQuery): Promise<SelectCredit[]>;
-  // findById(id: SelectCredit['id']): Promise<SelectCredit | undefined>;
-  // findByUserPackageId(
-  //   id: SelectCredit['user_package_id']
-  // ): Promise<SelectCredit | undefined>;
-  // findAllByUserId(data: FindAllCreditOptions): Promise<SelectCreditPagination>;
+  find<T extends keyof CreditTransactions>(
+    data?: SelectCreditQuery
+  ): Promise<SelectCredit[]>;
+  findWithPagination(data?: SelectCreditQuery): Promise<SelectCreditPagination>;
 
   create(data: InsertCreditCommand): Promise<SelectCredit | Error>;
 

@@ -36,7 +36,7 @@ export interface PackageService {
   findAllActivePackageByUserId(
     user_id: SelectPackageTransaction['user_id']
   ): PromiseResult<SelectAllActivePackage[], Error>;
-  findAboutToExpiredPackage(
+  findAboutToExpired(
     user_id: SelectPackageTransaction['user_id'],
     class_type: SelectClassType['id']
   ): PromiseResult<SelectAllActivePackage | undefined, Error>;

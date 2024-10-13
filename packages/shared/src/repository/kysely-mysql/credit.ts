@@ -4,8 +4,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
 import {
   CreditRepository,
-  DeleteCredit,
-  FindAllCreditOptions,
+  DeleteCreditCommand,
   InsertCredit,
   InsertCreditCommand,
   SelectCredit,
@@ -13,7 +12,12 @@ import {
   UpdateCredit,
   UpdateCreditCommand,
 } from '../credit';
-import { ExpressionBuilder, sql, Transaction } from 'kysely';
+import {
+  ExpressionBuilder,
+  SelectQueryBuilder,
+  sql,
+  Transaction,
+} from 'kysely';
 import { SelectUser } from '../user';
 import { entriesFromObject } from '#dep/util/index';
 
@@ -45,10 +49,40 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
     };
   }
 
-  async find({ filters, limit, offset, perPage, orderBy }: SelectCreditQuery) {
-    let baseQuery = this._db.selectFrom('credit_transactions').selectAll();
+  async join() {
+    function hasDogNamed(
+      name: Expression<string>,
+      ownerId: Expression<number>
+    ) {
+      // Create an expression builder without any tables in the context.
+      // This way we make no assumptions about the calling context.
+      const eb = expressionBuilder<DB, never>();
+
+      return eb.exists(
+        eb
+          .selectFrom('pet')
+          .select('pet.id')
+          .where('pet.owner_id', '=', ownerId)
+          .where('pet.species', '=', 'dog')
+          .where('pet.name', '=', name)
+      );
+    }
+  }
+
+  async find({
+    filters,
+    limit,
+    offset,
+    perPage,
+    orderBy,
+    customFilters,
+  }: SelectCreditQuery) {
+    let baseQuery = this._db.selectFrom('credit_transactions');
     if (filters) {
       baseQuery = baseQuery.where(this.compileFilters(filters));
+    }
+    if (customFilters) {
+      baseQuery = baseQuery.where((eb) => eb.and(customFilters));
     }
     if (limit) {
       baseQuery = baseQuery.limit(limit);
@@ -62,39 +96,45 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
     if (orderBy) {
       baseQuery = baseQuery.orderBy(orderBy);
     }
-    return baseQuery.execute();
+
+    return baseQuery.selectAll().execute();
   }
 
-  // async findAllByUserId(data: FindAllCreditOptions) {
-  //   const { page = 1, perPage = 10, sort } = data;
+  async findWithPagination({
+    filters,
+    limit,
+    offset,
+    perPage,
+    orderBy,
+  }: SelectCreditQuery) {
+    let baseQuery = this._db.selectFrom('credit_transactions');
+    if (filters) {
+      baseQuery = baseQuery.where(this.compileFilters(filters));
+    }
+    const count = (await baseQuery
+      .select(({ fn }) => [
+        fn.count<number>('credit_transactions.id').as('count'),
+      ])
+      .executeTakeFirst()) ?? { count: 0 };
 
-  //   const offset = (page - 1) * perPage;
-  //   const orderBy = (
-  //     sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
-  //   ).join(' ') as `${keyof SelectCredit} ${'asc' | 'desc'}`;
+    const pageCount = Math.ceil((count?.count ?? 0) / (perPage ?? 1));
 
-  //   let query = this._db
-  //     .selectFrom('credit_transactions')
-  //     .where('credit_transactions.user_id', '=', data.user_id);
+    if (limit) {
+      baseQuery = baseQuery.limit(limit);
+    }
+    if (offset) {
+      baseQuery = baseQuery.offset(offset);
+    }
+    if (perPage) {
+      baseQuery = baseQuery.limit(perPage);
+    }
+    if (orderBy) {
+      baseQuery = baseQuery.orderBy(orderBy);
+    }
 
-  //   const queryData = await query
-  //     .selectAll()
-  //     .limit(perPage)
-  //     .offset(offset)
-  //     .orderBy(orderBy)
-  //     .execute();
-
-  //   const queryCount = await query
-  //     .select(({ fn }) => [
-  //       fn.count<number>('credit_transactions.id').as('count'),
-  //     ])
-  //     .executeTakeFirst();
-
-  //   return {
-  //     data: queryData,
-  //     pageCount: Math.ceil((queryCount?.count ?? 0) / perPage),
-  //   };
-  // }
+    const data = await baseQuery.selectAll().execute();
+    return { data, pageCount };
+  }
 
   async create({ data, trx }: InsertCreditCommand) {
     try {
@@ -105,7 +145,7 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
         .returningAll()
         .compile();
 
-      const result = await this._db.executeQuery(query);
+      const result = await db.executeQuery(query);
 
       if (result.rows[0] === undefined) {
         console.error('Failed to create credit', result);
@@ -140,14 +180,14 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
     }
   }
 
-  async delete({ filters, trx }: DeleteCredit) {
+  async delete({ filters, trx }: DeleteCreditCommand) {
     try {
       const db = trx ?? this._db;
 
       const query = await db
         .deleteFrom('credit_transactions')
         .where(this.compileFilters(filters))
-        .executeTakeFirst();
+        .executeTakeFirstOrThrow();
 
       if (query.numDeletedRows === undefined) {
         console.error('Failed to delete credit', query);
