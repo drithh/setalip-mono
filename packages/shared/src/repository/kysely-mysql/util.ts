@@ -8,8 +8,13 @@ import {
   OrderByExpression,
 } from 'kysely';
 
-export function applyFilters<T extends keyof DB, F>(filters: Partial<F>) {
+export function applyFilters<T extends keyof DB, F>(
+  filters: Partial<F> | undefined
+) {
   return (eb: ExpressionBuilder<DB, T>) => {
+    if (!filters) {
+      return eb.and([]);
+    }
     const appliedFilters = entriesFromObject(filters).flatMap(([key, value]) =>
       value !== undefined
         ? eb(key as ReferenceExpression<DB, T>, '=', value)
@@ -30,9 +35,7 @@ export function applyModifiers<T extends keyof DB, F>(
     query = query.limit(data.perPage);
   }
   if (data?.orderBy) {
-    query = query.orderBy(
-      data.orderBy as ReadonlyArray<OrderByExpression<DB, T, {}>>
-    );
+    query = query.orderBy(data.orderBy as any);
   }
   return query;
 }

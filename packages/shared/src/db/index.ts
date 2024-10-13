@@ -36,15 +36,16 @@ export const db = new Database({
 
 export type DBTransaction = Transaction<DB>;
 
-export interface Command {
+export interface Command<T> {
+  filters?: Partial<T>;
+  customFilters?: Expression<SqlBool>[];
   trx?: DBTransaction;
 }
 
 export interface Query<T> {
   filters?: Partial<T>;
+  customFilters?: Expression<SqlBool>[];
   perPage?: number;
   offset?: number;
-  orderBy?: `${Extract<keyof T, string>} ${'asc' | 'desc'}`[];
-  customFilters?: Expression<SqlBool>[];
-  compile?: boolean;
+  orderBy?: `${Extract<keyof T, string>} ${'asc' | 'desc'}`;
 }

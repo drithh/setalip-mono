@@ -1,26 +1,19 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
-import type {
-  ClassTypeRepository,
+
+import {
+  FindAllPackage,
   FindAllPackageOptions,
-  FindAllUserPackageOption,
+  FindAllUserPackageActiveByUserId,
+  FindAllUserPackageTransactionByUserIdOption,
   FindAllUserPackageTransactionOption,
-  InsertPackage,
-  InsertPackageTransaction,
-  LoyaltyRepository,
-  PackageRepository,
-  SelectClassType,
-  SelectPackage,
-  SelectPackageTransaction,
-  SelectPackageTransactionWithPackage,
-  UpdatePackage,
-  UpdatePackageTransaction,
+  InsertPackageTransactionOption,
+  PackageService,
+  SelectPackageTransaction__Package__User__DepositAccount,
+  SelectPackageTransaction__Package__UserPackage,
   UpdatePackageTransactionImage,
-  UserRepository,
-  VoucherRepository,
-  WebSettingRepository,
-} from '../repository';
-import { PackageService } from './package';
+  UpdatePackageTransactionOption,
+} from './package';
 import { NotificationType, type NotificationService } from '../notification';
 import { error } from 'console';
 import { PromiseResult } from '../types';
@@ -30,12 +23,32 @@ import {
   expressionBuilder,
   ExpressionBuilder,
   SelectQueryBuilder,
+  sql,
   SqlBool,
 } from 'kysely';
 import { Database, db, DB, Packages } from '../db';
+import type {
+  SelectPackageTransaction,
+  PackageRepository,
+  UserRepository,
+  WebSettingRepository,
+  ClassTypeRepository,
+  VoucherRepository,
+  LoyaltyRepository,
+  SelectPackage,
+  SelectUserPackage,
+  SelectClassType,
+  InsertPackage,
+  InsertPackageTransaction,
+  UpdatePackage,
+  UpdatePackageTransaction,
+  InsertPackageCommand,
+} from '../repository';
+import { addDays } from 'date-fns';
+import { up } from '../../scripts/migrations/001-migrate';
 
-interface FindAllPackage extends SelectPackage {
-  class_type: string;
+interface FindAllPackageTransaction extends SelectPackageTransaction {
+  user_name: string;
 }
 
 @injectable()
@@ -88,44 +101,15 @@ export class PackageServiceImpl implements PackageService {
       customFilters.push(eb('is_active', '=', is_active));
     }
 
-    // function lateralJoinClassType<
-    //   T extends SelectQueryBuilder<DB, 'packages', {}>,
-    // >(
-    //   qb: T
-    // ): SelectQueryBuilder<DB, 'packages' | 'class_types', SelectClassType> {
-    //   return qb
-    //     .innerJoinLateral(
-    //       (eb) =>
-    //         eb
-    //           .selectFrom('class_types')
-    //           .selectAll()
-    //           .whereRef('class_types.id', '=', 'packages.class_type_id')
-    //           .as('class_types'),
-    //       (join) => join.onTrue()
-    //     )
-    //     .selectAll();
-    // }
-
     const packages =
       await this._packageRepository.findWithPagination<FindAllPackage>({
         customFilters: customFilters,
-        withClassType: true,
         perPage: perPage,
         offset: offset,
-        orderBy: orderBy,
+        // fix this
+        orderBy: orderBy[0],
+        withClassType: true,
       });
-
-    return {
-      result: packages,
-      error: undefined,
-    };
-  }
-
-  async findAllActivePackageByUserId(
-    user_id: SelectPackageTransaction['user_id']
-  ) {
-    const packages =
-      await this._packageRepository.findAllActivePackageByUserId(user_id);
 
     return {
       result: packages,
@@ -136,7 +120,7 @@ export class PackageServiceImpl implements PackageService {
   async findById(id: SelectPackage['id']) {
     const singlePackage = await this._packageRepository.find({
       filters: { id },
-      limit: 1,
+      perPage: 1,
     });
 
     if (singlePackage.length < 0) {
@@ -150,14 +134,55 @@ export class PackageServiceImpl implements PackageService {
     };
   }
 
-  async findAboutToExpired(
-    user_id: SelectPackageTransaction['user_id'],
-    class_type: SelectClassType['id']
+  async findAllUserPackageActiveByUserId(
+    user_id: SelectUserPackage['user_id']
   ) {
-    const singlePackage = await this._packageRepository.findAboutToExpired(
-      user_id,
-      class_type
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<DB, 'user_packages' | 'credit_transactions'>();
+    customFilters.push(eb('user_packages.expired_at', '>', new Date()));
+    customFilters.push(
+      eb(sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`, '>', 0)
     );
+
+    const packages =
+      await this._packageRepository.findUserPackage<FindAllUserPackageActiveByUserId>(
+        {
+          filters: { user_id },
+          orderBy: 'expired_at asc',
+          customFilters: customFilters,
+          withPackage: true,
+          withClassType: true,
+          withCreditTransaction: true,
+        }
+      );
+
+    return {
+      result: packages,
+      error: undefined,
+    };
+  }
+
+  async findUserPackageExpiringByUserId(
+    user_id: SelectUserPackage['user_id'],
+    class_type_id: SelectClassType['id']
+  ) {
+    const activePackages = await this.findAllUserPackageActiveByUserId(user_id);
+
+    if (activePackages.error || !activePackages.result) {
+      return {
+        error: activePackages.error,
+      };
+    }
+
+    const singlePackage = activePackages.result.find(
+      (singlePackage) => singlePackage.class_type_id === class_type_id
+    );
+
+    if (!singlePackage) {
+      return {
+        error: new Error('Package not found'),
+      };
+    }
 
     return {
       result: singlePackage,
@@ -166,8 +191,34 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async findAllPackageTransaction(data: FindAllUserPackageTransactionOption) {
+    const { page = 1, perPage = 10, sort, user_name, status } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+    ).join(' ') as `${keyof SelectPackageTransaction} ${'asc' | 'desc'}`;
+
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<DB, 'package_transactions' | 'users'>();
+    if (status && status.length > 0) {
+      customFilters.push(eb('package_transactions.status', 'in', status));
+    }
+    if (user_name) {
+      customFilters.push(eb('users.name', 'like', `%${user_name}%`));
+    }
+
     const packages =
-      await this._packageRepository.findAllPackageTransaction(data);
+      await this._packageRepository.findPackageTransactionWithPagination<SelectPackageTransaction__Package__User__DepositAccount>(
+        {
+          customFilters: customFilters,
+          perPage: perPage,
+          offset: offset,
+          orderBy: orderBy,
+          withPackage: true,
+          withUser: true,
+          withDepositAccount: true,
+        }
+      );
 
     return {
       result: packages,
@@ -175,9 +226,34 @@ export class PackageServiceImpl implements PackageService {
     };
   }
 
-  async findAllPackageTransactionByUserId(data: FindAllUserPackageOption) {
+  async findAllPackageTransactionByUserId(
+    data: FindAllUserPackageTransactionByUserIdOption
+  ) {
+    const { page = 1, perPage = 10, sort, user_id, status } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['created_at', 'desc']
+    ).join(' ') as `${keyof SelectPackageTransaction} ${'asc' | 'desc'}`;
+
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<DB, 'package_transactions' | 'users'>();
+    if (status && status.length > 0) {
+      customFilters.push(eb('package_transactions.status', 'in', status));
+    }
+
     const packages =
-      await this._packageRepository.findAllPackageTransactionByUserId(data);
+      await this._packageRepository.findPackageTransactionWithPagination<SelectPackageTransaction__Package__UserPackage>(
+        {
+          filters: { user_id },
+          customFilters: customFilters,
+          perPage: perPage,
+          offset: offset,
+          orderBy: orderBy,
+          withPackage: true,
+          withUserPackage: true,
+        }
+      );
 
     return {
       result: packages,
@@ -185,24 +261,26 @@ export class PackageServiceImpl implements PackageService {
     };
   }
 
-  async findPackageTransactionById(
-    id: SelectPackageTransaction['id']
-  ): PromiseResult<SelectPackageTransactionWithPackage, Error> {
-    const packageTransaction = await this._packageRepository.find({
-      filters: { id },
-      limit: 1,
-    });
+  async findPackageTransactionById(id: SelectPackageTransaction['id']) {
+    const packageTransaction = (
+      await this._packageRepository.findPackageTransaction<SelectPackageTransaction__Package__UserPackage>(
+        {
+          filters: { id },
+          perPage: 1,
+          withPackage: true,
+          withUserPackage: true,
+        }
+      )
+    )?.[0];
 
-    if (packageTransaction.length < 0) {
+    if (!packageTransaction) {
       return {
-        result: undefined,
         error: new Error('Package transaction not found'),
       };
     }
 
     return {
-      result: packageTransaction[0],
-      error: undefined,
+      result: packageTransaction,
     };
   }
 
@@ -210,20 +288,62 @@ export class PackageServiceImpl implements PackageService {
     user_id: SelectPackageTransaction['user_id'],
     package_id: SelectPackage['id']
   ) {
-    const packageTransaction =
-      await this._packageRepository.findPackageTransactionByUserIdAndPackageId(
-        user_id,
-        package_id
-      );
+    const packageTransaction = (
+      await this._packageRepository.findPackageTransaction({
+        filters: { user_id, package_id },
+        perPage: 1,
+      })
+    )?.[0];
+
+    if (packageTransaction) {
+      return {
+        result: packageTransaction,
+        error: undefined,
+      };
+    }
+    const allPendingTransactions =
+      await this._packageRepository.findPackageTransaction({
+        filters: {
+          status: 'pending',
+        },
+      });
+
+    const uniqueCodes = new Set(
+      allPendingTransactions.map((transaction) => transaction.unique_code)
+    );
+
+    let newUniqueCode;
+    do {
+      newUniqueCode = Math.floor(Math.random() * 100);
+    } while (uniqueCodes.has(newUniqueCode));
 
     return {
-      result: packageTransaction,
+      result: {
+        user_id,
+        package_id,
+        unique_code: newUniqueCode,
+
+        id: 0,
+        deposit_account_id: null,
+        discount: null,
+        voucher_discount: null,
+        user_package_id: null,
+        voucher_id: null,
+
+        status: 'pending' as const,
+        image_url: null,
+        credit: 0,
+        amount_paid: 0,
+        updated_by: 0,
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
       error: undefined,
     };
   }
 
-  async create(data: InsertPackage) {
-    const result = await this._packageRepository.create(data);
+  async create({ data, trx }: InsertPackageCommand) {
+    const result = await this._packageRepository.create({ data });
 
     if (result instanceof Error) {
       return {
@@ -236,7 +356,15 @@ export class PackageServiceImpl implements PackageService {
     };
   }
 
-  async createPackageTransaction(data: InsertPackageTransaction) {
+  async createPackageTransaction(data: InsertPackageTransactionOption) {
+    if (
+      data.deposit_account_id === null ||
+      data.deposit_account_id === undefined
+    ) {
+      return {
+        error: new Error('Deposit account id is required'),
+      };
+    }
     const user = await this._userRepository.findById(data.user_id);
 
     if (!user) {
@@ -245,7 +373,11 @@ export class PackageServiceImpl implements PackageService {
       };
     }
 
-    const packageData = await this._packageRepository.findById(data.package_id);
+    const packageData = (
+      await this._packageRepository.find({
+        filters: { id: data.package_id },
+      })
+    )?.[0];
 
     if (!packageData) {
       return {
@@ -260,17 +392,14 @@ export class PackageServiceImpl implements PackageService {
     }
 
     if (packageData.one_time_only) {
-      const userPackage = await this._packageRepository.findAllPackageByUserId(
-        data.user_id
-      );
+      const userPackage = await this._packageRepository.findUserPackage({
+        filters: { user_id: data.user_id, package_id: packageData.id },
+      });
 
-      // iterate through userPackage to check if user already have the same package
-      for (const userPackageData of userPackage) {
-        if (userPackageData.package_id === data.package_id) {
-          return {
-            error: new Error('User already bought one time only package'),
-          };
-        }
+      if (userPackage.length > 0) {
+        return {
+          error: new Error('User already bought one time only package'),
+        };
       }
     }
 
@@ -323,9 +452,13 @@ export class PackageServiceImpl implements PackageService {
     }
 
     dataWithDiscount.amount_paid = reducedPrice + data.unique_code;
-
-    const result =
-      await this._packageRepository.createPackageTransaction(dataWithDiscount);
+    const result = await this._packageRepository.createPackageTransaction({
+      data: {
+        ...dataWithDiscount,
+        status: 'pending',
+        credit: packageData.credit + (packageData.discount_credit ?? 0),
+      },
+    });
 
     if (result instanceof Error) {
       return {
@@ -357,7 +490,7 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async update(data: UpdatePackage) {
-    const result = await this._packageRepository.update(data);
+    const result = await this._packageRepository.update({ data });
 
     if (result instanceof Error) {
       return {
@@ -371,11 +504,18 @@ export class PackageServiceImpl implements PackageService {
     };
   }
 
-  async updatePackageTransaction(data: UpdatePackageTransaction) {
-    const packageTransaction =
-      await this._packageRepository.findPackageTransactionById(data.id);
+  async updatePackageTransaction(data: UpdatePackageTransactionOption) {
+    const packageTransaction = (
+      await this._packageRepository.findPackageTransaction({
+        filters: { id: data.id },
+        perPage: 1,
+      })
+    )?.[0];
 
-    if (!packageTransaction || !packageTransaction.deposit_account_id) {
+    if (
+      packageTransaction === undefined ||
+      packageTransaction.deposit_account_id === null
+    ) {
       return {
         result: undefined,
         error: new Error('Package transaction not found'),
@@ -393,9 +533,11 @@ export class PackageServiceImpl implements PackageService {
       };
     }
 
-    const packageData = await this._packageRepository.findById(
-      packageTransaction.package_id
-    );
+    const packageData = (
+      await this._packageRepository.find({
+        filters: { id: packageTransaction.package_id },
+      })
+    )?.[0];
 
     if (!packageData) {
       return {
@@ -411,9 +553,11 @@ export class PackageServiceImpl implements PackageService {
       };
     }
 
-    const classTypes = await this._classTypeRepository.findById(
-      packageData.class_type_id
-    );
+    const classTypes = (
+      await this._classTypeRepository.find({
+        filters: { id: packageData.class_type_id },
+      })
+    )?.[0];
 
     if (!classTypes) {
       return {
@@ -461,39 +605,64 @@ export class PackageServiceImpl implements PackageService {
       dataWithDiscount.voucher_id = packageTransaction.voucher_id;
     }
 
-    dataWithDiscount.amount_paid = reducedPrice;
-    const result = await this._packageRepository.updatePackageTransaction(data);
+    if (dataWithDiscount.status !== 'completed') {
+      const updatePackageTransaction =
+        await this._packageRepository.updatePackageTransaction({
+          data: {
+            ...dataWithDiscount,
+            deposit_account_id:
+              dataWithDiscount.deposit_account_id ??
+              packageTransaction.deposit_account_id,
+            voucher_discount:
+              dataWithDiscount.voucher_discount ??
+              packageTransaction.voucher_discount,
+            voucher_id:
+              dataWithDiscount.voucher_id ?? packageTransaction.voucher_id,
+            amount_paid: reducedPrice,
+          },
+        });
 
-    if (result instanceof Error) {
-      return {
-        result: undefined,
-        error: result,
-      };
-    }
-
-    if (result.status === 'completed') {
-      const notification = await this._notificationService.sendNotification({
-        payload: {
-          type: NotificationType.AdminConfirmedUserPackage,
-          package: packageData.name,
-          credit: result.credit,
-          status: result.status,
-          expired_at: result.expired_at,
-          class_type: classTypes.type,
-        },
-        recipient: user.phone_number,
-      });
-
-      // check whether user bought package for the first time
-      const userPackage = await this._packageRepository.findAllPackageByUserId(
-        user.id
-      );
-
-      if (userPackage.length === 0) {
+      if (updatePackageTransaction instanceof Error) {
         return {
           result: undefined,
+          error: updatePackageTransaction,
         };
       }
+    } else {
+      const expiredAt = addDays(new Date(), packageData?.valid_for ?? 0);
+
+      const userPackage = await this._packageRepository.createUserPackage({
+        data: {
+          user_id: packageTransaction.user_id,
+          package_id: packageTransaction.package_id,
+          expired_at: expiredAt,
+          credit: packageTransaction.credit ?? 0,
+        },
+      });
+
+      if (userPackage instanceof Error) {
+        return {
+          result: undefined,
+          error: userPackage,
+        };
+      }
+
+      const updatePackageTransaction =
+        await this._packageRepository.updatePackageTransaction({
+          data: {
+            ...dataWithDiscount,
+            deposit_account_id:
+              dataWithDiscount.deposit_account_id ??
+              packageTransaction.deposit_account_id,
+            voucher_discount:
+              dataWithDiscount.voucher_discount ??
+              packageTransaction.voucher_discount,
+            voucher_id:
+              dataWithDiscount.voucher_id ?? packageTransaction.voucher_id,
+            user_package_id: userPackage.id,
+            amount_paid: reducedPrice,
+          },
+        });
 
       // loyalty
       const loyalty = await this._loyaltyRepository.createOnReward({
@@ -501,6 +670,25 @@ export class PackageServiceImpl implements PackageService {
         user_id: user.id,
         note: `You bought ${packageData.name}`,
         reference_id: data.id,
+      });
+
+      if (loyalty) {
+        return {
+          result: undefined,
+          error: loyalty,
+        };
+      }
+
+      const notification = await this._notificationService.sendNotification({
+        payload: {
+          type: NotificationType.AdminConfirmedUserPackage,
+          package: packageData.name,
+          credit: packageTransaction.credit,
+          status: 'completed',
+          expired_at: expiredAt,
+          class_type: classTypes.type,
+        },
+        recipient: user.phone_number,
       });
 
       if (notification.error) {
@@ -517,8 +705,27 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async updatePackageTransactionImage(data: UpdatePackageTransactionImage) {
-    const result =
-      await this._packageRepository.updatePackageTransactionImage(data);
+    if (!data.image_url) {
+      return {
+        result: undefined,
+        error: new Error('Image url is required'),
+      };
+    }
+    if (!data.id) {
+      return {
+        result: undefined,
+        error: new Error('Package transaction id is required'),
+      };
+    }
+    const result = await this._packageRepository.updatePackageTransaction({
+      data: {
+        id: data.id,
+        image_url: data.image_url,
+      },
+      filters: {
+        id: data.id,
+      },
+    });
 
     if (result instanceof Error) {
       return {
@@ -548,8 +755,26 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async deleteExpiredPackageTransaction() {
-    const result = await this._packageRepository.deletePackageTransaction({
-      filters: {},
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<DB, 'package_transactions'>();
+    customFilters.push(eb('created_at', '<', addDays(new Date(), -2)));
+
+    const packageTransactions =
+      await this._packageRepository.findPackageTransaction({
+        filters: {
+          status: 'pending',
+        },
+        customFilters: customFilters,
+      });
+
+    const result = await this._packageRepository.updatePackageTransaction({
+      data: {
+        status: 'failed',
+      },
+      filters: {
+        status: 'pending',
+      },
+      customFilters: customFilters,
     });
 
     if (result instanceof Error) {
@@ -560,7 +785,7 @@ export class PackageServiceImpl implements PackageService {
     }
 
     return {
-      result: result,
+      result: packageTransactions,
     };
   }
 }

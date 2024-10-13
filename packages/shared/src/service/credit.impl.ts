@@ -57,7 +57,7 @@ export class CreditServiceImpl implements CreditService {
     const filters = {
       user_package_id: id,
     };
-    const credit = await this._creditRepository.find({ filters, limit: 1 });
+    const credit = await this._creditRepository.find({ filters, perPage: 1 });
 
     if (credit.length < 0) {
       return {
