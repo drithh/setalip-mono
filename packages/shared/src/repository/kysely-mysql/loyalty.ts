@@ -341,9 +341,11 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
             return new Error('Package not found');
           }
 
-          const singlePackage = await this._packageRepository.findById(
-            shop.package_id
-          );
+          const singlePackage = (
+            await this._packageRepository.find({
+              filters: { id: shop.package_id },
+            })
+          )?.[0];
 
           if (singlePackage === undefined) {
             console.error('Package not found:', shop.package_id);
@@ -372,30 +374,30 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
 
           const userPackageId = resultUserPackage.rows[0].id;
 
-          const creditTransaction = await trx
-            .insertInto('credit_transactions')
-            .values({
-              user_package_id: userPackageId,
-              expired_at: expiredAt,
-              note: `Purchase package ${singlePackage.name} with loyalty points`,
-              class_type_id: singlePackage.class_type_id,
-              user_id: data.user_id,
-              amount: singlePackage.credit,
-              type: 'debit',
-            })
-            .returningAll()
-            .compile();
+          // const creditTransaction = await trx
+          //   .insertInto('credit_transactions')
+          //   .values({
+          //     user_package_id: userPackageId,
+          //     expired_at: expiredAt,
+          //     note: `Purchase package ${singlePackage.name} with loyalty points`,
+          //     class_type_id: singlePackage.class_type_id,
+          //     user_id: data.user_id,
+          //     amount: singlePackage.credit,
+          //     type: 'debit',
+          //   })
+          //   .returningAll()
+          //   .compile();
 
-          const resultCreditTransaction =
-            await trx.executeQuery(creditTransaction);
+          // const resultCreditTransaction =
+          //   await trx.executeQuery(creditTransaction);
 
-          if (resultCreditTransaction.rows[0] === undefined) {
-            console.error(
-              'Failed to create credit transaction',
-              resultCreditTransaction
-            );
-            return new Error('Failed to create credit transaction');
-          }
+          // if (resultCreditTransaction.rows[0] === undefined) {
+          //   console.error(
+          //     'Failed to create credit transaction',
+          //     resultCreditTransaction
+          //   );
+          //   return new Error('Failed to create credit transaction');
+          // }
 
           const query = this._db
             .insertInto('loyalty_transactions')

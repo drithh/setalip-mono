@@ -7,12 +7,7 @@ import {
   UpdateResult,
   Updateable,
 } from 'kysely';
-import {
-  DefaultPagination,
-  OptionalToRequired,
-  SelectAmountCredit,
-  SelectCredit,
-} from '.';
+import { DefaultPagination, OptionalToRequired, SelectCredit } from '.';
 
 export type InsertUser = Insertable<Users>;
 export type UpdateUser = OptionalToRequired<Updateable<Users>, 'id'>;
@@ -21,6 +16,12 @@ export type SelectUser = Selectable<Users>;
 export interface SelectMember {
   id: SelectUser['id'];
   name: SelectUser['name'];
+}
+
+export interface SelectAmountCredit {
+  class_type_name: string;
+  class_type_id: number;
+  remaining_amount: number;
 }
 
 export interface SelectUserWithCredits extends SelectUser {

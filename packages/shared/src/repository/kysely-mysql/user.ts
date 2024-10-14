@@ -2,6 +2,7 @@ import { Database } from '#dep/db/index';
 import {
   FindAllUserOptions,
   InsertUser,
+  SelectAmountCredit,
   SelectUser,
   SelectUserWithCredits,
   UpdateUser,
@@ -11,19 +12,19 @@ import {
 import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
 import { sql } from 'kysely';
-import type { CreditRepository } from '../credit';
+import type { PackageService } from '#dep/service/index';
 
 @injectable()
 export class KyselyMySqlUserRepository implements UserRepository {
   private _db: Database;
-  private _creditRepository: CreditRepository;
+  private _packageService: PackageService;
 
   constructor(
     @inject(TYPES.Database) db: Database,
-    @inject(TYPES.CreditRepository) creditRepository: CreditRepository
+    @inject(TYPES.PackageService) packageService: PackageService
   ) {
     this._db = db;
-    this._creditRepository = creditRepository;
+    this._packageService = packageService;
   }
 
   async count() {
@@ -68,8 +69,39 @@ export class KyselyMySqlUserRepository implements UserRepository {
     // iterate over queryData and fetch credits for each user
     const userWithCredits: SelectUserWithCredits[] = [];
     for (const user of queryData) {
-      const credits = await this._creditRepository.findAmountByUserId(user.id);
-      userWithCredits.push({ ...user, credits });
+      const activePackages =
+        await this._packageService.findAllUserPackageActiveByUserId(user.id);
+      if (activePackages.error) {
+        console.error('Error fetching active packages:', activePackages.error);
+        return {
+          data: [],
+          pageCount: 0,
+        };
+      }
+
+      const groupedPackages = activePackages.result.reduce(
+        (acc, pkg) => {
+          const { class_type_id, class_type, credit_used, credit } = pkg;
+
+          // If the class_type is not in the accumulator, initialize it
+          if (!acc[class_type_id]) {
+            acc[class_type_id] = {
+              class_type_name: class_type,
+              class_type_id: class_type_id,
+              remaining_amount: 0,
+            };
+          }
+          acc[class_type_id].remaining_amount += credit - credit_used;
+
+          return acc;
+        },
+        {} as Record<string, SelectAmountCredit>
+      );
+
+      // convert object to array
+      const groupedPackagesArray = Object.values(groupedPackages);
+
+      userWithCredits.push({ ...user, credits: groupedPackagesArray });
     }
 
     return {

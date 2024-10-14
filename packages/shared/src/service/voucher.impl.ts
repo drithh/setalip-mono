@@ -59,10 +59,9 @@ export class VoucherServiceImpl implements VoucherService {
 
     // check whether user used the voucher
     const packageTransaction =
-      await this._packageRepository.findPackageTransactionByVoucherIdAndUserId(
-        voucher.id,
-        data.user_id ?? 0
-      );
+      await this._packageRepository.findPackageTransaction({
+        filters: { voucher_id: voucher.id, user_id: data.user_id ?? 0 },
+      });
 
     if (packageTransaction) {
       return {
