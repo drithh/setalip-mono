@@ -209,7 +209,7 @@ export const agendaRouter = {
         TYPES.AgendaService
       );
 
-      const agendas = await agendaService.findAgendaByUserId({
+      const agendas = await agendaService.findByUserId({
         page: input.page,
         perPage: input.per_page,
         sort: input.sort,

@@ -1,53 +1,51 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
-import type {
-  FindAllAgendaOptions,
-  InsertAgenda,
-  AgendaRepository,
-  SelectAgenda,
-  UpdateAgenda,
-  InsertAgendaBooking,
-  UpdateAgendaBooking,
-  FindScheduleByDateOptions,
+import {
+  AgendaService,
+  DefaultReturn,
   FindAgendaByUserOptions,
-  UserRepository,
-  ClassRepository,
-  PackageRepository,
-  CreditRepository,
-  InsertAgendaAndTransaction,
-  LocationRepository,
   FindAllAgendaByCoachOptions,
-  SelectCoach,
-  UpdateAgendaBookingById,
-  LoyaltyRepository,
-  SelectAgendaBooking,
-  DeleteAgenda,
-  UpdateAgendaBookingParticipant,
-  CancelAgenda,
-  InsertAgendaBookingByAdmin,
-  InsertAgendaBookingAndTransactionByAdmin,
-  DeleteParticipant,
-  SelectAgendaRecurrence,
+  FindAllAgendaOptions,
+  FindScheduleByDateOptions,
   FindScheduleByIdOptions,
-  UpdateAgendaRecurrence,
-  InsertAgendaRecurrence,
-  FindAllAgendaRecurrenceOption,
-  SelectAllAgendaRecurrence,
-  FindAllAgendaBookingByMonthAndLocation,
-  SelectAgendaBookingWithIncome,
-} from '../repository';
-import { AgendaService } from './agenda';
+  SelectAgenda__Coach__Class__Location,
+  SelectAgenda__Coach__Class__Location__AgendaBooking,
+  SelectAgenda__Coach__Class__Location__Participant,
+} from './agenda';
 import {
   addDays,
   addMinutes,
   differenceInHours,
+  endOfDay,
   format,
   isAfter,
   isBefore,
   isEqual,
+  startOfDay,
 } from 'date-fns';
 import { NotificationType, type NotificationService } from '../notification';
 import { PromiseResult } from '../types';
+import { Expression, SqlBool, expressionBuilder, sql } from 'kysely';
+import { db, DB } from '../db';
+import type {
+  AgendaRepository,
+  UserRepository,
+  ClassRepository,
+  PackageRepository,
+  CreditRepository,
+  LocationRepository,
+  LoyaltyRepository,
+  SelectAgenda,
+  SelectCoach,
+  SelectAgendaRecurrence,
+  SelectAgendaBooking,
+  InsertAgenda,
+  InsertAgendaRecurrence,
+  InsertAgendaBooking,
+  UpdateAgenda,
+  UpdateAgendaRecurrence,
+  UpdateAgendaBooking,
+} from '../repository';
 
 @injectable()
 export class AgendaServiceImpl implements AgendaService {
@@ -84,20 +82,63 @@ export class AgendaServiceImpl implements AgendaService {
     return this._agendaRepository.count();
   }
 
-  async countParticipant(id: SelectAgenda['id']) {
-    return this._agendaRepository.countParticipant(id);
-  }
+  // async countParticipant(id: SelectAgenda['id']) {
+  //   return this._agendaRepository.countParticipant(id);
+  // }
 
-  async countCheckedInByUserId(userId: SelectAgenda['id']) {
-    return this._agendaRepository.countCheckedInByUserId(userId);
-  }
+  // async countCheckedInByUserId(userId: SelectAgenda['id']) {
+  //   return this._agendaRepository.countCheckedInByUserId(userId);
+  // }
 
-  async countCoachAgenda(userId: SelectCoach['user_id']) {
-    return this._agendaRepository.countCoachAgenda(userId);
-  }
+  // async countCoachAgenda(userId: SelectCoach['user_id']) {
+  //   return this._agendaRepository.countCoachAgenda(userId);
+  // }
 
   async findAll(data: FindAllAgendaOptions) {
-    const agendas = await this._agendaRepository.findAll(data);
+    const {
+      page = 1,
+      perPage = 10,
+      sort,
+      className,
+      coaches,
+      locations,
+      date,
+    } = data;
+    const localDate = format(date, 'yyyy-MM-dd');
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['agendas.time', 'asc']
+    ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
+
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<
+      DB,
+      'agendas' | 'classes' | 'coaches' | 'locations'
+    >();
+
+    if (className) {
+      customFilters.push(eb('classes.name', 'like', `%${className}%`));
+    }
+
+    if (coaches?.length && coaches.length > 0) {
+      customFilters.push(eb('coaches.id', 'in', coaches));
+    }
+
+    if (locations?.length && locations.length > 0) {
+      customFilters.push(eb('locations.id', 'in', locations));
+    }
+
+    const agendas = await this._agendaRepository.findWithPagination({
+      offset,
+      perPage,
+      orderBy,
+      customFilters,
+
+      withCoach: true,
+      withClass: true,
+      withLocation: true,
+      withParticipant: true,
+    });
 
     return {
       result: agendas,
@@ -105,20 +146,138 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
-  async findAllAgendaRecurrence(
-    data: FindAllAgendaRecurrenceOption
-  ): PromiseResult<SelectAllAgendaRecurrence, Error> {
-    const agendaRecurrence =
-      await this._agendaRepository.findAllAgendaRecurrence(data);
+  async findAllByCoachId(data: FindAllAgendaByCoachOptions) {
+    const {
+      page = 1,
+      perPage = 10,
+      sort,
+      classTypes,
+      locations,
+      date,
+      coachUserId,
+    } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['agendas.time', 'desc']
+    ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
+
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<
+      DB,
+      | 'agendas'
+      | 'classes'
+      | 'class_types'
+      | 'coaches'
+      | 'locations'
+      | 'agenda_bookings'
+    >();
+
+    customFilters.push(eb('coaches.user_id', '=', coachUserId));
+    customFilters.push(eb('agendas.deleted_at', 'is', null));
+
+    if (classTypes?.length && classTypes.length > 0) {
+      customFilters.push(eb('class_types.id', 'in', classTypes));
+    }
+    if (locations?.length && locations.length > 0) {
+      customFilters.push(eb('locations.id', 'in', locations));
+    }
+    if (date) {
+      const today = startOfDay(new Date(date));
+      const tomorrow = endOfDay(today);
+      customFilters.push(eb('agendas.time', '>=', today));
+      customFilters.push(eb('agendas.time', '<', tomorrow));
+    }
+
+    const schedules = await this._agendaRepository.findWithPagination({
+      offset,
+      perPage,
+      orderBy,
+      customFilters,
+      withCoach: true,
+      withClass: true,
+      withLocation: true,
+      withCountParticipant: true,
+    });
 
     return {
-      result: agendaRecurrence,
+      result: schedules,
+      error: undefined,
+    };
+  }
+
+  async findAllByUserId(data: FindAgendaByUserOptions) {
+    const {
+      page = 1,
+      userId,
+      perPage = 10,
+      sort,
+      classTypes,
+      coaches,
+      locations,
+    } = data;
+
+    const offset = (page - 1) * perPage;
+
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['agenda_bookings.updated_at', 'desc']
+    ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
+
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<
+      DB,
+      | 'agendas'
+      | 'classes'
+      | 'class_types'
+      | 'coaches'
+      | 'locations'
+      | 'agenda_bookings'
+    >();
+
+    customFilters.push(eb('agenda_bookings.user_id', '=', userId));
+    customFilters.push(eb('agendas.deleted_at', 'is', null));
+
+    if (classTypes?.length && classTypes.length > 0) {
+      customFilters.push(eb('class_types.id', 'in', classTypes));
+    }
+
+    if (coaches?.length && coaches.length > 0) {
+      customFilters.push(eb('coaches.id', 'in', coaches));
+    }
+
+    if (locations?.length && locations.length > 0) {
+      customFilters.push(eb('locations.id', 'in', locations));
+    }
+
+    const agendas = await this._agendaRepository.findWithPagination({
+      offset,
+      perPage,
+      orderBy,
+      customFilters,
+      withCoach: true,
+      withClass: true,
+      withLocation: true,
+      withAgendaBooking: true,
+    });
+
+    return {
+      result: agendas,
       error: undefined,
     };
   }
 
   async findById(id: SelectAgenda['id']) {
-    const singleAgenda = await this._agendaRepository.findById(id);
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<DB, 'agendas'>();
+
+    customFilters.push(eb('agendas.id', '=', id));
+    customFilters.push(eb('agendas.deleted_at', 'is', null));
+
+    const singleAgenda = (
+      await this._agendaRepository.find({
+        customFilters,
+      })
+    )?.[0];
 
     if (!singleAgenda) {
       return {
@@ -131,14 +290,142 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
-  async findAllAgendaBookingByMonthAndLocation(
-    data: FindAllAgendaBookingByMonthAndLocation
-  ) {
-    const agendaBooking =
-      await this._agendaRepository.findAllAgendaBookingByMonthAndLocation(data);
+  async findAllParticipantByAgendaId(id: SelectAgenda['id']) {
+    const participants = (
+      await this._agendaRepository.find({
+        filters: { id },
+        withParticipant: true,
+      })
+    )?.[0];
+
+    if (!participants) {
+      return {
+        error: new Error('Participants not found'),
+      };
+    }
 
     return {
-      result: agendaBooking,
+      result: participants,
+      error: undefined,
+    };
+  }
+
+  async findScheduleByDate(data: FindScheduleByDateOptions) {
+    const {
+      page = 1,
+      perPage = 10,
+      sort,
+      classTypes,
+      coaches,
+      locations,
+      classNames,
+      date,
+    } = data;
+
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['agendas.time', 'desc']
+    ).join(' ') as `${keyof SelectAgenda} ${'asc' | 'desc'}`;
+
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<
+      DB,
+      | 'agendas'
+      | 'classes'
+      | 'class_types'
+      | 'coaches'
+      | 'locations'
+      | 'agenda_bookings'
+    >();
+
+    if (classTypes?.length && classTypes.length > 0) {
+      customFilters.push(eb('class_types.id', 'in', classTypes));
+    }
+    if (coaches?.length && coaches.length > 0) {
+      customFilters.push(eb('coaches.id', 'in', coaches));
+    }
+    if (locations?.length && locations.length > 0) {
+      customFilters.push(eb('locations.id', 'in', locations));
+    }
+    if (classNames?.length && classNames.length > 0) {
+      customFilters.push(eb('classes.id', 'in', classNames));
+    }
+
+    const schedules = await this._agendaRepository.findWithPagination({
+      offset,
+      perPage,
+      orderBy,
+      date,
+      withBackfillAgenda: true,
+      withCoach: true,
+      withClass: true,
+      withLocation: true,
+      withCountParticipant: true,
+    });
+
+    return {
+      result: schedules,
+      error: undefined,
+    };
+  }
+
+  async findTodayScheduleByCoachId(coachUserId: SelectCoach['user_id']) {
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<DB, 'agendas' | 'coaches'>();
+
+    customFilters.push(eb('coaches.user_id', '=', coachUserId));
+    customFilters.push(
+      eb(sql`DATE(agendas.time)`, '=', format(new Date(), 'yyyy-MM-dd'))
+    );
+    customFilters.push(eb('agendas.deleted_at', 'is', null));
+
+    const schedules = await this._agendaRepository.find({
+      withCoach: true,
+      withClass: true,
+      withLocation: true,
+      withCountParticipant: true,
+    });
+
+    return {
+      result: schedules,
+      error: undefined,
+    };
+  }
+
+  async findScheduleById(data: FindScheduleByIdOptions) {
+    //   return schedule;
+    const singleSchedule = (
+      await this._agendaRepository.find({
+        date: data.time,
+        withBackfillAgenda: true,
+        withClass: true,
+        withLocation: true,
+        withCoach: true,
+        withCountParticipant: true,
+      })
+    )?.[0];
+
+    if (!singleSchedule) {
+      return {
+        error: new Error('Schedule not found'),
+      };
+    }
+
+    return {
+      result: singleSchedule,
+    };
+  }
+
+  //asdsadas
+
+  async findAllAgendaRecurrence(
+    data: FindAllAgendaRecurrenceOption
+  ): PromiseResult<SelectAllAgendaRecurrence, Error> {
+    const agendaRecurrence =
+      await this._agendaRepository.findAllAgendaRecurrence(data);
+
+    return {
+      result: agendaRecurrence,
       error: undefined,
     };
   }
@@ -196,67 +483,6 @@ export class AgendaServiceImpl implements AgendaService {
 
     return {
       result: agendaBooking,
-    };
-  }
-
-  async findAllParticipantByAgendaId(id: SelectAgenda['id']) {
-    const participants =
-      await this._agendaRepository.findAllParticipantByAgendaId(id);
-
-    return {
-      result: participants,
-      error: undefined,
-    };
-  }
-
-  async findTodayScheduleByCoachId(coachUserId: SelectCoach['user_id']) {
-    const schedules =
-      await this._agendaRepository.findTodayScheduleByCoachId(coachUserId);
-
-    return {
-      result: schedules,
-      error: undefined,
-    };
-  }
-
-  async findAllByCoachId(data: FindAllAgendaByCoachOptions) {
-    const schedules = await this._agendaRepository.findAllByCoachId(data);
-
-    return {
-      result: schedules,
-      error: undefined,
-    };
-  }
-
-  async findScheduleByDate(data: FindScheduleByDateOptions) {
-    const schedules = await this._agendaRepository.findScheduleByDate(data);
-
-    return {
-      result: schedules,
-      error: undefined,
-    };
-  }
-
-  async findScheduleById(data: FindScheduleByIdOptions) {
-    const singleSchedule = await this._agendaRepository.findScheduleById(data);
-
-    if (!singleSchedule) {
-      return {
-        error: new Error('Schedule not found'),
-      };
-    }
-
-    return {
-      result: singleSchedule,
-    };
-  }
-
-  async findAgendaByUserId(data: FindAgendaByUserOptions) {
-    const agendas = await this._agendaRepository.findAgendaByUserId(data);
-
-    return {
-      result: agendas,
-      error: undefined,
     };
   }
 

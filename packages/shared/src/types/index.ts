@@ -1,3 +1,5 @@
+import { SelectQueryBuilder } from 'kysely';
+
 export type PromiseResult<Result, Error> = Promise<
   | {
       result: Result;
@@ -11,3 +13,5 @@ export type PromiseResult<Result, Error> = Promise<
 export type ErrorFields<T extends string | number | symbol> = {
   [K in T]?: string;
 };
+
+export type QueryResult<T> = SelectQueryBuilder<any, any, T>;

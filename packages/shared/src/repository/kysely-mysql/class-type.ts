@@ -9,12 +9,15 @@ import {
   InsertClassTypeCommand,
   SelectClassType,
   SelectClassTypeQuery,
+  SelectClassTypeReturn,
   UpdateClassType,
   UpdateClassTypeCommand,
 } from '..';
 import { entriesFromObject } from '#dep/util/index';
-import { ExpressionBuilder } from 'kysely';
+import { ExpressionBuilder, sql } from 'kysely';
 import { applyFilters } from './util';
+import { QueryResult } from '#dep/types/index';
+import { ClassTypeWithIncome } from '#dep/service/class-type';
 
 @injectable()
 export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
@@ -35,7 +38,50 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
 
   async find(data?: SelectClassTypeQuery) {
     let baseQuery = this._db.selectFrom('class_types');
-
+    baseQuery = baseQuery.$if(
+      data?.withIncome !== undefined,
+      (qb): QueryResult<ClassTypeWithIncome> =>
+        qb
+          .innerJoin('classes', 'class_types.id', 'classes.class_type_id')
+          .innerJoin('agendas', 'classes.id', 'agendas.class_id')
+          .innerJoin(
+            'agenda_bookings',
+            'agendas.id',
+            'agenda_bookings.agenda_id'
+          )
+          .innerJoin(
+            'location_facilities',
+            'agendas.location_facility_id',
+            'location_facilities.id'
+          )
+          .innerJoin(
+            'locations',
+            'location_facilities.location_id',
+            'locations.id'
+          )
+          .innerJoin(
+            'credit_transactions',
+            'agenda_bookings.id',
+            'credit_transactions.agenda_booking_id'
+          )
+          .innerJoin(
+            'user_packages',
+            'credit_transactions.user_package_id',
+            'user_packages.id'
+          )
+          .innerJoin(
+            'package_transactions',
+            'user_packages.id',
+            'package_transactions.user_package_id'
+          )
+          .select([
+            sql<number>`count(agenda_bookings.id)`.as('participant'),
+            sql<number>`sum(IFNULL(package_transactions.amount_paid / package_transactions.credit, 0))`.as(
+              'income'
+            ),
+          ])
+          .groupBy('class_types.id')
+    );
     if (data?.filters) {
       baseQuery = baseQuery.where(applyFilters(data.filters));
     }
@@ -48,7 +94,8 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
       baseQuery = baseQuery.offset(data.offset);
     }
 
-    return baseQuery.selectAll().execute();
+    const result = baseQuery.selectAll().execute();
+    return result;
   }
 
   async create({ data, trx }: InsertClassTypeCommand) {
