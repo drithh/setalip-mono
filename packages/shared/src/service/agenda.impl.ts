@@ -6,8 +6,10 @@ import {
   FindAgendaByUserOptions,
   FindAllAgendaByCoachOptions,
   FindAllAgendaOptions,
+  FindAllAgendaRecurrenceOption,
   FindScheduleByDateOptions,
   FindScheduleByIdOptions,
+  InsertAgendaBookingOption,
   SelectAgenda__Coach__Class__Location,
   SelectAgenda__Coach__Class__Location__AgendaBooking,
   SelectAgenda__Coach__Class__Location__Participant,
@@ -18,10 +20,13 @@ import {
   differenceInHours,
   endOfDay,
   format,
+  getDay,
   isAfter,
   isBefore,
   isEqual,
+  set,
   startOfDay,
+  subDays,
 } from 'date-fns';
 import { NotificationType, type NotificationService } from '../notification';
 import { PromiseResult } from '../types';
@@ -45,7 +50,18 @@ import type {
   UpdateAgenda,
   UpdateAgendaRecurrence,
   UpdateAgendaBooking,
+  BackFillProps,
+  InsertAgendaCommand,
 } from '../repository';
+import type {
+  DeleteAgenda,
+  CancelAgendaBookingByAdminOption,
+  CancelAgendaBookingByUserOption,
+  InsertAgendaBookingByAdminOption,
+  PackageService,
+  SelectCoachAgendaBooking,
+  FindAllAgendaBookingByMonthAndLocation,
+} from '.';
 
 @injectable()
 export class AgendaServiceImpl implements AgendaService {
@@ -53,6 +69,7 @@ export class AgendaServiceImpl implements AgendaService {
   private _userRepository: UserRepository;
   private _classRepository: ClassRepository;
   private _packageRepository: PackageRepository;
+  private _packageService: PackageService;
   private _creditRepository: CreditRepository;
   private _notificationService: NotificationService;
   private _locationRepository: LocationRepository;
@@ -63,6 +80,7 @@ export class AgendaServiceImpl implements AgendaService {
     @inject(TYPES.UserRepository) userRepository: UserRepository,
     @inject(TYPES.ClassRepository) classRepository: ClassRepository,
     @inject(TYPES.PackageRepository) packageRepository: PackageRepository,
+    @inject(TYPES.PackageService) packageService: PackageService,
     @inject(TYPES.CreditRepository) creditRepository: CreditRepository,
     @inject(TYPES.NotificationService) notificationService: NotificationService,
     @inject(TYPES.LocationRepository) locationRepository: LocationRepository,
@@ -72,6 +90,7 @@ export class AgendaServiceImpl implements AgendaService {
     this._userRepository = userRepository;
     this._classRepository = classRepository;
     this._packageRepository = packageRepository;
+    this._packageService = packageService;
     this._creditRepository = creditRepository;
     this._notificationService = notificationService;
     this._locationRepository = locationRepository;
@@ -81,18 +100,6 @@ export class AgendaServiceImpl implements AgendaService {
   async count() {
     return this._agendaRepository.count();
   }
-
-  // async countParticipant(id: SelectAgenda['id']) {
-  //   return this._agendaRepository.countParticipant(id);
-  // }
-
-  // async countCheckedInByUserId(userId: SelectAgenda['id']) {
-  //   return this._agendaRepository.countCheckedInByUserId(userId);
-  // }
-
-  // async countCoachAgenda(userId: SelectCoach['user_id']) {
-  //   return this._agendaRepository.countCoachAgenda(userId);
-  // }
 
   async findAll(data: FindAllAgendaOptions) {
     const {
@@ -113,7 +120,7 @@ export class AgendaServiceImpl implements AgendaService {
     const customFilters: Expression<SqlBool>[] = [];
     const eb = expressionBuilder<
       DB,
-      'agendas' | 'classes' | 'coaches' | 'locations'
+      'agendas' | 'classes' | 'coaches' | 'locations' | 'agenda_recurrences'
     >();
 
     if (className) {
@@ -128,11 +135,29 @@ export class AgendaServiceImpl implements AgendaService {
       customFilters.push(eb('locations.id', 'in', locations));
     }
 
+    const backfillProps: BackFillProps = {
+      date,
+      agendaFilter: [eb(sql`DATE(agendas.time)`, '=', localDate)],
+      agendaReccurenceFilter: [
+        eb(
+          'agenda_recurrences.day_of_week',
+          '=',
+          sql<number>`DAYOFWEEK(${localDate}) - 1`
+        ),
+        eb('agenda_recurrences.start_date', '<=', date),
+        eb('agenda_recurrences.end_date', '>=', date),
+      ],
+      unionFilter: [eb('deleted_at', 'is', null)],
+    };
+
     const agendas = await this._agendaRepository.findWithPagination({
       offset,
       perPage,
       orderBy,
       customFilters,
+
+      backfillProps,
+      withBackfillAgenda: true,
 
       withCoach: true,
       withClass: true,
@@ -336,6 +361,7 @@ export class AgendaServiceImpl implements AgendaService {
       | 'coaches'
       | 'locations'
       | 'agenda_bookings'
+      | 'agenda_recurrences'
     >();
 
     if (classTypes?.length && classTypes.length > 0) {
@@ -351,12 +377,29 @@ export class AgendaServiceImpl implements AgendaService {
       customFilters.push(eb('classes.id', 'in', classNames));
     }
 
+    const localDate = format(date, 'yyyy-MM-dd');
+
+    const backfillProps: BackFillProps = {
+      date,
+      agendaFilter: [eb(sql`DATE(agendas.time)`, '=', localDate)],
+      agendaReccurenceFilter: [
+        eb(
+          'agenda_recurrences.day_of_week',
+          '=',
+          sql<number>`DAYOFWEEK(${localDate}) - 1`
+        ),
+        eb('agenda_recurrences.start_date', '<=', date),
+        eb('agenda_recurrences.end_date', '>=', date),
+      ],
+      unionFilter: [eb('deleted_at', 'is', null)],
+    };
+
     const schedules = await this._agendaRepository.findWithPagination({
       offset,
       perPage,
       orderBy,
-      date,
       withBackfillAgenda: true,
+      backfillProps,
       withCoach: true,
       withClass: true,
       withLocation: true,
@@ -393,10 +436,32 @@ export class AgendaServiceImpl implements AgendaService {
   }
 
   async findScheduleById(data: FindScheduleByIdOptions) {
-    //   return schedule;
+    const eb = expressionBuilder<
+      DB,
+      | 'agendas'
+      | 'classes'
+      | 'class_types'
+      | 'coaches'
+      | 'locations'
+      | 'agenda_bookings'
+      | 'agenda_recurrences'
+    >();
+    const date = data.time ?? new Date();
+
+    const backfillProps: BackFillProps = {
+      date,
+      agendaFilter: [eb(sql`DATE(agendas.id)`, '=', data.id ?? 0)],
+      agendaReccurenceFilter: [
+        eb('agenda_recurrences.id', '=', data.agendaRecurrenceId ?? 0),
+        eb('agenda_recurrences.start_date', '<=', date),
+        eb('agenda_recurrences.end_date', '>=', date),
+      ],
+      unionFilter: [eb('deleted_at', 'is', null), eb('is_show', '=', 1)],
+    };
+
     const singleSchedule = (
       await this._agendaRepository.find({
-        date: data.time,
+        backfillProps,
         withBackfillAgenda: true,
         withClass: true,
         withLocation: true,
@@ -416,38 +481,82 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
-  //asdsadas
+  async findAllAgendaBookingByAgendaId(agenda_id: SelectAgenda['id']) {
+    const agendaBooking = await this._agendaRepository.findAgendaBooking({
+      filters: { agenda_id },
+    });
 
-  async findAllAgendaRecurrence(
-    data: FindAllAgendaRecurrenceOption
-  ): PromiseResult<SelectAllAgendaRecurrence, Error> {
-    const agendaRecurrence =
-      await this._agendaRepository.findAllAgendaRecurrence(data);
-
-    return {
-      result: agendaRecurrence,
-      error: undefined,
-    };
-  }
-
-  async findAllCoachAgendaByMonthAndLocation(
-    data: FindAllAgendaBookingByMonthAndLocation
-  ) {
-    const agendaBooking =
-      await this._agendaRepository.findAllCoachAgendaByMonthAndLocation(data);
+    if (!agendaBooking) {
+      return {
+        error: new Error('Agenda not found'),
+      };
+    }
 
     return {
       result: agendaBooking,
-      error: undefined,
     };
   }
 
-  async findAllAgendaBookingByAgendaId(id: SelectAgenda['id']) {
-    const agendaBooking =
-      await this._agendaRepository.findAllAgendaBookingByAgendaId(id);
+  async findAgendaBookingById(id: SelectAgendaBooking['id']) {
+    const agendaBooking = (
+      await this._agendaRepository.findAgendaBooking({
+        filters: { id },
+      })
+    )?.[0];
+
+    if (!agendaBooking) {
+      return {
+        error: new Error('Agenda booking not found'),
+      };
+    }
 
     return {
       result: agendaBooking,
+    };
+  }
+
+  async findAllAgendaRecurrence(data: FindAllAgendaRecurrenceOption) {
+    const {
+      page = 1,
+      perPage = 10,
+      sort,
+      day_of_week,
+      coaches,
+      locations,
+    } = data;
+    const offset = (page - 1) * perPage;
+    const orderBy = (
+      sort?.split('.').filter(Boolean) ?? ['agenda_recurrences.time', 'asc']
+    ).join(' ') as `${keyof SelectAgendaRecurrence} ${'asc' | 'desc'}`;
+
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<
+      DB,
+      'agenda_recurrences' | 'coaches' | 'locations'
+    >();
+
+    customFilters.push(eb('agenda_recurrences.day_of_week', '=', day_of_week));
+    if (coaches?.length && coaches.length > 0) {
+      customFilters.push(eb('coaches.id', 'in', coaches));
+    }
+    if (locations?.length && locations.length > 0) {
+      customFilters.push(eb('locations.id', 'in', locations));
+    }
+
+    const agendaReccurences =
+      await this._agendaRepository.findAgendaRecurrenceWithPagination({
+        perPage,
+        offset,
+        orderBy,
+
+        customFilters,
+        withCoach: true,
+        withClass: true,
+        withLocation: true,
+      });
+
+    return {
+      result: agendaReccurences,
       error: undefined,
     };
   }
@@ -455,8 +564,11 @@ export class AgendaServiceImpl implements AgendaService {
   async findAgendaRecurrenceById(
     id: SelectAgendaRecurrence['id']
   ): PromiseResult<SelectAgendaRecurrence, Error> {
-    const agendaRecurrence =
-      await this._agendaRepository.findAgendaRecurrenceById(id);
+    const agendaRecurrence = (
+      await this._agendaRepository.findAgendaRecurrence({
+        filters: { id },
+      })
+    )?.[0];
 
     if (!agendaRecurrence) {
       return {
@@ -471,23 +583,132 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
-  async findAgendaBookingById(id: SelectAgendaBooking['id']) {
-    const agendaBooking =
-      await this._agendaRepository.findAgendaBookingById(id);
+  private async checkCoachAgendaAvailability(
+    coachId: SelectCoach['id'],
+    startTime: string,
+    endTime: string
+  ) {
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<DB, 'agendas' | 'classes'>();
 
-    if (!agendaBooking) {
+    customFilters.push(eb('agendas.coach_id', '=', coachId));
+    customFilters.push(eb('agendas.deleted_at', 'is', null));
+    customFilters.push(eb(sql`agendas.time`, '<', endTime));
+    customFilters.push(
+      eb(
+        sql`ADDDATE(agendas.time, INTERVAL classes.duration MINUTE)`,
+        '>',
+        startTime
+      )
+    );
+
+    const coachAgenda = await this._agendaRepository.find({
+      customFilters,
+      withClass: true,
+      withCoach: true,
+    });
+
+    if (coachAgenda.length > 0) {
+      console.error('Coach is not available', coachAgenda);
+      return new Error(
+        `Coach is not available, ${coachAgenda[0]?.coach_name} at ${format(coachAgenda[0]?.time ?? new Date(), 'HH:mm')}`
+      );
+    }
+
+    return undefined;
+  }
+
+  private async checkCoachAgendaRecurrenceAvailability(
+    coachId: SelectCoach['id'],
+    dayOfWeek: number,
+    startTime: string,
+    endTime: string,
+    startDate: string,
+    endDate: string
+  ) {
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<DB, 'agenda_recurrences' | 'classes'>();
+
+    customFilters.push(eb('agenda_recurrences.coach_id', '=', coachId));
+    customFilters.push(eb('agenda_recurrences.day_of_week', '=', dayOfWeek));
+    customFilters.push(eb('agenda_recurrences.time', '<', endTime));
+    customFilters.push(
+      eb(
+        sql`ADDDATE(agenda_recurrences.time, INTERVAL classes.duration MINUTE)`,
+        '>',
+        startTime
+      )
+    );
+    customFilters.push(eb(sql`agenda_recurrences.start_date`, '<=', startDate));
+    customFilters.push(eb(sql`agenda_recurrences.end_date`, '>=', endDate));
+
+    const coachAgenda = await this._agendaRepository.find({
+      customFilters,
+      withClass: true,
+      withCoach: true,
+    });
+
+    if (coachAgenda.length > 0) {
+      console.error('Coach is not available', coachAgenda);
+      return new Error(
+        `Coach is not available, ${coachAgenda[0]?.coach_name} at ${format(coachAgenda[0]?.time ?? new Date(), 'HH:mm')}`
+      );
+    }
+
+    return undefined;
+  }
+
+  async create({ data, trx }: InsertAgendaCommand) {
+    const singleClass = await this._classRepository.findById(data.class_id);
+
+    if (singleClass?.duration === undefined) {
+      console.error('Failed to get class duration', singleClass);
       return {
-        error: new Error('Agenda booking not found'),
+        error: new Error('Failed to get class duration'),
+      };
+    }
+    const startTime = format(data.time, 'yyyy-MM-dd HH:mm:ss');
+    const endTime = format(
+      addMinutes(data.time, singleClass.duration),
+      'yyyy-MM-dd HH:mm:ss'
+    );
+
+    const dayOfWeek = getDay(data.time);
+
+    const coachAgendaAvailability = await this.checkCoachAgendaAvailability(
+      data.coach_id,
+      startTime,
+      endTime
+    );
+
+    if (coachAgendaAvailability !== undefined) {
+      return {
+        error: coachAgendaAvailability,
       };
     }
 
-    return {
-      result: agendaBooking,
-    };
-  }
+    const coachAgendaRecurrenceAvailability =
+      await this.checkCoachAgendaRecurrenceAvailability(
+        data.coach_id,
+        dayOfWeek,
+        startTime,
+        endTime,
+        format(data.time, 'yyyy-MM-dd'),
+        format(data.time, 'yyyy-MM-dd')
+      );
 
-  async create(data: InsertAgenda) {
-    const result = await this._agendaRepository.create(data);
+    if (
+      coachAgendaRecurrenceAvailability !== undefined &&
+      data.agenda_recurrence_id === null
+    ) {
+      return {
+        error: coachAgendaRecurrenceAvailability,
+      };
+    }
+
+    const result = await this._agendaRepository.create({
+      data,
+    });
 
     if (result instanceof Error) {
       return {
@@ -496,12 +717,59 @@ export class AgendaServiceImpl implements AgendaService {
     }
 
     return {
-      result,
+      result: result,
+      error: undefined,
     };
   }
 
   async createAgendaRecurrence(data: InsertAgendaRecurrence) {
-    const result = await this._agendaRepository.createAgendaRecurrence(data);
+    const singleClass = await this._classRepository.findById(data.class_id);
+
+    if (singleClass?.duration === undefined) {
+      console.error('Failed to get class duration', singleClass);
+      return {
+        error: new Error('Failed to get class duration'),
+      };
+    }
+    const startTime = format(data.time, 'yyyy-MM-dd HH:mm:ss');
+    const endTime = format(
+      addMinutes(data.time, singleClass.duration),
+      'yyyy-MM-dd HH:mm:ss'
+    );
+
+    const dayOfWeek = getDay(data.time);
+
+    const coachAgendaAvailability = await this.checkCoachAgendaAvailability(
+      data.coach_id,
+      startTime,
+      endTime
+    );
+
+    if (coachAgendaAvailability !== undefined) {
+      return {
+        error: coachAgendaAvailability,
+      };
+    }
+
+    const coachAgendaRecurrenceAvailability =
+      await this.checkCoachAgendaRecurrenceAvailability(
+        data.coach_id,
+        dayOfWeek,
+        startTime,
+        endTime,
+        format(data.time, 'yyyy-MM-dd'),
+        format(data.time, 'yyyy-MM-dd')
+      );
+
+    if (coachAgendaRecurrenceAvailability !== undefined) {
+      return {
+        error: coachAgendaRecurrenceAvailability,
+      };
+    }
+
+    const result = await this._agendaRepository.createAgendaRecurrence({
+      data,
+    });
 
     if (result instanceof Error) {
       return {
@@ -514,7 +782,117 @@ export class AgendaServiceImpl implements AgendaService {
     };
   }
 
-  async createAgendaBooking(data: InsertAgendaBooking) {
+  private async findOrCreateAgendaFromRecurrence(
+    time: Date,
+    agendaId?: SelectAgenda['id'],
+    agendaRecurrenceId?: SelectAgendaRecurrence['id']
+  ): Promise<Error | SelectAgenda> {
+    if (agendaId) {
+      const agenda = (
+        await this._agendaRepository.find({
+          filters: { id: agendaId },
+        })
+      )?.[0];
+      if (!agenda) {
+        return new Error('Agenda not found');
+      }
+
+      return agenda;
+    } else {
+      if (!agendaRecurrenceId) {
+        return new Error('Agenda recurrence not found');
+      }
+
+      const agendaRecurrence = (
+        await this._agendaRepository.findAgendaRecurrence({
+          filters: { id: agendaRecurrenceId },
+        })
+      )?.[0];
+
+      if (agendaRecurrence === undefined) {
+        console.error('Failed to get agenda recurrence', agendaRecurrence);
+        return new Error('Failed to get agenda recurrence');
+      }
+
+      function combineDateAndTime(date: Date, time: string): Date {
+        const [hours, minutes, seconds] = time.split(':').map(Number);
+
+        return set(date, {
+          hours: hours || 0,
+          minutes: minutes || 0,
+          seconds: seconds || 0,
+          milliseconds: 0, // Reset milliseconds since MySQL TIME doesn't include them
+        });
+      }
+
+      const agendaTime = combineDateAndTime(time, agendaRecurrence.time);
+
+      const createAgenda = await this._agendaRepository.create({
+        data: {
+          is_show: 1,
+          class_id: agendaRecurrence.class_id,
+          coach_id: agendaRecurrence.coach_id,
+          location_facility_id: agendaRecurrence.location_facility_id,
+          time: agendaTime,
+          agenda_recurrence_id: agendaRecurrence.id,
+        },
+      });
+
+      if (createAgenda instanceof Error) {
+        return createAgenda;
+      }
+
+      return createAgenda;
+    }
+  }
+
+  private async checkAgendaConflict(
+    userId: SelectAgendaBooking['user_id'],
+    startTIme: Date,
+    endTime: Date
+  ): Promise<undefined | Error> {
+    const customFilters: Expression<SqlBool>[] = [];
+    const eb = expressionBuilder<
+      DB,
+      | 'agendas'
+      | 'classes'
+      | 'class_types'
+      | 'coaches'
+      | 'locations'
+      | 'agenda_bookings'
+      | 'agenda_recurrences'
+    >();
+    customFilters.push(eb('agenda_bookings.user_id', '=', userId));
+    customFilters.push(eb('agendas.deleted_at', 'is', null));
+    // customFilters.push(eb('agendas.is_show', '=', 1));
+    customFilters.push(eb('agendas.time', '<', endTime));
+    customFilters.push(
+      eb(
+        sql`ADDDATE(agendas.time, INTERVAL classes.duration MINUTE)`,
+        '>',
+        startTIme
+      )
+    );
+
+    const agendas = await this._agendaRepository.find({
+      customFilters,
+      withCoach: true,
+      withClass: true,
+      withLocation: true,
+      withAgendaBooking: true,
+    });
+
+    if (agendas.length > 0) {
+      console.error('User already has an agenda at this time', agendas);
+      return new Error(
+        `User already has an agenda at this time, ${agendas[0]?.time}`
+      );
+    }
+
+    return undefined;
+  }
+
+  async createAgendaBooking(data: InsertAgendaBookingOption) {
     const user = await this._userRepository.findById(data.user_id);
 
     if (!user) {
@@ -522,49 +900,16 @@ export class AgendaServiceImpl implements AgendaService {
         error: new Error('User not found'),
       };
     }
+    const agenda = await this.findOrCreateAgendaFromRecurrence(
+      data.time,
+      data.agenda_id ?? undefined,
+      data.agenda_recurrence_id ?? undefined
+    );
 
-    let agenda: SelectAgenda | undefined;
-    if (data.agenda_id) {
-      agenda = await this._agendaRepository.findById(data.agenda_id as number);
-      if (!agenda) {
-        return {
-          error: new Error('Agenda not found'),
-        };
-      }
-    } else {
-      if (!data.agenda_recurrence_id) {
-        return {
-          error: new Error('Agenda recurrence not found'),
-        };
-      }
-
-      const agendaRecurrence =
-        await this._agendaRepository.findAgendaRecurrenceById(
-          data.agenda_recurrence_id
-        );
-
-      if (agendaRecurrence === undefined) {
-        console.error('Failed to get agenda recurrence', agendaRecurrence);
-        return {
-          error: new Error('Failed to get agenda recurrence'),
-        };
-      }
-
-      const createAgenda = await this._agendaRepository.create({
-        is_show: 1,
-        class_id: agendaRecurrence.class_id,
-        coach_id: agendaRecurrence.coach_id,
-        location_facility_id: agendaRecurrence.location_facility_id,
-        time: data.time,
-        agenda_recurrence_id: agendaRecurrence.id,
-      });
-
-      if (createAgenda instanceof Error) {
-        return {
-          error: createAgenda,
-        };
-      }
-      agenda = createAgenda;
+    if (agenda instanceof Error) {
+      return {
+        error: agenda,
+      };
     }
 
     const agendaClass = await this._classRepository.findById(agenda.class_id);
@@ -586,91 +931,76 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const countParticipant = await this._agendaRepository.countParticipant(
-      agenda.id
-    );
+    const countParticipant = await this._agendaRepository.findAgendaBooking({
+      filters: { agenda_id: agenda.id, status: 'booked' },
+    });
 
-    if (countParticipant >= agendaClass.slot) {
+    if (countParticipant.length >= agendaClass.slot) {
       return {
         error: new Error('Class is full'),
       };
     }
 
-    const expiringCredit = await this._packageRepository.findAboutToExpired(
-      user.id,
-      agendaClass.class_type_id
-    );
+    const expiringCredit =
+      await this._packageService.findUserPackageExpiringByUserId(
+        user.id,
+        agendaClass.class_type_id
+      );
 
-    if (!expiringCredit) {
+    if (expiringCredit.error) {
       return {
-        error: new Error('User does not have a package for this class'),
+        error: expiringCredit.error,
       };
     }
 
-    // const credit = await this._creditRepository.findAmountByUserId(user.id);
-    // if (!credit) {
-    //   return {
-    //     error: new Error('User does not have any credit'),
-    //   };
-    // }
-
-    // const currentCredit = credit.find(
-    //   (item) => item.class_type_id === agendaClass.class_type_id
-    // );
-
-    // if (!currentCredit || currentCredit.remaining_amount < 1) {
-    //   return {
-    //     error: new Error('User does not have any credit for this class'),
-    //   };
-    // }
-
-    // const creditTransaction = await this._creditRepository.findById(
-    //   expiringCredit.id
-    // );
-
-    // if (!creditTransaction) {
-    //   return {
-    //     error: new Error('Credit transaction not found'),
-    //   };
-    // }
-    const userAgenda = await this._agendaRepository.findActiveAgendaByUserId(
-      user.id
-    );
-    // iterate over userAgenda to check if user overlaps with existing agenda
-    // const agendaEndTime = addMinutes(agenda.time, agendaClass.duration);
-
-    for (const userAgendaItem of userAgenda) {
-      const userAgendaEndTime = addMinutes(
-        userAgendaItem.time ?? new Date(),
-        userAgendaItem.class_duration ?? 0
-      );
-
-      if (
-        (isBefore(userAgendaItem.time ?? new Date(), agenda.time) ||
-          isEqual(userAgendaItem.time ?? new Date(), agenda.time)) &&
-        (isAfter(userAgendaEndTime, agenda.time) ||
-          isEqual(userAgendaEndTime, agenda.time))
-      ) {
-        return {
-          error: new Error('User already has an agenda at this time'),
-        };
-      }
+    if (!expiringCredit || expiringCredit.result === undefined) {
+      return {
+        error: new Error('User does not have any credit for this class'),
+      };
     }
 
-    const inputData: InsertAgendaAndTransaction = {
-      ...data,
-      agenda_id: agenda.id,
-      status: 'booked',
-      user_package_id: expiringCredit.id,
-      class_type_id: agendaClass.class_type_id,
-      note: `Booked ${agendaClass.name} class on ${format(agenda.time, 'dd MMM yyyy - HH:mm')}`,
-    };
+    const startTime = agenda.time;
+    const endTime = addMinutes(startTime, agendaClass.duration);
+    const agendaConflict = await this.checkAgendaConflict(
+      user.id,
+      startTime,
+      endTime
+    );
 
-    const result = await this._agendaRepository.createAgendaBooking(inputData);
-
-    if (result instanceof Error) {
+    if (agendaConflict instanceof Error) {
       return {
-        error: result,
+        error: agendaConflict,
+      };
+    }
+
+    const createAgendaBooking =
+      await this._agendaRepository.createAgendaBooking({
+        data: {
+          user_id: user.id,
+          agenda_id: agenda.id,
+          status: 'booked',
+        },
+      });
+
+    if (createAgendaBooking instanceof Error) {
+      return {
+        error: createAgendaBooking,
+      };
+    }
+
+    const createCreditTransaction = await this._creditRepository.create({
+      data: {
+        agenda_booking_id: createAgendaBooking.id,
+        class_type_id: agendaClass.class_type_id,
+        note: `Booked For ${user.name} in the ${agendaClass.name} class on ${format(agenda.time, 'dd MMM yyyy - HH:mm')}`,
+        user_id: user.id,
+        user_package_id: expiringCredit.result.id,
+      },
+    });
+
+    if (createCreditTransaction instanceof Error) {
+      return {
+        error: createCreditTransaction,
       };
     }
 
@@ -693,11 +1023,12 @@ export class AgendaServiceImpl implements AgendaService {
     }
 
     return {
-      result,
+      result: createAgendaBooking,
+      error: undefined,
     };
   }
 
-  async createAgendaBookingByAdmin(data: InsertAgendaBookingByAdmin) {
+  async createAgendaBookingByAdmin(data: InsertAgendaBookingByAdminOption) {
     const user = await this._userRepository.findById(data.user_id);
 
     if (!user) {
@@ -715,48 +1046,17 @@ export class AgendaServiceImpl implements AgendaService {
         error: new Error('User not found'),
       };
     }
-    let agenda: SelectAgenda | undefined;
-    if (data.agenda_id) {
-      agenda = await this._agendaRepository.findById(data.agenda_id as number);
-      if (!agenda) {
-        return {
-          error: new Error('Agenda not found'),
-        };
-      }
-    } else {
-      if (!data.agenda_recurrence_id) {
-        return {
-          error: new Error('Agenda recurrence not found'),
-        };
-      }
 
-      const agendaRecurrence =
-        await this._agendaRepository.findAgendaRecurrenceById(
-          data.agenda_recurrence_id
-        );
+    const agenda = await this.findOrCreateAgendaFromRecurrence(
+      data.time,
+      data.agenda_id ?? undefined,
+      data.agenda_recurrence_id ?? undefined
+    );
 
-      if (agendaRecurrence === undefined) {
-        console.error('Failed to get agenda recurrence', agendaRecurrence);
-        return {
-          error: new Error('Failed to get agenda recurrence'),
-        };
-      }
-
-      const createAgenda = await this._agendaRepository.create({
-        is_show: 1,
-        class_id: agendaRecurrence.class_id,
-        coach_id: agendaRecurrence.coach_id,
-        location_facility_id: agendaRecurrence.location_facility_id,
-        time: data.time,
-        agenda_recurrence_id: agendaRecurrence.id,
-      });
-
-      if (createAgenda instanceof Error) {
-        return {
-          error: createAgenda,
-        };
-      }
-      agenda = createAgenda;
+    if (agenda instanceof Error) {
+      return {
+        error: agenda,
+      };
     }
 
     const agendaClass = await this._classRepository.findById(agenda.class_id);
@@ -778,94 +1078,72 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const countParticipant = await this._agendaRepository.countParticipant(
-      agenda.id
-    );
+    const countParticipant = await this._agendaRepository.findAgendaBooking({
+      filters: { agenda_id: agenda.id, status: 'booked' },
+    });
 
-    if (countParticipant >= agendaClass.slot) {
+    if (countParticipant.length >= agendaClass.slot) {
       return {
         error: new Error('Class is full'),
       };
     }
 
-    const expiringCredit = await this._packageRepository.findAboutToExpired(
-      useUserCredit.id,
-      agendaClass.class_type_id
-    );
+    const expiringCredit =
+      await this._packageService.findUserPackageExpiringByUserId(
+        useUserCredit.id,
+        agendaClass.class_type_id
+      );
 
-    if (!expiringCredit) {
+    if (expiringCredit.error) {
+      return {
+        error: expiringCredit.error,
+      };
+    }
+
+    if (!expiringCredit || !expiringCredit.result) {
       return {
         error: new Error('User does not have a package for this class'),
       };
     }
 
-    // const credit = await this._creditRepository.findAmountByUserId(
-    //   useUserCredit.id
-    // );
-    // if (!credit) {
-    //   return {
-    //     error: new Error('User does not have any credit'),
-    //   };
-    // }
-
-    // const currentCredit = credit.find(
-    //   (item) => item.class_type_id === agendaClass.class_type_id
-    // );
-
-    // if (!currentCredit || currentCredit.remaining_amount < 1) {
-    //   return {
-    //     error: new Error('User does not have any credit for this class'),
-    //   };
-    // }
-
-    // const creditTransaction = await this._creditRepository.findById(
-    //   expiringCredit.id
-    // );
-
-    // if (!creditTransaction) {
-    //   return {
-    //     error: new Error('Credit transaction not found'),
-    //   };
-    // }
-
-    const userAgenda = await this._agendaRepository.findActiveAgendaByUserId(
-      user.id
+    const startTime = agenda.time;
+    const endTime = addMinutes(startTime, agendaClass.duration);
+    const agendaConflict = await this.checkAgendaConflict(
+      useUserCredit.id,
+      startTime,
+      endTime
     );
 
-    for (const userAgendaItem of userAgenda) {
-      const userAgendaEndTime = addMinutes(
-        userAgendaItem.time ?? new Date(),
-        userAgendaItem.class_duration ?? 0
-      );
-
-      if (
-        (isBefore(userAgendaItem.time ?? new Date(), agenda.time) ||
-          isEqual(userAgendaItem.time ?? new Date(), agenda.time)) &&
-        (isAfter(userAgendaEndTime, agenda.time) ||
-          isEqual(userAgendaEndTime, agenda.time))
-      ) {
-        return {
-          error: new Error('User already has an agenda at this time'),
-        };
-      }
+    if (agendaConflict instanceof Error) {
+      return {
+        error: agendaConflict,
+      };
     }
 
-    const inputData: InsertAgendaBookingAndTransactionByAdmin = {
-      agenda_id: agenda.id,
-      user_id: data.user_id,
-      used_credit_user_id: data.used_credit_user_id,
-      status: 'booked',
-      user_package_id: expiringCredit.id,
-      class_type_id: agendaClass.class_type_id,
-      note: `Booked For ${user.name} in the ${agendaClass.name} class on ${format(agenda.time, 'dd MMM yyyy - HH:mm')}`,
-    };
+    const createAgendaBooking =
+      await this._agendaRepository.createAgendaBooking({
+        data: { user_id: data.user_id, agenda_id: agenda.id, status: 'booked' },
+      });
 
-    const result =
-      await this._agendaRepository.createAgendaBookingByAdmin(inputData);
-
-    if (result instanceof Error) {
+    if (createAgendaBooking instanceof Error) {
       return {
-        error: result,
+        error: createAgendaBooking,
+      };
+    }
+
+    const createCreditTransaction = await this._creditRepository.create({
+      data: {
+        agenda_booking_id: createAgendaBooking.id,
+        class_type_id: agendaClass.class_type_id,
+        note: `Booked For ${user.name} in the ${agendaClass.name} class on ${format(agenda.time, 'dd MMM yyyy - HH:mm')}`,
+        user_id: useUserCredit.id,
+        user_package_id: expiringCredit.result.id,
+      },
+    });
+
+    if (createCreditTransaction instanceof Error) {
+      return {
+        error: createCreditTransaction,
       };
     }
 
@@ -888,77 +1166,286 @@ export class AgendaServiceImpl implements AgendaService {
     }
 
     return {
-      result,
+      result: createAgendaBooking,
     };
   }
 
   async update(data: UpdateAgenda) {
-    const result = await this._agendaRepository.update(data);
+    // if data.id is undefined, create a new agenda
+    if (
+      !data.id ||
+      (await this._agendaRepository.find({ filters: { id: data.id } }))
+        .length === 0
+    ) {
+      if (data.time === undefined) {
+        console.error('Time is required');
+        return {
+          error: new Error('Time is required'),
+        };
+      }
+      if (!data.class_id) {
+        console.error('Class ID is required');
+        return {
+          error: new Error('Class ID is required'),
+        };
+      }
+      if (data.coach_id === undefined) {
+        console.error('Coach ID is required');
+        return {
+          error: new Error('Coach ID is required'),
+        };
+      }
+      if (data.location_facility_id === undefined) {
+        console.error('Location Facility ID is required');
+        return {
+          error: new Error('Location Facility ID is required'),
+        };
+      }
+      const createAgenda = await this.create({
+        data: {
+          is_show: data.is_show,
+          class_id: data.class_id,
+          coach_id: data.coach_id,
+          location_facility_id: data.location_facility_id,
+          time: data.time,
+          agenda_recurrence_id: data.agenda_recurrence_id,
+        },
+      });
 
-    if (result instanceof Error) {
-      return {
-        result: undefined,
-        error: result,
-      };
+      if (createAgenda instanceof Error) {
+        return {
+          error: createAgenda,
+        };
+      }
+    } else {
+      const updateAgenda = await this._agendaRepository.update({
+        data,
+        filters: { id: data.id },
+      });
+
+      if (updateAgenda instanceof Error) {
+        return {
+          error: updateAgenda,
+        };
+      }
     }
 
     return {
-      result: result,
+      result: null,
     };
   }
 
   async updateAgendaRecurrence(data: UpdateAgendaRecurrence) {
-    const result = await this._agendaRepository.updateAgendaRecurrence(data);
+    const isDateSame = (currentDate?: Date, newDate?: Date) => {
+      if (currentDate === undefined || newDate === undefined) {
+        return false;
+      }
+      return currentDate.toISOString() === newDate.toISOString();
+    };
 
-    if (result instanceof Error) {
+    const isDateDifferent = (currentDate?: Date, newDate?: Date) => {
+      if (currentDate === undefined || newDate === undefined) {
+        return false;
+      }
+      return currentDate.toISOString() !== newDate.toISOString();
+    };
+
+    if (!data.id) {
+      console.error('Agenda recurrence ID is required');
       return {
-        result: undefined,
-        error: result,
+        error: new Error('Agenda recurrence ID is required'),
+      };
+    }
+    const currentAgendaRecurrence = await this.findAgendaRecurrenceById(
+      data.id
+    );
+
+    if (currentAgendaRecurrence === undefined) {
+      console.error('Failed to get current agenda recurrence');
+      return {
+        error: new Error('Failed to get current agenda recurrence'),
       };
     }
 
-    return {
-      result: result,
-    };
-  }
+    // check if start_date same from current start_date or end_date same from current end_date
+    if (isDateSame(currentAgendaRecurrence.result?.end_date, data.end_date)) {
+      // if there are egenda that after the current agenda recurrence
+      if (
+        isDateDifferent(
+          currentAgendaRecurrence.result?.end_date,
+          data?.end_date
+        )
+      ) {
+        if (data.end_date === undefined) {
+          console.error('End date is required');
+          return {
+            error: new Error('End date is required'),
+          };
+        }
+        const eb = expressionBuilder<DB, 'agendas' | 'agenda_recurrences'>();
+        const checkAgendas = await this._agendaRepository.find({
+          filters: {
+            agenda_recurrence_id: data.id,
+          },
+          customFilters: [
+            eb('time', '>', data.end_date),
+            eb('agendas.deleted_at', 'is', null),
+          ],
+        });
 
-  async updateAgendaBooking(data: UpdateAgendaBooking) {
-    const result = await this._agendaRepository.updateAgendaBooking(data);
+        if (checkAgendas.length > 0) {
+          console.error(
+            'There are agendas after the current agenda recurrence'
+          );
+          return {
+            error: new Error(
+              `There are ${checkAgendas.length} agendas after the current agenda recurrence`
+            ),
+          };
+        }
+      }
+      const updateAgendaRecurrence =
+        await this._agendaRepository.updateAgendaRecurrence({
+          data,
+          filters: { id: data.id },
+        });
+      if (updateAgendaRecurrence instanceof Error) {
+        return {
+          error: updateAgendaRecurrence,
+        };
+      }
+    } else {
+      // when start date different from current start date we need to split the agenda
+      if (data.coach_id === undefined) {
+        console.error('Coach ID is required');
+        return {
+          error: new Error('Coach ID is required'),
+        };
+      }
+      if (data.location_facility_id === undefined) {
+        console.error('Location Facility ID is required');
+        return {
+          error: new Error('Location Facility ID is required'),
+        };
+      }
+      if (data.day_of_week === undefined) {
+        console.error('Day of week is required');
+        return {
+          error: new Error('Day of week is required'),
+        };
+      }
+      if (data.time === undefined) {
+        console.error('Time is required');
+        return {
+          error: new Error('Time is required'),
+        };
+      }
+      if (data.start_date === undefined) {
+        console.error('Start date is required');
+        return {
+          error: new Error('Start date is required'),
+        };
+      }
+      if (data.end_date === undefined) {
+        console.error('End date is required');
+        return {
+          error: new Error('End date is required'),
+        };
+      }
+      if (data.class_id === undefined) {
+        console.error('Class ID is required');
+        return {
+          error: new Error('Class ID is required'),
+        };
+      }
 
-    if (result instanceof Error) {
-      return {
-        result: undefined,
-        error: result,
-      };
+      const checkCoachAgendaRecurrenceAvailability =
+        await this.checkCoachAgendaRecurrenceAvailability(
+          data.coach_id,
+          data.day_of_week,
+          data.time,
+          data.time,
+          format(data.start_date, 'yyyy-MM-dd'),
+          format(data.end_date, 'yyyy-MM-dd')
+        );
+
+      if (checkCoachAgendaRecurrenceAvailability instanceof Error) {
+        return {
+          error: checkCoachAgendaRecurrenceAvailability,
+        };
+      }
+
+      // update current agenda recurrence
+      const updateCurrentAgendaRecurrence =
+        await this._agendaRepository.updateAgendaRecurrence({
+          data: {
+            end_date: subDays(data.start_date, 1),
+          },
+          filters: { id: data.id },
+        });
+
+      if (updateCurrentAgendaRecurrence instanceof Error) {
+        return {
+          error: updateCurrentAgendaRecurrence,
+        };
+      }
+
+      const createNewAgendaRecurrence =
+        await this._agendaRepository.createAgendaRecurrence({
+          data: {
+            coach_id: data.coach_id,
+            class_id: data.class_id,
+            location_facility_id: data.location_facility_id,
+            day_of_week: data.day_of_week,
+            time: data.time,
+            start_date: data.start_date,
+            end_date: data.end_date,
+          },
+        });
+
+      if (createNewAgendaRecurrence instanceof Error) {
+        return {
+          error: createNewAgendaRecurrence,
+        };
+      }
+
+      // get all agendas that after the current agenda recurrence, and update the agenda_recurrence_id and everything
+      const eb = expressionBuilder<DB, 'agendas' | 'agenda_recurrences'>();
+      // with date-fns set date to new date
+      const updateAgendas = await this._agendaRepository.update({
+        data: {
+          time: sql<Date>`CONCAT(DATE(time), ' ', ${data.time})` as any,
+          agenda_recurrence_id: createNewAgendaRecurrence.id,
+          class_id: data.class_id,
+          coach_id: data.coach_id,
+          location_facility_id: data.location_facility_id,
+        },
+        customFilters: [
+          eb('agenda_recurrence_id', '=', data.id),
+          eb('time', '>', data.start_date),
+        ],
+      });
+
+      if (updateAgendas instanceof Error) {
+        return {
+          error: updateAgendas,
+        };
+      }
     }
 
     return {
-      result: result,
+      result: null,
     };
   }
 
-  async updateAgendaBookingParticipant(data: UpdateAgendaBookingParticipant) {
-    const result =
-      await this._agendaRepository.updateAgendaBookingParticipant(data);
+  async updateAgendaBookingById(data: UpdateAgendaBooking) {
+    const result = await this._agendaRepository.updateAgendaBooking({
+      data,
+      filters: { id: data.id },
+    });
 
     if (result instanceof Error) {
       return {
-        result: undefined,
-        error: result,
-      };
-    }
-
-    return {
-      result: result,
-    };
-  }
-
-  async updateAgendaBookingById(data: UpdateAgendaBookingById) {
-    const result = await this._agendaRepository.updateAgendaBookingById(data);
-
-    if (result instanceof Error) {
-      return {
-        result: undefined,
         error: result,
       };
     }
@@ -966,14 +1453,14 @@ export class AgendaServiceImpl implements AgendaService {
     // loyalty rewards
     if (data.status === 'checked_in') {
       // check if loyalty reward already exists
-
-      const agendaBooking = await this._agendaRepository.findAgendaBookingById(
-        data.id
-      );
+      const agendaBooking = (
+        await this._agendaRepository.findAgendaBooking({
+          filters: { id: data.id },
+        })
+      )?.[0];
 
       if (!agendaBooking) {
         return {
-          result: undefined,
           error: new Error('Agenda booking not found'),
         };
       }
@@ -986,27 +1473,30 @@ export class AgendaServiceImpl implements AgendaService {
 
       if (loyaltyCheck) {
         return {
-          result: undefined,
-          error: undefined,
+          error: new Error('Loyalty reward already exists'),
         };
       }
 
-      const agenda = await this._agendaRepository.findById(
-        agendaBooking.agenda_id as number
-      );
+      const agenda = await this.findById(agendaBooking.agenda_id as number);
 
-      if (!agenda) {
+      if (agenda.error) {
         return {
-          result: undefined,
+          error: agenda.error,
+        };
+      }
+
+      if (!agenda || agenda.result === undefined) {
+        return {
           error: new Error('Agenda not found'),
         };
       }
 
-      const singleClass = await this._classRepository.findById(agenda.class_id);
+      const singleClass = await this._classRepository.findById(
+        agenda.result.class_id
+      );
 
       if (!singleClass) {
         return {
-          result: undefined,
           error: new Error('Class not found'),
         };
       }
@@ -1015,7 +1505,6 @@ export class AgendaServiceImpl implements AgendaService {
 
       if (!user) {
         return {
-          result: undefined,
           error: new Error('User not found'),
         };
       }
@@ -1023,88 +1512,134 @@ export class AgendaServiceImpl implements AgendaService {
       const loyalty = await this._loyaltyRepository.createOnReward({
         reward_id: 1,
         user_id: user.id,
-        note: `Checked in to ${singleClass.name} class on ${agenda.time}`,
+        note: `Checked in to ${singleClass.name} class on ${agenda.result.time}`,
         reference_id: agendaBooking.id,
       });
 
       if (loyalty instanceof Error) {
         return {
-          result: undefined,
           error: new Error('Failed to create loyalty reward', loyalty),
         };
       }
     }
 
     return {
-      result: result,
+      result: null,
     };
   }
 
   async delete(data: DeleteAgenda) {
     if (data.id === undefined || data.id === null || data.id === 0) {
-      const result = await this._agendaRepository.delete(data);
-
-      if (result instanceof Error) {
+      if (data.time === undefined) {
+        console.error('Time is required');
         return {
-          result: undefined,
-          error: result,
+          error: new Error('Time is required'),
+        };
+      }
+      if (!data.agenda_recurrence_id || data.agenda_recurrence_id === 0) {
+        console.error('Agenda recurrence ID is required');
+        return {
+          error: new Error('Agenda recurrence ID is required'),
+        };
+      }
+
+      const createAgenda = await this._agendaRepository.create({
+        data: {
+          is_show: 0,
+          class_id: data.class_id,
+          coach_id: data.coach_id,
+          location_facility_id: data.location_facility_id,
+          time: data.time,
+          agenda_recurrence_id: data.agenda_recurrence_id,
+          deleted_at: new Date(),
+        },
+      });
+
+      if (createAgenda instanceof Error) {
+        return {
+          error: createAgenda,
         };
       }
 
       return {
-        result: result,
+        result: null,
       };
     }
 
-    const agenda = await this._agendaRepository.findById(data.id);
+    // if there is an agenda id, delete the agenda
+    const agenda = await this.findById(data.id);
 
-    if (!agenda) {
+    if (!agenda || agenda.error) {
       return {
-        result: undefined,
-        error: new Error('Agenda not found'),
+        error: agenda.error || new Error('Agenda not found'),
       };
     }
 
     const agendaClass = await this._classRepository.findDeletedById(
-      agenda.class_id
+      agenda.result.class_id
     );
 
     if (!agendaClass) {
       return {
-        result: undefined,
         error: new Error('Class not found'),
       };
     }
 
     const agendaLocation =
       await this._locationRepository.findLocationByFacilityId(
-        agenda.location_facility_id
+        agenda.result.location_facility_id
       );
 
     if (!agendaLocation) {
       return {
-        result: undefined,
         error: new Error('Location not found'),
       };
     }
-    const agendaBookings =
-      await this._agendaRepository.findAllAgendaBookingByAgendaId(data.id);
 
-    const result = await this._agendaRepository.delete(data);
+    const agendaBookings = await this.findAllAgendaBookingByAgendaId(data.id);
 
-    if (result instanceof Error) {
+    if (agendaBookings.error) {
       return {
-        result: undefined,
-        error: result,
+        error: agendaBookings.error,
       };
     }
 
-    for (const booking of agendaBookings) {
+    const updateAgendaBooking =
+      await this._agendaRepository.updateAgendaBooking({
+        data: { status: 'cancelled' },
+        filters: { agenda_id: data.id },
+      });
+
+    if (updateAgendaBooking instanceof Error) {
+      return {
+        error: updateAgendaBooking,
+      };
+    }
+
+    if (data.is_refund) {
+      const eb = expressionBuilder<DB, 'credit_transactions'>();
+      const deleteCreditTransaction = await this._creditRepository.delete({
+        customFilters: [
+          eb(
+            'agenda_booking_id',
+            'in',
+            agendaBookings.result.map((a) => a.id)
+          ),
+        ],
+      });
+
+      if (deleteCreditTransaction instanceof Error) {
+        return {
+          error: deleteCreditTransaction,
+        };
+      }
+    }
+
+    for (const booking of agendaBookings.result) {
       const user = await this._userRepository.findById(booking.user_id);
 
       if (!user) {
         return {
-          result: undefined,
           error: new Error('User not found'),
         };
       }
@@ -1112,7 +1647,7 @@ export class AgendaServiceImpl implements AgendaService {
       const notification = await this._notificationService.sendNotification({
         payload: {
           type: NotificationType.AdminDeletedAgenda,
-          date: agenda.time,
+          date: agenda.result.time,
           class: agendaClass.name,
           location: agendaLocation.name,
           is_refund: data.is_refund,
@@ -1122,142 +1657,165 @@ export class AgendaServiceImpl implements AgendaService {
 
       if (notification.error) {
         return {
-          result: undefined,
           error: notification.error,
         };
       }
     }
 
     return {
-      result: result,
+      result: null,
     };
   }
 
   async deleteAgendaRecurrence(id: SelectAgendaRecurrence['id']) {
-    const result = await this._agendaRepository.deleteAgendaRecurrence(id);
-
-    if (result instanceof Error) {
+    const agendaRecurrence = await this.findAgendaRecurrenceById(id);
+    if (!agendaRecurrence || agendaRecurrence.error) {
       return {
-        result: undefined,
-        error: result,
+        error:
+          agendaRecurrence.error || new Error('Agenda recurrence not found'),
+      };
+    }
+
+    const deleteAgendaRecurrence =
+      await this._agendaRepository.deleteAgendaRecurrence({
+        filters: { id: id },
+      });
+
+    if (deleteAgendaRecurrence instanceof Error) {
+      return {
+        error: deleteAgendaRecurrence,
       };
     }
 
     return {
-      result: result,
+      result: null,
     };
   }
 
-  async deleteAgendaBooking(data: DeleteParticipant) {
-    const agendaBooking = await this._agendaRepository.findAgendaBookingById(
-      data.id
+  async cancelAgendaBookingByAdmin(data: CancelAgendaBookingByAdminOption) {
+    const eb = expressionBuilder<
+      DB,
+      'agendas' | 'agenda_bookings' | 'credit_transactions'
+    >();
+    const agenda = (
+      await this._agendaRepository.find({
+        customFilters: [
+          eb('agendas.deleted_at', 'is', null),
+          eb('agenda_bookings.id', '=', data.id),
+        ],
+        withAgendaBooking: true,
+        withClass: true,
+        withLocation: true,
+      })
+    )?.[0];
+
+    if (agenda === undefined) {
+      console.error('Failed to get agenda booking', agenda);
+      return {
+        error: new Error('Failed to get agenda booking'),
+      };
+    }
+
+    const agendaBooking = await this.findAgendaBookingById(data.id);
+
+    if (agendaBooking.error) {
+      return {
+        error: agendaBooking.error,
+      };
+    }
+
+    const user = await this._userRepository.findById(
+      agendaBooking.result.user_id
     );
-
-    if (!agendaBooking) {
-      return {
-        result: undefined,
-        error: new Error('Agenda booking not found'),
-      };
-    }
-
-    const agenda = await this._agendaRepository.findById(
-      agendaBooking.agenda_id as number
-    );
-
-    if (!agenda) {
-      return {
-        result: undefined,
-        error: new Error('Agenda not found'),
-      };
-    }
-
-    const agendaClass = await this._classRepository.findById(agenda.class_id);
-
-    if (!agendaClass) {
-      return {
-        result: undefined,
-        error: new Error('Class not found'),
-      };
-    }
-
-    const agendaLocation =
-      await this._locationRepository.findLocationByFacilityId(
-        agenda.location_facility_id
-      );
-
-    if (!agendaLocation) {
-      return {
-        result: undefined,
-        error: new Error('Location not found'),
-      };
-    }
-
-    const user = await this._userRepository.findById(agendaBooking.user_id);
 
     if (!user) {
       return {
-        result: undefined,
         error: new Error('User not found'),
       };
     }
-    data;
-    const result = await this._agendaRepository.deleteAgendaBooking(data);
 
-    if (result instanceof Error) {
-      return {
-        result: undefined,
-        error: result,
-      };
+    await this._agendaRepository.updateAgendaBooking({
+      data: { status: 'cancelled' },
+      filters: { id: data.id },
+    });
+
+    if (data.type === 'refund') {
+      const deleteCreditTransaction = await this._creditRepository.delete({
+        customFilters: [eb('agenda_booking_id', '=', data.id)],
+      });
+
+      if (deleteCreditTransaction instanceof Error) {
+        return {
+          error: deleteCreditTransaction,
+        };
+      }
     }
 
     const notification = await this._notificationService.sendNotification({
       payload: {
         type: NotificationType.AdminCancelledUserAgenda,
         date: agenda.time,
-        class: agendaClass.name,
-        location: agendaLocation.name,
-        facility: agendaLocation.facility_name,
+        class: agenda.class_name,
+        location: agenda.location_name,
+        facility: agenda.location_facility_name,
       },
       recipient: user.phone_number,
     });
 
     if (notification.error) {
       return {
-        result: undefined,
         error: notification.error,
       };
     }
 
     return {
-      result: result,
+      result: null,
     };
   }
 
-  async cancel(data: CancelAgenda) {
-    // get agneda
-    const agendaBooking = await this._agendaRepository.findAgendaBookingById(
-      data.agenda_booking_id
-    );
+  async cancelAgendaBookingByUser(data: CancelAgendaBookingByUserOption) {
+    const eb = expressionBuilder<
+      DB,
+      'agendas' | 'agenda_bookings' | 'credit_transactions'
+    >();
 
-    if (!agendaBooking) {
+    const agenda = (
+      await this._agendaRepository.find({
+        customFilters: [
+          eb('agendas.deleted_at', 'is', null),
+          eb('agenda_bookings.id', '=', data.id),
+        ],
+        withAgendaBooking: true,
+        withClass: true,
+        withLocation: true,
+      })
+    )?.[0];
+
+    if (agenda === undefined) {
+      console.error('Failed to get agenda booking', agenda);
       return {
-        result: undefined,
-        error: new Error('Agenda booking not found'),
+        error: new Error('Failed to get agenda booking'),
       };
     }
 
-    const agenda = await this._agendaRepository.findById(
-      agendaBooking.agenda_id as number
-    );
+    const agendaBooking = await this.findAgendaBookingById(data.id);
 
-    if (!agenda) {
+    if (agendaBooking.error) {
       return {
-        result: undefined,
-        error: new Error('Agenda not found'),
+        error: agendaBooking.error,
       };
     }
 
-    // if agenda < 24 hours, cannot cancel
+    const user = await this._userRepository.findById(
+      agendaBooking.result.user_id
+    );
+
+    if (!user) {
+      return {
+        error: new Error('User not found'),
+      };
+    }
+
     const agendaTime = agenda.time;
     const now = new Date();
 
@@ -1270,17 +1828,125 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
-    const result = await this._agendaRepository.cancel(data);
+    const updateAgendaBooking =
+      await this._agendaRepository.updateAgendaBooking({
+        data: { status: 'cancelled' },
+        filters: { id: data.id },
+      });
 
-    if (result instanceof Error) {
+    if (updateAgendaBooking instanceof Error) {
       return {
-        result: undefined,
-        error: result,
+        error: updateAgendaBooking,
+      };
+    }
+
+    const deleteCreditTransaction = await this._creditRepository.delete({
+      customFilters: [eb('agenda_booking_id', '=', data.id)],
+    });
+
+    if (deleteCreditTransaction instanceof Error) {
+      return {
+        error: deleteCreditTransaction,
       };
     }
 
     return {
-      result: result,
+      result: null,
+    };
+  }
+
+  async findAllCoachAgendaByMonthAndLocation(
+    data: FindAllAgendaBookingByMonthAndLocation
+  ) {
+    const { date, location_id } = data;
+    const queryAgenda = await db
+      .selectFrom('agendas')
+      .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
+      .innerJoin('users', 'coaches.user_id', 'users.id')
+      .innerJoin('classes', 'agendas.class_id', 'classes.id')
+      .innerJoin('class_types', 'classes.class_type_id', 'class_types.id')
+      .innerJoin(
+        'location_facilities',
+        'agendas.location_facility_id',
+        'location_facilities.id'
+      )
+      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .select([
+        'coaches.id as coach_id',
+        'users.name as coach_name',
+        'class_types.id as class_type_id',
+        'class_types.type as class_type_name',
+        sql<number>`count(agendas.id)`.as('total'),
+      ])
+      .where('locations.id', '=', location_id)
+      .where(sql`MONTH(agendas.time)`, '=', format(date, 'MM'))
+      .where(sql`YEAR(agendas.time)`, '=', format(date, 'yyyy'))
+      .groupBy('users.id')
+      .groupBy('class_types.id')
+      .execute();
+
+    // transform data
+    const transformedAgenda = queryAgenda.reduce<SelectCoachAgendaBooking[]>(
+      (acc, item) => {
+        const coach = acc.find((coach) => coach.coach_id === item.coach_id);
+
+        if (coach === undefined) {
+          acc.push({
+            coach_id: item.coach_id,
+            coach_name: item.coach_name,
+            agenda: [
+              {
+                class_type_id: item.class_type_id,
+                class_type_name: item.class_type_name,
+                total: item.total,
+              },
+            ],
+            agenda_count: 0,
+          });
+        } else {
+          coach.agenda.push({
+            class_type_id: item.class_type_id,
+            class_type_name: item.class_type_name,
+            total: item.total,
+          });
+        }
+
+        return acc;
+      },
+      []
+    );
+
+    const queryDays = await db
+      .selectFrom('agendas')
+      .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
+      .innerJoin(
+        'location_facilities',
+        'agendas.location_facility_id',
+        'location_facilities.id'
+      )
+      .innerJoin('locations', 'location_facilities.location_id', 'locations.id')
+      .select([
+        'coaches.id',
+        sql<number>`COUNT(DISTINCT DAY(agendas.time))`.as('days_with_agendas'),
+      ])
+      .where('locations.id', '=', location_id)
+      .where(sql`MONTH(agendas.time)`, '=', format(date, 'MM'))
+      .where(sql`YEAR(agendas.time)`, '=', format(date, 'yyyy'))
+      .groupBy('coaches.id')
+      .execute();
+
+    const transformedData = transformedAgenda.map((coach) => {
+      const days = queryDays.find((day) => day.id === coach.coach_id);
+
+      return {
+        ...coach,
+        agenda_count: days?.days_with_agendas ?? 0,
+      };
+    });
+
+    return {
+      result: transformedData,
+      error: undefined,
     };
   }
 }

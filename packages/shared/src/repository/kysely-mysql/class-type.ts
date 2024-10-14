@@ -36,7 +36,7 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
     return query?.count ?? 0;
   }
 
-  async find(data?: SelectClassTypeQuery) {
+  async find<T extends SelectClassType>(data?: SelectClassTypeQuery) {
     let baseQuery = this._db.selectFrom('class_types');
     baseQuery = baseQuery.$if(
       data?.withIncome !== undefined,
@@ -83,7 +83,9 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
           .groupBy('class_types.id')
     );
     if (data?.filters) {
-      baseQuery = baseQuery.where(applyFilters(data.filters));
+      baseQuery = baseQuery.where(
+        applyFilters(data.filters, data.customFilters)
+      );
     }
 
     if (data?.orderBy) {
@@ -94,8 +96,8 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
       baseQuery = baseQuery.offset(data.offset);
     }
 
-    const result = baseQuery.selectAll().execute();
-    return result;
+    const result = await baseQuery.selectAll().execute();
+    return result as T[];
   }
 
   async create({ data, trx }: InsertClassTypeCommand) {
@@ -121,13 +123,13 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
     }
   }
 
-  async update({ data, trx }: UpdateClassTypeCommand) {
+  async update({ data, trx, customFilters }: UpdateClassTypeCommand) {
     try {
       const db = trx ?? this._db;
       const query = db
         .updateTable('class_types')
         .set(data)
-        .where(applyFilters({ id: data.id }))
+        .where(applyFilters({ id: data.id }, customFilters))
         .returningAll()
         .compile();
 
@@ -145,12 +147,12 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
     }
   }
 
-  async delete({ filters, trx }: DeleteClassTypeCommand) {
+  async delete({ filters, trx, customFilters }: DeleteClassTypeCommand) {
     try {
       const db = trx ?? this._db;
       const query = db
         .deleteFrom('class_types')
-        .where(applyFilters(filters))
+        .where(applyFilters(filters, customFilters))
         .execute();
 
       return;

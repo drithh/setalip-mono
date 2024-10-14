@@ -247,7 +247,7 @@ export const agendaRouter = {
       return result;
     }),
 
-  updateAgendaBooking: protectedProcedure
+  updateAgendaBookingById: protectedProcedure
     .input(updateAgendaBookingSchema)
     .mutation(async ({ ctx, input }) => {
       const agendaService = ctx.container.get<AgendaService>(
@@ -270,7 +270,7 @@ export const agendaRouter = {
         TYPES.AgendaService
       );
 
-      const result = await agendaService.cancel({
+      const result = await agendaService.deleteAgendaBookingByUser({
         agenda_booking_id: input.id,
         user_id: ctx.session.userId,
       });
@@ -287,7 +287,7 @@ export const agendaRouter = {
         TYPES.AgendaService
       );
 
-      const result = await agendaService.deleteAgendaBooking({
+      const result = await agendaService.cancelAgendaBookingByAdmin({
         id: input.id,
         type: input.type,
       });

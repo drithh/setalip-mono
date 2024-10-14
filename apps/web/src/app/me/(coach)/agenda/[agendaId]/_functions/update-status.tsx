@@ -18,7 +18,7 @@ const TOAST_MESSAGES = {
 };
 
 export const useUpdateMutation = () =>
-  api.agenda.updateAgendaBooking.useMutation({
+  api.agenda.updateAgendaBookingById.useMutation({
     onMutate: () => {
       toast.loading(TOAST_MESSAGES.loading.title, {
         description: TOAST_MESSAGES.loading.description,

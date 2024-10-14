@@ -6,8 +6,6 @@ import {
   FindAllUserOptions,
   InsertCredit,
   SelectCredit,
-  SelectAmountCredit,
-  DeleteCredit,
   SelectAllUserName,
   SelectMember,
 } from '../repository';

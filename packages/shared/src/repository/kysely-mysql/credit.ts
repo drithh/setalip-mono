@@ -22,6 +22,7 @@ import { SelectUser } from '../user';
 import { entriesFromObject } from '#dep/util/index';
 import { SelectPackageQuery } from '../package';
 import { applyFilters, applyModifiers } from './util';
+import { custom } from 'zod';
 
 @injectable()
 export class KyselyMySqlCreditRepository implements CreditRepository {
@@ -45,7 +46,9 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
   async base(data?: SelectCreditQuery) {
     let baseQuery = this._db.selectFrom('credit_transactions');
     if (data?.filters) {
-      baseQuery = baseQuery.where(applyFilters(data.filters));
+      baseQuery = baseQuery.where(
+        applyFilters(data.filters, data.customFilters)
+      );
     }
 
     return baseQuery;
@@ -103,13 +106,13 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
     }
   }
 
-  async update({ data, trx, filters }: UpdateCreditCommand) {
+  async update({ data, trx, filters, customFilters }: UpdateCreditCommand) {
     try {
       const db = trx ?? this._db;
       const query = await db
         .updateTable('credit_transactions')
         .set(data)
-        .where(applyFilters(filters))
+        .where(applyFilters(filters, customFilters))
         .executeTakeFirstOrThrow();
 
       if (query.numUpdatedRows === undefined) {
@@ -124,13 +127,25 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
     }
   }
 
-  async delete({ filters, trx }: DeleteCreditCommand) {
+  async delete({
+    filters,
+    trx,
+    withAgendaBooking,
+    customFilters,
+  }: DeleteCreditCommand) {
     try {
       const db = trx ?? this._db;
 
       const query = await db
         .deleteFrom('credit_transactions')
-        .where(applyFilters(filters))
+        .$if(withAgendaBooking === true, (qb) =>
+          qb.innerJoin(
+            'agenda_bookings',
+            'credit_transactions.agenda_booking_id',
+            'agenda_bookings.id'
+          )
+        )
+        .where(applyFilters(filters, customFilters))
         .executeTakeFirstOrThrow();
 
       if (query.numDeletedRows === undefined) {

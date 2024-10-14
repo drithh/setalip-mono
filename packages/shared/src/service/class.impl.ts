@@ -75,9 +75,11 @@ export class ClassServiceImpl implements ClassService {
 
   async create(data: InsertClass) {
     // find class type
-    const classType = await this._classTypeRepository.findById(
-      data.class_type_id
-    );
+    const classType = await this._classTypeRepository.find({
+      filters: {
+        id: data.class_type_id,
+      },
+    });
 
     if (!classType) {
       return {

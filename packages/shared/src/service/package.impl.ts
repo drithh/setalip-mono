@@ -134,6 +134,24 @@ export class PackageServiceImpl implements PackageService {
     };
   }
 
+  /**
+   * Finds all active user packages by the given user ID.
+   *
+   * @param user_id - The ID of the user whose active packages are to be found.
+   * @returns An object containing the result of the query and any potential error.
+   *
+   * @remarks
+   * This method applies custom filters to ensure that only active packages are retrieved.
+   * It filters out packages that have expired and those where the credit is more than the sum of credit transactions.
+   * The results are ordered by the expiration date in ascending order.
+   *
+   * @example
+   * ```typescript
+   * const userId = 'some-user-id';
+   * const result = await findAllUserPackageActiveByUserId(userId);
+   * console.log(result);
+   * ```
+   */
   async findAllUserPackageActiveByUserId(
     user_id: SelectUserPackage['user_id']
   ) {
@@ -141,7 +159,11 @@ export class PackageServiceImpl implements PackageService {
     const eb = expressionBuilder<DB, 'user_packages' | 'credit_transactions'>();
     customFilters.push(eb('user_packages.expired_at', '>', new Date()));
     customFilters.push(
-      eb(sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`, '>', 0)
+      eb(
+        'user_packages.credit',
+        '>',
+        sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`
+      )
     );
 
     const packages =
@@ -162,6 +184,20 @@ export class PackageServiceImpl implements PackageService {
     };
   }
 
+  /**
+   * Finds the expiring user package by user ID and class type ID.
+   *
+   * @param user_id - The ID of the user whose package is being searched.
+   * @param class_type_id - The ID of the class type to filter the packages.
+   * @returns An object containing either the found package or an error.
+   *
+   * @remarks
+   * This method first retrieves all active packages for the given user ID.
+   * If there is an error in retrieving the packages or no packages are found,
+   * it returns an error. Otherwise, it searches for a package matching the
+   * specified class type ID. If such a package is found, it is returned;
+   * otherwise, an error indicating that the package was not found is returned.
+   */
   async findUserPackageExpiringByUserId(
     user_id: SelectUserPackage['user_id'],
     class_type_id: SelectClassType['id']

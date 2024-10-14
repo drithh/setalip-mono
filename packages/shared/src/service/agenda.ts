@@ -16,8 +16,11 @@ import {
   SelectLocation,
   SelectAgendaPagination,
   SelectFacility,
+  InsertAgendaCommand,
+  InsertAgendaBookingCommand,
 } from '../repository';
 import { PromiseResult } from '../types';
+import { FindAllIncomeByMonthAndLocationOption } from './class-type';
 export interface FindAllAgendaOptions extends DefaultPagination {
   className?: SelectClass['name'];
   coaches?: SelectCoach['id'][];
@@ -121,13 +124,64 @@ export interface DefaultReturn<T> {
   pageCount: number;
 }
 
+export interface TotalCoachAgenda {
+  class_type_id: SelectClassType['id'];
+  class_type_name: SelectClassType['type'];
+  total: number;
+}
+
+export interface SelectCoachAgendaBooking {
+  coach_id: SelectCoach['id'];
+  coach_name: SelectUser['name'];
+  agenda: TotalCoachAgenda[];
+  agenda_count: number;
+}
+
+export interface FindAllAgendaRecurrenceOption extends DefaultPagination {
+  coaches?: SelectCoach['id'][];
+  locations?: SelectLocation['id'][];
+  day_of_week: number;
+}
+
+export interface InsertAgendaBookingOption {
+  agenda_id?: SelectAgendaBooking['agenda_id'];
+  user_id: SelectAgendaBooking['user_id'];
+  time: SelectAgenda['time'];
+  agenda_recurrence_id?: SelectAgenda['agenda_recurrence_id'];
+}
+
+export interface InsertAgendaBookingByAdminOption
+  extends InsertAgendaBookingOption {
+  used_credit_user_id: SelectAgendaBooking['user_id'];
+}
+
+export interface SelectAgendaRecurrence__Coach__Class__Location
+  extends SelectAgendaRecurrence,
+    AgendaWithLocation,
+    AgendaWithCoach,
+    AgendaWithClass {}
+
+export interface DeleteAgenda extends SelectAgenda {
+  is_refund: boolean;
+}
+
+export interface CancelAgendaBookingByAdminOption {
+  id: SelectAgendaBooking['id'];
+  type: 'refund' | 'no_refund';
+}
+
+export interface CancelAgendaBookingByUserOption {
+  id: SelectAgendaBooking['id'];
+  user_id: SelectUser['id'];
+}
+
+export interface FindAllAgendaBookingByMonthAndLocation {
+  date: Date;
+  location_id: number;
+}
+
 export interface AgendaService {
   count(): Promise<number>;
-  countParticipant(id: SelectAgenda['id']): Promise<number>;
-  countCheckedInByUserId(
-    userId: SelectAgenda['id']
-  ): Promise<number | undefined>;
-  countCoachAgenda(userId: SelectCoach['user_id']): Promise<number>;
 
   findAll(
     data: FindAllAgendaOptions
@@ -161,54 +215,54 @@ export interface AgendaService {
     data: FindScheduleByIdOptions
   ): PromiseResult<SelectAgenda__Coach__Class__Location, Error>;
 
-  // // better with agendabooking
+  findAllAgendaBookingByAgendaId(
+    id: SelectAgenda['id']
+  ): PromiseResult<SelectAgendaBooking[], Error>;
+  findAgendaBookingById(
+    id: SelectAgendaBooking['id']
+  ): PromiseResult<SelectAgendaBooking | undefined, Error>;
+
+  findAllAgendaRecurrence(
+    data: FindAllAgendaRecurrenceOption
+  ): PromiseResult<
+    DefaultReturn<SelectAgendaRecurrence__Coach__Class__Location>,
+    Error
+  >;
+  findAgendaRecurrenceById(
+    id: SelectAgendaRecurrence['id']
+  ): PromiseResult<SelectAgendaRecurrence, Error>;
+
+  create(data: InsertAgendaCommand): PromiseResult<SelectAgenda, Error>;
+  createAgendaBooking(
+    data: InsertAgendaBookingOption
+  ): PromiseResult<SelectAgendaBooking, Error>;
+  createAgendaBookingByAdmin(
+    data: InsertAgendaBookingByAdminOption
+  ): PromiseResult<SelectAgendaBooking, Error>;
+  createAgendaRecurrence(
+    data: InsertAgendaRecurrence
+  ): PromiseResult<SelectAgendaRecurrence, Error>;
+
+  update(data: UpdateAgenda): PromiseResult<null, Error>;
+  updateAgendaBookingById(
+    data: UpdateAgendaBooking
+  ): PromiseResult<null, Error>;
+  updateAgendaRecurrence(
+    data: UpdateAgendaRecurrence
+  ): PromiseResult<null, Error>;
+
+  delete(data: DeleteAgenda): PromiseResult<null, Error>;
+  deleteAgendaRecurrence(
+    id: SelectAgendaRecurrence['id']
+  ): PromiseResult<null, Error>;
+  cancelAgendaBookingByAdmin(
+    data: CancelAgendaBookingByAdminOption
+  ): PromiseResult<null, Error>;
+  cancelAgendaBookingByUser(
+    data: CancelAgendaBookingByUserOption
+  ): PromiseResult<null, Error>;
 
   findAllCoachAgendaByMonthAndLocation(
-    data: FindAllAgendaBookingByMonthAndLocation
+    data: FindAllIncomeByMonthAndLocationOption
   ): PromiseResult<SelectCoachAgendaBooking[], Error>;
-  // findAllAgendaBookingByAgendaId(
-  //   id: SelectAgenda['id']
-  // ): PromiseResult<SelectAgendaBooking[], Error>;
-  // findAgendaBookingById(
-  //   id: SelectAgendaBooking['id']
-  // ): PromiseResult<SelectAgendaBooking | undefined, Error>;
-
-  // findAllAgendaRecurrence(
-  //   data: FindAllAgendaRecurrenceOption
-  // ): PromiseResult<SelectAllAgendaRecurrence, Error>;
-  // findAgendaRecurrenceById(
-  //   id: SelectAgendaRecurrence['id']
-  // ): PromiseResult<SelectAgendaRecurrence, Error>;
-
-  // create(data: InsertAgenda): PromiseResult<SelectAgenda, Error>;
-  // createAgendaBooking(
-  //   data: InsertAgendaBooking
-  // ): PromiseResult<SelectAgendaBooking, Error>;
-  // createAgendaBookingByAdmin(
-  //   data: InsertAgendaBookingByAdmin
-  // ): PromiseResult<SelectAgendaBooking, Error>;
-  // createAgendaRecurrence(
-  //   data: InsertAgendaRecurrence
-  // ): PromiseResult<SelectAgendaRecurrence, Error>;
-
-  // update(data: UpdateAgenda): PromiseResult<undefined, Error>;
-  // updateAgendaBooking(
-  //   data: UpdateAgendaBooking
-  // ): PromiseResult<undefined, Error>;
-  // updateAgendaRecurrence(
-  //   data: UpdateAgendaRecurrence
-  // ): PromiseResult<undefined, Error>;
-  // updateAgendaBookingParticipant(
-  //   data: UpdateAgendaBookingParticipant
-  // ): PromiseResult<undefined, Error>;
-  // updateAgendaBookingById(
-  //   data: UpdateAgendaBookingById
-  // ): PromiseResult<undefined, Error>;
-
-  // delete(data: DeleteAgenda): PromiseResult<undefined, Error>;
-  // deleteAgendaRecurrence(
-  //   id: SelectAgendaRecurrence['id']
-  // ): PromiseResult<undefined, Error>;
-  // deleteAgendaBooking(data: DeleteParticipant): PromiseResult<undefined, Error>;
-  // cancel(data: CancelAgenda): PromiseResult<undefined, Error>;
 }

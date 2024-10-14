@@ -36,7 +36,8 @@ export interface UpdateCreditCommand extends Command<SelectCredit> {
 }
 
 export interface DeleteCreditCommand extends Command<SelectCredit> {
-  filters: Partial<SelectCredit>;
+  filters?: Partial<SelectCredit>;
+  withAgendaBooking?: boolean;
 }
 
 export interface CreditRepository {

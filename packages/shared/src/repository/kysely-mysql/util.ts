@@ -6,21 +6,33 @@ import {
   ReferenceExpression,
   SelectQueryBuilder,
   OrderByExpression,
+  Expression,
+  SqlBool,
 } from 'kysely';
 
 export function applyFilters<T extends keyof DB, F>(
-  filters: Partial<F> | undefined
+  filters: Partial<F> | undefined,
+  customFilters?: Expression<SqlBool>[]
 ) {
-  return (eb: ExpressionBuilder<DB, T>) => {
-    if (!filters) {
-      return eb.and([]);
-    }
-    const appliedFilters = entriesFromObject(filters).flatMap(([key, value]) =>
-      value !== undefined
-        ? eb(key as ReferenceExpression<DB, T>, '=', value)
-        : []
-    );
-    return eb.and(appliedFilters);
+  return (eb: ExpressionBuilder<any, T>) => {
+    // const empty = eb.and([]);
+    const transformFilters = (filters?: Partial<F>) => {
+      if (!filters) {
+        return [];
+      }
+      return entriesFromObject(filters).flatMap(([key, value]) =>
+        value !== undefined
+          ? eb(key as ReferenceExpression<DB, T>, '=', value)
+          : []
+      );
+    };
+
+    const transformedFilters = [
+      ...transformFilters(filters),
+      ...(customFilters ?? []),
+    ];
+
+    return eb.and(transformedFilters);
   };
 }
 

@@ -52,7 +52,9 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
   async base(data?: SelectPackageQuery) {
     let baseQuery = this._db.selectFrom('packages');
     if (data?.filters) {
-      baseQuery = baseQuery.where(applyFilters(data.filters));
+      baseQuery = baseQuery.where(
+        applyFilters(data.filters, data.customFilters)
+      );
     }
     if (data?.withClassType) {
       baseQuery = baseQuery
@@ -91,7 +93,9 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
   async baseUserPackage(data?: SelectUserPackageQuery) {
     let baseQuery = this._db.selectFrom('user_packages');
     if (data?.filters) {
-      baseQuery = baseQuery.where(applyFilters(data.filters));
+      baseQuery = baseQuery.where(
+        applyFilters(data.filters, data.customFilters)
+      );
     }
 
     if (data?.withPackage) {
@@ -169,7 +173,9 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       );
 
     if (data?.filters) {
-      baseQuery = baseQuery.where(applyFilters(data.filters));
+      baseQuery = baseQuery.where(
+        applyFilters(data.filters, data.customFilters)
+      );
     }
 
     return baseQuery;
@@ -292,13 +298,13 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     }
   }
 
-  async update({ data, trx, filters }: UpdatePackageCommand) {
+  async update({ data, trx, filters, customFilters }: UpdatePackageCommand) {
     try {
       const db = trx ?? this._db;
       const query = await db
         .updateTable('packages')
         .set(data)
-        .where(applyFilters(filters))
+        .where(applyFilters(filters, customFilters))
         .executeTakeFirst();
 
       if (query.numUpdatedRows === undefined) {
@@ -313,13 +319,18 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     }
   }
 
-  async updateUserPackage({ data, trx, filters }: UpdateUserPackageCommand) {
+  async updateUserPackage({
+    data,
+    trx,
+    filters,
+    customFilters,
+  }: UpdateUserPackageCommand) {
     try {
       const db = trx ?? this._db;
       const query = await db
         .updateTable('user_packages')
         .set(data)
-        .where(applyFilters(filters))
+        .where(applyFilters(filters, customFilters))
         .executeTakeFirst();
 
       if (query.numUpdatedRows === undefined) {
@@ -338,6 +349,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     data,
     trx,
     filters,
+    customFilters,
   }: UpdatePackageTransactionCommand) {
     try {
       const db = trx ?? this._db;
@@ -353,7 +365,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
           voucher_id: data.voucher_id,
           user_package_id: data.user_package_id,
         })
-        .where(applyFilters(filters))
+        .where(applyFilters(filters, customFilters))
         .executeTakeFirst();
 
       if (query.numUpdatedRows === undefined) {
@@ -368,13 +380,13 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     }
   }
 
-  async delete({ filters, trx }: DeletePackageCommand) {
+  async delete({ filters, trx, customFilters }: DeletePackageCommand) {
     try {
       const db = trx ?? this._db;
 
       const query = await db
         .deleteFrom('packages')
-        .where(applyFilters(filters))
+        .where(applyFilters(filters, customFilters))
         .executeTakeFirst();
 
       if (query.numDeletedRows === undefined) {

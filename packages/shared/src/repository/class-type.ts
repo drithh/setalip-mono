@@ -31,7 +31,9 @@ export type SelectClassTypeReturn<T extends SelectClassTypeQuery> =
 export interface ClassTypeRepository {
   count(): Promise<number>;
 
-  find<T extends SelectClassTypeQuery>(x: T): Promise<SelectClassTypeReturn<T>>;
+  find<T extends SelectClassTypeQuery>(
+    x?: T
+  ): Promise<SelectClassTypeReturn<T>>;
 
   create(data: InsertClassTypeCommand): Promise<SelectClassType | Error>;
   update(data: UpdateClassTypeCommand): Promise<undefined | Error>;
