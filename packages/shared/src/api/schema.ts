@@ -1,5 +1,5 @@
-import { DeleteAgenda } from '#dep/repository/agenda';
 import { z } from 'zod';
+import { DeleteAgenda } from '../service';
 
 export const cronSchema = z.object({
   secret: z.string(),

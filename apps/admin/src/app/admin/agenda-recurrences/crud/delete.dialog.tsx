@@ -12,11 +12,11 @@ import {
 import { Button } from '@repo/ui/components/ui/button';
 import { useDeleteMutation } from './_functions/delete';
 import { api } from '@/trpc/react';
-import { SelectAgendaRecurrenceWithCoachAndClass } from '@repo/shared/repository';
 import { CONSTANT, DAYS } from './constant';
+import { SelectAgendaRecurrence__Coach__Class__Location } from '@repo/shared/service';
 
 interface DeleteProps {
-  data: SelectAgendaRecurrenceWithCoachAndClass;
+  data: SelectAgendaRecurrence__Coach__Class__Location;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

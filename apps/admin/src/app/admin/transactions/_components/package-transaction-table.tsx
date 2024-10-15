@@ -8,13 +8,11 @@ import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './columns';
-import {
-  SelectPackageTransaction,
-  SelectPackageTransactionWithUser,
-} from '@repo/shared/repository';
+import { SelectPackageTransaction } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllPackageSchema } from '@repo/shared/api/schema';
+import { SelectPackageTransaction__Package__User__DepositAccount } from '@repo/shared/service';
 // import CreatePackageForm from '../create-package.form';
 
 interface PackageTableProps {
@@ -45,7 +43,7 @@ export default function PackageTable({
     [],
   );
 
-  const filterFields: DataTableFilterField<SelectPackageTransactionWithUser>[] =
+  const filterFields: DataTableFilterField<SelectPackageTransaction__Package__User__DepositAccount>[] =
     [
       {
         label: 'Nama',

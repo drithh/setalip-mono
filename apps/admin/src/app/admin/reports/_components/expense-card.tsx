@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  FindAllAgendaBookingByMonthAndLocation,
-  SelectClassType,
-  SelectLocation,
-} from '@repo/shared/repository';
+import { SelectClassType, SelectLocation } from '@repo/shared/repository';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader } from '@repo/ui/components/ui/card';
@@ -31,6 +27,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { ExpenseSchema, expenseSchema } from './form-schema';
 import Expense from './expense';
+import { FindAllAgendaBookingByMonthAndLocation } from '@repo/shared/service';
 
 export interface ExpenseCardProps {
   locations: SelectLocation[];
@@ -149,7 +146,7 @@ export default function ExpenseCard({
     {
       const agendaIncome = monthlyIncome.data?.result?.map((item) => {
         return {
-          name: item.class_type_name,
+          name: item.type,
           total: item.participant,
           amount: item.income,
         };

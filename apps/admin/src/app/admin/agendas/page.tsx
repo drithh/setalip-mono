@@ -1,10 +1,10 @@
 import { findAllAgendaSchema } from '@repo/shared/api/schema';
 import { TYPES, container } from '@repo/shared/inversify';
-import { FindAllAgendaOptions } from '@repo/shared/repository';
 import {
   ClassService,
   ClassTypeService,
   CoachService,
+  FindAllAgendaOptions,
   LocationService,
 } from '@repo/shared/service';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';

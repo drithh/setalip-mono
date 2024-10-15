@@ -17,7 +17,7 @@ import {
 } from '@repo/ui/components/ui/form';
 import { EditLoyaltyShopSchema, editLoyaltyShopSchema } from './form-schema';
 import { toast } from 'sonner';
-import { SelectLoyaltyShop, SelectPackages } from '@repo/shared/repository';
+import { SelectLoyaltyShop } from '@repo/shared/repository';
 import {
   Sheet,
   SheetContent,
@@ -40,9 +40,10 @@ import {
   SelectItem,
 } from '@repo/ui/components/ui/select';
 import { LOYALTY_SHOP_TYPES } from './constant';
+import { SelectPackage__ClassType } from '@repo/shared/service';
 
 interface EditLoyaltyShopProps {
-  packages: SelectPackages[];
+  packages: SelectPackage__ClassType[];
   data: SelectLoyaltyShop;
   open: boolean;
   onOpenChange: (open: boolean) => void;

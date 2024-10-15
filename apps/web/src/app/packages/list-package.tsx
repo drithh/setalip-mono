@@ -1,20 +1,21 @@
 'use client';
 
-import { SelectAllPackage, SelectClassType } from '@repo/shared/repository';
+import { SelectClassType } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import { cn } from '@repo/ui/lib/utils';
 import { useState } from 'react';
 
 import Package from './package';
+import { SelectPackage__ClassType } from '@repo/shared/service';
 
 interface PackageProps {
-  packages: SelectAllPackage['data'];
+  packages: SelectPackage__ClassType[];
   classTypes: SelectClassType[];
 }
 
 export default function ListPackage({ packages, classTypes }: PackageProps) {
   const [filteredPackages, setFilteredPackages] =
-    useState<SelectAllPackage['data']>(packages);
+    useState<SelectPackage__ClassType[]>(packages);
   const [selectedPackageType, setSelectedPackageType] =
     useState<SelectClassType>({
       id: 0,

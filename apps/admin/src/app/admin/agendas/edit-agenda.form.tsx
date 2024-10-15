@@ -19,7 +19,6 @@ import { EditAgendaSchema, editAgendaSchema } from './form-schema';
 import { toast } from 'sonner';
 import { DatetimePicker } from '@repo/ui/components/datetime-picker';
 import {
-  SelectAgendaWithCoachAndClass,
   SelectClass,
   SelectCoachWithUser,
   SelectLocation,
@@ -41,12 +40,13 @@ import {
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
 import { Switch } from '@repo/ui/components/ui/switch';
+import { SelectAgenda__Coach__Class__Location__Participant } from '@repo/shared/service';
 
 interface EditAgendaProps {
   locations: SelectLocation[];
   coaches: SelectCoachWithUser[];
   classes: SelectClass[];
-  agenda: SelectAgendaWithCoachAndClass;
+  agenda: SelectAgenda__Coach__Class__Location__Participant;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

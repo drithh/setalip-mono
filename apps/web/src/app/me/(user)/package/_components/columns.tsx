@@ -1,6 +1,5 @@
 'use client';
 
-import { SelectAllPackageTransaction } from '@repo/shared/repository';
 import { moneyFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { Badge } from '@repo/ui/components/ui/badge';
@@ -8,10 +7,9 @@ import { type ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import * as React from 'react';
 import EditPackageTransactionForm from '../edit-package-transaction.form';
+import { SelectPackageTransaction__Package__UserPackage } from '@repo/shared/service';
 
-export function getColumns(): ColumnDef<
-  SelectAllPackageTransaction['data'][0]
->[] {
+export function getColumns(): ColumnDef<SelectPackageTransaction__Package__UserPackage>[] {
   return [
     {
       accessorKey: 'package_name',
@@ -72,10 +70,10 @@ export function getColumns(): ColumnDef<
             <span className="inline-block font-semibold sm:hidden">
               Tanggal Expired:&ensp;
             </span>
-            {row.original.package_expired_at ? (
+            {row.original.user_package_expired_at ? (
               <p className="font-semibold">
                 {format(
-                  new Date(row.original.package_expired_at),
+                  new Date(row.original.user_package_expired_at),
                   'MMM dd - HH:mm',
                 )}
               </p>

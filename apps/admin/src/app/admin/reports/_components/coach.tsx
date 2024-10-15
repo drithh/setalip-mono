@@ -19,10 +19,8 @@ import {
   FormControl,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import {
-  SelectClassType,
-  SelectCoachAgendaBooking,
-} from '@repo/shared/repository';
+import { SelectClassType } from '@repo/shared/repository';
+import { SelectCoachAgendaBooking } from '@repo/shared/service';
 
 interface ExpenseProps {
   coachAgenda: SelectCoachAgendaBooking[];

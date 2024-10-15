@@ -161,7 +161,7 @@ export interface SelectAgendaRecurrence__Coach__Class__Location
     AgendaWithCoach,
     AgendaWithClass {}
 
-export interface DeleteAgenda extends SelectAgenda {
+export interface DeleteAgenda extends UpdateAgenda {
   is_refund: boolean;
 }
 

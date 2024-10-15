@@ -1536,6 +1536,25 @@ export class AgendaServiceImpl implements AgendaService {
           error: new Error('Time is required'),
         };
       }
+      if (!data.class_id) {
+        console.error('Class ID is required');
+        return {
+          error: new Error('Class ID is required'),
+        };
+      }
+      if (data.coach_id === undefined) {
+        console.error('Coach ID is required');
+        return {
+          error: new Error('Coach ID is required'),
+        };
+      }
+      if (data.location_facility_id === undefined) {
+        console.error('Location Facility ID is required');
+        return {
+          error: new Error('Location Facility ID is required'),
+        };
+      }
+
       if (!data.agenda_recurrence_id || data.agenda_recurrence_id === 0) {
         console.error('Agenda recurrence ID is required');
         return {

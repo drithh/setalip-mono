@@ -12,11 +12,11 @@ import {
 } from '@repo/ui/components/ui/alert-dialog';
 import { Button } from '@repo/ui/components/ui/button';
 import { api } from '@/trpc/react';
-import { SelectParticipant } from '@repo/shared/repository';
 import { Trash2 } from 'lucide-react';
+import { AgendaWithParticipant } from '@repo/shared/service';
 
 interface DeleteParticipantProps {
-  participant: SelectParticipant;
+  participant: AgendaWithParticipant;
   onDelete: (is_refund: boolean) => void;
 }
 
@@ -36,7 +36,7 @@ export default function DeleteParticipantDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>
             Apakah kamu yakin menghapus peserta{' '}
-            <span className="font-semibold">{participant.name}</span>?
+            <span className="font-semibold">{participant.user_name}</span>?
           </AlertDialogTitle>
           <AlertDialogDescription>
             Aksi ini hanya akan menghapus peserta dari agenda ini.

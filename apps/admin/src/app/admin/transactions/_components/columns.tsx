@@ -12,14 +12,12 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import { moneyFormatter } from '@repo/shared/util';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
-import {
-  SelectPackageTransaction,
-  SelectPackageTransactionWithUser,
-} from '@repo/shared/repository';
+import { SelectPackageTransaction } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import EditPackageTransactionForm from '../edit-package-transactions.form';
 import { format } from 'date-fns';
 import { Badge } from '@repo/ui/components/ui/badge';
+import { SelectPackageTransaction__Package__User__DepositAccount } from '@repo/shared/service';
 //
 interface getColumnsProps {
   statuses: SelectPackageTransaction['status'][];
@@ -28,7 +26,7 @@ interface getColumnsProps {
 
 export function getColumns({
   statuses,
-}: getColumnsProps): ColumnDef<SelectPackageTransactionWithUser>[] {
+}: getColumnsProps): ColumnDef<SelectPackageTransaction__Package__User__DepositAccount>[] {
   return [
     {
       accessorKey: 'created_at',

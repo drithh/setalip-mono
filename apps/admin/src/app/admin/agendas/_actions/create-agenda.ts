@@ -27,11 +27,13 @@ export async function createAgenda(
   const agendaService = container.get<AgendaService>(TYPES.AgendaService);
 
   const result = await agendaService.create({
-    time: parsed.data.time,
-    class_id: parsed.data.class_id,
-    coach_id: parsed.data.coach_id,
-    location_facility_id: parsed.data.location_facility_id,
-    is_show: parsed.data.is_show,
+    data: {
+      time: parsed.data.time,
+      class_id: parsed.data.class_id,
+      coach_id: parsed.data.coach_id,
+      location_facility_id: parsed.data.location_facility_id,
+      is_show: parsed.data.is_show,
+    },
   });
 
   if (result.error) {

@@ -1,10 +1,10 @@
-import { FindAllAgendaRecurrenceOption } from '@repo/shared/repository';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import AgendaRecurrenceTable from './crud/table';
 import { TYPES, container } from '@repo/shared/inversify';
 import {
   ClassService,
   CoachService,
+  FindAllAgendaRecurrenceOption,
   LocationService,
 } from '@repo/shared/service';
 import { findAllAgendaRecurrenceSchema } from '@repo/shared/api/schema';

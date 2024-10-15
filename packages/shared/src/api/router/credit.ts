@@ -14,9 +14,9 @@ export const creditRouter = {
     .query(async ({ ctx, input }) => {
       const userId = ctx.session.userId;
 
-      const types = input.type
-        ?.split('.')
-        .map((type) => type as SelectCredit['type']);
+      // const types = input.type
+      //   ?.split('.')
+      // .map((type) => type as SelectCredit['type']);
 
       const creditService = ctx.container.get<CreditService>(
         TYPES.CreditService
@@ -26,7 +26,6 @@ export const creditRouter = {
         page: input.page,
         perPage: input.per_page,
         sort: input.sort,
-        types: types,
         user_id: userId,
       });
 

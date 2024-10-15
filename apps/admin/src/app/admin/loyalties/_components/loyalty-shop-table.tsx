@@ -8,17 +8,15 @@ import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './loyalty-shop-columns';
-import {
-  SelectAllLoyaltyShop,
-  SelectPackages,
-} from '@repo/shared/repository';
+import { SelectAllLoyaltyShop } from '@repo/shared/repository';
 import { api } from '@/trpc/react';
 import { z } from 'zod';
 import { findAllLoyaltyShopSchema } from '@repo/shared/api/schema';
 import CreateLoyaltyShopForm from '../create-loyalty-shop.form';
+import { SelectPackage__ClassType } from '@repo/shared/service';
 
 interface LoyaltyShopTableProps {
-  packages: SelectPackages[];
+  packages: SelectPackage__ClassType[];
   search: z.infer<typeof findAllLoyaltyShopSchema>;
 }
 

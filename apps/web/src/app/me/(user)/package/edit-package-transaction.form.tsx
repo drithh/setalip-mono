@@ -24,9 +24,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Dropzone } from '@repo/ui/components/dropzone';
 import { PhotoProvider } from 'react-photo-view';
-import {
-  SelectPackageTransactionWithPackage,
-} from '@repo/shared/repository';
+
 import {
   Sheet,
   SheetTrigger,
@@ -35,11 +33,12 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
+import { SelectPackageTransaction__Package__UserPackage } from '@repo/shared/service';
 
 type FileWithPreview = File & { preview: string };
 
 interface EditPackageTransactionProps {
-  data: SelectPackageTransactionWithPackage;
+  data: SelectPackageTransaction__Package__UserPackage;
 }
 
 const TOAST_MESSAGES = {

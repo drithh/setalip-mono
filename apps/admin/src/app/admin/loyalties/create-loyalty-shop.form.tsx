@@ -43,10 +43,10 @@ import {
   SelectItem,
 } from '@repo/ui/components/ui/select';
 import { LOYALTY_SHOP_TYPES } from './constant';
-import { SelectPackages } from '@repo/shared/repository';
+import { SelectPackage__ClassType } from '@repo/shared/service';
 
 interface CreateLoyaltyShopProps {
-  packages: SelectPackages[];
+  packages: SelectPackage__ClassType[];
 }
 
 const TOAST_MESSAGES = {

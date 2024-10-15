@@ -13,7 +13,9 @@ export type ClassTypeWithIncome = {
   income: number;
 };
 
-export interface SelectClassType__Income extends ClassTypeWithIncome {}
+export interface SelectClassType__Income
+  extends SelectClassType,
+    ClassTypeWithIncome {}
 
 export interface ClassTypeService {
   findAll(): PromiseResult<SelectClassType[], Error>;

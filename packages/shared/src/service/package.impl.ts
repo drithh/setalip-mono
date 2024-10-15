@@ -2,7 +2,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
 
 import {
-  FindAllPackage,
+  SelectPackage__ClassType,
   FindAllPackageOptions,
   FindAllUserPackageActiveByUserId,
   FindAllUserPackageTransactionByUserIdOption,
@@ -102,14 +102,16 @@ export class PackageServiceImpl implements PackageService {
     }
 
     const packages =
-      await this._packageRepository.findWithPagination<FindAllPackage>({
-        customFilters: customFilters,
-        perPage: perPage,
-        offset: offset,
-        // fix this
-        orderBy: orderBy[0],
-        withClassType: true,
-      });
+      await this._packageRepository.findWithPagination<SelectPackage__ClassType>(
+        {
+          customFilters: customFilters,
+          perPage: perPage,
+          offset: offset,
+          // fix this
+          orderBy: orderBy[0],
+          withClassType: true,
+        }
+      );
 
     return {
       result: packages,

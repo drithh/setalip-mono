@@ -4,13 +4,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { useRef, useState } from 'react';
 
-
 import { toast } from 'sonner';
-import {
-  DeleteParticipant,
-  SelectAgendaWithCoachAndClass,
-  SelectParticipant,
-} from '@repo/shared/repository';
 import {
   Sheet,
   SheetContent,
@@ -40,10 +34,15 @@ import { ChevronsUpDown } from 'lucide-react';
 import { useCreateMutation } from './_functions/create-agenda-booking';
 import { useDeleteMutation } from './_functions/delete-agenda-booking';
 import { Label } from '@repo/ui/components/ui/label';
+import {
+  AgendaWithParticipant,
+  CancelAgendaBookingByAdminOption,
+  SelectAgenda__Coach__Class__Location__Participant,
+} from '@repo/shared/service';
 
 interface EditParticipantProps {
-  agenda: SelectAgendaWithCoachAndClass;
-  participants: SelectParticipant[];
+  agenda: SelectAgenda__Coach__Class__Location__Participant;
+  participants: AgendaWithParticipant[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -95,7 +94,7 @@ export default function EditParticipantForm({
     );
   };
 
-  const onDelete = (data: DeleteParticipant) => {
+  const onDelete = (data: CancelAgendaBookingByAdminOption) => {
     deleteAgendaBooking.mutate(
       {
         id: data.id,
@@ -136,7 +135,7 @@ export default function EditParticipantForm({
             <div className="flex w-full flex-col">
               {participants.map((participant) => (
                 <div key={participant.agenda_booking_id} className="flex gap-2">
-                  <Input readOnly value={participant.name} />
+                  <Input readOnly value={participant.user_name} />
                   <DeleteParticipantDialog
                     participant={participant}
                     onDelete={(is_refund) => {

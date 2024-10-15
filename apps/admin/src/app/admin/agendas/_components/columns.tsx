@@ -13,7 +13,6 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import {
-  SelectAgendaWithCoachAndClass,
   SelectClass,
   SelectCoachWithUser,
   SelectLocation,
@@ -24,6 +23,7 @@ import EditAgendaForm from '../edit-agenda.form';
 import { format } from 'date-fns';
 import DeleteAgendaDialog from '../delete-agenda.dialog';
 import { Badge } from '@repo/ui/components/ui/badge';
+import { SelectAgenda__Coach__Class__Location__Participant } from '@repo/shared/service';
 
 interface getColumnsProps {
   locations: SelectLocation[];
@@ -35,7 +35,7 @@ export function getColumns({
   locations,
   coaches,
   classes,
-}: getColumnsProps): ColumnDef<SelectAgendaWithCoachAndClass>[] {
+}: getColumnsProps): ColumnDef<SelectAgenda__Coach__Class__Location__Participant>[] {
   // generate random color in total of classes
   // Function to generate a random color in hexadecimal format
   const generateColorFromName = (name: string) => {
@@ -142,7 +142,7 @@ export function getColumns({
       cell: ({ row }) => {
         return (
           <p className="-ml-5 text-center">
-            {row.original.participants?.length ?? 0} / {row.original.slot}
+            {row.original.participants?.length ?? 0} / {row.original.class_slot}
           </p>
         );
       },

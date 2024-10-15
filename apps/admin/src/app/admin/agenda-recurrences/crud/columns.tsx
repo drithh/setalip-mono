@@ -13,7 +13,6 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import {
-  SelectAgendaRecurrenceWithCoachAndClass,
   SelectClass,
   SelectCoachWithUser,
   SelectLocation,
@@ -23,6 +22,7 @@ import EditForm from './edit.form';
 import DeleteDialog from './delete.dialog';
 import { Badge } from '@repo/ui/components/ui/badge';
 import { format } from 'date-fns';
+import { SelectAgendaRecurrence__Coach__Class__Location } from '@repo/shared/service';
 
 interface getColumnsProps {
   locations: SelectLocation[];
@@ -34,7 +34,7 @@ export function getColumns({
   locations,
   coaches,
   classes,
-}: getColumnsProps): ColumnDef<SelectAgendaRecurrenceWithCoachAndClass>[] {
+}: getColumnsProps): ColumnDef<SelectAgendaRecurrence__Coach__Class__Location>[] {
   // generate random color in total of classes
   // Function to generate a random color in hexadecimal format
   const generateColorFromName = (name: string) => {
@@ -157,7 +157,7 @@ export function getColumns({
       ),
 
       cell: ({ row }) => {
-        return <p className="-ml-5 text-center">{row.original.slot}</p>;
+        return <p className="-ml-5 text-center">{row.original.class_slot}</p>;
       },
     },
     {

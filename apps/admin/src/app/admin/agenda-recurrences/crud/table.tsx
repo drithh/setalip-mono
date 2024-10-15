@@ -9,7 +9,6 @@ import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 
 import { getColumns } from './columns';
 import {
-  SelectAgendaRecurrenceWithCoachAndClass,
   SelectClass,
   SelectCoachWithUser,
   SelectLocation,
@@ -20,6 +19,7 @@ import { findAllStatisticSchema } from '@repo/shared/api/schema';
 import CreateForm from './create.form';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import DayPicker from './_components/day-picker';
+import { SelectAgendaRecurrence__Coach__Class__Location } from '@repo/shared/service';
 
 interface TableProps {
   locations: SelectLocation[];
@@ -63,7 +63,7 @@ export default function Table({
     [],
   );
 
-  const filterFields: DataTableFilterField<SelectAgendaRecurrenceWithCoachAndClass>[] =
+  const filterFields: DataTableFilterField<SelectAgendaRecurrence__Coach__Class__Location>[] =
     [
       {
         label: 'Lokasi',

@@ -19,6 +19,7 @@ import {
 } from '../schema';
 import { parse, startOfToday } from 'date-fns';
 import { SelectAgendaBooking } from '#dep/repository/agenda';
+import { ClassTypeService } from '#dep/service/class-type';
 
 export const agendaRouter = {
   findAll: protectedProcedure
@@ -82,11 +83,11 @@ export const agendaRouter = {
   findAllAgendaBookingByMonthAndLocation: adminProcedure
     .input(findAllAgendaBookingByMonthAndLocationSchema)
     .query(async ({ ctx, input }) => {
-      const agendaService = ctx.container.get<AgendaService>(
-        TYPES.AgendaService
+      const classTypeService = ctx.container.get<ClassTypeService>(
+        TYPES.ClassTypeService
       );
       const result =
-        await agendaService.findAllAgendaBookingByMonthAndLocation(input);
+        await classTypeService.findAllIncomeByMonthAndLocation(input);
       return result;
     }),
   findAllCoachAgendaByMonthAndLocation: adminProcedure
@@ -209,7 +210,7 @@ export const agendaRouter = {
         TYPES.AgendaService
       );
 
-      const agendas = await agendaService.findByUserId({
+      const agendas = await agendaService.findAllByUserId({
         page: input.page,
         perPage: input.per_page,
         sort: input.sort,
@@ -270,8 +271,8 @@ export const agendaRouter = {
         TYPES.AgendaService
       );
 
-      const result = await agendaService.deleteAgendaBookingByUser({
-        agenda_booking_id: input.id,
+      const result = await agendaService.cancelAgendaBookingByUser({
+        id: input.id,
         user_id: ctx.session.userId,
       });
 

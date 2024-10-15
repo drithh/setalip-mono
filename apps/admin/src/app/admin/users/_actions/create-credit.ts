@@ -25,23 +25,28 @@ export async function createCredit(
     };
   }
 
-  const insertData = {
-    ...parsed.data,
-    type: 'debit' as const,
-  } satisfies InsertCredit;
+  // const insertData = {
+  //   ...parsed.data,
+  //   type: 'debit' as const,
+  // } satisfies InsertCredit;
 
-  const creditService = container.get<CreditService>(TYPES.CreditService);
+  // const creditService = container.get<CreditService>(TYPES.CreditService);
 
-  const createCredit = await creditService.create(insertData);
+  // const createCredit = await creditService.create(insertData);
 
-  if (createCredit.error) {
-    return {
-      form: parsed.data,
-      status: 'error',
-      errors: createCredit.error.message,
-    };
-  }
+  // if (createCredit.error) {
+  //   return {
+  //     form: parsed.data,
+  //     status: 'error',
+  //     errors: createCredit.error.message,
+  //   };
+  // }
 
+  return {
+    form: parsed.data,
+    status: 'error',
+    errors: 'Not implemented',
+  };
   return {
     form: undefined,
     status: 'success',

@@ -1,8 +1,7 @@
-import { FindAllPackageOptions } from '@repo/shared/repository';
 import { DataTableSkeleton } from '@repo/ui/components/data-table/skeleton';
 import PackageTable from './_components/package-table';
 import { TYPES, container } from '@repo/shared/inversify';
-import { ClassTypeService } from '@repo/shared/service';
+import { ClassTypeService, FindAllPackageOptions } from '@repo/shared/service';
 import { findAllPackageSchema } from '@repo/shared/api/schema';
 import QueryResetBoundary from '@/lib/query-reset-boundary';
 import React from 'react';

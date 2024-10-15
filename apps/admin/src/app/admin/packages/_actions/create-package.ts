@@ -58,19 +58,21 @@ export async function createPackage(
     : [null, null, null];
 
   const result = await packageService.create({
-    name: parsed.data.name,
-    price: parsed.data.price,
-    credit: parsed.data.credit,
-    loyalty_points: parsed.data.loyalty_points,
-    one_time_only: parsed.data.one_time_only,
-    valid_for: parsed.data.valid_for,
-    class_type_id: parsed.data.class_type_id,
-    is_active: parsed.data.is_active,
+    data: {
+      name: parsed.data.name,
+      price: parsed.data.price,
+      credit: parsed.data.credit,
+      loyalty_points: parsed.data.loyalty_points,
+      one_time_only: parsed.data.one_time_only,
+      valid_for: parsed.data.valid_for,
+      class_type_id: parsed.data.class_type_id,
+      is_active: parsed.data.is_active,
 
-    discount_end_date,
-    discount_percentage:
-      discount_percentage === undefined ? null : discount_percentage,
-    discount_credit: discount_credit === undefined ? null : discount_credit,
+      discount_end_date,
+      discount_percentage:
+        discount_percentage === undefined ? null : discount_percentage,
+      discount_credit: discount_credit === undefined ? null : discount_credit,
+    },
   });
 
   if (result.error) {

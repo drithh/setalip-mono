@@ -1,13 +1,11 @@
-import { FindAllAgendaBookingByMonthAndLocation } from '@repo/shared/repository';
 import { TYPES, container } from '@repo/shared/inversify';
 import {
   ClassTypeService,
+  FindAllAgendaBookingByMonthAndLocation,
   LocationService,
 } from '@repo/shared/service';
 import { findAllAgendaBookingByMonthAndLocationSchema } from '@repo/shared/api/schema';
 import React from 'react';
-
-
 
 import ExpenseCard from './_components/expense-card';
 

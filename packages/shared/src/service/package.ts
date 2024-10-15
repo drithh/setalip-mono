@@ -19,7 +19,7 @@ import {
 } from '../repository';
 import { PromiseResult } from '../types';
 
-export interface FindAllPackage extends SelectPackage {
+export interface SelectPackage__ClassType extends SelectPackage {
   class_type: SelectClassType['type'];
 }
 
@@ -110,7 +110,7 @@ export interface UpdatePackageTransactionImage {
 export interface PackageService {
   findAll(
     data: FindAllPackageOptions
-  ): PromiseResult<SelectPackagePagination<FindAllPackage>, Error>;
+  ): PromiseResult<SelectPackagePagination<SelectPackage__ClassType>, Error>;
   findById(
     id: SelectPackage['id']
   ): PromiseResult<SelectPackage | undefined, Error>;

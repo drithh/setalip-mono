@@ -19,7 +19,6 @@ import { EditSchema, editSchema } from './form-schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import {
-  SelectAgendaRecurrenceWithCoachAndClass,
   SelectClass,
   SelectCoachWithUser,
   SelectLocation,
@@ -44,12 +43,13 @@ import { CONSTANT, DAYS } from './constant';
 import { TimePicker } from '@repo/ui/components/datetime-picker';
 import { parse, format } from 'date-fns';
 import { DatePicker } from '@repo/ui/components/date-picker';
+import { SelectAgendaRecurrence__Coach__Class__Location } from '@repo/shared/service';
 
 interface EditProps {
   locations: SelectLocation[];
   coaches: SelectCoachWithUser[];
   classes: SelectClass[];
-  data: SelectAgendaRecurrenceWithCoachAndClass;
+  data: SelectAgendaRecurrence__Coach__Class__Location;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

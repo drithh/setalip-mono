@@ -15,14 +15,12 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import DeleteLoyaltyShopDialog from '../delete-loyalty-shop.dialog';
 import EditLoyaltyShopForm from '../edit-loyalty-shop.form';
-import {
-  SelectAllLoyaltyShop,
-  SelectAllPackage,
-} from '@repo/shared/repository';
+import { SelectAllLoyaltyShop } from '@repo/shared/repository';
 import { Badge } from '@repo/ui/components/ui/badge';
+import { SelectPackage__ClassType } from '@repo/shared/service';
 
 interface getColumnsProps {
-  packages: SelectAllPackage['data'];
+  packages: SelectPackage__ClassType[];
 }
 
 export function getColumns({

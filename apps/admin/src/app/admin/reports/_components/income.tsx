@@ -1,4 +1,4 @@
-import { SelectAgendaBookingWithIncome } from '@repo/shared/repository';
+import { SelectClassType__Income } from '@repo/shared/service';
 import { moneyFormatter } from '@repo/shared/util';
 import {
   Table,
@@ -10,7 +10,7 @@ import {
 } from '@repo/ui/components/ui/table';
 
 interface IncomeProps {
-  income: SelectAgendaBookingWithIncome[];
+  income: SelectClassType__Income[];
 }
 
 export default function Income(data: IncomeProps) {
@@ -26,8 +26,8 @@ export default function Income(data: IncomeProps) {
       </TableHeader>
       <TableBody>
         {data.income.map((income) => (
-          <TableRow key={income.class_type_id}>
-            <TableCell>{income.class_type_name}</TableCell>
+          <TableRow key={income.id}>
+            <TableCell>{income.type}</TableCell>
             <TableCell>{income.participant}</TableCell>
             <TableCell>{moneyFormatter.format(income.income)}</TableCell>
           </TableRow>
