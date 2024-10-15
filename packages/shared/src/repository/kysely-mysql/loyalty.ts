@@ -357,6 +357,7 @@ export class KyselyMySqlLoyaltyRepository implements LoyaltyRepository {
           const userPackage = trx
             .insertInto('user_packages')
             .values({
+              note: `Purchase package ${singlePackage.name} with loyalty points`,
               user_id: data.user_id,
               package_id: singlePackage.id,
               expired_at: expiredAt,

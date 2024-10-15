@@ -1,14 +1,14 @@
 'use client';
 
 import { AgendaBookings } from '@repo/shared/db';
-import { SelectBookingParticipant } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import { useState } from 'react';
 
 import { useUpdateMutation } from './_functions/update-status';
+import { AgendaWithParticipant } from '@repo/shared/service';
 
 interface StatusProps {
-  data: SelectBookingParticipant;
+  data: AgendaWithParticipant;
   statuses: AgendaBookings['status'][];
 }
 
@@ -17,7 +17,7 @@ const formatText = (text: string) => {
 };
 
 export default function Status({ data, statuses }: StatusProps) {
-  const [status, setStatus] = useState(data.status);
+  const [status, setStatus] = useState(data.agenda_booking_status);
   const index = statuses.indexOf(status);
 
   const updateStatus = useUpdateMutation();
@@ -26,7 +26,10 @@ export default function Status({ data, statuses }: StatusProps) {
     const nextStatus = statuses[(index + 1) % statuses.length];
     if (nextStatus) {
       setStatus(nextStatus);
-      await updateStatus.mutateAsync({ id: data.id, status: nextStatus });
+      await updateStatus.mutateAsync({
+        id: data.agenda_booking_id,
+        status: nextStatus,
+      });
     }
   };
 

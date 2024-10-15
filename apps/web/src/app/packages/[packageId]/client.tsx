@@ -4,8 +4,8 @@ import {
   SelectPackage,
   SelectClassType,
   SelectAllDepositAccount,
-  SelectPackageTransactionByUser,
   SelectVoucher,
+  SelectPackageTransaction,
 } from '@repo/shared/repository';
 import { moneyFormatter } from '@repo/shared/util';
 import {
@@ -44,7 +44,7 @@ import {
 interface ClientProps {
   singlePackage: SelectPackage;
   classType: SelectClassType;
-  packageTransaction: SelectPackageTransactionByUser;
+  packageTransaction: SelectPackageTransaction;
   depositAccounts: SelectAllDepositAccount | undefined;
 }
 
@@ -144,7 +144,7 @@ export default function Client({
                 : 'Can be bought multiple times'}
             </p>
           </div>
-          {packageTransaction?.is_new === false && (
+          {packageTransaction?.id && (
             <Alert>
               <AlertTitle className="flex gap-2">
                 <ExclamationTriangleIcon />

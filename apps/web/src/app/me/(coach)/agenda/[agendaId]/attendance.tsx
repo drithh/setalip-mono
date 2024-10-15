@@ -1,10 +1,5 @@
 'use client';
 
-
-
-import {
-  SelectBookingParticipant,
-} from '@repo/shared/repository';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 import * as React from 'react';
@@ -12,10 +7,11 @@ import * as React from 'react';
 import { useDataTable } from '@/hooks/use-data-table';
 
 import { getColumns } from './columns';
+import { AgendaWithParticipant } from '@repo/shared/service';
 // import CreateAgendaForm from './create-agenda.form';
 
 interface AgendaTableProps {
-  participants: SelectBookingParticipant[];
+  participants: AgendaWithParticipant[];
 }
 
 export default function AgendaTable({ participants }: AgendaTableProps) {
@@ -26,7 +22,7 @@ export default function AgendaTable({ participants }: AgendaTableProps) {
     columns,
     pageCount: -1,
     defaultPerPage: 10,
-    defaultSort: 'name.asc',
+    defaultSort: 'user_name.asc',
     visibleColumns: {},
   });
 

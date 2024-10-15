@@ -1,6 +1,5 @@
 'use client';
 
-import { SelectAllAgendaByUser } from '@repo/shared/repository';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { Badge } from '@repo/ui/components/ui/badge';
 
@@ -16,8 +15,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@repo/ui/components/ui/dropdown-menu';
+import { SelectAgenda__Coach__Class__Location__AgendaBooking } from '@repo/shared/service';
 
-export function getColumns(): ColumnDef<SelectAllAgendaByUser['data'][0]>[] {
+export function getColumns(): ColumnDef<SelectAgenda__Coach__Class__Location__AgendaBooking>[] {
   return [
     {
       accessorKey: 'time',

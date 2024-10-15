@@ -1,11 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  SelectAgenda,
-  SelectClass,
-  SelectScheduleByDate,
-} from '@repo/shared/repository';
+import { SelectAgenda, SelectClass } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   Form,
@@ -27,11 +23,12 @@ import {
   CreateAgendaBookingSchema,
   createAgendaBookingSchema,
 } from './form-schema';
+import { SelectAgenda__Coach__Class__Location } from '@repo/shared/service';
 
 interface CreateAgendaBookingProps {
   id: SelectAgenda['id'];
   time: string;
-  agenda: SelectScheduleByDate;
+  agenda: SelectAgenda__Coach__Class__Location;
   class_name: SelectClass['name'];
 }
 

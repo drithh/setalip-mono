@@ -6,6 +6,10 @@ export async function up(db: Kysely<any>): Promise<void> {
   try {
     await db.transaction().execute(async (trx) => {
       await trx.schema
+        .alterTable('user_packages')
+        .addColumn('note', 'text', (col) => col.notNull())
+        .execute();
+      await trx.schema
         .alterTable('credit_transactions')
         .dropConstraint('credit_transactions_ibfk_5')
         .execute();

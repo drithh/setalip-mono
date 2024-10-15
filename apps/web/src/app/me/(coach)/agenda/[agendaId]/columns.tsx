@@ -1,18 +1,16 @@
 'use client';
 
 import { AgendaBookings } from '@repo/shared/db';
-import {
-  SelectBookingParticipant,
-} from '@repo/shared/repository';
-import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 
+import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 
 import { type ColumnDef } from '@tanstack/react-table';
 import * as React from 'react';
 
 import Status from './status';
+import { AgendaWithParticipant } from '@repo/shared/service';
 
-export function getColumns(): ColumnDef<SelectBookingParticipant>[] {
+export function getColumns(): ColumnDef<AgendaWithParticipant>[] {
   const statuses = [
     'booked',
     'checked_in',
@@ -26,7 +24,7 @@ export function getColumns(): ColumnDef<SelectBookingParticipant>[] {
         <DataTableColumnHeader column={column} title="Nama" />
       ),
       cell: ({ row }) => {
-        return <p>{row.original.name}</p>;
+        return <p>{row.original.user_name}</p>;
       },
     },
     {

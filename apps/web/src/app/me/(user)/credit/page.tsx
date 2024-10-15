@@ -24,7 +24,7 @@ export default async function Credit({ searchParams }: { searchParams: any }) {
   const search = findAllUserCreditSchema.parse(searchParams);
 
   const packageService = container.get<PackageService>(TYPES.PackageService);
-  const packages = await packageService.findAllActivePackageByUserId(
+  const packages = await packageService.findAllUserPackageActiveByUserId(
     auth.user.id,
   );
 
@@ -51,7 +51,7 @@ export default async function Credit({ searchParams }: { searchParams: any }) {
             <CardContent className="">
               <p>
                 Sessions Remaining:{' '}
-                {singlePackage?.amount - (singlePackage?.credit_used ?? 0)}
+                {singlePackage?.credit - (singlePackage?.credit_used ?? 0)}
               </p>
               <p>
                 Expired At:{' '}

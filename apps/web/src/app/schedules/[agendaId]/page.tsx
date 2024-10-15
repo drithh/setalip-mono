@@ -72,7 +72,7 @@ export default async function AgendaDetail({
   }
 
   const packageService = container.get<PackageService>(TYPES.PackageService);
-  const singlePackage = await packageService.findAboutToExpired(
+  const singlePackage = await packageService.findUserPackageExpiringByUserId(
     auth.user.id,
     singleClass.result.class_type_id,
   );
@@ -169,7 +169,7 @@ export default async function AgendaDetail({
                   <CardContent className="">
                     <p>
                       Sessions Remaining:{' '}
-                      {(singlePackage.result?.amount ?? 0) -
+                      {(singlePackage.result?.credit ?? 0) -
                         (singlePackage.result?.credit_used ?? 0)}
                     </p>
                     <p>

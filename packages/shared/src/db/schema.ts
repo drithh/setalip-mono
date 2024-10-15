@@ -315,6 +315,7 @@ export interface UserPackages {
   credit: number;
   expired_at: Date;
   id: Generated<number>;
+  note: string;
   package_id: number;
   updated_at: Generated<Date>;
   updated_by: Generated<number>;

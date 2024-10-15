@@ -3,7 +3,6 @@
 import { findAllScheduleSchema } from '@repo/shared/api/schema';
 import {
   SelectAllClass,
-  SelectAllSchedule,
   SelectClassType,
   SelectCoachWithUser,
   SelectLocation,
@@ -22,6 +21,7 @@ import { api } from '@/trpc/react';
 
 import { getColumns } from './columns';
 import DayPicker from './day-picker';
+import { SelectAgenda__Coach__Class__Location } from '@repo/shared/service';
 
 interface AgendaTableProps {
   locations: SelectLocation[];
@@ -64,44 +64,45 @@ export default function AgendaTable({
     router.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
-  const filterFields: DataTableFilterField<SelectAllSchedule['data'][0]>[] = [
-    {
-      label: 'Lokasi',
-      value: 'location_name',
-      options: locations.map((location) => ({
-        label: location.name,
-        value: location.id.toString(),
-        withCount: true,
-      })),
-    },
-    {
-      label: 'Kelas',
-      value: 'class_name',
-      options: classes.map((singleClass) => ({
-        label: singleClass.name,
-        value: singleClass.id.toString(),
-        withCount: true,
-      })),
-    },
-    {
-      label: 'Tipe Kelas',
-      value: 'class_type_name',
-      options: classTypes.map((classType) => ({
-        label: classType.type,
-        value: classType.id.toString(),
-        withCount: true,
-      })),
-    },
-    {
-      label: 'Instruktur',
-      value: 'coach_name',
-      options: coaches.map((coach) => ({
-        label: coach.name,
-        value: coach.id.toString(),
-        withCount: true,
-      })),
-    },
-  ];
+  const filterFields: DataTableFilterField<SelectAgenda__Coach__Class__Location>[] =
+    [
+      {
+        label: 'Lokasi',
+        value: 'location_name',
+        options: locations.map((location) => ({
+          label: location.name,
+          value: location.id.toString(),
+          withCount: true,
+        })),
+      },
+      {
+        label: 'Kelas',
+        value: 'class_name',
+        options: classes.map((singleClass) => ({
+          label: singleClass.name,
+          value: singleClass.id.toString(),
+          withCount: true,
+        })),
+      },
+      {
+        label: 'Tipe Kelas',
+        value: 'class_type_name',
+        options: classTypes.map((classType) => ({
+          label: classType.type,
+          value: classType.id.toString(),
+          withCount: true,
+        })),
+      },
+      {
+        label: 'Instruktur',
+        value: 'coach_name',
+        options: coaches.map((coach) => ({
+          label: coach.name,
+          value: coach.id.toString(),
+          withCount: true,
+        })),
+      },
+    ];
 
   const { table } = useDataTable({
     data: result?.data ?? [],

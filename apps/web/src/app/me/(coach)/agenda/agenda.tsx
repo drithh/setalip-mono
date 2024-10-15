@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  findAllCoachAgendaSchema,
-} from '@repo/shared/api/schema';
-import {
-  SelectAllSchedule,
-  SelectClassType,
-  SelectLocation,
-} from '@repo/shared/repository';
+import { findAllCoachAgendaSchema } from '@repo/shared/api/schema';
+import { SelectClassType, SelectLocation } from '@repo/shared/repository';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 import type { DataTableFilterField } from '@repo/ui/types';
@@ -19,6 +13,7 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { api } from '@/trpc/react';
 
 import { getColumns } from './columns';
+import { SelectAgenda__Coach__Class__Location } from '@repo/shared/service';
 // import CreateAgendaForm from './create-agenda.form';
 
 interface AgendaTableProps {
@@ -55,27 +50,28 @@ export default function AgendaTable({
     router.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
-  const filterFields: DataTableFilterField<SelectAllSchedule['data'][0]>[] = [
-    {
-      label: 'Lokasi',
-      value: 'location_name',
-      options: locations.map((location) => ({
-        label: location.name,
-        value: location.id.toString(),
-        withCount: true,
-      })),
-    },
+  const filterFields: DataTableFilterField<SelectAgenda__Coach__Class__Location>[] =
+    [
+      {
+        label: 'Lokasi',
+        value: 'location_name',
+        options: locations.map((location) => ({
+          label: location.name,
+          value: location.id.toString(),
+          withCount: true,
+        })),
+      },
 
-    {
-      label: 'Kelas',
-      value: 'class_type_name',
-      options: classTypes.map((classType) => ({
-        label: classType.type,
-        value: classType.id.toString(),
-        withCount: true,
-      })),
-    },
-  ];
+      {
+        label: 'Kelas',
+        value: 'class_type_name',
+        options: classTypes.map((classType) => ({
+          label: classType.type,
+          value: classType.id.toString(),
+          withCount: true,
+        })),
+      },
+    ];
 
   const { table } = useDataTable({
     data: result?.data ?? [],

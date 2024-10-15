@@ -2,7 +2,6 @@
 
 import { findAllUserAgendaSchema } from '@repo/shared/api/schema';
 import {
-  SelectAllAgendaByUser,
   SelectClassType,
   SelectCoachWithUser,
   SelectLocation,
@@ -18,6 +17,7 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { api } from '@/trpc/react';
 
 import { getColumns } from './columns';
+import { SelectAgenda__Coach__Class__Location__AgendaBooking } from '@repo/shared/service';
 // import CreateAgendaForm from './create-agenda.form';
 
 interface AgendaTableProps {
@@ -56,7 +56,7 @@ export default function AgendaTable({
     router.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
-  const filterFields: DataTableFilterField<SelectAllAgendaByUser['data'][0]>[] =
+  const filterFields: DataTableFilterField<SelectAgenda__Coach__Class__Location__AgendaBooking>[] =
     [
       {
         label: 'Lokasi',

@@ -1,9 +1,7 @@
 'use client';
 
 import { findAllPackageTransactionByUserIdSchema } from '@repo/shared/api/schema';
-import {
-  SelectAllPackageTransaction,
-} from '@repo/shared/repository';
+import {} from '@repo/shared/repository';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 import type { DataTableFilterField } from '@repo/ui/types';
@@ -15,6 +13,7 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { api } from '@/trpc/react';
 
 import { getColumns } from './columns';
+import { SelectPackageTransaction__Package__UserPackage } from '@repo/shared/service';
 // import CreatePackageTransactionForm from './create-packageTransaction.form';
 
 interface PackageTransactionTableProps {
@@ -40,21 +39,20 @@ export default function PackageTransactionTable({
     'completed',
     'pending',
     'failed',
-  ] satisfies SelectAllPackageTransaction['data'][0]['status'][];
+  ] satisfies SelectPackageTransaction__Package__UserPackage['status'][];
 
-  const filterFields: DataTableFilterField<
-    SelectAllPackageTransaction['data'][0]
-  >[] = [
-    {
-      label: 'Status',
-      value: 'status',
-      options: statues.map((status) => ({
-        label: status,
-        value: status,
-        withCount: true,
-      })),
-    },
-  ];
+  const filterFields: DataTableFilterField<SelectPackageTransaction__Package__UserPackage>[] =
+    [
+      {
+        label: 'Status',
+        value: 'status',
+        options: statues.map((status) => ({
+          label: status,
+          value: status,
+          withCount: true,
+        })),
+      },
+    ];
 
   const { table } = useDataTable({
     data: result?.data ?? [],
@@ -62,7 +60,7 @@ export default function PackageTransactionTable({
     pageCount: result?.pageCount,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: 'package_expired_at.desc',
+    defaultSort: 'user_package_expired_at.desc',
     visibleColumns: {},
   });
 

@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   SelectAllDepositAccount,
   SelectPackageTransaction,
-  SelectPackageTransactionByUser,
   SelectVoucher,
 } from '@repo/shared/repository';
 import { Button } from '@repo/ui/components/ui/button';
@@ -39,7 +38,7 @@ interface Price {
   total: number;
 }
 interface CreateTransactionProps {
-  packageTransaction: SelectPackageTransactionByUser;
+  packageTransaction: SelectPackageTransaction;
   packageId: SelectPackageTransaction['package_id'];
   depositAccounts: SelectAllDepositAccount['data'];
   price: Price;

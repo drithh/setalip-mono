@@ -675,6 +675,7 @@ export class PackageServiceImpl implements PackageService {
           package_id: packageTransaction.package_id,
           expired_at: expiredAt,
           credit: packageTransaction.credit ?? 0,
+          note: `You bought ${packageData.name}`,
         },
       });
 

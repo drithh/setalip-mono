@@ -182,6 +182,10 @@ export interface FindAllAgendaBookingByMonthAndLocation {
 
 export interface AgendaService {
   count(): Promise<number>;
+  countCheckedInByUserId(
+    userId: SelectAgendaBooking['user_id']
+  ): Promise<number | undefined>;
+  countCoachAgenda(userId: SelectCoach['user_id']): Promise<number>;
 
   findAll(
     data: FindAllAgendaOptions

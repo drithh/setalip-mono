@@ -1,5 +1,4 @@
 'use client';
-import { SelectPackages } from '@repo/shared/repository';
 import { moneyFormatter } from '@repo/shared/util';
 import { Button } from '@repo/ui/components/ui/button';
 import { Card } from '@repo/ui/components/ui/card';
@@ -9,8 +8,9 @@ import PulsatingButton from '@repo/ui/components/pulsating-button';
 import Countdown from 'react-countdown';
 import { useState } from 'react';
 import { cn } from '@repo/ui/lib/utils';
+import { SelectPackage__ClassType } from '@repo/shared/service';
 interface PackageProps {
-  singlePackage: SelectPackages;
+  singlePackage: SelectPackage__ClassType;
 }
 
 export default function Package({ singlePackage }: PackageProps) {

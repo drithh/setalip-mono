@@ -1,6 +1,6 @@
 'use client';
 
-import { SelectAllSchedule } from '@repo/shared/repository';
+import { SelectAgenda__Coach__Class__Location } from '@repo/shared/service';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { Badge } from '@repo/ui/components/ui/badge';
 import { Button } from '@repo/ui/components/ui/button';
@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import Link from 'next/link';
 import * as React from 'react';
 
-export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
+export function getColumns(): ColumnDef<SelectAgenda__Coach__Class__Location>[] {
   return [
     {
       accessorKey: 'time',
@@ -107,7 +107,7 @@ export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
             <span className="inline-block font-semibold sm:hidden">
               Participant :&ensp;
             </span>
-            {row.original.participant} / {row.original.slot}
+            {row.original.participant} / {row.original.class_slot}
           </p>
         );
       },
@@ -116,7 +116,7 @@ export function getColumns(): ColumnDef<SelectAllSchedule['data'][0]>[] {
     {
       id: 'actions',
       cell: function Cell({ row }) {
-        return (row.original?.participant ?? 0) >= row.original.slot ? (
+        return (row.original?.participant ?? 0) >= row.original.class_slot ? (
           <Button
             variant={'outline'}
             className="w-full cursor-not-allowed  hover:text-primary-foreground"

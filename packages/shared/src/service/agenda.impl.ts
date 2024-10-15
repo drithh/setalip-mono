@@ -101,6 +101,29 @@ export class AgendaServiceImpl implements AgendaService {
     return this._agendaRepository.count();
   }
 
+  async countCheckedInByUserId(userId: SelectAgendaBooking['user_id']) {
+    const query = await db
+      .selectFrom('agenda_bookings')
+      .select(({ fn }) => [fn.count<number>('agenda_bookings.id').as('count')])
+      .where('agenda_bookings.user_id', '=', userId)
+      .where('agenda_bookings.status', '=', 'checked_in')
+      .executeTakeFirst();
+
+    return query?.count;
+  }
+
+  async countCoachAgenda(userId: SelectCoach['user_id']) {
+    const query = await db
+      .selectFrom('agendas')
+      .where('deleted_at', 'is', null)
+      .select(({ fn }) => [fn.count<number>('agendas.id').as('count')])
+      .innerJoin('coaches', 'agendas.coach_id', 'coaches.id')
+      .where('coaches.user_id', '=', userId)
+      .executeTakeFirst();
+
+    return query?.count ?? 0;
+  }
+
   async findAll(data: FindAllAgendaOptions) {
     const {
       page = 1,

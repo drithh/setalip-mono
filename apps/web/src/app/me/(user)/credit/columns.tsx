@@ -3,6 +3,7 @@
 import {
   SelectCreditPagination,
   SelectClassType,
+  SelectCredit,
 } from '@repo/shared/repository';
 import { DataTableColumnHeader } from '@repo/ui/components/data-table/column-header';
 import { Badge } from '@repo/ui/components/ui/badge';
@@ -14,9 +15,7 @@ interface getColumnsProps {
   classTypes: SelectClassType[];
 }
 
-export function getColumns(
-  data: getColumnsProps,
-): ColumnDef<SelectCreditPagination['data'][0]>[] {
+export function getColumns(data: getColumnsProps): ColumnDef<SelectCredit>[] {
   return [
     {
       accessorKey: 'updated_at',
@@ -65,20 +64,20 @@ export function getColumns(
         </div>
       ),
     },
-    {
-      accessorKey: 'amount',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Jumlah" />
-      ),
-      cell: ({ row }) => (
-        <p className="md:-ml-5 md:text-center">
-          <span className="inline-block font-semibold sm:hidden">
-            Jumlah :&ensp;
-          </span>
-          {row.original.amount * (row.original.type === 'credit' ? -1 : 1)}
-        </p>
-      ),
-    },
+    // {
+    //   accessorKey: 'amount',
+    //   header: ({ column }) => (
+    //     <DataTableColumnHeader column={column} title="Jumlah" />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <p className="md:-ml-5 md:text-center">
+    //       <span className="inline-block font-semibold sm:hidden">
+    //         Jumlah :&ensp;
+    //       </span>
+    //       {row.original.amount * (row.original.type === 'credit' ? -1 : 1)}
+    //     </p>
+    //   ),
+    // },
     {
       accessorKey: 'type',
       header: ({ column }) => (
@@ -89,18 +88,18 @@ export function getColumns(
         />
       ),
 
-      cell: ({ row }) => {
-        return (
-          <div className="sm:-ml-5 sm:text-center">
-            <span className="inline-block font-semibold sm:hidden">
-              Type :&ensp;
-            </span>
-            <Badge className="text-center capitalize">
-              {row.original.type}
-            </Badge>
-          </div>
-        );
-      },
+      // cell: ({ row }) => {
+      //   return (
+      //     <div className="sm:-ml-5 sm:text-center">
+      //       <span className="inline-block font-semibold sm:hidden">
+      //         Type :&ensp;
+      //       </span>
+      //       <Badge className="text-center capitalize">
+      //         {row.original.type}
+      //       </Badge>
+      //     </div>
+      //   );
+      // },
     },
   ];
 }

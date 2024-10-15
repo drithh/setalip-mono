@@ -12,11 +12,11 @@ import {
 import { Button } from '@repo/ui/components/ui/button';
 import { useDeleteMutation } from './_functions/cancel-booking';
 import { api } from '@/trpc/react';
-import { SelectAllAgendaByUser } from '@repo/shared/repository';
 import { format } from 'date-fns';
+import { SelectAgenda__Coach__Class__Location__AgendaBooking } from '@repo/shared/service';
 
 interface DeleteAgendaProps {
-  data: SelectAllAgendaByUser['data'][0];
+  data: SelectAgenda__Coach__Class__Location__AgendaBooking;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

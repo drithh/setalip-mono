@@ -4,6 +4,7 @@ import { findAllUserCreditSchema } from '@repo/shared/api/schema';
 import {
   SelectCreditPagination,
   SelectClassType,
+  SelectCredit,
 } from '@repo/shared/repository';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
@@ -47,23 +48,18 @@ export default function CreditTransactionTable({
     [],
   );
 
-  const creditTypes = [
-    'credit',
-    'debit',
-  ] satisfies SelectCreditPagination['data'][0]['type'][];
+  // const creditTypes = ['credit', 'debit'] satisfies SelectCredit['type'][];
 
-  const filterFields: DataTableFilterField<
-    SelectCreditPagination['data'][0]
-  >[] = [
-    {
-      label: 'Type',
-      value: 'type',
-      options: creditTypes.map((type) => ({
-        label: type,
-        value: type,
-        withCount: true,
-      })),
-    },
+  const filterFields: DataTableFilterField<SelectCredit>[] = [
+    // {
+    //   label: 'Type',
+    //   value: 'type',
+    //   options: creditTypes.map((type) => ({
+    //     label: type,
+    //     value: type,
+    //     withCount: true,
+    //   })),
+    // },
   ];
 
   const { table } = useDataTable({
