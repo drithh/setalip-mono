@@ -59,13 +59,13 @@ export async function editUser(
     };
   }
 
-  if (user.result.id !== auth.user.id) {
-    return {
-      form: parsed.data,
-      status: 'error',
-      errors: 'User not found',
-    };
-  }
+  // if (user.result.id !== auth.user.id) {
+  //   return {
+  //     form: parsed.data,
+  //     status: 'error',
+  //     errors: 'User not found',
+  //   };
+  // }
 
   const parsedPhoneNumber = parsePhoneNumber(parsed.data.phone_number);
   const formattedPhoneNumber = `+${parsedPhoneNumber.countryCallingCode}${parsedPhoneNumber.nationalNumber}`;

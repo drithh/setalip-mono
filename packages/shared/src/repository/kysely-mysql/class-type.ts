@@ -82,11 +82,9 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
           ])
           .groupBy('class_types.id')
     );
-    if (data?.filters) {
-      baseQuery = baseQuery.where(
-        applyFilters(data.filters, data.customFilters)
-      );
-    }
+    baseQuery = baseQuery.where(
+      applyFilters(data?.filters, data?.customFilters)
+    );
 
     if (data?.orderBy) {
       baseQuery = baseQuery.orderBy(data.orderBy);

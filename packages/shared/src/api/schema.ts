@@ -161,6 +161,10 @@ export const findAllUserAgendaSchema = defaultPaginationSchema.extend({
   sort: z.string().default('agenda_booking_updated_at.desc'),
 });
 
+export const findAllUserAgendaSchema__Admin = findAllUserAgendaSchema.extend({
+  user_id: z.coerce.number().refine((data) => data > 0),
+});
+
 export const findAllCoachAgendaSchema = defaultPaginationSchema.extend({
   class_type_name: z.string().optional(),
   coach_name: z.string().optional(),

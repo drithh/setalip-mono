@@ -146,8 +146,7 @@ export function getColumns(): ColumnDef<SelectAgenda__Coach__Class__Location__Ag
         const now = new Date();
 
         const hoursDifference = differenceInHours(agendaTime, now);
-        const isWithin24Hours =
-          hoursDifference < 24 && isBefore(now, agendaTime);
+        const isWithin24Hours = hoursDifference < 24;
         return (
           <>
             <DeleteAgendaDialog

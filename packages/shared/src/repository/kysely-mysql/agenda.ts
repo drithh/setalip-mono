@@ -237,11 +237,9 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
         )
       );
 
-    if (data?.filters) {
-      baseQuery = baseQuery.where(
-        applyFilters(data.filters, data.customFilters)
-      );
-    }
+    baseQuery = baseQuery.where(
+      applyFilters(data?.filters, data?.customFilters)
+    );
 
     return baseQuery;
   }
@@ -259,10 +257,8 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     const queryCount = await baseQuery
       .select(({ fn }) => [fn.count<number>('agendas.id').as('count')])
       .executeTakeFirst();
-    console.log('queryCount', queryCount);
     baseQuery = applyModifiers(baseQuery, data);
     const queryData = await baseQuery.selectAll('agendas').execute();
-    console.log('queryData', queryData);
     const pageCount = Math.ceil(
       (queryCount?.count ?? 0) / (data?.perPage ?? 10)
     );
@@ -275,11 +271,9 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
 
   baseAgendaBooking(data?: SelectAgendaBookingQuery) {
     let baseQuery = this._db.selectFrom('agenda_bookings');
-    if (data?.filters) {
-      baseQuery = baseQuery.where(
-        applyFilters(data.filters, data.customFilters)
-      );
-    }
+    baseQuery = baseQuery.where(
+      applyFilters(data?.filters, data?.customFilters)
+    );
 
     return baseQuery;
   }
@@ -365,11 +359,9 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             ])
       );
 
-    if (data?.filters) {
-      baseQuery = baseQuery.where(
-        applyFilters(data.filters, data.customFilters)
-      );
-    }
+    baseQuery = baseQuery.where(
+      applyFilters(data?.filters, data?.customFilters)
+    );
 
     return baseQuery;
   }

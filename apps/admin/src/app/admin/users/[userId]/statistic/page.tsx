@@ -1,14 +1,21 @@
 import { container, TYPES } from '@repo/shared/inversify';
-import { AgendaService, StatisticService } from '@repo/shared/service';
+import {
+  AgendaService,
+  StatisticService,
+  UserService,
+} from '@repo/shared/service';
 import { Card } from '@repo/ui/components/ui/card';
 
-import { validateUser } from '@/lib/auth';
+import { validateAdmin, validateUser } from '@/lib/auth';
 import { StatisticBadge } from './_components/statistic-badge';
+import { userSchema } from '../form-schema';
+import { redirect } from 'next/navigation';
+import { getUser } from '../_lib/get-user';
 
-export default async function Statistic({}: {}) {
-  const auth = await validateUser();
+export default async function Statistic({ params }: any) {
+  const auth = await validateAdmin();
 
-  const role = auth.user.role === 'coach' ? 'coach' : 'user';
+  const user = await getUser(params);
 
   const statisticService = container.get<StatisticService>(
     TYPES.StatisticService,
@@ -16,13 +23,19 @@ export default async function Statistic({}: {}) {
   const statistics = await statisticService.findAll({
     perPage: 100,
     sort: 'point.asc',
-    role: [role],
+    role: [
+      user.role === 'admin'
+        ? 'user'
+        : user.role === 'owner'
+          ? 'user'
+          : user.role,
+    ],
   });
 
   const agendaService = container.get<AgendaService>(TYPES.AgendaService);
   let totalAgenda = 0;
 
-  if (role === 'coach') {
+  if (user.role === 'coach') {
     totalAgenda = (await agendaService.countCoachAgenda(auth.user.id)) ?? 0;
   } else {
     totalAgenda =

@@ -18,6 +18,7 @@ import { api } from '@/trpc/react';
 
 import { getColumns } from './columns';
 import { SelectAgenda__Coach__Class__Location__AgendaBooking } from '@repo/shared/service';
+import { userSchema } from '../form-schema';
 // import CreateAgendaForm from './create-agenda.form';
 
 interface AgendaTableProps {
@@ -25,6 +26,7 @@ interface AgendaTableProps {
   coaches: SelectCoachWithUser[];
   classTypes: SelectClassType[];
   search: z.infer<typeof findAllUserAgendaSchema>;
+  params: z.infer<typeof userSchema>;
 }
 
 export default function AgendaTable({
@@ -32,11 +34,16 @@ export default function AgendaTable({
   coaches,
   classTypes,
   search,
+  params,
 }: AgendaTableProps) {
-  const [{ result, error }] = api.agenda.findAllUserAgenda.useSuspenseQuery(
-    search,
-    {},
-  );
+  const [{ result, error }] =
+    api.agenda.findAllUserAgenda__Admin.useSuspenseQuery(
+      {
+        ...search,
+        user_id: params.userId,
+      },
+      {},
+    );
   if (error) {
     throw new Error('Error fetching data', error);
   }

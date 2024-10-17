@@ -45,11 +45,9 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
 
   base(data?: SelectCreditQuery) {
     let baseQuery = this._db.selectFrom('credit_transactions');
-    if (data?.filters) {
-      baseQuery = baseQuery.where(
-        applyFilters(data.filters, data.customFilters)
-      );
-    }
+    baseQuery = baseQuery.where(
+      applyFilters(data?.filters, data?.customFilters)
+    );
 
     return baseQuery;
   }

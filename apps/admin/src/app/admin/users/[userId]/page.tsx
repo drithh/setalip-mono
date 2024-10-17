@@ -11,7 +11,7 @@ import { validateAdmin } from '@/lib/auth';
 import EditUserForm from './edit-user.form';
 import Link from 'next/link';
 import { Button } from '@repo/ui/components/ui/button';
-import { userSchema } from './form-schema';
+import { getUser } from './_lib/get-user';
 
 export default async function Page({ params }: { params: any }) {
   const auth = await validateAdmin();
@@ -19,32 +19,21 @@ export default async function Page({ params }: { params: any }) {
     redirect('/login');
   }
 
-  if (!auth.user || !auth.session) {
-    redirect('/login');
-  }
-
-  const parsedParams = userSchema.parse(params);
-
-  const userService = container.get<UserService>(TYPES.UserService);
-  const user = await userService.findById(parsedParams.userId);
+  const user = await getUser(params);
 
   const locationService = container.get<LocationService>(TYPES.LocationService);
   const locations = await locationService.findAll();
-
-  if (user.error) {
-    redirect('/login');
-  }
 
   return (
     <div className="w-full p-2 md:p-6">
       <div className="flex place-content-between">
         <h1 className="text-3xl font-bold">Profile</h1>
-        <EditUserForm user={user.result} locations={locations.result ?? []} />
+        <EditUserForm user={user} locations={locations.result ?? []} />
       </div>
       <div className="mt-8 flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <Label>Nama</Label>
-          <Input readOnly value={user.result?.name ?? ''} />
+          <Input readOnly value={user?.name ?? ''} />
         </div>
         <div className="flex flex-col gap-2">
           <Label>Lokasi</Label>
@@ -52,27 +41,27 @@ export default async function Page({ params }: { params: any }) {
             readOnly
             value={
               locations.result?.find(
-                (location) => location.id === user.result?.location_id,
+                (location) => location.id === user?.location_id,
               )?.name
             }
           />
         </div>
         <div className="flex flex-col gap-2">
           <Label>Email</Label>
-          <Input readOnly value={user.result?.email ?? ''} />
+          <Input readOnly value={user?.email ?? ''} />
         </div>
         <div className="flex flex-col gap-2">
           <Label>Nomor Whatsapp</Label>
-          <Input readOnly value={user.result?.phone_number ?? ''} />
+          <Input readOnly value={user?.phone_number ?? ''} />
         </div>
         <div className="flex flex-col gap-2">
           <Label>Alamat</Label>
-          <Textarea readOnly value={user.result?.address ?? ''} />
+          <Textarea readOnly value={user?.address ?? ''} />
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex place-content-between place-items-center">
             <Label className="flex flex-col gap-2">Verified At</Label>
-            {user.result?.verified_at === null && (
+            {user?.verified_at === null && (
               <Link href={'/verification'}>
                 <Button variant={'link'}>Verifikasi User</Button>
               </Link>
@@ -81,8 +70,8 @@ export default async function Page({ params }: { params: any }) {
           <Input
             readOnly
             value={
-              user.result?.verified_at
-                ? format(user.result?.verified_at, 'dd MMM yyyy')
+              user?.verified_at
+                ? format(user?.verified_at, 'dd MMM yyyy')
                 : 'Not Verified'
             }
           />

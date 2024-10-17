@@ -1840,6 +1840,8 @@ export class AgendaServiceImpl implements AgendaService {
       };
     }
 
+    console.log(agenda);
+
     const agendaBooking = await this.findAgendaBookingById(data.id);
 
     if (agendaBooking.error) {
@@ -1860,10 +1862,12 @@ export class AgendaServiceImpl implements AgendaService {
 
     const agendaTime = agenda.time;
     const now = new Date();
-
     const hoursDifference = differenceInHours(agendaTime, now);
+    console.log(
+      `Agenda Time: ${agenda.id} ${agenda.time} | Now: ${now} | Diff: ${hoursDifference} ${isBefore(now, agendaTime)}`
+    );
 
-    if (hoursDifference < 24 && isBefore(now, agendaTime)) {
+    if (hoursDifference < 24) {
       return {
         result: undefined,
         error: new Error('The agenda is less than 24 hours away'),

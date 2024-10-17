@@ -53,11 +53,9 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
   base(data?: SelectPackageQuery) {
     let baseQuery = this._db.selectFrom('packages');
-    if (data?.filters) {
-      baseQuery = baseQuery.where(
-        applyFilters(data.filters, data.customFilters)
-      );
-    }
+    baseQuery = baseQuery.where(
+      applyFilters(data?.filters, data?.customFilters)
+    );
     if (data?.withClassType) {
       baseQuery = baseQuery
         .innerJoin('class_types', 'packages.class_type_id', 'class_types.id')
@@ -94,11 +92,9 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
   baseUserPackage(data?: SelectUserPackageQuery) {
     let baseQuery = this._db.selectFrom('user_packages');
-    if (data?.filters) {
-      baseQuery = baseQuery.where(
-        applyFilters(data.filters, data.customFilters)
-      );
-    }
+    baseQuery = baseQuery.where(
+      applyFilters(data?.filters, data?.customFilters)
+    );
 
     if (data?.withPackage) {
       const packageQuery = baseQuery
@@ -201,11 +197,9 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
           .select('deposit_accounts.bank_name as deposit_account_bank')
       );
 
-    if (data?.filters) {
-      baseQuery = baseQuery.where(
-        applyFilters(data.filters, data.customFilters)
-      );
-    }
+    baseQuery = baseQuery.where(
+      applyFilters(data?.filters, data?.customFilters)
+    );
 
     return baseQuery;
   }

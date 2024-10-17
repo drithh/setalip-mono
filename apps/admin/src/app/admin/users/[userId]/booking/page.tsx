@@ -6,17 +6,20 @@ import {
   LocationService,
 } from '@repo/shared/service';
 
-import { validateUser } from '@/lib/auth';
+import { validateAdmin, validateUser } from '@/lib/auth';
 
 import AgendaTable from './agenda';
+import { getUser } from '../_lib/get-user';
 
 export default async function Schedules({
+  params,
   searchParams,
 }: {
+  params: any;
   searchParams: any;
 }) {
-  const auth = await validateUser();
-
+  const auth = await validateAdmin();
+  const user = await getUser(params);
   const search = findAllUserAgendaSchema.parse(searchParams);
 
   const classTypeService = container.get<ClassTypeService>(
@@ -39,6 +42,7 @@ export default async function Schedules({
           coaches={coaches.result || []}
           classTypes={classTypes.result || []}
           search={search}
+          params={params}
         />
       </div>
     </div>

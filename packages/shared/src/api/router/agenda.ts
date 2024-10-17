@@ -14,6 +14,7 @@ import {
   findAllCoachAgendaSchema,
   findAllScheduleSchema,
   findAllUserAgendaSchema,
+  findAllUserAgendaSchema__Admin,
   insertAgendaBookingAdminSchema,
   updateAgendaBookingSchema,
 } from '../schema';
@@ -218,6 +219,38 @@ export const agendaRouter = {
         coaches: coaches,
         classTypes: classTypes,
         userId: user.id,
+      });
+
+      return agendas;
+    }),
+
+  findAllUserAgenda__Admin: adminProcedure
+    .input(findAllUserAgendaSchema__Admin)
+    .query(async ({ ctx, input }) => {
+      const coaches =
+        input.coach_name?.split('.').map((coach) => parseInt(coach)) ?? [];
+
+      const locations =
+        input.location_name?.split('.').map((location) => parseInt(location)) ??
+        [];
+
+      const classTypes =
+        input.class_type_name
+          ?.split('.')
+          .map((classType) => parseInt(classType)) ?? [];
+
+      const agendaService = ctx.container.get<AgendaService>(
+        TYPES.AgendaService
+      );
+
+      const agendas = await agendaService.findAllByUserId({
+        page: input.page,
+        perPage: input.per_page,
+        sort: input.sort,
+        locations: locations,
+        coaches: coaches,
+        classTypes: classTypes,
+        userId: input.user_id,
       });
 
       return agendas;
