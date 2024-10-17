@@ -157,28 +157,8 @@ export class PackageServiceImpl implements PackageService {
   async findAllUserPackageActiveByUserId(
     user_id: SelectUserPackage['user_id']
   ) {
-    const customFilters: Expression<SqlBool>[] = [];
-    const eb = expressionBuilder<DB, 'user_packages' | 'credit_transactions'>();
-    customFilters.push(eb('user_packages.expired_at', '>', new Date()));
-    customFilters.push(
-      eb(
-        'user_packages.credit',
-        '>',
-        sql<number>`COALESCE(SUM(credit_transactions.amount), 0)`
-      )
-    );
-
     const packages =
-      await this._packageRepository.findUserPackage<FindAllUserPackageActiveByUserId>(
-        {
-          filters: { user_id },
-          orderBy: 'expired_at asc',
-          customFilters: customFilters,
-          withPackage: true,
-          withClassType: true,
-          withCreditTransaction: true,
-        }
-      );
+      await this._packageRepository.findAllUserPackageActiveByUserId(user_id);
 
     return {
       result: packages,

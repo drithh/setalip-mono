@@ -12,19 +12,19 @@ import {
 import { injectable, inject } from 'inversify';
 import { TYPES } from '#dep/inversify/types';
 import { sql } from 'kysely';
-import type { PackageService } from '#dep/service/index';
+import type { PackageRepository } from '../package';
 
 @injectable()
 export class KyselyMySqlUserRepository implements UserRepository {
   private _db: Database;
-  private _packageService: PackageService;
+  private _packageRepository: PackageRepository;
 
   constructor(
     @inject(TYPES.Database) db: Database,
-    @inject(TYPES.PackageService) packageService: PackageService
+    @inject(TYPES.PackageRepository) packageRepository: PackageRepository
   ) {
     this._db = db;
-    this._packageService = packageService;
+    this._packageRepository = packageRepository;
   }
 
   async count() {
@@ -70,16 +70,9 @@ export class KyselyMySqlUserRepository implements UserRepository {
     const userWithCredits: SelectUserWithCredits[] = [];
     for (const user of queryData) {
       const activePackages =
-        await this._packageService.findAllUserPackageActiveByUserId(user.id);
-      if (activePackages.error) {
-        console.error('Error fetching active packages:', activePackages.error);
-        return {
-          data: [],
-          pageCount: 0,
-        };
-      }
+        await this._packageRepository.findAllUserPackageActiveByUserId(user.id);
 
-      const groupedPackages = activePackages.result.reduce(
+      const groupedPackages = activePackages.reduce(
         (acc, pkg) => {
           const { class_type_id, class_type, credit_used, credit } = pkg;
 

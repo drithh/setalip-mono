@@ -160,7 +160,7 @@ export class AgendaServiceImpl implements AgendaService {
 
     const backfillProps: BackFillProps = {
       date,
-      agendaFilter: [eb(sql`DATE(agendas.time)`, '=', localDate)],
+      agendaFilter: [eb(sql`DATE(time)`, '=', localDate)],
       agendaReccurenceFilter: [
         eb(
           'agenda_recurrences.day_of_week',
@@ -404,7 +404,7 @@ export class AgendaServiceImpl implements AgendaService {
 
     const backfillProps: BackFillProps = {
       date,
-      agendaFilter: [eb(sql`DATE(agendas.time)`, '=', localDate)],
+      agendaFilter: [eb(sql`DATE(time)`, '=', localDate)],
       agendaReccurenceFilter: [
         eb(
           'agenda_recurrences.day_of_week',
@@ -473,7 +473,7 @@ export class AgendaServiceImpl implements AgendaService {
 
     const backfillProps: BackFillProps = {
       date,
-      agendaFilter: [eb(sql`DATE(agendas.id)`, '=', data.id ?? 0)],
+      agendaFilter: [eb(`id`, '=', data.id ?? 0)],
       agendaReccurenceFilter: [
         eb('agenda_recurrences.id', '=', data.agendaRecurrenceId ?? 0),
         eb('agenda_recurrences.start_date', '<=', date),

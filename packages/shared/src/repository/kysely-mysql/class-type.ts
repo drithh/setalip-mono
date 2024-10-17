@@ -96,7 +96,7 @@ export class KyselyMySqlClassTypeRepository implements ClassTypeRepository {
       baseQuery = baseQuery.offset(data.offset);
     }
 
-    const result = await baseQuery.selectAll().execute();
+    const result = await baseQuery.selectAll('class_types').execute();
     return result as T[];
   }
 

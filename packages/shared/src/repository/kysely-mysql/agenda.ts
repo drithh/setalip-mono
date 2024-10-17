@@ -67,7 +67,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     return query?.count ?? 0;
   }
 
-  async backfillAgenda(backfillProps: BackFillProps) {
+  backfillAgenda(backfillProps: BackFillProps) {
     const localDate = format(backfillProps.date, 'yyyy-MM-dd');
     const query = this._db
       .with('agenda_data', (eb) =>
@@ -83,7 +83,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             'agendas.is_show',
             'agendas.deleted_at',
           ])
-          .where(applyFilters(backfillProps.agendaFilter))
+          .where(applyFilters([], backfillProps.agendaFilter))
       )
       .with('missing_recurrences', (eb) =>
         eb
@@ -106,7 +106,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
             'agenda_recurrences.start_date',
             'agenda_recurrences.end_date',
           ])
-          .where(applyFilters(backfillProps.agendaReccurenceFilter))
+          .where(applyFilters([], backfillProps.agendaReccurenceFilter))
           .where('agenda_data.id', 'is', null)
       )
       .with('agendas', (eb) =>
@@ -134,17 +134,17 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
                 'is_show',
               ])
           )
-          .where(applyFilters(backfillProps.agendaFilter))
+          .where(applyFilters([], backfillProps.agendaFilter))
       )
       .selectFrom('agendas');
 
     return query;
   }
 
-  async base(data?: SelectAgendaQuery) {
+  base(data?: SelectAgendaQuery) {
     let baseQuery = this._db.selectFrom('agendas');
     if (data?.withBackfillAgenda) {
-      baseQuery = await this.backfillAgenda(data.backfillProps);
+      baseQuery = this.backfillAgenda(data.backfillProps);
     }
 
     baseQuery = baseQuery
@@ -247,22 +247,22 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
   }
 
   async find<T extends SelectAgenda>(data?: SelectAgendaQuery) {
-    let baseQuery = await this.base(data);
+    let baseQuery = this.base(data);
     baseQuery = applyModifiers(baseQuery, data);
-    const result = await baseQuery.selectAll().execute();
+    const result = await baseQuery.selectAll('agendas').execute();
     return result as T[];
   }
 
   async findWithPagination<T extends SelectAgenda>(data?: SelectAgendaQuery) {
-    let baseQuery = await this.base(data);
+    let baseQuery = this.base(data);
 
     const queryCount = await baseQuery
       .select(({ fn }) => [fn.count<number>('agendas.id').as('count')])
       .executeTakeFirst();
-
+    console.log('queryCount', queryCount);
     baseQuery = applyModifiers(baseQuery, data);
-    const queryData = await baseQuery.selectAll().execute();
-
+    const queryData = await baseQuery.selectAll('agendas').execute();
+    console.log('queryData', queryData);
     const pageCount = Math.ceil(
       (queryCount?.count ?? 0) / (data?.perPage ?? 10)
     );
@@ -273,7 +273,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     };
   }
 
-  async baseAgendaBooking(data?: SelectAgendaBookingQuery) {
+  baseAgendaBooking(data?: SelectAgendaBookingQuery) {
     let baseQuery = this._db.selectFrom('agenda_bookings');
     if (data?.filters) {
       baseQuery = baseQuery.where(
@@ -287,23 +287,23 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
   async findAgendaBooking<T extends SelectAgendaBooking>(
     data?: SelectAgendaBookingQuery
   ) {
-    let baseQuery = await this.baseAgendaBooking(data);
+    let baseQuery = this.baseAgendaBooking(data);
     baseQuery = applyModifiers(baseQuery, data);
-    const result = await baseQuery.selectAll().execute();
+    const result = await baseQuery.selectAll('agenda_bookings').execute();
     return result as T[];
   }
 
   async findAgendaBookingWithPagination<T extends SelectAgendaBooking>(
     data?: SelectAgendaBookingQuery
   ) {
-    let baseQuery = await this.baseAgendaBooking(data);
+    let baseQuery = this.baseAgendaBooking(data);
 
     const queryCount = await baseQuery
       .select(({ fn }) => [fn.count<number>('agenda_bookings.id').as('count')])
       .executeTakeFirst();
 
     baseQuery = applyModifiers(baseQuery, data);
-    const queryData = await baseQuery.selectAll().execute();
+    const queryData = await baseQuery.selectAll('agenda_bookings').execute();
 
     const pageCount = Math.ceil(
       (queryCount?.count ?? 0) / (data?.perPage ?? 10)
@@ -315,7 +315,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
     };
   }
 
-  async baseAgendaRecurrence(data?: SelectAgendaRecurrenceQuery) {
+  baseAgendaRecurrence(data?: SelectAgendaRecurrenceQuery) {
     let baseQuery = this._db.selectFrom('agenda_recurrences');
     baseQuery = baseQuery
       .$if(
@@ -377,16 +377,16 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
   async findAgendaRecurrence<T extends SelectAgendaRecurrence>(
     data?: SelectAgendaRecurrenceQuery
   ) {
-    let baseQuery = await this.baseAgendaRecurrence(data);
+    let baseQuery = this.baseAgendaRecurrence(data);
     baseQuery = applyModifiers(baseQuery, data);
-    const result = await baseQuery.selectAll().execute();
+    const result = await baseQuery.selectAll('agenda_recurrences').execute();
     return result as T[];
   }
 
   async findAgendaRecurrenceWithPagination<T extends SelectAgendaRecurrence>(
     data?: SelectAgendaRecurrenceQuery
   ) {
-    let baseQuery = await this.baseAgendaRecurrence(data);
+    let baseQuery = this.baseAgendaRecurrence(data);
 
     const queryCount = await baseQuery
       .select(({ fn }) => [
@@ -395,7 +395,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
       .executeTakeFirst();
 
     baseQuery = applyModifiers(baseQuery, data);
-    const queryData = await baseQuery.selectAll().execute();
+    const queryData = await baseQuery.selectAll('agenda_recurrences').execute();
 
     const pageCount = Math.ceil(
       (queryCount?.count ?? 0) / (data?.perPage ?? 10)

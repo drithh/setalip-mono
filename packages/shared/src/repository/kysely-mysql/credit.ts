@@ -43,7 +43,7 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
     return query?.count ?? 0;
   }
 
-  async base(data?: SelectCreditQuery) {
+  base(data?: SelectCreditQuery) {
     let baseQuery = this._db.selectFrom('credit_transactions');
     if (data?.filters) {
       baseQuery = baseQuery.where(
@@ -55,14 +55,14 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
   }
 
   async find<T extends SelectCredit>(data?: SelectCreditQuery) {
-    let baseQuery = await this.base(data);
+    let baseQuery = this.base(data);
     baseQuery = applyModifiers(baseQuery, data);
-    const result = await baseQuery.selectAll().execute();
+    const result = await baseQuery.selectAll('credit_transactions').execute();
     return result as T[];
   }
 
   async findWithPagination<T extends SelectCredit>(data?: SelectCreditQuery) {
-    let baseQuery = await this.base(data);
+    let baseQuery = this.base(data);
 
     const queryCount = await baseQuery
       .select(({ fn }) => [
@@ -75,7 +75,9 @@ export class KyselyMySqlCreditRepository implements CreditRepository {
     );
 
     baseQuery = applyModifiers(baseQuery, data);
-    const queryData = await baseQuery.selectAll().execute();
+    const queryData = await baseQuery
+      .selectAll('credit_transactions')
+      .execute();
 
     return {
       data: queryData as T[],

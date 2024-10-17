@@ -17,6 +17,7 @@ import {
   UserPackages,
   Users,
 } from '../db';
+import { FindAllUserPackageActiveByUserId } from '#dep/service/package';
 
 export type SelectUserPackage = Selectable<UserPackages>;
 export type SelectPackage = Selectable<Packages>;
@@ -93,6 +94,9 @@ export interface PackageRepository {
   findUserPackage<T extends SelectUserPackage>(
     data?: SelectUserPackageQuery
   ): Promise<T[]>;
+  findAllUserPackageActiveByUserId(
+    user_id: SelectUserPackage['user_id']
+  ): Promise<FindAllUserPackageActiveByUserId[]>;
 
   findPackageTransaction<T extends SelectPackageTransaction>(
     data?: SelectPackageTransactionQuery
