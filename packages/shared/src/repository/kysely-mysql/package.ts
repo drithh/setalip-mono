@@ -125,7 +125,8 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
           sql<number>`COALESCE(COUNT(credit_transactions.id), 0)`.as(
             'credit_used'
           )
-        );
+        )
+        .groupBy('user_packages.id');
     }
 
     return baseQuery;
@@ -150,13 +151,6 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     const eb = expressionBuilder<DB, 'user_packages' | 'credit_transactions'>();
     customFilters.push(eb('user_packages.expired_at', '>', new Date()));
     customFilters.push(eb('user_packages.user_id', '=', user_id));
-    customFilters.push(
-      eb(
-        'user_packages.credit',
-        '>',
-        sql<number>`COALESCE(COUNT(credit_transactions.id), 0)`
-      )
-    );
 
     const packages =
       await this.findUserPackage<FindAllUserPackageActiveByUserId>({

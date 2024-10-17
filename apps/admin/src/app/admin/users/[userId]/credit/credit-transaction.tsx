@@ -17,21 +17,28 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { api } from '@/trpc/react';
 
 import { getColumns } from './columns';
+import { userSchema } from '../form-schema';
 // import CreateCreditTransactionForm from './create-creditTransaction.form';
 
 interface CreditTransactionTableProps {
   search: z.infer<typeof findAllUserCreditSchema>;
+  params: z.infer<typeof userSchema>;
   classTypes: SelectClassType[];
 }
 
 export default function CreditTransactionTable({
   search,
+  params,
   classTypes,
 }: CreditTransactionTableProps) {
-  const [{ result, error }] = api.credit.findAllByUserId.useSuspenseQuery(
-    search,
-    {},
-  );
+  const [{ result, error }] =
+    api.credit.findAllByUserId__Admin.useSuspenseQuery(
+      {
+        ...search,
+        user_id: params.userId,
+      },
+      {},
+    );
   if (error) {
     throw new Error('Error fetching data', error);
   }

@@ -13,19 +13,24 @@ import {
   CardTitle,
 } from '@repo/ui/components/ui/card';
 
-import { validateUser } from '@/lib/auth';
+import { validateAdmin, validateUser } from '@/lib/auth';
 
 import CreditTransactionTable from './credit-transaction';
 import { format } from 'date-fns';
+import { getUser } from '../_lib/get-user';
+import { userSchema } from '../form-schema';
 
-export default async function Credit({ searchParams }: { searchParams: any }) {
-  const auth = await validateUser();
+export default async function Credit({ searchParams, params }: any) {
+  const auth = await validateAdmin();
 
+  const parsedParams = userSchema.parse(params);
+
+  const user = await getUser(parsedParams);
   const search = findAllUserCreditSchema.parse(searchParams);
 
   const packageService = container.get<PackageService>(TYPES.PackageService);
   const packages = await packageService.findAllUserPackageActiveByUserId(
-    auth.user.id,
+    user.id,
   );
 
   const classTypeService = container.get<ClassTypeService>(
@@ -67,6 +72,7 @@ export default async function Credit({ searchParams }: { searchParams: any }) {
       <div className="mx-auto mt-8 flex min-h-screen w-full max-w-[95vw] flex-col gap-24 md:max-w-screen-xl">
         <CreditTransactionTable
           search={search}
+          params={parsedParams}
           classTypes={classTypes.result ?? []}
         />
       </div>

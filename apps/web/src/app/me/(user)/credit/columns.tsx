@@ -78,28 +78,28 @@ export function getColumns(data: getColumnsProps): ColumnDef<SelectCredit>[] {
     //     </p>
     //   ),
     // },
-    {
-      accessorKey: 'type',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          className="w-32 justify-center"
-          column={column}
-          title="Type"
-        />
-      ),
+    // {
+    //   accessorKey: 'type',
+    //   header: ({ column }) => (
+    //     <DataTableColumnHeader
+    //       className="w-32 justify-center"
+    //       column={column}
+    //       title="Type"
+    //     />
+    //   ),
 
-      // cell: ({ row }) => {
-      //   return (
-      //     <div className="sm:-ml-5 sm:text-center">
-      //       <span className="inline-block font-semibold sm:hidden">
-      //         Type :&ensp;
-      //       </span>
-      //       <Badge className="text-center capitalize">
-      //         {row.original.type}
-      //       </Badge>
-      //     </div>
-      //   );
-      // },
-    },
+    // cell: ({ row }) => {
+    //   return (
+    //     <div className="sm:-ml-5 sm:text-center">
+    //       <span className="inline-block font-semibold sm:hidden">
+    //         Type :&ensp;
+    //       </span>
+    //       <Badge className="text-center capitalize">
+    //         {row.original.type}
+    //       </Badge>
+    //     </div>
+    //   );
+    // },
+    // },
   ];
 }

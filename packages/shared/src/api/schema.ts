@@ -176,6 +176,10 @@ export const findAllUserCreditSchema = defaultPaginationSchema.extend({
   type: z.string().optional(),
 });
 
+export const findAllUserCreditSchema__Admin = findAllUserCreditSchema.extend({
+  user_id: z.coerce.number().refine((data) => data > 0),
+});
+
 export const findAllLoyaltySchema = defaultPaginationSchema.extend({
   type: z.string().optional(),
   user_name: z.string().optional(),
@@ -186,6 +190,9 @@ export const findAllLoyaltyShopSchema = defaultPaginationSchema.extend({});
 
 export const findAllUserLoyaltySchema = defaultPaginationSchema.extend({
   type: z.string().optional(),
+});
+export const findAllUserLoyaltySchema__Admin = findAllUserLoyaltySchema.extend({
+  user_id: z.coerce.number().refine((data) => data > 0),
 });
 
 export const findAllPackageTransactionByUserIdSchema =

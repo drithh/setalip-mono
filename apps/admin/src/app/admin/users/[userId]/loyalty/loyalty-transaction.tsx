@@ -1,9 +1,7 @@
 'use client';
 
 import { findAllUserLoyaltySchema } from '@repo/shared/api/schema';
-import {
-  SelectAllLoyaltyByUserId,
-} from '@repo/shared/repository';
+import { SelectAllLoyaltyByUserId } from '@repo/shared/repository';
 import { DataTable } from '@repo/ui/components/data-table/table';
 import { DataTableToolbar } from '@repo/ui/components/data-table/toolbar';
 import type { DataTableFilterField } from '@repo/ui/types';
@@ -15,19 +13,26 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { api } from '@/trpc/react';
 
 import { getColumns } from './columns';
+import { userSchema } from '../form-schema';
 // import CreateLoyaltyTransactionForm from './create-loyaltyTransaction.form';
 
 interface LoyaltyTransactionTableProps {
   search: z.infer<typeof findAllUserLoyaltySchema>;
+  params: z.infer<typeof userSchema>;
 }
 
 export default function LoyaltyTransactionTable({
   search,
+  params,
 }: LoyaltyTransactionTableProps) {
-  const [{ result, error }] = api.loyalty.findAllByUserId.useSuspenseQuery(
-    search,
-    {},
-  );
+  const [{ result, error }] =
+    api.loyalty.findAllByUserId__Admin.useSuspenseQuery(
+      {
+        ...search,
+        user_id: params.userId,
+      },
+      {},
+    );
   if (error) {
     throw new Error('Error fetching data', error);
   }
