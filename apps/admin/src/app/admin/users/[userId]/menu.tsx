@@ -40,6 +40,11 @@ export const getMenus = (userId: number): Menu[] => {
       path: `/admin/users/${userId}/credit`,
     },
     {
+      icon: <Receipt className="h-5 w-5" />,
+      label: 'Billing',
+      path: `/admin/users/${userId}/package`,
+    },
+    {
       icon: <Sparkles className="h-5 w-5" />,
       label: 'Loyalty',
       path: `/admin/users/${userId}/loyalty`,

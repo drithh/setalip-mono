@@ -14,17 +14,26 @@ import { api } from '@/trpc/react';
 
 import { getColumns } from './columns';
 import { SelectPackageTransaction__Package__UserPackage } from '@repo/shared/service';
+import { userSchema } from '../../form-schema';
 // import CreatePackageTransactionForm from './create-packageTransaction.form';
 
 interface PackageTransactionTableProps {
   search: z.infer<typeof findAllPackageTransactionByUserIdSchema>;
+  params: z.infer<typeof userSchema>;
 }
 
 export default function PackageTransactionTable({
   search,
+  params,
 }: PackageTransactionTableProps) {
   const [{ result, error }] =
-    api.package.findAllPackageTransactionByUserId.useSuspenseQuery(search, {});
+    api.package.findAllPackageTransactionByUserId__Admin.useSuspenseQuery(
+      {
+        ...search,
+        user_id: params.userId,
+      },
+      {},
+    );
   if (error) {
     throw new Error('Error fetching data', error);
   }

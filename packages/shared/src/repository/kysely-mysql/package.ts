@@ -32,7 +32,7 @@ import {
   UpdateUserPackageCommand,
   InsertUserPackageCommand,
 } from '../package';
-import { FindAllUserPackageActiveByUserId } from '#dep/service/package';
+import { SelectUserPackage__Package__ClassType__PackageTransaction } from '#dep/service/package';
 
 @injectable()
 export class KyselyMySqlPackageRepository implements PackageRepository {
@@ -64,10 +64,11 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     return baseQuery;
   }
 
-  async find(data?: SelectPackageQuery) {
+  async find<T extends SelectPackage>(data?: SelectPackageQuery) {
     let baseQuery = this.base(data);
     baseQuery = applyModifiers(baseQuery, data);
-    return baseQuery.selectAll('packages').execute();
+    const result = await baseQuery.selectAll('packages').execute();
+    return result as T[];
   }
 
   async findWithPagination<T extends SelectPackage>(data?: SelectPackageQuery) {
@@ -153,13 +154,15 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     customFilters.push(eb('user_packages.user_id', '=', user_id));
 
     const packages =
-      await this.findUserPackage<FindAllUserPackageActiveByUserId>({
-        orderBy: 'expired_at asc',
-        customFilters: customFilters,
-        withPackage: true,
-        withClassType: true,
-        withCreditTransaction: true,
-      });
+      await this.findUserPackage<SelectUserPackage__Package__ClassType__PackageTransaction>(
+        {
+          orderBy: 'expired_at asc',
+          customFilters: customFilters,
+          withPackage: true,
+          withClassType: true,
+          withCreditTransaction: true,
+        }
+      );
 
     return packages;
   }
@@ -189,6 +192,18 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
             'deposit_accounts.id'
           )
           .select('deposit_accounts.bank_name as deposit_account_bank')
+      )
+      .$if(data?.withUserPackage ?? false, (qb) =>
+        qb
+          .innerJoin(
+            'user_packages',
+            'package_transactions.user_package_id',
+            'user_packages.id'
+          )
+          .select([
+            'user_packages.expired_at as user_package_expired_at',
+            'user_packages.credit as user_package_credit',
+          ])
       );
 
     baseQuery = baseQuery.where(
@@ -219,6 +234,8 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       .executeTakeFirst();
 
     baseQuery = applyModifiers(baseQuery, data);
+
+    console.log('baseQuery adsadasdasdas', baseQuery.compile());
     const queryData = await baseQuery
       .selectAll('package_transactions')
       .execute();

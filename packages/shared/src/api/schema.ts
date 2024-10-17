@@ -200,6 +200,11 @@ export const findAllPackageTransactionByUserIdSchema =
     status: z.string().optional(),
   });
 
+export const findAllPackageTransactionByUserIdSchema__Admin =
+  findAllPackageTransactionByUserIdSchema.extend({
+    user_id: z.coerce.number().refine((data) => data > 0),
+  });
+
 export const findAllDepositAccountSchema = defaultPaginationSchema.extend({
   name: z.string().optional(),
 });

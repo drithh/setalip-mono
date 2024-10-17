@@ -4,7 +4,7 @@ import { TYPES } from '../inversify';
 import {
   SelectPackage__ClassType,
   FindAllPackageOptions,
-  FindAllUserPackageActiveByUserId,
+  SelectUserPackage__Package__ClassType__PackageTransaction,
   FindAllUserPackageTransactionByUserIdOption,
   FindAllUserPackageTransactionOption,
   InsertPackageTransactionOption,
@@ -101,17 +101,13 @@ export class PackageServiceImpl implements PackageService {
       customFilters.push(eb('is_active', '=', is_active));
     }
 
-    const packages =
-      await this._packageRepository.findWithPagination<SelectPackage__ClassType>(
-        {
-          customFilters: customFilters,
-          perPage: perPage,
-          offset: offset,
-          // fix this
-          orderBy: orderBy[0],
-          withClassType: true,
-        }
-      );
+    const packages = await this._packageRepository.findWithPagination({
+      customFilters: customFilters,
+      perPage: perPage,
+      offset: offset,
+      orderBy: orderBy[0],
+      withClassType: true,
+    });
 
     return {
       result: packages,
@@ -226,17 +222,15 @@ export class PackageServiceImpl implements PackageService {
     }
 
     const packages =
-      await this._packageRepository.findPackageTransactionWithPagination<SelectPackageTransaction__Package__User__DepositAccount>(
-        {
-          customFilters: customFilters,
-          perPage: perPage,
-          offset: offset,
-          orderBy: orderBy,
-          withPackage: true,
-          withUser: true,
-          withDepositAccount: true,
-        }
-      );
+      await this._packageRepository.findPackageTransactionWithPagination({
+        customFilters: customFilters,
+        perPage: perPage,
+        offset: offset,
+        orderBy: orderBy,
+        withPackage: true,
+        withUser: true,
+        withDepositAccount: true,
+      });
 
     return {
       result: packages,
@@ -256,22 +250,20 @@ export class PackageServiceImpl implements PackageService {
 
     const customFilters: Expression<SqlBool>[] = [];
     const eb = expressionBuilder<DB, 'package_transactions' | 'users'>();
+    customFilters.push(eb('package_transactions.user_id', '=', user_id));
     if (status && status.length > 0) {
       customFilters.push(eb('package_transactions.status', 'in', status));
     }
 
     const packages =
-      await this._packageRepository.findPackageTransactionWithPagination<SelectPackageTransaction__Package__UserPackage>(
-        {
-          filters: { user_id },
-          customFilters: customFilters,
-          perPage: perPage,
-          offset: offset,
-          orderBy: orderBy,
-          withPackage: true,
-          withUserPackage: true,
-        }
-      );
+      await this._packageRepository.findPackageTransactionWithPagination({
+        customFilters: customFilters,
+        perPage: perPage,
+        offset: offset,
+        orderBy: orderBy,
+        withPackage: true,
+        withUserPackage: true,
+      });
 
     return {
       result: packages,
@@ -281,14 +273,12 @@ export class PackageServiceImpl implements PackageService {
 
   async findPackageTransactionById(id: SelectPackageTransaction['id']) {
     const packageTransaction = (
-      await this._packageRepository.findPackageTransaction<SelectPackageTransaction__Package__UserPackage>(
-        {
-          filters: { id },
-          perPage: 1,
-          withPackage: true,
-          withUserPackage: true,
-        }
-      )
+      await this._packageRepository.findPackageTransaction({
+        filters: { id },
+        perPage: 1,
+        withPackage: true,
+        withUserPackage: true,
+      })
     )?.[0];
 
     if (!packageTransaction) {

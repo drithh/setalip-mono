@@ -17,21 +17,52 @@ import {
   UserPackages,
   Users,
 } from '../db';
-import { FindAllUserPackageActiveByUserId } from '#dep/service/package';
+import {
+  SelectUserPackage__Package__ClassType__PackageTransaction,
+  PackageWithClassType,
+  UserPackageWithClassType,
+  UserPackageWithCreditTransaction,
+  UserPackageWithPackage,
+  PackageTransactionWithPackage,
+  PackageTransactionWithUserPackage,
+  PackageTransactionWithUser,
+  PackageTransactionWithDepositAccount,
+} from '#dep/service/package';
 
-export type SelectUserPackage = Selectable<UserPackages>;
 export type SelectPackage = Selectable<Packages>;
+export type SelectUserPackage = Selectable<UserPackages>;
 export type SelectPackageTransaction = Selectable<PackageTransactions>;
 
-export interface SelectPackagePagination<T extends SelectPackage> {
-  data: T[];
+export type SelectPackageReturn<T extends SelectPackageQuery> = SelectPackage &
+  (T['withClassType'] extends true ? PackageWithClassType : {});
+
+export type SelectUserPackageReturn<T extends SelectUserPackageQuery> =
+  SelectUserPackage &
+    (T['withClassType'] extends true ? UserPackageWithClassType : {}) &
+    (T['withCreditTransaction'] extends true
+      ? UserPackageWithCreditTransaction
+      : {}) &
+    (T['withPackage'] extends true ? UserPackageWithPackage : {});
+
+export type SelectPackageTransactionReturn<
+  T extends SelectPackageTransactionQuery,
+> = SelectPackageTransaction &
+  (T['withPackage'] extends true ? PackageTransactionWithPackage : {}) &
+  (T['withUserPackage'] extends true ? PackageTransactionWithUserPackage : {}) &
+  (T['withUser'] extends true ? PackageTransactionWithUser : {}) &
+  (T['withDepositAccount'] extends true
+    ? PackageTransactionWithDepositAccount
+    : {});
+
+export interface SelectPackagePagination<T extends SelectPackageQuery> {
+  data: SelectPackageReturn<T>[];
   pageCount: number;
 }
 
 export interface SelectPackageTransactionPagination<
-  T extends SelectPackageTransaction,
+  T extends SelectPackageTransactionQuery,
 > {
-  data: T[];
+  data: SelectPackageTransactionReturn<T>[];
   pageCount: number;
 }
 
@@ -86,23 +117,25 @@ export interface DeletePackageCommand extends Command<SelectPackage> {}
 export interface PackageRepository {
   count(): Promise<number>;
 
-  find(data?: SelectPackageQuery): Promise<SelectPackage[]>;
-  findWithPagination<T extends SelectPackage>(
-    data?: SelectPackageQuery
+  find<T extends SelectPackageQuery>(
+    data?: T
+  ): Promise<SelectPackageReturn<T>[]>;
+  findWithPagination<T extends SelectPackageQuery>(
+    data?: T
   ): Promise<SelectPackagePagination<T>>;
 
-  findUserPackage<T extends SelectUserPackage>(
-    data?: SelectUserPackageQuery
-  ): Promise<T[]>;
+  findUserPackage<T extends SelectUserPackageQuery>(
+    data?: T
+  ): Promise<SelectUserPackageReturn<T>[]>;
   findAllUserPackageActiveByUserId(
     user_id: SelectUserPackage['user_id']
-  ): Promise<FindAllUserPackageActiveByUserId[]>;
+  ): Promise<SelectUserPackage__Package__ClassType__PackageTransaction[]>;
 
-  findPackageTransaction<T extends SelectPackageTransaction>(
-    data?: SelectPackageTransactionQuery
-  ): Promise<T[]>;
-  findPackageTransactionWithPagination<T extends SelectPackageTransaction>(
-    data?: SelectPackageTransactionQuery
+  findPackageTransaction<T extends SelectPackageTransactionQuery>(
+    data?: T
+  ): Promise<SelectPackageTransactionReturn<T>[]>;
+  findPackageTransactionWithPagination<T extends SelectPackageTransactionQuery>(
+    data?: T
   ): Promise<SelectPackageTransactionPagination<T>>;
 
   create(data: InsertPackageCommand): Promise<SelectPackage | Error>;

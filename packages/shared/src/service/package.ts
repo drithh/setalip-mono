@@ -18,10 +18,14 @@ import {
   InsertPackageCommand,
 } from '../repository';
 import { PromiseResult } from '../types';
+import { DefaultReturn } from './agenda';
 
-export interface SelectPackage__ClassType extends SelectPackage {
+export interface PackageWithClassType {
   class_type: SelectClassType['type'];
 }
+export interface SelectPackage__ClassType
+  extends SelectPackage,
+    PackageWithClassType {}
 
 export interface FindAllPackageOptions extends DefaultPagination {
   name?: string;
@@ -29,13 +33,25 @@ export interface FindAllPackageOptions extends DefaultPagination {
   is_active?: number;
 }
 
-export interface FindAllUserPackageActiveByUserId extends SelectUserPackage {
+export interface UserPackageWithPackage {
   package_name: SelectPackage['name'];
   package_credit: SelectPackage['credit'];
-  class_type: SelectClassType['type'];
+}
+
+export interface UserPackageWithClassType {
   class_type_id: SelectClassType['id'];
+  class_type: SelectClassType['type'];
+}
+
+export interface UserPackageWithCreditTransaction {
   credit_used: number;
 }
+
+export interface SelectUserPackage__Package__ClassType__PackageTransaction
+  extends SelectUserPackage,
+    UserPackageWithPackage,
+    UserPackageWithClassType,
+    UserPackageWithCreditTransaction {}
 
 export interface FindAllUserPackageTransactionOption extends DefaultPagination {
   status?: SelectPackageTransaction['status'][];
@@ -48,20 +64,20 @@ export interface FindAllUserPackageTransactionByUserIdOption
   user_id: SelectPackageTransaction['user_id'];
 }
 
-interface PackageTransactionWithPackage {
+export interface PackageTransactionWithPackage {
   package_name: SelectPackage['name'];
 }
 
-interface PackageTransactionWithUser {
+export interface PackageTransactionWithUser {
   user_id: SelectUser['id'];
   user_name: SelectUser['name'];
 }
 
-interface PackageTransactionWithDepositAccount {
+export interface PackageTransactionWithDepositAccount {
   deposit_account_bank: SelectDepositAccount['bank_name'];
 }
 
-interface PackageTransactionWithUserPackage {
+export interface PackageTransactionWithUserPackage {
   user_package_expired_at: SelectUserPackage['expired_at'];
   user_package_credit: SelectUserPackage['credit'];
 }
@@ -110,29 +126,35 @@ export interface UpdatePackageTransactionImage {
 export interface PackageService {
   findAll(
     data: FindAllPackageOptions
-  ): PromiseResult<SelectPackagePagination<SelectPackage__ClassType>, Error>;
+  ): PromiseResult<DefaultReturn<SelectPackage__ClassType>, Error>;
   findById(
     id: SelectPackage['id']
   ): PromiseResult<SelectPackage | undefined, Error>;
 
   findAllUserPackageActiveByUserId(
     user_id: SelectUserPackage['user_id']
-  ): PromiseResult<FindAllUserPackageActiveByUserId[], Error>;
+  ): PromiseResult<
+    SelectUserPackage__Package__ClassType__PackageTransaction[],
+    Error
+  >;
   findUserPackageExpiringByUserId(
     user_id: SelectUserPackage['user_id'],
     class_type: SelectClassType['id']
-  ): PromiseResult<FindAllUserPackageActiveByUserId | undefined, Error>;
+  ): PromiseResult<
+    SelectUserPackage__Package__ClassType__PackageTransaction | undefined,
+    Error
+  >;
 
   findAllPackageTransaction(
     data: FindAllUserPackageTransactionOption
   ): PromiseResult<
-    SelectPackageTransactionPagination<SelectPackageTransaction__Package__User__DepositAccount>,
+    DefaultReturn<SelectPackageTransaction__Package__User__DepositAccount>,
     Error
   >;
   findAllPackageTransactionByUserId(
     data: FindAllUserPackageTransactionByUserIdOption
   ): PromiseResult<
-    SelectPackageTransactionPagination<SelectPackageTransaction__Package__UserPackage>,
+    DefaultReturn<SelectPackageTransaction__Package__UserPackage>,
     Error
   >;
   findPackageTransactionById(

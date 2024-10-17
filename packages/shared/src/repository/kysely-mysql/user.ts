@@ -70,7 +70,9 @@ export class KyselyMySqlUserRepository implements UserRepository {
     const userWithCredits: SelectUserWithCredits[] = [];
     for (const user of queryData) {
       const activePackages =
-        await this._packageRepository.findAllUserPackageActiveByUserId(user.id);
+        await this._packageRepository.SelectUserPackage__Package__ClassType__PackageTransaction(
+          user.id
+        );
 
       const groupedPackages = activePackages.reduce(
         (acc, pkg) => {

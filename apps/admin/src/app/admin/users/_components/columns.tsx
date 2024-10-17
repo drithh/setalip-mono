@@ -26,6 +26,7 @@ import DeleteCreditForm from '../delete-credit.form';
 import { format } from 'date-fns';
 import CreateLoyaltyForm from '../create-loyalty.form';
 import DeleteLoyaltyForm from '../delete-loyalty.form';
+import Link from 'next/link';
 
 interface getColumnsProps {
   locations: SelectLocation[];
@@ -129,19 +130,21 @@ export function getColumns({
     {
       id: 'actions',
       cell: function Cell({ row }) {
-        const [showEditUserSheet, setShowEditUserSheet] = React.useState(false);
-        const [showCreateCreditSheet, setShowCreateCreditSheet] =
-          React.useState(false);
-        const [showDeleteCreditSheet, setShowDeleteCreditSheet] =
-          React.useState(false);
-        const [showCreateLoyaltySheet, setShowCreateLoyaltySheet] =
-          React.useState(false);
-        const [showDeleteLoyaltySheet, setShowDeleteLoyaltySheet] =
-          React.useState(false);
+        // const [showEditUserSheet, setShowEditUserSheet] = React.useState(false);
+        // const [showCreateCreditSheet, setShowCreateCreditSheet] =
+        //   React.useState(false);
+        // const [showDeleteCreditSheet, setShowDeleteCreditSheet] =
+        //   React.useState(false);
+        // const [showCreateLoyaltySheet, setShowCreateLoyaltySheet] =
+        //   React.useState(false);
+        // const [showDeleteLoyaltySheet, setShowDeleteLoyaltySheet] =
+        //   React.useState(false);
 
         return (
-          <>
-            <EditUserForm
+          <Button>
+            <Link href={`/admin/users/${row.original.id}`}>
+              Manage
+              {/* <EditUserForm
               locations={locations}
               open={showEditUserSheet}
               onOpenChange={setShowEditUserSheet}
@@ -206,8 +209,9 @@ export function getColumns({
                   Reduce Loyalty
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
-          </>
+            </DropdownMenu> */}
+            </Link>
+          </Button>
         );
       },
     },
