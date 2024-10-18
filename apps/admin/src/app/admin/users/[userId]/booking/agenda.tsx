@@ -19,6 +19,9 @@ import { api } from '@/trpc/react';
 import { getColumns } from './columns';
 import { SelectAgenda__Coach__Class__Location__AgendaBooking } from '@repo/shared/service';
 import { userSchema } from '../form-schema';
+import { Button } from '@repo/ui/components/ui/button';
+import { cn } from '@repo/ui/lib/utils';
+import { toast } from 'sonner';
 // import CreateAgendaForm from './create-agenda.form';
 
 interface AgendaTableProps {
@@ -54,12 +57,12 @@ export default function AgendaTable({
 
   const columns = React.useMemo(() => getColumns(), []);
 
-  const onDateChange = (date: Date) => {
-    // search params
+  const tab = search.tab ?? 'upcoming';
+
+  const tabs = ['upcoming', 'past'];
+  const onTabClick = (tab: string) => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
-    // remove timzone in date
-    const stringDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate()}`;
-    newSearchParams.set('date', stringDate);
+    newSearchParams.set('tab', tab);
     router.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
@@ -115,6 +118,35 @@ export default function AgendaTable({
 
   return (
     <DataTable table={table}>
+      <div className="flex justify-between">
+        <div className="grid grid-cols-2 gap-4 rounded-lg  bg-primary/30 p-2 sm:max-w-fit">
+          {tabs.map((singleTab) => (
+            <Button
+              variant={'ghost'}
+              key={singleTab}
+              className={cn(
+                'rounded-lg px-4 py-2 capitalize hover:bg-primary/70 hover:text-primary-foreground/70 ',
+                singleTab == tab &&
+                  'bg-primary hover:bg-primary/90 hover:text-primary-foreground',
+              )}
+              onClick={() => onTabClick(singleTab)}
+            >
+              <p className="capitalize">{singleTab}</p>
+            </Button>
+          ))}
+        </div>
+
+        <Button
+          onClick={() => {
+            router.push(`/admin/agendas`);
+            toast.warning('Create user booking must be done from agenda', {
+              description: 'Choose manage participant to create booking',
+            });
+          }}
+        >
+          Create Booking
+        </Button>
+      </div>
       <DataTableToolbar
         table={table}
         filterFields={filterFields}

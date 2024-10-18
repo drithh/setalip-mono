@@ -263,6 +263,7 @@ export class AgendaServiceImpl implements AgendaService {
       classTypes,
       coaches,
       locations,
+      tabType,
     } = data;
 
     const offset = (page - 1) * perPage;
@@ -284,6 +285,12 @@ export class AgendaServiceImpl implements AgendaService {
 
     customFilters.push(eb('agenda_bookings.user_id', '=', userId));
     customFilters.push(eb('agendas.deleted_at', 'is', null));
+
+    if (tabType === 'upcoming') {
+      customFilters.push(eb('agendas.time', '>=', new Date()));
+    } else {
+      customFilters.push(eb('agendas.time', '<', new Date()));
+    }
 
     if (classTypes?.length && classTypes.length > 0) {
       customFilters.push(eb('class_types.id', 'in', classTypes));

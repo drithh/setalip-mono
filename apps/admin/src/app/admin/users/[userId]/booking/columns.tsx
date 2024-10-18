@@ -166,13 +166,11 @@ export function getColumns(): ColumnDef<SelectAgenda__Coach__Class__Location__Ag
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
                 {/* <DropdownMenuSeparator /> */}
-                {!isWithin24Hours && (
-                  <DropdownMenuItem
-                    onSelect={() => setShowDeleteTaskDialog(true)}
-                  >
-                    Cancel booking
-                  </DropdownMenuItem>
-                )}
+                <DropdownMenuItem
+                  onSelect={() => setShowDeleteTaskDialog(true)}
+                >
+                  Cancel booking
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </>

@@ -219,6 +219,7 @@ export const agendaRouter = {
         coaches: coaches,
         classTypes: classTypes,
         userId: user.id,
+        tabType: input.tab,
       });
 
       return agendas;
@@ -251,6 +252,7 @@ export const agendaRouter = {
         coaches: coaches,
         classTypes: classTypes,
         userId: input.user_id,
+        tabType: input.tab,
       });
 
       return agendas;

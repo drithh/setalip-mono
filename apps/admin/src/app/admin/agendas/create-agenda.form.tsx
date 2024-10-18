@@ -100,8 +100,8 @@ export default function CreateAgendaForm({
   );
 
   useEffect(() => {
-    toast.dismiss();
     if (formState.status === 'field-errors') {
+      toast.dismiss();
       for (const fieldName in formState.errors) {
         if (Object.prototype.hasOwnProperty.call(formState.errors, fieldName)) {
           const typedFieldName = fieldName as keyof FormSchema;
@@ -112,6 +112,7 @@ export default function CreateAgendaForm({
         }
       }
     } else if (formState.status === 'error') {
+      toast.dismiss();
       toast.error(TOAST_MESSAGES.error.title, {
         description: formState.errors,
       });
@@ -121,6 +122,7 @@ export default function CreateAgendaForm({
     }
 
     if (formState.status === 'success') {
+      toast.dismiss();
       toast.success(TOAST_MESSAGES.success.title);
       form.reset();
       trpcUtils.invalidate();

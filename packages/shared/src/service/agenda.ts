@@ -36,6 +36,7 @@ export interface FindAllAgendaByCoachOptions extends DefaultPagination {
 }
 
 export interface FindAgendaByUserOptions extends DefaultPagination {
+  tabType: 'upcoming' | 'past';
   coaches?: SelectCoach['id'][];
   locations: SelectLocation['id'][];
   classTypes?: SelectClassType['id'][];

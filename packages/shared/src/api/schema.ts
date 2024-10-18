@@ -155,6 +155,7 @@ export const findAllScheduleSchema = defaultPaginationSchema.extend({
 });
 
 export const findAllUserAgendaSchema = defaultPaginationSchema.extend({
+  tab: z.enum(['upcoming', 'past']).default('upcoming'),
   class_type_name: z.string().optional(),
   coach_name: z.string().optional(),
   location_name: z.string().optional(),
