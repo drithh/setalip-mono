@@ -14,6 +14,8 @@ import { api } from '@/trpc/react';
 
 import { getColumns } from './columns';
 import { SelectPackageTransaction__Package__UserPackage } from '@repo/shared/service';
+import { Button } from '@repo/ui/components/ui/button';
+import { cn } from '@repo/ui/lib/utils';
 // import CreatePackageTransactionForm from './create-packageTransaction.form';
 
 interface PackageTransactionTableProps {
@@ -33,26 +35,24 @@ export default function PackageTransactionTable({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const columns = React.useMemo(() => getColumns(), []);
+  const status = search.status ?? 'pending';
+  const statuses = ['completed', 'pending', 'failed', 'expired'];
+  const columns = React.useMemo(
+    () =>
+      getColumns({
+        isPending: search.status === 'pending',
+      }),
+    [search.status],
+  );
 
-  const statues = [
-    'completed',
-    'pending',
-    'failed',
-  ] satisfies SelectPackageTransaction__Package__UserPackage['status'][];
+  const onTabClick = (tab: string) => {
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set('status', tab);
+    router.push(`${pathname}?${newSearchParams.toString()}`);
+  };
 
   const filterFields: DataTableFilterField<SelectPackageTransaction__Package__UserPackage>[] =
-    [
-      {
-        label: 'Status',
-        value: 'status',
-        options: statues.map((status) => ({
-          label: status,
-          value: status,
-          withCount: true,
-        })),
-      },
-    ];
+    [];
 
   const { table } = useDataTable({
     data: result?.data ?? [],
@@ -70,6 +70,24 @@ export default function PackageTransactionTable({
 
   return (
     <DataTable table={table}>
+      <div className="grid grid-cols-2 gap-4 rounded-lg bg-primary/30  p-2 sm:max-w-fit md:grid-cols-4">
+        {statuses.map((singleStatus) => (
+          <Button
+            variant={'ghost'}
+            key={singleStatus}
+            className={cn(
+              'rounded-lg px-4 py-2 capitalize hover:bg-primary/70 hover:text-primary-foreground/70 ',
+              singleStatus == status &&
+                'bg-primary hover:bg-primary/90 hover:text-primary-foreground',
+            )}
+            onClick={() => onTabClick(singleStatus)}
+          >
+            <p className="capitalize">
+              {singleStatus === 'completed' ? 'active' : singleStatus}
+            </p>
+          </Button>
+        ))}
+      </div>
       <DataTableToolbar
         table={table}
         filterFields={filterFields}

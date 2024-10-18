@@ -21,32 +21,32 @@ export const getMenus = (userId: number): Menu[] => {
   return [
     {
       icon: <User2 className="h-5 w-5" />,
-      label: 'Profile',
+      label: 'User Profile',
       path: `/admin/users/${userId}`,
     },
     {
       icon: <Trophy className="h-5 w-5" />,
-      label: 'Statistic',
+      label: 'User Statistic',
       path: `/admin/users/${userId}/statistic`,
     },
     {
       icon: <CalendarCheck className="h-5 w-5" />,
-      label: 'Booking',
+      label: 'User Agenda',
       path: `/admin/users/${userId}/booking`,
     },
     {
       icon: <CreditCard className="h-5 w-5" />,
-      label: 'Credit',
+      label: 'User Credit',
       path: `/admin/users/${userId}/credit`,
     },
     {
       icon: <Receipt className="h-5 w-5" />,
-      label: 'Billing',
+      label: 'User Package',
       path: `/admin/users/${userId}/package`,
     },
     {
       icon: <Sparkles className="h-5 w-5" />,
-      label: 'Loyalty',
+      label: 'User Loyalty',
       path: `/admin/users/${userId}/loyalty`,
     },
   ];

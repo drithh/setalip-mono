@@ -117,7 +117,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
     if (data?.withCreditTransaction) {
       baseQuery = baseQuery
-        .innerJoin(
+        .leftJoin(
           'credit_transactions',
           'user_packages.id',
           'credit_transactions.user_package_id'
@@ -127,7 +127,11 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
             'credit_used'
           )
         )
-        .groupBy('user_packages.id');
+        .groupBy('user_packages.id') as SelectQueryBuilder<
+        DB,
+        'user_packages' | 'credit_transactions',
+        {}
+      >;
     }
 
     return baseQuery;
@@ -167,7 +171,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     return packages;
   }
 
-  baseUserPackageTransaction(data?: SelectPackageTransactionQuery) {
+  basePackageTransaction(data?: SelectPackageTransactionQuery) {
     let baseQuery = this._db
       .selectFrom('package_transactions')
       .$if(data?.withPackage ?? false, (qb) =>
@@ -200,10 +204,19 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
             'package_transactions.user_package_id',
             'user_packages.id'
           )
+          .leftJoin(
+            'credit_transactions',
+            'user_packages.id',
+            'credit_transactions.user_package_id'
+          )
           .select([
             'user_packages.expired_at as user_package_expired_at',
             'user_packages.credit as user_package_credit',
+            sql<number>`COALESCE(COUNT(credit_transactions.id), 0)`.as(
+              'user_package_credit_used'
+            ),
           ])
+          .groupBy('user_packages.id')
       );
 
     baseQuery = baseQuery.where(
@@ -216,7 +229,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
   async findPackageTransaction<T extends SelectPackageTransaction>(
     data?: SelectPackageTransactionQuery
   ) {
-    let baseQuery = this.baseUserPackageTransaction(data);
+    let baseQuery = this.basePackageTransaction(data);
     baseQuery = applyModifiers(baseQuery, data);
     const result = await baseQuery.selectAll('package_transactions').execute();
     return result as T[];
@@ -225,7 +238,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
   async findPackageTransactionWithPagination<
     T extends SelectPackageTransaction,
   >(data?: SelectPackageTransactionQuery) {
-    let baseQuery = this.baseUserPackageTransaction(data);
+    let baseQuery = this.basePackageTransaction(data);
 
     const queryCount = await baseQuery
       .select(({ fn }) => [

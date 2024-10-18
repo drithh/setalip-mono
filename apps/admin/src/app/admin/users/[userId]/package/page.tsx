@@ -31,7 +31,7 @@ export default async function Package({
 
   return (
     <div className="w-full p-2 md:p-6">
-      <h1 className="text-3xl font-bold">Billing</h1>
+      <h1 className="text-3xl font-bold">Package</h1>
       <div className="mx-auto flex min-h-screen w-full max-w-[95vw] flex-col gap-24 md:max-w-screen-xl">
         <PackageTransactionTable search={search} params={parsedParams} />
       </div>

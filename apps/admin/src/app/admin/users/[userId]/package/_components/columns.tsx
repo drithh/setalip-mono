@@ -8,8 +8,24 @@ import { format } from 'date-fns';
 import * as React from 'react';
 import EditPackageTransactionForm from '../edit-package-transaction.form';
 import { SelectPackageTransaction__Package__UserPackage } from '@repo/shared/service';
+import EditUserPackageForm from '../edit-user-package.form';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
+import { Button } from '@repo/ui/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@repo/ui/components/ui/dropdown-menu';
 
-export function getColumns(): ColumnDef<SelectPackageTransaction__Package__UserPackage>[] {
+interface getColumnsProps {
+  isPending: boolean;
+}
+
+export function getColumns(
+  props: getColumnsProps,
+): ColumnDef<SelectPackageTransaction__Package__UserPackage>[] {
   return [
     {
       accessorKey: 'package_name',
@@ -77,12 +93,61 @@ export function getColumns(): ColumnDef<SelectPackageTransaction__Package__UserP
                   'MMM dd - HH:mm',
                 )}
               </p>
-            ) : row.original.status === 'pending' ? (
-              <EditPackageTransactionForm data={row.original} />
             ) : (
               '-'
             )}
           </div>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      cell: function Cell({ row }) {
+        const [showEditUserPackage, setShowEditUserPackage] =
+          React.useState(false);
+        const [showEditPackageTransaction, setShowEditPackageTransaction] =
+          React.useState(false);
+        return (
+          <>
+            {showEditPackageTransaction && (
+              <EditPackageTransactionForm
+                data={row.original}
+                open={showEditPackageTransaction}
+                onOpenChange={setShowEditPackageTransaction}
+              />
+            )}
+            {showEditUserPackage && (
+              <EditUserPackageForm
+                data={row.original}
+                open={showEditUserPackage}
+                onOpenChange={setShowEditUserPackage}
+              />
+            )}
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  aria-label="Open menu"
+                  variant="ghost"
+                  className="flex size-8 p-0 data-[state=open]:bg-muted"
+                >
+                  <DotsHorizontalIcon className="size-4" aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                {/* <DropdownMenuItem
+                  onSelect={() => {
+                    setShowEditPackageTransaction(true);
+                  }}
+                >
+                  Edit Transaction
+                </DropdownMenuItem> */}
+                <DropdownMenuItem onSelect={() => setShowEditUserPackage(true)}>
+                  Edit User Package
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
         );
       },
     },

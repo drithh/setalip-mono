@@ -9,7 +9,13 @@ import * as React from 'react';
 import EditPackageTransactionForm from '../edit-package-transaction.form';
 import { SelectPackageTransaction__Package__UserPackage } from '@repo/shared/service';
 
-export function getColumns(): ColumnDef<SelectPackageTransaction__Package__UserPackage>[] {
+interface PackageTransactionTableProps {
+  isPending: boolean;
+}
+
+export function getColumns(
+  props: PackageTransactionTableProps,
+): ColumnDef<SelectPackageTransaction__Package__UserPackage>[] {
   return [
     {
       accessorKey: 'package_name',
@@ -61,14 +67,14 @@ export function getColumns(): ColumnDef<SelectPackageTransaction__Package__UserP
         <DataTableColumnHeader
           className=""
           column={column}
-          title="Tanggal Expired"
+          title={props.isPending ? 'Aksi' : 'Tanggal Expired'}
         />
       ),
       cell: ({ row }) => {
         return (
           <div className="flex ">
             <span className="inline-block font-semibold sm:hidden">
-              Tanggal Expired:&ensp;
+              {props.isPending ? 'Aksi' : 'Tanggal Expired'}:&ensp;
             </span>
             {row.original.user_package_expired_at ? (
               <p className="font-semibold">

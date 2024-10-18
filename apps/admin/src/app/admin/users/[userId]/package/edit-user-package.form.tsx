@@ -18,6 +18,8 @@ import {
 import {
   EditPackageTransactionSchema,
   editPackageTransactionSchema,
+  editUserPackageSchema,
+  EditUserPackageSchema,
 } from './form-schema';
 import FileCard from '@/components/file-card';
 import { toast } from 'sonner';
@@ -34,10 +36,12 @@ import {
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
 import { SelectPackageTransaction__Package__UserPackage } from '@repo/shared/service';
+import { editUserPackage } from './_actions/edit-user-package';
+import { DatetimePicker } from '@repo/ui/components/datetime-picker';
 
 type FileWithPreview = File & { preview: string };
 
-interface EditPackageTransactionProps {
+interface EditUserPackageProps {
   data: SelectPackageTransaction__Package__UserPackage;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -45,38 +49,38 @@ interface EditPackageTransactionProps {
 
 const TOAST_MESSAGES = {
   error: {
-    title: 'Gagal upload bukti',
+    title: 'Gagal update package user',
   },
   loading: {
-    title: 'Upload bukti...',
+    title: 'Update package user...',
     description: 'Mohon tunggu',
   },
   success: {
-    title: 'Bukti berhasil diupload',
+    title: 'Package user berhasil diupdate',
   },
 };
 
-export default function EditPackageTransactionForm({
+export default function EditUserPackageForm({
   data,
   open,
   onOpenChange,
-}: EditPackageTransactionProps) {
+}: EditUserPackageProps) {
   const router = useRouter();
-  const [imageRemoved, setImageRemoved] = useState(false);
 
-  const [formState, formAction] = useFormState(editPackageTransaction, {
+  const [formState, formAction] = useFormState(editUserPackage, {
     status: 'default',
     form: {
-      id: data.id,
-      file: null,
-      image_url: data.image_url ? data.image_url : undefined,
+      id: data.user_package_id ?? 0,
+      credit: data.user_package_credit - data.user_package_credit_used,
+      expired_at: data.user_package_expired_at,
+      credit_used: data.user_package_credit_used,
     },
   });
 
-  type FormSchema = EditPackageTransactionSchema;
+  type FormSchema = EditUserPackageSchema;
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(editPackageTransactionSchema),
+    resolver: zodResolver(editUserPackageSchema),
     defaultValues: formState.form,
   });
 
@@ -114,25 +118,10 @@ export default function EditPackageTransactionForm({
       toast.loading(TOAST_MESSAGES.loading.title, {
         description: TOAST_MESSAGES.loading.description,
       });
+
       formAction(new FormData(formRef.current!));
     })(event);
   };
-
-  function handleOnDrop(acceptedFiles: FileList | null) {
-    if (!acceptedFiles || acceptedFiles.length === 0) {
-      form.setError('file', { message: 'File tidak valid' });
-      return;
-    }
-    const file = acceptedFiles[0];
-
-    if (!file) {
-      form.setError('file', { message: 'File tidak valid' });
-      return;
-    }
-
-    form.setValue('file', file);
-    form.clearErrors('file');
-  }
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -140,10 +129,9 @@ export default function EditPackageTransactionForm({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle className="text-left">Upload Bukti Bayar</SheetTitle>
+          <SheetTitle className="text-left">Edit User Package</SheetTitle>
           <SheetDescription className="text-left">
-            Upload bukti bayar untuk transaksi ini, pastikan bukti bayar yang
-            diupload valid.
+            Edit user package untuk kredit dan waktu expired
           </SheetDescription>
         </SheetHeader>
         <div className="grid gap-4 py-4">
@@ -158,74 +146,68 @@ export default function EditPackageTransactionForm({
                 control={form.control}
                 name="id"
                 render={({ field }) => (
-                  <Input type="hidden" {...field} value={data.id} />
+                  <Input
+                    type="hidden"
+                    {...field}
+                    value={data.user_package_id ?? 0}
+                  />
                 )}
               />
 
-              {data.image_url && !imageRemoved && (
-                <Input
-                  type="hidden"
-                  {...form.register('image_url')}
-                  value={data.image_url ?? undefined}
-                />
-              )}
+              <FormField
+                control={form.control}
+                name="credit_used"
+                render={({ field }) => (
+                  <Input
+                    type="hidden"
+                    {...field}
+                    value={data.user_package_credit_used}
+                  />
+                )}
+              />
 
               <FormField
                 control={form.control}
-                name="file"
+                name="credit"
                 render={({ field }) => (
-                  <FormItem className="w-full">
+                  <FormItem className="grid w-full gap-2">
+                    <FormLabel>Sisa Kredit</FormLabel>
                     <FormControl>
                       <>
-                        <FormLabel>Foto</FormLabel>
-                        {field.value && field.value.size !== 0 ? (
-                          <PhotoProvider>
-                            <div className="grid h-40 w-full gap-2">
-                              <FileCard
-                                file={{
-                                  ...field.value,
-                                  preview: URL.createObjectURL(field.value),
-                                }}
-                                onDelete={() => {
-                                  form.setValue('file', null);
-                                }}
-                              />
-                            </div>
-                          </PhotoProvider>
-                        ) : (
-                          data.image_url &&
-                          !imageRemoved && (
-                            <PhotoProvider>
-                              <div className="grid h-40 w-full gap-2">
-                                <FileCard
-                                  file={
-                                    {
-                                      preview: data.image_url,
-                                      name: data.image_url,
-                                    } as FileWithPreview
-                                  }
-                                  onDelete={() => {
-                                    setImageRemoved(true);
-                                  }}
-                                />
-                              </div>
-                            </PhotoProvider>
-                          )
-                        )}
-                        <div className="space-y-6">
-                          <Dropzone
-                            {...field}
-                            accept="image/*"
-                            dropMessage="Tarik dan lepas file di sini atau klik untuk memilih file"
-                            handleOnDrop={handleOnDrop}
-                          />
-                        </div>
+                        <Input type="number" {...field} />
                       </>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="expired_at"
+                render={({ field }) => (
+                  <FormItem className="grid w-full gap-2">
+                    <FormLabel>Waktu Expired</FormLabel>
+                    <FormControl>
+                      <>
+                        <Input
+                          type="hidden"
+                          {...field}
+                          value={field.value.toString()}
+                        />
+                        <DatetimePicker
+                          value={field.value}
+                          onChange={(value) => {
+                            field.onChange(value);
+                          }}
+                        />
+                      </>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <Button type="submit" className="w-full">
                 Simpan
               </Button>

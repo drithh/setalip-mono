@@ -14,3 +14,13 @@ export type EditPackageTransactionSchema = z.infer<
 >;
 export type FormEditPackageTransaction =
   FormState<EditPackageTransactionSchema>;
+
+export const editUserPackageSchema = z.object({
+  id: z.coerce.number(),
+  expired_at: z.coerce.date(),
+  credit: z.coerce.number(),
+  credit_used: z.coerce.number(),
+});
+
+export type EditUserPackageSchema = z.infer<typeof editUserPackageSchema>;
+export type FormEditUserPackage = FormState<EditUserPackageSchema>;

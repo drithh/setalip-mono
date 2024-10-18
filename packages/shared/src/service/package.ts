@@ -60,8 +60,15 @@ export interface FindAllUserPackageTransactionOption extends DefaultPagination {
 
 export interface FindAllUserPackageTransactionByUserIdOption
   extends DefaultPagination {
-  status?: SelectPackageTransaction['status'][];
+  status?: SelectPackageTransaction['status'] | 'expired';
   user_id: SelectPackageTransaction['user_id'];
+}
+
+export interface UpdateUserPackageOption {
+  id: SelectUserPackage['id'];
+  credit: SelectUserPackage['credit'];
+  expired_at: SelectUserPackage['expired_at'];
+  credit_used: SelectUserPackage['credit'];
 }
 
 export interface PackageTransactionWithPackage {
@@ -80,6 +87,7 @@ export interface PackageTransactionWithDepositAccount {
 export interface PackageTransactionWithUserPackage {
   user_package_expired_at: SelectUserPackage['expired_at'];
   user_package_credit: SelectUserPackage['credit'];
+  user_package_credit_used: SelectUserPackage['credit'];
 }
 // export interface SelectPackageTransactionByUser extends SelectPackageTransaction {
 export interface SelectPackageTransaction__Package__UserPackage
@@ -174,6 +182,9 @@ export interface PackageService {
   ): PromiseResult<SelectPackageTransaction, Error>;
 
   update(data: UpdatePackage): PromiseResult<undefined, Error>;
+  updateUserPackage(
+    data: UpdateUserPackageOption
+  ): PromiseResult<undefined, Error>;
   updatePackageTransaction(
     data: UpdatePackageTransactionOption
   ): PromiseResult<undefined, Error>;

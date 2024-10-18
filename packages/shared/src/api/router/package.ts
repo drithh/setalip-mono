@@ -62,9 +62,7 @@ export const packageRouter = {
     .query(async ({ ctx, input }) => {
       const user_id = ctx.session.userId;
 
-      const statuses = input.status
-        ?.split('.')
-        .map((status) => status as PackageTransactions['status']);
+      const status = input.status as PackageTransactions['status'] | 'expired';
 
       const packageService = ctx.container.get<PackageService>(
         TYPES.PackageService
@@ -75,7 +73,7 @@ export const packageRouter = {
         perPage: input.per_page,
         sort: input.sort,
         user_id: user_id,
-        status: statuses,
+        status: status,
       });
 
       return packages;
@@ -83,9 +81,7 @@ export const packageRouter = {
   findAllPackageTransactionByUserId__Admin: adminProcedure
     .input(findAllPackageTransactionByUserIdSchema__Admin)
     .query(async ({ ctx, input }) => {
-      const statuses = input.status
-        ?.split('.')
-        .map((status) => status as PackageTransactions['status']);
+      const status = input.status as PackageTransactions['status'] | 'expired';
 
       const packageService = ctx.container.get<PackageService>(
         TYPES.PackageService
@@ -96,7 +92,7 @@ export const packageRouter = {
         perPage: input.per_page,
         sort: input.sort,
         user_id: input.user_id,
-        status: statuses,
+        status: status,
       });
 
       return packages;

@@ -13,6 +13,7 @@ import {
   SelectPackageTransaction__Package__UserPackage,
   UpdatePackageTransactionImage,
   UpdatePackageTransactionOption,
+  UpdateUserPackageOption,
 } from './package';
 import { NotificationType, type NotificationService } from '../notification';
 import { error } from 'console';
@@ -249,10 +250,18 @@ export class PackageServiceImpl implements PackageService {
     ).join(' ') as `${keyof SelectPackageTransaction} ${'asc' | 'desc'}`;
 
     const customFilters: Expression<SqlBool>[] = [];
-    const eb = expressionBuilder<DB, 'package_transactions' | 'users'>();
+    const eb = expressionBuilder<
+      DB,
+      'package_transactions' | 'users' | 'user_packages'
+    >();
     customFilters.push(eb('package_transactions.user_id', '=', user_id));
     if (status && status.length > 0) {
-      customFilters.push(eb('package_transactions.status', 'in', status));
+      if (status === 'expired') {
+        customFilters.push(eb('user_packages.expired_at', '<', new Date()));
+      } else {
+        customFilters.push(eb('package_transactions.status', '=', status));
+        customFilters.push(eb('user_packages.expired_at', '>=', new Date()));
+      }
     }
 
     const packages =
@@ -498,7 +507,33 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async update(data: UpdatePackage) {
-    const result = await this._packageRepository.update({ data });
+    const result = await this._packageRepository.update({
+      data,
+      filters: { id: data.id },
+    });
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result: result,
+    };
+  }
+
+  async updateUserPackage(data: UpdateUserPackageOption) {
+    const userPackage = {
+      id: data.id,
+      expired_at: data.expired_at,
+      credit: data.credit + data.credit_used,
+    };
+    const result = await this._packageRepository.updateUserPackage({
+      data: userPackage,
+      filters: { id: data.id },
+    });
 
     if (result instanceof Error) {
       return {
