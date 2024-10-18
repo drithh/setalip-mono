@@ -26,7 +26,13 @@ export default function PackageTransactionTable({
   search,
 }: PackageTransactionTableProps) {
   const [{ result, error }] =
-    api.package.findAllPackageTransactionByUserId.useSuspenseQuery(search, {});
+    api.package.findAllPackageTransactionByUserId.useSuspenseQuery(
+      {
+        ...search,
+        status: search.status ?? 'completed',
+      },
+      {},
+    );
   if (error) {
     throw new Error('Error fetching data', error);
   }
