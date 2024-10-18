@@ -16,6 +16,7 @@ import {
   SelectPackageTransactionPagination,
   SelectVoucher,
   InsertPackageCommand,
+  SelectAgenda,
 } from '../repository';
 import { PromiseResult } from '../types';
 import { DefaultReturn } from './agenda';
@@ -147,7 +148,8 @@ export interface PackageService {
   >;
   findUserPackageExpiringByUserId(
     user_id: SelectUserPackage['user_id'],
-    class_type: SelectClassType['id']
+    class_type: SelectClassType['id'],
+    minimalEXpired: SelectUserPackage['expired_at']
   ): PromiseResult<
     SelectUserPackage__Package__ClassType__PackageTransaction | undefined,
     Error

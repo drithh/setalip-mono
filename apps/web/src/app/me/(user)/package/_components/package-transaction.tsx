@@ -41,7 +41,7 @@ export default function PackageTransactionTable({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const status = search.status ?? 'pending';
+  const status = search.status ?? 'completed';
   const statuses = ['completed', 'pending', 'failed', 'expired'];
   const columns = React.useMemo(
     () =>

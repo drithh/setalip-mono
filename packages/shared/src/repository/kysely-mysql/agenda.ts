@@ -247,6 +247,7 @@ export class KyselyMySqlAgendaRepository implements AgendaRepository {
   async find<T extends SelectAgenda>(data?: SelectAgendaQuery) {
     let baseQuery = this.base(data);
     baseQuery = applyModifiers(baseQuery, data);
+
     const result = await baseQuery.selectAll('agendas').execute();
     return result as T[];
   }

@@ -478,37 +478,59 @@ export class AgendaServiceImpl implements AgendaService {
     >();
     const date = data.time ?? new Date();
 
-    const backfillProps: BackFillProps = {
-      date,
-      agendaFilter: [eb(`id`, '=', data.id ?? 0)],
-      agendaReccurenceFilter: [
-        eb('agenda_recurrences.id', '=', data.agendaRecurrenceId ?? 0),
-        eb('agenda_recurrences.start_date', '<=', date),
-        eb('agenda_recurrences.end_date', '>=', date),
-      ],
-      unionFilter: [eb('deleted_at', 'is', null), eb('is_show', '=', 1)],
-    };
+    if (data.id) {
+      const singleSchedule = (
+        await this._agendaRepository.find({
+          withClass: true,
+          withLocation: true,
+          withCoach: true,
+          withCountParticipant: true,
+          customFilters: [eb('agendas.id', '=', data.id)],
+        })
+      )?.[0];
 
-    const singleSchedule = (
-      await this._agendaRepository.find({
-        backfillProps,
-        withBackfillAgenda: true,
-        withClass: true,
-        withLocation: true,
-        withCoach: true,
-        withCountParticipant: true,
-      })
-    )?.[0];
+      if (!singleSchedule) {
+        return {
+          error: new Error('Schedule not found'),
+        };
+      }
 
-    if (!singleSchedule) {
       return {
-        error: new Error('Schedule not found'),
+        result: singleSchedule,
+      };
+    } else {
+      const backfillProps: BackFillProps = {
+        date,
+        agendaFilter: [eb(`id`, '=', data.id ?? 0)],
+        agendaReccurenceFilter: [
+          eb('agenda_recurrences.id', '=', data.agendaRecurrenceId ?? 0),
+          eb('agenda_recurrences.start_date', '<=', date),
+          eb('agenda_recurrences.end_date', '>=', date),
+        ],
+        unionFilter: [eb('deleted_at', 'is', null), eb('is_show', '=', 1)],
+      };
+
+      const singleSchedule = (
+        await this._agendaRepository.find({
+          backfillProps,
+          withBackfillAgenda: true,
+          withClass: true,
+          withLocation: true,
+          withCoach: true,
+          withCountParticipant: true,
+        })
+      )?.[0];
+
+      if (!singleSchedule) {
+        return {
+          error: new Error('Schedule not found'),
+        };
+      }
+
+      return {
+        result: singleSchedule,
       };
     }
-
-    return {
-      result: singleSchedule,
-    };
   }
 
   async findAllAgendaBookingByAgendaId(agenda_id: SelectAgenda['id']) {
@@ -974,7 +996,8 @@ export class AgendaServiceImpl implements AgendaService {
     const expiringCredit =
       await this._packageService.findUserPackageExpiringByUserId(
         user.id,
-        agendaClass.class_type_id
+        agendaClass.class_type_id,
+        agenda.time
       );
 
     if (expiringCredit.error) {
@@ -1121,7 +1144,8 @@ export class AgendaServiceImpl implements AgendaService {
     const expiringCredit =
       await this._packageService.findUserPackageExpiringByUserId(
         useUserCredit.id,
-        agendaClass.class_type_id
+        agendaClass.class_type_id,
+        agenda.time
       );
 
     if (expiringCredit.error) {

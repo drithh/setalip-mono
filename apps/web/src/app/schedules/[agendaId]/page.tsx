@@ -75,6 +75,7 @@ export default async function AgendaDetail({
   const singlePackage = await packageService.findUserPackageExpiringByUserId(
     auth.user.id,
     singleClass.result.class_type_id,
+    singleAgenda.result.time,
   );
 
   const textTime = `${format(singleAgenda.result.time, 'dd MMM yyyy')} at ${format(singleAgenda.result.time, 'HH:mm')} - ${format(

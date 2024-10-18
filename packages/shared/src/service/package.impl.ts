@@ -148,7 +148,6 @@ export class PackageServiceImpl implements PackageService {
    * ```typescript
    * const userId = 'some-user-id';
    * const result = await findAllUserPackageActiveByUserId(userId);
-   * console.log(result);
    * ```
    */
   async findAllUserPackageActiveByUserId(
@@ -179,7 +178,8 @@ export class PackageServiceImpl implements PackageService {
    */
   async findUserPackageExpiringByUserId(
     user_id: SelectUserPackage['user_id'],
-    class_type_id: SelectClassType['id']
+    class_type_id: SelectClassType['id'],
+    minimalEXpired: SelectUserPackage['expired_at']
   ) {
     const activePackages = await this.findAllUserPackageActiveByUserId(user_id);
 
@@ -190,7 +190,9 @@ export class PackageServiceImpl implements PackageService {
     }
 
     const singlePackage = activePackages.result.find(
-      (singlePackage) => singlePackage.class_type_id === class_type_id
+      (singlePackage) =>
+        singlePackage.class_type_id === class_type_id &&
+        singlePackage.expired_at > minimalEXpired
     );
 
     if (!singlePackage) {
@@ -256,11 +258,15 @@ export class PackageServiceImpl implements PackageService {
     >();
     customFilters.push(eb('package_transactions.user_id', '=', user_id));
     if (status && status.length > 0) {
-      if (status === 'expired') {
-        customFilters.push(eb('user_packages.expired_at', '<', new Date()));
-      } else {
-        customFilters.push(eb('package_transactions.status', '=', status));
-        customFilters.push(eb('user_packages.expired_at', '>=', new Date()));
+      switch (status) {
+        case 'expired':
+          customFilters.push(eb('user_packages.expired_at', '<', new Date()));
+          break;
+        case 'completed':
+          customFilters.push(eb('user_packages.expired_at', '>=', new Date()));
+        default:
+          customFilters.push(eb('package_transactions.status', '=', status));
+          break;
       }
     }
 
@@ -307,7 +313,7 @@ export class PackageServiceImpl implements PackageService {
   ) {
     const packageTransaction = (
       await this._packageRepository.findPackageTransaction({
-        filters: { user_id, package_id },
+        filters: { user_id, package_id, status: 'pending' },
         perPage: 1,
       })
     )?.[0];
@@ -663,6 +669,9 @@ export class PackageServiceImpl implements PackageService {
               dataWithDiscount.voucher_id ?? packageTransaction.voucher_id,
             amount_paid: reducedPrice,
           },
+          filters: {
+            id: data.id,
+          },
         });
 
       if (updatePackageTransaction instanceof Error) {
@@ -706,7 +715,17 @@ export class PackageServiceImpl implements PackageService {
             user_package_id: userPackage.id,
             amount_paid: reducedPrice,
           },
+          filters: {
+            id: data.id,
+          },
         });
+
+      if (updatePackageTransaction instanceof Error) {
+        return {
+          result: undefined,
+          error: updatePackageTransaction,
+        };
+      }
 
       // loyalty
       const loyalty = await this._loyaltyRepository.createOnReward({

@@ -199,7 +199,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
       )
       .$if(data?.withUserPackage ?? false, (qb) =>
         qb
-          .innerJoin(
+          .leftJoin(
             'user_packages',
             'package_transactions.user_package_id',
             'user_packages.id'
@@ -248,7 +248,6 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
     baseQuery = applyModifiers(baseQuery, data);
 
-    console.log('baseQuery adsadasdasdas', baseQuery.compile());
     const queryData = await baseQuery
       .selectAll('package_transactions')
       .execute();
@@ -405,15 +404,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
       const query = await db
         .updateTable('package_transactions')
-        .set({
-          id: data.id,
-          status: data.status,
-          deposit_account_id: data.deposit_account_id,
-          amount_paid: data.amount_paid,
-          voucher_discount: data.voucher_discount,
-          voucher_id: data.voucher_id,
-          user_package_id: data.user_package_id,
-        })
+        .set(data)
         .where(applyFilters(filters, customFilters))
         .executeTakeFirst();
 

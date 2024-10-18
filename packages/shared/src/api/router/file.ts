@@ -80,6 +80,8 @@ export const fileRouter = {
             for (let i = 0; i < 2; i++) {
               currentPath = path.dirname(currentPath);
             }
+            // go to uploads
+            currentPath = path.join(currentPath, 'uploads');
           }
 
           const fullPath = path.join(currentPath, input.folder, filename);
