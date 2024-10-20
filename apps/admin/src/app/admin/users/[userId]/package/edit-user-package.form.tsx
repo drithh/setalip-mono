@@ -38,6 +38,7 @@ import {
 import { SelectPackageTransaction__Package__UserPackage } from '@repo/shared/service';
 import { editUserPackage } from './_actions/edit-user-package';
 import { DatetimePicker } from '@repo/ui/components/datetime-picker';
+import { api } from '@/trpc/react';
 
 type FileWithPreview = File & { preview: string };
 
@@ -65,6 +66,7 @@ export default function EditUserPackageForm({
   open,
   onOpenChange,
 }: EditUserPackageProps) {
+  const trpcUtils = api.useUtils();
   const router = useRouter();
 
   const [formState, formAction] = useFormState(editUserPackage, {
@@ -107,6 +109,7 @@ export default function EditUserPackageForm({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
+      trpcUtils.invalidate();
       onOpenChange(false);
       router.refresh();
     }

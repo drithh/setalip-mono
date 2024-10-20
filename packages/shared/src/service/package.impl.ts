@@ -45,7 +45,7 @@ import type {
   UpdatePackageTransaction,
   InsertPackageCommand,
 } from '../repository';
-import { addDays } from 'date-fns';
+import { addDays, isAfter } from 'date-fns';
 import { up } from '../../scripts/migrations/001-migrate';
 
 interface FindAllPackageTransaction extends SelectPackageTransaction {
@@ -179,10 +179,9 @@ export class PackageServiceImpl implements PackageService {
   async findUserPackageExpiringByUserId(
     user_id: SelectUserPackage['user_id'],
     class_type_id: SelectClassType['id'],
-    minimalEXpired: SelectUserPackage['expired_at']
+    minimalExpired: SelectUserPackage['expired_at']
   ) {
     const activePackages = await this.findAllUserPackageActiveByUserId(user_id);
-
     if (activePackages.error || !activePackages.result) {
       return {
         error: activePackages.error,
@@ -192,7 +191,7 @@ export class PackageServiceImpl implements PackageService {
     const singlePackage = activePackages.result.find(
       (singlePackage) =>
         singlePackage.class_type_id === class_type_id &&
-        singlePackage.expired_at > minimalEXpired
+        isAfter(singlePackage.expired_at, minimalExpired)
     );
 
     if (!singlePackage) {
@@ -287,9 +286,10 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async findPackageTransactionById(id: SelectPackageTransaction['id']) {
+    const eb = expressionBuilder<DB, 'package_transactions'>();
     const packageTransaction = (
       await this._packageRepository.findPackageTransaction({
-        filters: { id },
+        customFilters: [eb('package_transactions.id', '=', id)],
         perPage: 1,
         withPackage: true,
         withUserPackage: true,
@@ -654,11 +654,17 @@ export class PackageServiceImpl implements PackageService {
       dataWithDiscount.voucher_id = packageTransaction.voucher_id;
     }
 
+    // remove voucher_code from dataWithDiscount
+    // @ts-ignore
+    delete dataWithDiscount.voucher_code;
+
     if (dataWithDiscount.status !== 'completed') {
       const updatePackageTransaction =
         await this._packageRepository.updatePackageTransaction({
           data: {
             ...dataWithDiscount,
+            status: dataWithDiscount.status,
+
             deposit_account_id:
               dataWithDiscount.deposit_account_id ??
               packageTransaction.deposit_account_id,

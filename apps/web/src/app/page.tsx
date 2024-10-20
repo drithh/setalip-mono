@@ -229,10 +229,10 @@ export default async function Home() {
                   key={location.id}
                   className="flex h-full  w-full max-w-80 flex-col overflow-hidden rounded-xl border border-secondary sm:w-full"
                 >
-                  <div className=" relative h-56 bg-transparent p-0 md:h-56">
+                  <div className="relative h-56 w-80  bg-transparent p-0">
                     <Image
+                      className="h-full w-full object-cover"
                       fill
-                      className="absolute object-cover"
                       alt={location.asset_name ?? ''}
                       src={location.asset_url ?? ''}
                     />
