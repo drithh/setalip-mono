@@ -108,7 +108,7 @@ export default function CreateTransaction({
 
     if (formState.status === 'success') {
       toast.success(TOAST_MESSAGES.success.title);
-      router.push('/me/package');
+      router.push('/me/package?status=pending');
     }
   }, [formState]);
 

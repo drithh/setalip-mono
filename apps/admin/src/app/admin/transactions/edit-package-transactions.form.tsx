@@ -155,7 +155,7 @@ export default function EditPackageTransactionForm({
                 action={formAction}
                 onSubmit={onFormSubmit}
               >
-                <div className="flex flex-col gap-4">
+                {/* <div className="flex flex-col gap-4">
                   <Label>Bukti Transfer</Label>
                   <div className="group relative h-40 cursor-pointer overflow-hidden">
                     {singlePackageTransaction.image_url && (
@@ -171,7 +171,7 @@ export default function EditPackageTransactionForm({
                       </PhotoProvider>
                     )}
                   </div>
-                </div>
+                </div> */}
 
                 <FormField
                   control={form.control}

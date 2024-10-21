@@ -1,7 +1,5 @@
 'use client';
-import {
-  SelectAllDepositAccount,
-} from '@repo/shared/repository';
+import { SelectAllDepositAccount } from '@repo/shared/repository';
 import { moneyFormatter } from '@repo/shared/util';
 import {
   AlertDialog,
@@ -14,6 +12,7 @@ import {
 } from '@repo/ui/components/ui/alert-dialog';
 import { Button } from '@repo/ui/components/ui/button';
 import { Checkbox } from '@repo/ui/components/ui/checkbox';
+import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 // import { useCreateMutation } from './_actions/create-transactions';
@@ -90,8 +89,18 @@ export default function CreateTransactionDialog({
               <p className="font-semibold">{data.name}</p>
             </div>
           </div>
-          Setelah melakukan pembayaran, namun belum mendapatkan konfirmasi,
-          silahkan hubungi admin
+          <div>
+            <span>
+              Setelah melakukan pembayaran, mohon untuk mengirimkan bukti
+              pembayaran ke nomor whatsapp kami{}
+            </span>
+            <Link href="https://api.whatsapp.com/send/?phone=6281511673808">
+              <Button variant={'link'} className="px-1">
+                0815-1167-3808
+              </Button>
+            </Link>
+          </div>
+
           <div className="flex place-items-start gap-2">
             <Checkbox
               className="mt-1"

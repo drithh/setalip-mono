@@ -8,6 +8,8 @@ import { format } from 'date-fns';
 import * as React from 'react';
 import EditPackageTransactionForm from '../edit-package-transaction.form';
 import { SelectPackageTransaction__Package__UserPackage } from '@repo/shared/service';
+import Link from 'next/link';
+import { Button } from '@repo/ui/components/ui/button';
 
 interface PackageTransactionTableProps {
   isPending: boolean;
@@ -84,7 +86,9 @@ export function getColumns(
                 )}
               </p>
             ) : row.original.status === 'pending' ? (
-              <EditPackageTransactionForm data={row.original} />
+              <Link href={'https://api.whatsapp.com/send/?phone=6281511673808'}>
+                <Button variant={'outline'}>Bukti Bayar</Button>
+              </Link>
             ) : (
               '-'
             )}
