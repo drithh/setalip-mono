@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createLoyalty } from './_actions/create-loyalty';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -63,7 +62,7 @@ export default function CreateLoyaltyForm({
   const trpcUtils = api.useUtils();
   type FormSchema = CreateLoyaltySchema;
 
-  const [formState, formAction] = useFormState(createLoyalty, {
+  const [formState, formAction] = useActionState(createLoyalty, {
     status: 'default',
     form: {
       amount: 0,

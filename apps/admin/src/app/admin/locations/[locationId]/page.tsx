@@ -25,11 +25,12 @@ import EditOperationalHourForm from './edit-operational-hour.form';
 import DeleteLocation from './delete-location.dialog';
 import { BackButton } from '@repo/ui/components/back-button';
 
-export default async function LocationDetail({
-  params,
-}: {
-  params: { locationId: string };
-}) {
+export default async function LocationDetail(
+  props: {
+    params: Promise<{ locationId: string }>;
+  }
+) {
+  const params = await props.params;
   const auth = await validateAdmin();
 
   const locationService = container.get<LocationService>(TYPES.LocationService);

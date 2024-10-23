@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import ResetPasswordForm from './reset-password.form';
 
-export default function ResetPassword({
-  params,
-}: {
-  params: { token: string };
-}) {
+export default async function ResetPassword(
+  props: {
+    params: Promise<{ token: string }>;
+  }
+) {
+  const params = await props.params;
   return (
     <div className="mx-auto grid w-[350px] gap-6 py-8">
       <div className="grid gap-2 text-center">

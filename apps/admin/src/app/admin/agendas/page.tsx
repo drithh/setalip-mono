@@ -13,10 +13,11 @@ import QueryResetBoundary from '../../../lib/query-reset-boundary';
 import AgendaTable from './_components/agenda-table';
 
 export interface IndexPageProps {
-  searchParams: FindAllAgendaOptions;
+  searchParams: Promise<FindAllAgendaOptions>;
 }
 
-export default async function Agendas({ searchParams }: IndexPageProps) {
+export default async function Agendas(props: IndexPageProps) {
+  const searchParams = await props.searchParams;
   const search = findAllAgendaSchema.parse(searchParams);
   const classService = container.get<ClassService>(TYPES.ClassService);
   const classes = await classService.findAll({});

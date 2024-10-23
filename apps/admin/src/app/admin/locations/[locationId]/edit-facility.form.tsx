@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editFacility } from './_actions/edit-facility';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -55,7 +54,7 @@ export default function EditFacilityForm({ facility }: EditFacilityProps) {
   const [openSheet, setOpenSheet] = useState(false);
   const [imageRemoved, setImageRemoved] = useState(false);
 
-  const [formState, formAction] = useFormState(editFacility, {
+  const [formState, formAction] = useActionState(editFacility, {
     status: 'default',
     form: {
       facilityId: facility.id,

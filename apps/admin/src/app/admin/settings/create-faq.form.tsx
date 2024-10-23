@@ -2,8 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { createFrequentlyAskedQuestion } from './_actions/create-faq';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -53,13 +52,16 @@ export default function CreateFrequentlyAskedQuestionForm({}: CreateFrequentlyAs
   const trpcUtils = api.useUtils();
   type FormSchema = CreateFrequentlyAskedQuestionSchema;
 
-  const [formState, formAction] = useFormState(createFrequentlyAskedQuestion, {
-    status: 'default',
-    form: {
-      question: '',
-      answer: '',
-    } as FormSchema,
-  });
+  const [formState, formAction] = useActionState(
+    createFrequentlyAskedQuestion,
+    {
+      status: 'default',
+      form: {
+        question: '',
+        answer: '',
+      } as FormSchema,
+    },
+  );
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(createFrequentlyAskedQuestionSchema),

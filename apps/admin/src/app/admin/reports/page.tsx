@@ -10,10 +10,11 @@ import React from 'react';
 import ExpenseCard from './_components/expense-card';
 
 export interface IndexPageProps {
-  searchParams: FindAllAgendaBookingByMonthAndLocation;
+  searchParams: Promise<FindAllAgendaBookingByMonthAndLocation>;
 }
 
-export default async function Reports({ searchParams }: IndexPageProps) {
+export default async function Reports(props: IndexPageProps) {
+  const searchParams = await props.searchParams;
   const search =
     findAllAgendaBookingByMonthAndLocationSchema.parse(searchParams);
 

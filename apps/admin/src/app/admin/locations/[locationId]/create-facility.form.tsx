@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createFacility } from './_actions/create-facility';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -58,7 +57,7 @@ export default function CreateFacilityForm({
   const router = useRouter();
   type FormSchema = CreateFacilitySchema;
 
-  const [formState, formAction] = useFormState(createFacility, {
+  const [formState, formAction] = useActionState(createFacility, {
     status: 'default',
     form: {
       locationId: locationId,

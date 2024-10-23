@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editLoyaltyReward } from './_actions/edit-loyalty-reward';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -21,9 +20,7 @@ import {
   editLoyaltyRewardSchema,
 } from './form-schema';
 import { toast } from 'sonner';
-import {
-  SelectLoyaltyReward,
-} from '@repo/shared/repository';
+import { SelectLoyaltyReward } from '@repo/shared/repository';
 import {
   Sheet,
   SheetContent,
@@ -31,7 +28,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
-
 
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
@@ -65,7 +61,7 @@ export default function EditLoyaltyRewardForm({
   const trpcUtils = api.useUtils();
   type FormSchema = EditLoyaltyRewardSchema;
 
-  const [formState, formAction] = useFormState(editLoyaltyReward, {
+  const [formState, formAction] = useActionState(editLoyaltyReward, {
     status: 'default',
     form: {
       id: data.id,

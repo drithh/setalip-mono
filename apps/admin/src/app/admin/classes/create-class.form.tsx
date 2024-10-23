@@ -2,8 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -60,7 +59,7 @@ export default function CreateClassForm({ classTypes }: CreateClassFormProps) {
 
   const [openSheet, setOpenSheet] = useState(false);
 
-  const [formState, formAction] = useFormState(createClass, {
+  const [formState, formAction] = useActionState(createClass, {
     status: 'default',
     form: {
       name: '',

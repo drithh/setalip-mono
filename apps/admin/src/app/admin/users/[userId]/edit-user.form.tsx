@@ -31,8 +31,7 @@ import {
 } from '@repo/ui/components/ui/sheet';
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
@@ -67,7 +66,7 @@ export default function EditUserForm({ user, locations }: EditUserProps) {
   const router = useRouter();
   type FormSchema = EditUserSchema;
 
-  const [formState, formAction] = useFormState(editUser, {
+  const [formState, formAction] = useActionState(editUser, {
     status: 'default',
     form: {
       ...user,

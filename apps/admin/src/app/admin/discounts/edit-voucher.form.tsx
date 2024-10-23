@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editVoucher } from './_actions/edit-voucher';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -83,7 +82,7 @@ export default function EditVoucherForm({
 
   const types = ['percentage', 'fixed'] satisfies SelectVoucher['type'][];
 
-  const [formState, formAction] = useFormState(editVoucher, {
+  const [formState, formAction] = useActionState(editVoucher, {
     status: 'default',
     form: {
       id: data.id,

@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createCredit } from './_actions/create-credit';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -68,7 +67,7 @@ export default function CreateCreditForm({
   const router = useRouter();
   type FormSchema = CreateCreditSchema;
 
-  const [formState, formAction] = useFormState(createCredit, {
+  const [formState, formAction] = useActionState(createCredit, {
     status: 'default',
     form: {
       amount: 0,

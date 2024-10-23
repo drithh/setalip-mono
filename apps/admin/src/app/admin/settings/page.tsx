@@ -17,10 +17,11 @@ import EditWebSettingForm from './edit-web-settings.form';
 import CarouselTable from './_components/carousel-table';
 import RichTextViewer from '@repo/ui/components/rich-text/viewer';
 interface IndexPageProps {
-  searchParams: Record<string, any>;
+  searchParams: Promise<Record<string, any>>;
 }
 
-export default async function Page({ searchParams }: IndexPageProps) {
+export default async function Page(props: IndexPageProps) {
+  const searchParams = await props.searchParams;
   const search = findAllDepositReviewFaqSchema.parse(searchParams);
 
   const webSettingService = container.get<WebSettingService>(

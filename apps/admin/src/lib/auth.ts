@@ -6,21 +6,21 @@ import { cache } from 'react';
 import { headers } from 'next/headers';
 
 export const logout = async () => {
-  const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
+  const sessionId = (await cookies()).get(lucia.sessionCookieName)?.value ?? null;
   if (!sessionId) return;
   await lucia.invalidateSession(sessionId);
   redirect('/login');
 };
 
 export const validateRequest = cache(async () => {
-  const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
+  const sessionId = (await cookies()).get(lucia.sessionCookieName)?.value ?? null;
   if (!sessionId) return null;
   const { user, session } = await lucia.validateSession(sessionId);
 
   try {
     if (session && session.fresh) {
       const sessionCookie = lucia.createSessionCookie(session.id);
-      cookies().set(
+      (await cookies()).set(
         sessionCookie.name,
         sessionCookie.value,
         sessionCookie.attributes,
@@ -28,7 +28,7 @@ export const validateRequest = cache(async () => {
     }
     if (!session) {
       const sessionCookie = lucia.createBlankSessionCookie();
-      cookies().set(
+      (await cookies()).set(
         sessionCookie.name,
         sessionCookie.value,
         sessionCookie.attributes,
@@ -52,7 +52,7 @@ export const validateUser = cache(async () => {
     redirect('/login');
   }
 
-  const headersList = headers();
+  const headersList = await headers();
   const pathname = headersList.get('x-path');
   if (
     user &&

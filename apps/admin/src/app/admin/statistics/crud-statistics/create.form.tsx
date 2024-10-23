@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { create } from './_actions/create';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -58,7 +57,7 @@ export default function CreateForm({}: CreateProps) {
   const trpcUtils = api.useUtils();
   type FormSchema = CreateSchema;
 
-  const [formState, formAction] = useFormState(create, {
+  const [formState, formAction] = useActionState(create, {
     status: 'default',
     form: {
       name: '',

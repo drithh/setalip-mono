@@ -16,11 +16,9 @@ import {
 } from '@repo/ui/components/ui/form';
 import { Input } from '@repo/ui/components/ui/input';
 
-
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
@@ -64,7 +62,7 @@ export default function RegisterUserForm({ locations }: RegisterUserFormProps) {
     }
   }, [auth]);
 
-  const [formState, formAction] = useFormState(registerUser, {
+  const [formState, formAction] = useActionState(registerUser, {
     status: 'default',
     form: {
       address: '',

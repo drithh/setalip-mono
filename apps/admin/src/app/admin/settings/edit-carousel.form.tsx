@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editCarousel } from './_actions/edit-carousel';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -63,7 +62,7 @@ export default function EditCarouselForm({
   const router = useRouter();
   type FormSchema = EditCarouselSchema;
 
-  const [formState, formAction] = useFormState(editCarousel, {
+  const [formState, formAction] = useActionState(editCarousel, {
     status: 'default',
     form: {
       id: data.id,

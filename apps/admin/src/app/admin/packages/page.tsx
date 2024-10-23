@@ -7,10 +7,11 @@ import QueryResetBoundary from '@/lib/query-reset-boundary';
 import React from 'react';
 
 export interface IndexPageProps {
-  searchParams: FindAllPackageOptions;
+  searchParams: Promise<FindAllPackageOptions>;
 }
 
-export default async function Packages({ searchParams }: IndexPageProps) {
+export default async function Packages(props: IndexPageProps) {
+  const searchParams = await props.searchParams;
   const search = findAllPackageSchema.parse(searchParams);
 
   const classTypeService = container.get<ClassTypeService>(

@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editLoyaltyShop } from './_actions/edit-loyalty-shop';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -73,7 +72,7 @@ export default function EditLoyaltyShopForm({
   const trpcUtils = api.useUtils();
   type FormSchema = EditLoyaltyShopSchema;
 
-  const [formState, formAction] = useFormState(editLoyaltyShop, {
+  const [formState, formAction] = useActionState(editLoyaltyShop, {
     status: 'default',
     form: {
       id: data.id,

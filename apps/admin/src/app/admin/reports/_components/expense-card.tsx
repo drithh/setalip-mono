@@ -2,7 +2,7 @@
 
 import { SelectClassType, SelectLocation } from '@repo/shared/repository';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useActionState, useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader } from '@repo/ui/components/ui/card';
 import { openReportPDF } from '@repo/shared/pdf';
 import Income from './income';
@@ -17,7 +17,6 @@ import {
 } from '@repo/ui/components/ui/select';
 import { api } from '@/trpc/react';
 import { Separator } from '@repo/ui/components/ui/separator';
-import { useFormState } from 'react-dom';
 import { Form } from '@repo/ui/components/ui/form';
 
 import { useForm } from 'react-hook-form';
@@ -66,7 +65,7 @@ export default function ExpenseCard({
 
   const [coachExpense, setCoachExpense] = useState(0);
 
-  const [formState, formAction] = useFormState(expense, {
+  const [formState, formAction] = useActionState(expense, {
     status: 'default',
     form: {
       expense: [],

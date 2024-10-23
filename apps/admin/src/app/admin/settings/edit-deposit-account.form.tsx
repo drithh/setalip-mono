@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editDepositAccount } from './_actions/edit-deposit-account';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -61,7 +60,7 @@ export default function EditDepositAccountForm({
   const router = useRouter();
   type FormSchema = EditDepositAccountSchema;
 
-  const [formState, formAction] = useFormState(editDepositAccount, {
+  const [formState, formAction] = useActionState(editDepositAccount, {
     status: 'default',
     form: {
       id: data.id,

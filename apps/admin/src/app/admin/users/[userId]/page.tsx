@@ -13,7 +13,8 @@ import Link from 'next/link';
 import { Button } from '@repo/ui/components/ui/button';
 import { getUser } from './_lib/get-user';
 
-export default async function Page({ params }: { params: any }) {
+export default async function Page(props: { params: Promise<any> }) {
+  const params = await props.params;
   const auth = await validateAdmin();
   if (!auth) {
     redirect('/login');

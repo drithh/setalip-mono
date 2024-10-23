@@ -6,12 +6,11 @@ import React from 'react';
 import 'react-photo-view/dist/react-photo-view.css';
 
 export interface IndexPageProps {
-  searchParams: any;
+  searchParams: Promise<any>;
 }
 
-export default async function PackageTransactions({
-  searchParams,
-}: IndexPageProps) {
+export default async function PackageTransactions(props: IndexPageProps) {
+  const searchParams = await props.searchParams;
   const search = findAllPackageTransactionSchema.parse(searchParams);
 
   return (

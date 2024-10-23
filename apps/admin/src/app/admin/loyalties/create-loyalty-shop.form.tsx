@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createLoyaltyShop } from './_actions/create-loyalty-shop';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -70,7 +69,7 @@ export default function CreateLoyaltyShopForm({
   const trpcUtils = api.useUtils();
   type FormSchema = CreateLoyaltyShopSchema;
 
-  const [formState, formAction] = useFormState(createLoyaltyShop, {
+  const [formState, formAction] = useActionState(createLoyaltyShop, {
     status: 'default',
     form: {
       name: '',

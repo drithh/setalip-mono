@@ -12,13 +12,16 @@ import { userSchema } from './form-schema';
 
 interface LayoutProps {
   children: React.ReactNode;
-  params: any;
+  params: Promise<any>;
 }
 
-export default async function Layout({
-  children,
-  params,
-}: LayoutProps): Promise<React.ReactNode> {
+export default async function Layout(props: LayoutProps): Promise<React.ReactNode> {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const auth = await validateAdmin();
   if (!auth) {
     redirect('/login');

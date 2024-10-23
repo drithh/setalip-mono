@@ -12,12 +12,11 @@ import QueryResetBoundary from '@/lib/query-reset-boundary';
 import React from 'react';
 
 export interface IndexPageProps {
-  searchParams: FindAllAgendaRecurrenceOption;
+  searchParams: Promise<FindAllAgendaRecurrenceOption>;
 }
 
-export default async function AgendaRecurrences({
-  searchParams,
-}: IndexPageProps) {
+export default async function AgendaRecurrences(props: IndexPageProps) {
+  const searchParams = await props.searchParams;
   const search = findAllAgendaRecurrenceSchema.parse(searchParams);
 
   const classService = container.get<ClassService>(TYPES.ClassService);
