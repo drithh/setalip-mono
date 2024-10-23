@@ -21,7 +21,7 @@ import type {
   findAllReviewOption,
 } from '../repository';
 import { WebSettingService } from './web-setting';
-import { unstable_cache } from 'next/cache';
+import { revalidateTag, unstable_cache } from 'next/cache';
 
 @injectable()
 export class WebSettingServiceImpl implements WebSettingService {
@@ -38,7 +38,12 @@ export class WebSettingServiceImpl implements WebSettingService {
   }
 
   async findContact() {
-    const contact = await this._webSettingRepository.findContact();
+    const getCachedContact = unstable_cache(
+      async () => await this._webSettingRepository.findContact(),
+      ['contact-cache']
+    );
+
+    const contact = await getCachedContact();
 
     if (!contact) {
       return {
@@ -73,8 +78,13 @@ export class WebSettingServiceImpl implements WebSettingService {
   async findAllFrequentlyAskedQuestion(
     data: findAllFrequentlyAskedQuestionOption
   ) {
-    const faq =
-      await this._webSettingRepository.findAllFrequentlyAskedQuestion(data);
+    const getCachedFrequentlyAskedQuestions = unstable_cache(
+      async () =>
+        await this._webSettingRepository.findAllFrequentlyAskedQuestion(data),
+      ['frequently-asked-questions-cache']
+    );
+
+    const faq = await getCachedFrequentlyAskedQuestions();
 
     return {
       result: faq,
@@ -96,17 +106,26 @@ export class WebSettingServiceImpl implements WebSettingService {
   }
 
   async findAllReview(data: findAllReviewOption) {
-    const faq = await this._webSettingRepository.findAllReview(data);
+    const getCachedReviews = unstable_cache(
+      async () => await this._webSettingRepository.findAllReview(data),
+      ['reviews-cache']
+    );
+
+    const reviews = await getCachedReviews();
 
     return {
-      result: faq,
+      result: reviews,
       error: undefined,
     };
   }
 
   async findTermsAndConditions() {
-    const termsAndConditions =
-      await this._webSettingRepository.findTermsAndConditions();
+    const getCachedTermsAndConditions = unstable_cache(
+      async () => await this._webSettingRepository.findTermsAndConditions(),
+      ['terms-and-conditions-cache']
+    );
+
+    const termsAndConditions = await getCachedTermsAndConditions();
 
     return {
       result: termsAndConditions || '',
@@ -115,7 +134,12 @@ export class WebSettingServiceImpl implements WebSettingService {
   }
 
   async findPrivacyPolicy() {
-    const privacyPolicy = await this._webSettingRepository.findPrivacyPolicy();
+    const getCachedPrivacyPolicy = unstable_cache(
+      async () => await this._webSettingRepository.findPrivacyPolicy(),
+      ['privacy-policy-cache']
+    );
+
+    const privacyPolicy = await getCachedPrivacyPolicy();
 
     return {
       result: privacyPolicy || '',
@@ -146,6 +170,7 @@ export class WebSettingServiceImpl implements WebSettingService {
       };
     }
 
+    revalidateTag('deposit-accounts-cache');
     return {
       result: depositAccount,
     };
@@ -163,7 +188,6 @@ export class WebSettingServiceImpl implements WebSettingService {
       };
     }
 
-    // loyalty reward
     const loyalty = await this._loyaltyRepository.createOnReward({
       reward_id: 3,
       user_id: data.user_id,
@@ -177,6 +201,7 @@ export class WebSettingServiceImpl implements WebSettingService {
       };
     }
 
+    revalidateTag('reviews-cache');
     return {
       result: review,
     };
@@ -192,6 +217,8 @@ export class WebSettingServiceImpl implements WebSettingService {
       };
     }
 
+    revalidateTag('frequently-asked-questions-cache');
+
     return {
       result: faq,
     };
@@ -206,6 +233,7 @@ export class WebSettingServiceImpl implements WebSettingService {
       };
     }
 
+    revalidateTag('carousel-cache');
     return {
       result: carousel,
     };
@@ -220,6 +248,11 @@ export class WebSettingServiceImpl implements WebSettingService {
         error: result,
       };
     }
+
+    revalidateTag('logo-cache');
+    revalidateTag('contact-cache');
+    revalidateTag('terms-and-conditions-cache');
+    revalidateTag('privacy-policy-cache');
 
     return {
       result: undefined,
@@ -236,6 +269,8 @@ export class WebSettingServiceImpl implements WebSettingService {
       };
     }
 
+    revalidateTag('deposit-accounts-cache');
+
     return {
       result,
     };
@@ -250,6 +285,8 @@ export class WebSettingServiceImpl implements WebSettingService {
         error: result,
       };
     }
+
+    revalidateTag('reviews-cache');
 
     return {
       result,
@@ -267,6 +304,8 @@ export class WebSettingServiceImpl implements WebSettingService {
       };
     }
 
+    revalidateTag('frequently-asked-questions-cache');
+
     return {
       result,
     };
@@ -281,6 +320,8 @@ export class WebSettingServiceImpl implements WebSettingService {
         error: result,
       };
     }
+
+    revalidateTag('carousel-cache');
 
     return {
       result,
@@ -297,6 +338,8 @@ export class WebSettingServiceImpl implements WebSettingService {
       };
     }
 
+    revalidateTag('deposit-accounts-cache');
+
     return {
       result,
     };
@@ -311,6 +354,8 @@ export class WebSettingServiceImpl implements WebSettingService {
         error: result,
       };
     }
+
+    revalidateTag('reviews-cache');
 
     return {
       result,
@@ -328,6 +373,8 @@ export class WebSettingServiceImpl implements WebSettingService {
       };
     }
 
+    revalidateTag('frequently-asked-questions-cache');
+
     return {
       result,
     };
@@ -342,6 +389,8 @@ export class WebSettingServiceImpl implements WebSettingService {
         error: result,
       };
     }
+
+    revalidateTag('carousel-cache');
 
     return {
       result,

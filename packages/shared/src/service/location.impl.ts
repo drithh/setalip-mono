@@ -14,7 +14,7 @@ import type {
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../inversify';
 import { LocationService } from './location';
-import { unstable_cache } from 'next/cache';
+import { revalidateTag, unstable_cache } from 'next/cache';
 
 @injectable()
 export class LocationServiceImpl implements LocationService {
@@ -86,6 +86,7 @@ export class LocationServiceImpl implements LocationService {
       };
     }
 
+    revalidateTag('locations-cache');
     return {
       result,
     };
@@ -106,7 +107,6 @@ export class LocationServiceImpl implements LocationService {
   }
 
   async update(data: UpdateLocation) {
-    // todo timezone
     const result = await this._locationRepository.update(data);
 
     if (result instanceof Error) {
@@ -115,6 +115,7 @@ export class LocationServiceImpl implements LocationService {
       };
     }
 
+    revalidateTag('locations-cache');
     return {
       result,
     };
@@ -157,6 +158,7 @@ export class LocationServiceImpl implements LocationService {
       };
     }
 
+    revalidateTag('locations-cache');
     return {
       result,
     };

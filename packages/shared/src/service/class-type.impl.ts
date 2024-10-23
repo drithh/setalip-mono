@@ -10,7 +10,7 @@ import type {
   SelectClassType,
   UpdateClassType,
 } from '../repository';
-import { unstable_cache } from 'next/cache';
+import { revalidateTag, unstable_cache } from 'next/cache';
 import { Expression, expressionBuilder, sql, SqlBool } from 'kysely';
 import { format } from 'date-fns';
 import { DB, db } from '../db';
@@ -92,6 +92,7 @@ export class ClassTypeServiceImpl implements ClassTypeService {
       };
     }
 
+    revalidateTag('class-types-cache');
     return {
       result,
     };
@@ -106,7 +107,7 @@ export class ClassTypeServiceImpl implements ClassTypeService {
         error: result,
       };
     }
-
+    revalidateTag('class-types-cache');
     return {
       result,
     };
@@ -123,7 +124,7 @@ export class ClassTypeServiceImpl implements ClassTypeService {
         error: result,
       };
     }
-
+    revalidateTag('class-types-cache');
     return {
       result,
     };
