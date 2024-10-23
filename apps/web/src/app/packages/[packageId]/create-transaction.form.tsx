@@ -18,8 +18,7 @@ import {
 import { Input } from '@repo/ui/components/ui/input';
 import { cn } from '@repo/ui/lib/utils';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -70,7 +69,7 @@ export default function CreateTransaction({
   const router = useRouter();
   type FormSchema = CreateTransactionSchema;
 
-  const [formState, formAction] = useFormState(createTransaction, {
+  const [formState, formAction] = useActionState(createTransaction, {
     status: 'default',
     form: {
       deposit_account_id: depositAccounts[0]?.id ?? 0,

@@ -146,22 +146,22 @@ export default function RootLayout({
       </head>
       <body className="font-sans">
         <Provider>
-          <Suspense>
+          {/* <Suspense>
             <GlobalToast />
           </Suspense>
           <div className="flex min-h-screen w-full flex-col  bg-background">
-            <Header />
-            <div className="flex-grow">{children}</div>
-            <Footer />
-          </div>
+            <Header /> */}
+          <div className="flex-grow">{children}</div>
+          {/* <Footer />
+          </div> */}
         </Provider>
-        <Toaster
+        {/* <Toaster
           theme="light"
           richColors
           closeButton={true}
           position="top-right"
           duration={5000}
-        />
+        /> */}
       </body>
     </html>
   );

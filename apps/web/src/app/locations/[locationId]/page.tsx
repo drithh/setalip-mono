@@ -26,11 +26,12 @@ import {
 import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { BackButton } from '@repo/ui/components/back-button';
 
-export default async function LocationDetail({
-  params,
-}: {
-  params: { locationId: string };
-}) {
+export default async function LocationDetail(
+  props: {
+    params: Promise<{ locationId: string }>;
+  }
+) {
+  const params = await props.params;
   const locationService = container.get<LocationService>(TYPES.LocationService);
   const locationIdNumber = parseInt(params.locationId);
   if (isNaN(locationIdNumber)) {

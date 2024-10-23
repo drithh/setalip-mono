@@ -60,7 +60,7 @@ export async function loginUser(
     };
   }
 
-  cookies().set(
+  (await cookies()).set(
     loginUser.result.name,
     loginUser.result.value,
     loginUser.result.attributes,

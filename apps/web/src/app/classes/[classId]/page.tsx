@@ -29,11 +29,12 @@ import {
   AlertTitle,
 } from '@repo/ui/components/ui/alert';
 import { Info } from 'lucide-react';
-export default async function ClassDetail({
-  params,
-}: {
-  params: { classId: string };
-}) {
+export default async function ClassDetail(
+  props: {
+    params: Promise<{ classId: string }>;
+  }
+) {
+  const params = await props.params;
   const classService = container.get<ClassService>(TYPES.ClassService);
   const classIdNumber = parseInt(params.classId);
   if (isNaN(classIdNumber)) {
@@ -51,7 +52,7 @@ export default async function ClassDetail({
   };
 
   return (
-    <div>
+    (<div>
       <div className="w-full">
         <section className="container w-full py-12 md:py-24 lg:py-32">
           <div className=" my-2 flex place-items-center gap-2">
@@ -141,7 +142,7 @@ export default async function ClassDetail({
                 <h3 className="text-lg font-medium">Available Locations:</h3>
                 <ul className="flex w-fit flex-col gap-4">
                   {singleClass.result.locations?.map((location) => (
-                    <Link
+                    (<Link
                       key={location.location_id}
                       href={
                         singleClass.result?.class_type === 'Private'
@@ -152,7 +153,7 @@ export default async function ClassDetail({
                       <Button className="w-full ">
                         Book Now - {location.name}
                       </Button>
-                    </Link>
+                    </Link>)
                     // <li key={location.name}>{location.name}</li>
                   ))}
                 </ul>
@@ -161,6 +162,6 @@ export default async function ClassDetail({
           </div>
         </section>
       </div>
-    </div>
+    </div>)
   );
 }

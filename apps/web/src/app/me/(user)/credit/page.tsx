@@ -18,7 +18,8 @@ import { validateUser } from '@/lib/auth';
 import CreditTransactionTable from './credit-transaction';
 import { format } from 'date-fns';
 
-export default async function Credit({ searchParams }: { searchParams: any }) {
+export default async function Credit(props: { searchParams: Promise<any> }) {
+  const searchParams = await props.searchParams;
   const auth = await validateUser();
 
   const search = findAllUserCreditSchema.parse(searchParams);

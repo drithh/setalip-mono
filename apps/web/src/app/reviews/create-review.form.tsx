@@ -22,11 +22,9 @@ import { Input } from '@repo/ui/components/ui/input';
 
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-
 
 import { createReview } from './_actions/create-review';
 import { CreateReviewSchema, createReviewSchema } from './form-schema';
@@ -51,7 +49,7 @@ export default function CreateReviewForm({}: CreateReviewProps) {
   const router = useRouter();
   type FormSchema = CreateReviewSchema;
 
-  const [formState, formAction] = useFormState(createReview, {
+  const [formState, formAction] = useActionState(createReview, {
     status: 'default',
     form: {
       review: '',

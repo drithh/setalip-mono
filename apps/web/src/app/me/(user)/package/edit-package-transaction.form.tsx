@@ -3,8 +3,7 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editPackageTransaction } from './_actions/edit-package-transaction';
-import { useFormState } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -61,7 +60,7 @@ export default function EditPackageTransactionForm({
   const [openSheet, setOpenSheet] = useState(false);
   const [imageRemoved, setImageRemoved] = useState(false);
 
-  const [formState, formAction] = useFormState(editPackageTransaction, {
+  const [formState, formAction] = useActionState(editPackageTransaction, {
     status: 'default',
     form: {
       id: data.id,

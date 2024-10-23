@@ -4,11 +4,12 @@ import { ClassTypeService, PackageService } from '@repo/shared/service';
 
 import ListPackage from './list-package';
 
-export default async function Schedules({
-  searchParams,
-}: {
-  searchParams: any;
-}) {
+export default async function Schedules(
+  props: {
+    searchParams: Promise<any>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const search = findAllPackageSchema.parse(searchParams);
 
   const packageService = container.get<PackageService>(TYPES.PackageService);

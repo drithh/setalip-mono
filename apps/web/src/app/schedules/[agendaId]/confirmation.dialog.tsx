@@ -31,7 +31,21 @@ export default function CreateTransactionDialog({
   onCreate,
 }: CreateTransactionProps) {
   return (
-    <Credenza open={open} onOpenChange={onOpenChange}>
+    // <AlertDialog open={open} onOpenChange={onOpenChange}>
+    //   <AlertDialogContent>
+    //     <AlertDialogHeader>
+    //       <AlertDialogTitle>
+    //         Booking kelas <span className="font-semibold">{class_name}</span>
+    //       </AlertDialogTitle>
+    //     </AlertDialogHeader>
+    //     <AlertDialogFooter>
+    //       <AlertDialogCancel>Batal</AlertDialogCancel>
+    //       <AlertDialogAction asChild>
+    //       </AlertDialogAction>
+    //     </AlertDialogFooter>
+    //   </AlertDialogContent>
+    // </AlertDialog>
+    (<Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaContent>
         <CredenzaHeader>
           <CredenzaTitle>
@@ -62,21 +76,6 @@ export default function CreateTransactionDialog({
           </CredenzaClose>
         </CredenzaFooter>
       </CredenzaContent>
-    </Credenza>
-    // <AlertDialog open={open} onOpenChange={onOpenChange}>
-    //   <AlertDialogContent>
-    //     <AlertDialogHeader>
-    //       <AlertDialogTitle>
-    //         Booking kelas <span className="font-semibold">{class_name}</span>
-    //       </AlertDialogTitle>
-    //     </AlertDialogHeader>
-
-    //     <AlertDialogFooter>
-    //       <AlertDialogCancel>Batal</AlertDialogCancel>
-    //       <AlertDialogAction asChild>
-    //       </AlertDialogAction>
-    //     </AlertDialogFooter>
-    //   </AlertDialogContent>
-    // </AlertDialog>
+    </Credenza>)
   );
 }

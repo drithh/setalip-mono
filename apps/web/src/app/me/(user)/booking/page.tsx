@@ -10,11 +10,12 @@ import { validateUser } from '@/lib/auth';
 
 import AgendaTable from './agenda';
 
-export default async function Schedules({
-  searchParams,
-}: {
-  searchParams: any;
-}) {
+export default async function Schedules(
+  props: {
+    searchParams: Promise<any>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const auth = await validateUser();
 
   const search = findAllUserAgendaSchema.parse(searchParams);

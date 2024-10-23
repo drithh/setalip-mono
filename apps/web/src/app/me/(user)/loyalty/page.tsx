@@ -16,7 +16,8 @@ import ReferNow from './refer-now';
 import { ImageWithFallback } from '@/lib/image-with-fallback';
 import { AspectRatio } from '@repo/ui/components/ui/aspect-ratio';
 
-export default async function Loyalty({ searchParams }: { searchParams: any }) {
+export default async function Loyalty(props: { searchParams: Promise<any> }) {
+  const searchParams = await props.searchParams;
   const auth = await validateUser();
 
   const search = findAllUserLoyaltySchema.parse(searchParams);

@@ -12,8 +12,7 @@ import {
 } from '@repo/ui/components/ui/form';
 import { Input } from '@repo/ui/components/ui/input';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -55,7 +54,7 @@ export default function CreateAgendaBooking({
   const router = useRouter();
   type FormSchema = CreateAgendaBookingSchema;
 
-  const [formState, formAction] = useFormState(createAgendaBooking, {
+  const [formState, formAction] = useActionState(createAgendaBooking, {
     status: 'default',
     form: {
       agenda_id: id,
