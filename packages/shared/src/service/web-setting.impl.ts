@@ -40,7 +40,10 @@ export class WebSettingServiceImpl implements WebSettingService {
   async findContact() {
     const getCachedContact = unstable_cache(
       async () => await this._webSettingRepository.findContact(),
-      ['contact-cache']
+      [],
+      {
+        tags: ['contact-cache'],
+      }
     );
 
     const contact = await getCachedContact();
@@ -59,7 +62,10 @@ export class WebSettingServiceImpl implements WebSettingService {
   async findLogo() {
     const getCachedLogo = unstable_cache(
       async () => await this._webSettingRepository.findLogo(),
-      ['logo-cache']
+      [],
+      {
+        tags: ['logo-cache'],
+      }
     );
 
     const logo = await getCachedLogo();
@@ -81,9 +87,11 @@ export class WebSettingServiceImpl implements WebSettingService {
     const getCachedFrequentlyAskedQuestions = unstable_cache(
       async () =>
         await this._webSettingRepository.findAllFrequentlyAskedQuestion(data),
-      ['frequently-asked-questions-cache']
+      [],
+      {
+        tags: ['frequently-asked-questions-cache'],
+      }
     );
-
     const faq = await getCachedFrequentlyAskedQuestions();
 
     return {
@@ -95,7 +103,10 @@ export class WebSettingServiceImpl implements WebSettingService {
   async findAllDepositAccount(data: findAllDepositAccountOption) {
     const getCachedDepositAccounts = unstable_cache(
       async () => await this._webSettingRepository.findAllDepositAccount(data),
-      ['deposit-accounts-cache']
+      [],
+      {
+        tags: ['deposit-accounts-cache'],
+      }
     );
     const depositAccounts = await getCachedDepositAccounts();
 
@@ -108,7 +119,10 @@ export class WebSettingServiceImpl implements WebSettingService {
   async findAllReview(data: findAllReviewOption) {
     const getCachedReviews = unstable_cache(
       async () => await this._webSettingRepository.findAllReview(data),
-      ['reviews-cache']
+      [],
+      {
+        tags: ['reviews-cache'],
+      }
     );
 
     const reviews = await getCachedReviews();
@@ -122,7 +136,10 @@ export class WebSettingServiceImpl implements WebSettingService {
   async findTermsAndConditions() {
     const getCachedTermsAndConditions = unstable_cache(
       async () => await this._webSettingRepository.findTermsAndConditions(),
-      ['terms-and-conditions-cache']
+      [],
+      {
+        tags: ['terms-and-conditions-cache'],
+      }
     );
 
     const termsAndConditions = await getCachedTermsAndConditions();
@@ -136,7 +153,10 @@ export class WebSettingServiceImpl implements WebSettingService {
   async findPrivacyPolicy() {
     const getCachedPrivacyPolicy = unstable_cache(
       async () => await this._webSettingRepository.findPrivacyPolicy(),
-      ['privacy-policy-cache']
+      [],
+      {
+        tags: ['privacy-policy-cache'],
+      }
     );
 
     const privacyPolicy = await getCachedPrivacyPolicy();
@@ -150,7 +170,10 @@ export class WebSettingServiceImpl implements WebSettingService {
   async findAllCarousel() {
     const getCachedCarousel = unstable_cache(
       async () => await this._webSettingRepository.findAllCarousel(),
-      ['carousel-cache']
+      [],
+      {
+        tags: ['carousel-cache'],
+      }
     );
     const carousels = await getCachedCarousel();
 

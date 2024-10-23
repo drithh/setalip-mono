@@ -29,7 +29,10 @@ export class ClassTypeServiceImpl implements ClassTypeService {
   async findAll() {
     const getCachedClassTypes = unstable_cache(
       async () => await this._classTypeRepository.find(),
-      ['class-types-cache']
+      [],
+      {
+        tags: ['class-types-cache'],
+      }
     );
 
     const classTypes = await getCachedClassTypes();

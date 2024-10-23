@@ -29,7 +29,10 @@ export class LocationServiceImpl implements LocationService {
   async findAll() {
     const getCacchedLocations = unstable_cache(
       async () => await this._locationRepository.findAll(),
-      ['locations-cache']
+      [],
+      {
+        tags: ['locations-cache'],
+      }
     );
 
     const locations = await getCacchedLocations();
