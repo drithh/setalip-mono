@@ -59,6 +59,13 @@ const TOAST_MESSAGES = {
   },
 };
 
+export const roles = [
+  'admin',
+  'user',
+  'coach',
+  'owner',
+] satisfies SelectUser['role'][];
+
 export default function EditUserForm({ user, locations }: EditUserProps) {
   const [openSheet, setOpenSheet] = useState(false);
 
@@ -240,6 +247,37 @@ export default function EditUserForm({ user, locations }: EditUserProps) {
                       <FormLabel>Alamat</FormLabel>
                       <FormControl>
                         <Textarea {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full gap-2">
+                      <FormLabel>Role</FormLabel>
+                      <FormControl>
+                        <>
+                          <Input type="hidden" {...field} />
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value.toString()}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {roles.map((role) => (
+                                <SelectItem key={role} value={role}>
+                                  {role}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

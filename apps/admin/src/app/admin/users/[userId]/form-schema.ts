@@ -8,6 +8,7 @@ export const editUserSchema = z.object({
   phone_number: z.string().min(10).max(20),
   address: z.string().min(10).max(255),
   location_id: z.coerce.number(),
+  role: z.enum(['admin', 'coach', 'owner', 'user']),
 });
 
 export type EditUserSchema = z.infer<typeof editUserSchema>;

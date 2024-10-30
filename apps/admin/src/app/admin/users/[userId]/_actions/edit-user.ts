@@ -77,6 +77,7 @@ export async function editUser(
     phone_number: formattedPhoneNumber,
     address: parsed.data.address,
     location_id: parsed.data.location_id !== 0 ? parsed.data.location_id : null,
+    role: parsed.data.role,
   });
 
   if (result.error) {
