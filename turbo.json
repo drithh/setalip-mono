@@ -7,6 +7,7 @@
     "HOST",
     "TZ"
   ],
+  "daemon": false,
   "globalDependencies": ["**/.env.*local"],
   "tasks": {
     "build": {
