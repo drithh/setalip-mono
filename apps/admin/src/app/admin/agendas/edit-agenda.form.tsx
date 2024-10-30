@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editAgenda } from './_actions/edit-agenda';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -78,7 +79,7 @@ export default function EditAgendaForm({
   const trpcUtils = api.useUtils();
   type FormSchema = EditAgendaSchema;
 
-  const [formState, formAction] = useActionState(editAgenda, {
+  const [formState, formAction] = useFormState(editAgenda, {
     status: 'default',
     form: {
       id: agenda.id,

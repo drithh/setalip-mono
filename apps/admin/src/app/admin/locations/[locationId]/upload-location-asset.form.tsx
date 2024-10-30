@@ -1,9 +1,10 @@
 'use client';
-import { useActionState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { PhotoProvider } from 'react-photo-view';
 import FileCard from '@/components/file-card';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import {
   UploadLocationAssetSchema,
@@ -44,7 +45,7 @@ export default function UploadLocationAsset({
   locationId,
 }: UploadLocationAssetProps) {
   const router = useRouter();
-  const [formState, formAction] = useActionState(uploadLocationAsset, {
+  const [formState, formAction] = useFormState(uploadLocationAsset, {
     status: 'default',
     form: {
       locationId: locationId,

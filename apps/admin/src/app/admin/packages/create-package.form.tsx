@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createPackage } from './_actions/create-package';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -64,7 +65,7 @@ export default function CreatePackageForm({ classTypes }: CreatePackageProps) {
   const trpcUtils = api.useUtils();
   type FormSchema = CreatePackageSchema;
 
-  const [formState, formAction] = useActionState(createPackage, {
+  const [formState, formAction] = useFormState(createPackage, {
     status: 'default',
     form: {
       name: '',

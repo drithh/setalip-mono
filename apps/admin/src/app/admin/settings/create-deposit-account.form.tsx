@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createDepositAccount } from './_actions/create-deposit-account';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -53,7 +54,7 @@ export default function CreateDepositAccountForm({}: CreateDepositAccountProps) 
   const trpcUtils = api.useUtils();
   type FormSchema = CreateDepositAccountSchema;
 
-  const [formState, formAction] = useActionState(createDepositAccount, {
+  const [formState, formAction] = useFormState(createDepositAccount, {
     status: 'default',
     form: {
       name: '',

@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createAgenda } from './_actions/create-agenda';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -71,7 +72,7 @@ export default function CreateAgendaForm({
   const trpcUtils = api.useUtils();
   type FormSchema = CreateAgendaSchema;
 
-  const [formState, formAction] = useActionState(createAgenda, {
+  const [formState, formAction] = useFormState(createAgenda, {
     status: 'default',
     form: {
       time: new Date(),

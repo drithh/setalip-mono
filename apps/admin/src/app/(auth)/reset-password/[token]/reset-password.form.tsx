@@ -2,7 +2,8 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { resetPassword } from './_actions/reset-password';
-import { useActionState, useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -39,7 +40,7 @@ const TOAST_MESSAGES = {
 
 export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const router = useRouter();
-  const [formState, formAction] = useActionState(resetPassword, {
+  const [formState, formAction] = useFormState(resetPassword, {
     status: 'default',
     form: {
       password: '',

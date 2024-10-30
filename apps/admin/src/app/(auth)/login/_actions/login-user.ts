@@ -77,7 +77,7 @@ export async function loginUser(
     };
   }
 
-  (await cookies()).set(
+  cookies().set(
     loginUser.result.name,
     loginUser.result.value,
     loginUser.result.attributes,

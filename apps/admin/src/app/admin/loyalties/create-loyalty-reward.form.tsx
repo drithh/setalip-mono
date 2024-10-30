@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createLoyaltyReward } from './_actions/create-loyalty-reward';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -28,6 +29,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@repo/ui/components/ui/sheet';
+
 
 import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import { api } from '@/trpc/react';
@@ -55,7 +57,7 @@ export default function CreateLoyaltyRewardForm({}: CreateLoyaltyRewardProps) {
   const trpcUtils = api.useUtils();
   type FormSchema = CreateLoyaltyRewardSchema;
 
-  const [formState, formAction] = useActionState(createLoyaltyReward, {
+  const [formState, formAction] = useFormState(createLoyaltyReward, {
     status: 'default',
     form: {
       name: '',

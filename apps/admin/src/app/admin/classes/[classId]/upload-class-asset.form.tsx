@@ -1,8 +1,9 @@
 'use client';
-import { useActionState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { PhotoProvider } from 'react-photo-view';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { UploadClassAssetSchema, uploadClassAssetSchema } from './form-schema';
 import { uploadClassAsset } from './_actions/upload-class-asset';
@@ -39,7 +40,7 @@ interface UploadClassAssetProps {
 
 export default function UploadClassAsset({ classId }: UploadClassAssetProps) {
   const router = useRouter();
-  const [formState, formAction] = useActionState(uploadClassAsset, {
+  const [formState, formAction] = useFormState(uploadClassAsset, {
     status: 'default',
     form: {
       classId: classId,

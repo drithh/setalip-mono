@@ -2,8 +2,9 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
+import { useFormState } from 'react-dom';
 import { Checkbox } from '@repo/ui/components/ui/checkbox';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -70,7 +71,7 @@ export default function EditOperationalHourForm({
 
   const days = [0, 1, 2, 3, 4, 5, 6];
 
-  const [formState, formAction] = useActionState(editOperationalHour, {
+  const [formState, formAction] = useFormState(editOperationalHour, {
     status: 'default',
     form: {
       locationId: location.id,

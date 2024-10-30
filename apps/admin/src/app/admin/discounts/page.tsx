@@ -8,11 +8,10 @@ import React from 'react';
 import VoucherTable from './_components/voucher-table';
 
 export interface IndexPageProps {
-  searchParams: Promise<FindAllVoucherOptions>;
+  searchParams: FindAllVoucherOptions;
 }
 
-export default async function Vouchers(props: IndexPageProps) {
-  const searchParams = await props.searchParams;
+export default async function Vouchers({ searchParams }: IndexPageProps) {
   const search = findAllVoucherSchema.parse(searchParams);
 
   const userService = container.get<UserService>(TYPES.UserService);

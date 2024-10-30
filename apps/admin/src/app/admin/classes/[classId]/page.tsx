@@ -27,12 +27,11 @@ import DeleteClass from './delete-class.dialog';
 import ClassAssets from './_components/class-assets';
 import { Badge } from '@repo/ui/components/ui/badge';
 
-export default async function ClassDetail(
-  props: {
-    params: Promise<{ classId: string }>;
-  }
-) {
-  const params = await props.params;
+export default async function ClassDetail({
+  params,
+}: {
+  params: { classId: string };
+}) {
   const auth = await validateAdmin();
 
   const classService = container.get<ClassService>(TYPES.ClassService);

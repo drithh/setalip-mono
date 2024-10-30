@@ -12,8 +12,7 @@ import { userSchema } from '../form-schema';
 import { redirect } from 'next/navigation';
 import { getUser } from '../_lib/get-user';
 
-export default async function Statistic(props: any) {
-  const params = await props.params;
+export default async function Statistic({ params }: any) {
   const auth = await validateAdmin();
 
   const user = await getUser(params);

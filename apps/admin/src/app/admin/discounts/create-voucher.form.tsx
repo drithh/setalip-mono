@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createVoucher } from './_actions/create-voucher';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -67,7 +68,7 @@ export default function CreateVoucherForm({ users }: CreateVoucherProps) {
 
   const types = ['percentage', 'fixed'] satisfies SelectVoucher['type'][];
 
-  const [formState, formAction] = useActionState(createVoucher, {
+  const [formState, formAction] = useFormState(createVoucher, {
     status: 'default',
     form: {
       code: '',

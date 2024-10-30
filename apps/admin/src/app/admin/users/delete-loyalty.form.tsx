@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { deleteLoyalty } from './_actions/delete-loyalty';
-import { useActionState, useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -64,7 +65,7 @@ export default function DeleteLoyaltyForm({
   const router = useRouter();
   type FormSchema = DeleteLoyaltySchema;
 
-  const [formState, formAction] = useActionState(deleteLoyalty, {
+  const [formState, formAction] = useFormState(deleteLoyalty, {
     status: 'default',
     form: {
       amount: 0,

@@ -5,8 +5,9 @@ import { useForm } from 'react-hook-form';
 import { resendOtp } from './_actions/resend-otp';
 import { ResendOtpSchema, resendOtpSchema } from './form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useActionState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
+import { useFormState } from 'react-dom';
 import {
   Form,
   FormControl,
@@ -35,7 +36,7 @@ const TOAST_MESSAGES = {
 };
 
 export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
-  const [formState, formAction] = useActionState(resendOtp, {
+  const [formState, formAction] = useFormState(resendOtp, {
     status: 'default',
     form: {
       userId: userId,

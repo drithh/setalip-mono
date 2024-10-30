@@ -11,9 +11,6 @@ const __dirname = dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -42,11 +39,9 @@ const nextConfig = {
       },
     ],
   },
-  serverExternalPackages: ['@node-rs/argon2'],
-
   experimental: {
-    // serverComponentsExternalPackages: ['@node-rs/argon2'],
-    // outputFileTracingRoot: path.join(__dirname, '../../'),
+    serverComponentsExternalPackages: ['@node-rs/argon2'],
+    outputFileTracingRoot: path.join(__dirname, '../../'),
   },
   // output: 'standalone',
   transpilePackages: ['@repo/ui'],

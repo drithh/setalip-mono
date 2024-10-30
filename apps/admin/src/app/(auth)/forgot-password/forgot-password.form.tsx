@@ -2,6 +2,7 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { forgotPassword } from './_actions/forgot-password';
+import { useFormState } from 'react-dom';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,7 +18,6 @@ import { ForgotPasswordSchema, forgotPasswordSchema } from './form-schema';
 import { PhoneInput } from '@repo/ui/components/phone-input';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
-import { useActionState } from 'react';
 
 const TOAST_MESSAGES = {
   error: {
@@ -34,7 +34,7 @@ const TOAST_MESSAGES = {
 };
 
 export default function ForgotPasswordForm() {
-  const [formState, formAction] = useActionState(forgotPassword, {
+  const [formState, formAction] = useFormState(forgotPassword, {
     status: 'default',
     form: {
       phoneNumber: '',

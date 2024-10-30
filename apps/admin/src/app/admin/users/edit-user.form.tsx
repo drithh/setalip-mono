@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editUser } from './_actions/edit-user';
-import { useActionState, useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -68,7 +69,7 @@ export default function EditUserForm({
   const router = useRouter();
   type FormSchema = EditUserSchema;
 
-  const [formState, formAction] = useActionState(editUser, {
+  const [formState, formAction] = useFormState(editUser, {
     status: 'default',
     form: {
       ...user,

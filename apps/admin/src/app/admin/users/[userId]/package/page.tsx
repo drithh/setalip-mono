@@ -16,14 +16,13 @@ import PackageTransactionTable from './_components/package-transaction';
 import { getUser } from '../_lib/get-user';
 import { userSchema } from '../form-schema';
 
-export default async function Package(
-  props: {
-    searchParams: Promise<any>;
-    params: Promise<any>;
-  }
-) {
-  const params = await props.params;
-  const searchParams = await props.searchParams;
+export default async function Package({
+  searchParams,
+  params,
+}: {
+  searchParams: any;
+  params: any;
+}) {
   const auth = await validateAdmin();
 
   const parsedParams = userSchema.parse(params);

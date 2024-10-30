@@ -20,11 +20,10 @@ import LoyaltyRewardTable from './_components/loyalty-reward-table';
 import LoyaltyShopTable from './_components/loyalty-shop-table';
 
 export interface IndexPageProps {
-  searchParams: Promise<FindAllLoyaltyOptions>;
+  searchParams: FindAllLoyaltyOptions;
 }
 
-export default async function Loyaltys(props: IndexPageProps) {
-  const searchParams = await props.searchParams;
+export default async function Loyaltys({ searchParams }: IndexPageProps) {
   const search = findAllLoyaltySchema.parse(searchParams);
   const packageService = container.get<PackageService>(TYPES.PackageService);
   const packages = await packageService.findAll({

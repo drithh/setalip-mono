@@ -2,7 +2,8 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -58,7 +59,7 @@ export default function EditWebSettingForm({
 
   const [openSheet, setOpenSheet] = useState(false);
 
-  const [formState, formAction] = useActionState(editWebSetting, {
+  const [formState, formAction] = useFormState(editWebSetting, {
     status: 'default',
     form: {
       instagram_handle: webSetting.instagram_handle,

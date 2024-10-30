@@ -8,11 +8,10 @@ import React from 'react';
 import ReviewTable from './_components/review-table';
 
 export interface IndexPageProps {
-  searchParams: Promise<findAllReviewOption>;
+  searchParams: findAllReviewOption;
 }
 
-export default async function Reviews(props: IndexPageProps) {
-  const searchParams = await props.searchParams;
+export default async function Reviews({ searchParams }: IndexPageProps) {
   const search = findAllReviewSchema.parse(searchParams);
 
   const userService = container.get<UserService>(TYPES.UserService);

@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editReview } from './_actions/edit-review';
-import { useActionState, useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -70,7 +71,7 @@ export default function EditReviewForm({
   const router = useRouter();
   type FormSchema = EditReviewSchema;
 
-  const [formState, formAction] = useActionState(editReview, {
+  const [formState, formAction] = useFormState(editReview, {
     status: 'default',
     form: {
       id: data.id,

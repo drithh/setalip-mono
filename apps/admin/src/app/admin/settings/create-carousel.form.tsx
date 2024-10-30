@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createCarousel } from './_actions/create-carousel';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -55,7 +56,7 @@ export default function CreateCarouselForm({}: CreateCarouselProps) {
   const trpcUtils = api.useUtils();
   type FormSchema = CreateCarouselSchema;
 
-  const [formState, formAction] = useActionState(createCarousel, {
+  const [formState, formAction] = useFormState(createCarousel, {
     status: 'default',
     form: {
       title: '',

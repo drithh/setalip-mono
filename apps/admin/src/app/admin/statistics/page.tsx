@@ -8,11 +8,10 @@ import QueryResetBoundary from '@/lib/query-reset-boundary';
 import React from 'react';
 
 export interface IndexPageProps {
-  searchParams: Promise<FindAllStatisticOption>;
+  searchParams: FindAllStatisticOption;
 }
 
-export default async function Statistics(props: IndexPageProps) {
-  const searchParams = await props.searchParams;
+export default async function Statistics({ searchParams }: IndexPageProps) {
   const search = findAllStatisticSchema.parse(searchParams);
 
   const classTypeService = container.get<ClassTypeService>(

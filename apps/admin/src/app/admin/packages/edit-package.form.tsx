@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { editPackage } from './_actions/edit-package';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -75,7 +76,7 @@ export default function EditPackageForm({
   const router = useRouter();
   type FormSchema = EditPackageSchema;
 
-  const [formState, formAction] = useActionState(editPackage, {
+  const [formState, formAction] = useFormState(editPackage, {
     status: 'default',
     form: {
       id: singlePackage.id,

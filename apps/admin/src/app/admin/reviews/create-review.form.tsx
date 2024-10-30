@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { createReview } from './_actions/create-review';
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -60,7 +61,7 @@ export default function CreateReviewForm({ users }: CreateReviewProps) {
   const trpcUtils = api.useUtils();
   type FormSchema = CreateReviewSchema;
 
-  const [formState, formAction] = useActionState(createReview, {
+  const [formState, formAction] = useFormState(createReview, {
     status: 'default',
     form: {
       user_id: 0,

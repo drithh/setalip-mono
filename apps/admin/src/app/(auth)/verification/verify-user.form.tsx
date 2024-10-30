@@ -3,7 +3,8 @@
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { verifyUser } from './_actions/verify-user';
-import { useActionState, useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -45,7 +46,7 @@ const TOAST_MESSAGES = {
 export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
   const router = useRouter();
 
-  const [formState, formAction] = useActionState(verifyUser, {
+  const [formState, formAction] = useFormState(verifyUser, {
     status: 'default',
     form: {
       otp: '',

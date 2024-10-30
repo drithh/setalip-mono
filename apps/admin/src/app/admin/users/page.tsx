@@ -12,11 +12,10 @@ import {
 import { validateAdmin } from '@/lib/auth';
 
 export interface IndexPageProps {
-  searchParams: Promise<FindAllPackageOptions>;
+  searchParams: FindAllPackageOptions;
 }
 
-export default async function Packages(props: IndexPageProps) {
-  const searchParams = await props.searchParams;
+export default async function Packages({ searchParams }: IndexPageProps) {
   const auth = validateAdmin();
 
   const search = findAllUserSchema.parse(searchParams);

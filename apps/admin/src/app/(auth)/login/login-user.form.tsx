@@ -2,7 +2,8 @@
 
 import { Button } from '@repo/ui/components/ui/button';
 import { loginUser } from './_actions/login-user';
-import { useActionState, useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -54,7 +55,7 @@ export default function LoginUserForm() {
     }
   }, [auth]);
 
-  const [formState, formAction] = useActionState(loginUser, {
+  const [formState, formAction] = useFormState(loginUser, {
     status: 'default',
     form: {
       password: '',
