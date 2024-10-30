@@ -17,7 +17,8 @@ import {
   InputOTPSlot,
 } from "@repo/ui/components/ui/input-otp";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -46,7 +47,7 @@ const TOAST_MESSAGES = {
 export default function VerifyUserForm({ userId }: VerifyUserFormProps) {
   const router = useRouter();
 
-  const [formState, formAction] = useActionState(verifyUser, {
+  const [formState, formAction] = useFormState(verifyUser, {
     status: "default",
     form: {
       otp: "",

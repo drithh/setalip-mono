@@ -13,7 +13,8 @@ import {
 } from '@repo/ui/components/ui/form';
 import { Input } from '@repo/ui/components/ui/input';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -40,7 +41,7 @@ const TOAST_MESSAGES = {
 
 export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const router = useRouter();
-  const [formState, formAction] = useActionState(resetPassword, {
+  const [formState, formAction] = useFormState(resetPassword, {
     status: 'default',
     form: {
       password: '',

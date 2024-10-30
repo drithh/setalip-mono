@@ -16,12 +16,11 @@ import { validateUser } from '@/lib/auth';
 
 import Client from './client';
 
-export default async function PackageDetail(
-  props: {
-    params: Promise<{ packageId: string }>;
-  }
-) {
-  const params = await props.params;
+export default async function PackageDetail({
+  params,
+}: {
+  params: { packageId: string };
+}) {
   const auth = await validateUser();
   const packageIdNumber = parseInt(params.packageId);
   if (isNaN(packageIdNumber)) {

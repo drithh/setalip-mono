@@ -14,8 +14,7 @@ import { validateUser } from '@/lib/auth';
 
 import PackageTransactionTable from './_components/package-transaction';
 
-export default async function Package(props: { searchParams: Promise<any> }) {
-  const searchParams = await props.searchParams;
+export default async function Package({ searchParams }: { searchParams: any }) {
   const auth = await validateUser();
 
   const search = findAllPackageTransactionByUserIdSchema.parse(searchParams);

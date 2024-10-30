@@ -8,12 +8,11 @@ import { validateUser } from '@/lib/auth';
 import AgendaTable from './attendance';
 import { BackButton } from '@repo/ui/components/back-button';
 
-export default async function Attendances(
-  props: {
-    params: Promise<{ agendaId: string }>;
-  }
-) {
-  const params = await props.params;
+export default async function Attendances({
+  params,
+}: {
+  params: { agendaId: string };
+}) {
   const auth = await validateUser();
   if (auth.user.role !== 'coach') {
     redirect('/me');

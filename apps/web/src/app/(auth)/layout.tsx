@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { env } from '@repo/shared/env';
+env;
 const images = [
   {
     src: `${env.WEB_URL}/uploads/static/auth-1.webp`,

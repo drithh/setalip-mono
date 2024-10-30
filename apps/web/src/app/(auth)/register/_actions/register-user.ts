@@ -63,7 +63,7 @@ export async function registerUser(
     };
   }
 
-  (await cookies()).set(
+  cookies().set(
     registerUser.result.name,
     registerUser.result.value,
     registerUser.result.attributes,

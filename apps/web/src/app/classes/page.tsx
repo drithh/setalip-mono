@@ -4,8 +4,7 @@ import { ClassService, ClassTypeService } from '@repo/shared/service';
 
 import ListClass from './list-class';
 
-export default async function Classes(props: { searchParams: Promise<any> }) {
-  const searchParams = await props.searchParams;
+export default async function Classes({ searchParams }: { searchParams: any }) {
   // const search = findAllClasseschema.parse(searchParams);
 
   const classService = container.get<ClassService>(TYPES.ClassService);

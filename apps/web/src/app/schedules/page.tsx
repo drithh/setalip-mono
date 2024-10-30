@@ -14,12 +14,11 @@ import AgendaTable from './agenda';
 import QueryResetBoundary from '@/lib/query-reset-boundary';
 import React from 'react';
 
-export default async function Schedules(
-  props: {
-    searchParams: Promise<any>;
-  }
-) {
-  const searchParams = await props.searchParams;
+export default async function Schedules({
+  searchParams,
+}: {
+  searchParams: any;
+}) {
   const auth = await validateRequest();
 
   const search = findAllScheduleSchema.parse(searchParams);

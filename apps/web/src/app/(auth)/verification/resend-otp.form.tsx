@@ -10,7 +10,8 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import { Input } from '@repo/ui/components/ui/input';
-import { useActionState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -36,7 +37,7 @@ const TOAST_MESSAGES = {
 };
 
 export default function ResendOtpForm({ userId }: ResendOtpFormProps) {
-  const [formState, formAction] = useActionState(resendOtp, {
+  const [formState, formAction] = useFormState(resendOtp, {
     status: 'default',
     form: {
       userId: userId,

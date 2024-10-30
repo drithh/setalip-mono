@@ -11,7 +11,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/ui/form';
-import { useActionState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { Value as PhoneNumberValue } from 'react-phone-number-input';
 import { toast } from 'sonner';
@@ -34,7 +35,7 @@ const TOAST_MESSAGES = {
 };
 
 export default function ForgotPasswordForm() {
-  const [formState, formAction] = useActionState(forgotPassword, {
+  const [formState, formAction] = useFormState(forgotPassword, {
     status: 'default',
     form: {
       phoneNumber: '',

@@ -32,14 +32,13 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from '@repo/ui/components/ui/breadcrumb';
-export default async function AgendaDetail(
-  props: {
-    params: Promise<{ agendaId: string }>;
-    searchParams: Promise<{ agenda_recurrence_id: string; time: string }>;
-  }
-) {
-  const searchParams = await props.searchParams;
-  const params = await props.params;
+export default async function AgendaDetail({
+  params,
+  searchParams,
+}: {
+  params: { agendaId: string };
+  searchParams: { agenda_recurrence_id: string; time: string };
+}) {
   const auth = await validateUser();
 
   const agendaIdNumber = parseInt(params.agendaId);
