@@ -809,7 +809,39 @@ export class PackageServiceImpl implements PackageService {
   }
 
   async delete(id: SelectPackage['id']) {
-    const result = await this._packageRepository.delete({ filters: { id } });
+    const result = await this._packageRepository.update({
+      data: { deleted_at: new Date() },
+      filters: { id },
+    });
+
+    if (result instanceof Error) {
+      return {
+        result: undefined,
+        error: result,
+      };
+    }
+
+    return {
+      result: result,
+    };
+  }
+
+  async deleteUserPackage(id: SelectUserPackage['id']) {
+    const userPackage = await this._packageRepository.findUserPackage({
+      filters: { id },
+    });
+
+    if (userPackage.length === 0) {
+      return {
+        result: undefined,
+        error: new Error('User package not found'),
+      };
+    }
+
+    const result = await this._packageRepository.updateUserPackage({
+      data: { expired_at: new Date(), credit: 0 },
+      filters: { id },
+    });
 
     if (result instanceof Error) {
       return {

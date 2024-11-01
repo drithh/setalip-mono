@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@repo/ui/components/ui/dropdown-menu';
+import DeleteDialog from '../delete.dialog';
 
 interface getColumnsProps {
   isPending: boolean;
@@ -105,15 +106,24 @@ export function getColumns(
       cell: function Cell({ row }) {
         const [showEditUserPackage, setShowEditUserPackage] =
           React.useState(false);
-        const [showEditPackageTransaction, setShowEditPackageTransaction] =
+        // const [showEditPackageTransaction, setShowEditPackageTransaction] =
+        //   React.useState(false);
+        const [showDeleteUserPackage, setShowDeleteUserPackage] =
           React.useState(false);
         return (
           <>
-            {showEditPackageTransaction && (
+            {/* {showEditPackageTransaction && (
               <EditPackageTransactionForm
                 data={row.original}
                 open={showEditPackageTransaction}
                 onOpenChange={setShowEditPackageTransaction}
+              />
+            )} */}
+            {showDeleteUserPackage && (
+              <DeleteDialog
+                data={row.original}
+                open={showDeleteUserPackage}
+                onOpenChange={setShowDeleteUserPackage}
               />
             )}
             {showEditUserPackage && (
@@ -142,6 +152,13 @@ export function getColumns(
                 >
                   Edit Transaction
                 </DropdownMenuItem> */}
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setShowDeleteUserPackage(true);
+                  }}
+                >
+                  Cancle User Package
+                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setShowEditUserPackage(true)}>
                   Edit User Package
                 </DropdownMenuItem>

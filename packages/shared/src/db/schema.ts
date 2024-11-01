@@ -237,6 +237,7 @@ export interface Packages {
   class_type_id: number;
   created_at: Generated<Date>;
   credit: number;
+  deleted_at: Generated<Date | null>;
   discount_credit: Generated<number | null>;
   discount_end_date: Generated<Date | null>;
   discount_percentage: Generated<number | null>;

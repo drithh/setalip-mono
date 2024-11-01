@@ -24,8 +24,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={monserrat.className}>
-        <Provider>{children}</Provider>
         <Toaster position="top-right" duration={5000} />
+        <Provider>{children}</Provider>
       </body>
     </html>
   );

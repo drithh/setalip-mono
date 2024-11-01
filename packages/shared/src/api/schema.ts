@@ -83,6 +83,10 @@ export const deletePackageSchema = z.object({
   packageId: z.coerce.number().refine((data) => data > 0),
 });
 
+export const deleteUserPackageSchema = z.object({
+  userPackageId: z.coerce.number().refine((data) => data > 0),
+});
+
 export const findAllUserSchema = defaultPaginationSchema.extend({
   name: z.string().optional(),
   role: z.string().optional(),

@@ -6,6 +6,7 @@ import { TRPCRouterRecord } from '@trpc/server';
 import { adminProcedure, protectedProcedure } from '../trpc';
 import {
   deletePackageSchema,
+  deleteUserPackageSchema,
   findAllPackageSchema,
   findAllPackageTransactionByUserIdSchema,
   findAllPackageTransactionByUserIdSchema__Admin,
@@ -97,7 +98,7 @@ export const packageRouter = {
 
       return packages;
     }),
-  delete: protectedProcedure
+  delete: adminProcedure
     .input(deletePackageSchema)
     .mutation(async ({ ctx, input }) => {
       const packageService = ctx.container.get<PackageService>(
@@ -105,5 +106,14 @@ export const packageRouter = {
       );
 
       await packageService.delete(input.packageId);
+    }),
+  deleteUserPackage: adminProcedure
+    .input(deleteUserPackageSchema)
+    .mutation(async ({ ctx, input }) => {
+      const packageService = ctx.container.get<PackageService>(
+        TYPES.PackageService
+      );
+
+      await packageService.deleteUserPackage(input.userPackageId);
     }),
 } satisfies TRPCRouterRecord;

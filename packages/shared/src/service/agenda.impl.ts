@@ -694,7 +694,7 @@ export class AgendaServiceImpl implements AgendaService {
     customFilters.push(eb(sql`agenda_recurrences.start_date`, '<=', startDate));
     customFilters.push(eb(sql`agenda_recurrences.end_date`, '>=', endDate));
 
-    const coachAgenda = await this._agendaRepository.find({
+    const coachAgenda = await this._agendaRepository.findAgendaRecurrence({
       customFilters,
       withClass: true,
       withCoach: true,
@@ -783,13 +783,25 @@ export class AgendaServiceImpl implements AgendaService {
         error: new Error('Failed to get class duration'),
       };
     }
-    const startTime = format(data.time, 'yyyy-MM-dd HH:mm:ss');
+
+    const startDateTime = new Date(
+      `${data.start_date.toISOString().split('T')[0]}T${data.time}`
+    );
+    console.log(
+      'startDateTime',
+      startDateTime,
+      'time',
+      data.time,
+      'start_date',
+      data.start_date
+    );
+    const startTime = format(startDateTime, 'yyyy-MM-dd HH:mm:ss');
     const endTime = format(
-      addMinutes(data.time, singleClass.duration),
+      addMinutes(startDateTime, singleClass.duration),
       'yyyy-MM-dd HH:mm:ss'
     );
-
-    const dayOfWeek = getDay(data.time);
+    console.log('endTime', endTime);
+    const dayOfWeek = getDay(startDateTime);
 
     const coachAgendaAvailability = await this.checkCoachAgendaAvailability(
       data.coach_id,
@@ -802,15 +814,15 @@ export class AgendaServiceImpl implements AgendaService {
         error: coachAgendaAvailability,
       };
     }
-
+    console.log('coachAgendaAvailability', coachAgendaAvailability);
     const coachAgendaRecurrenceAvailability =
       await this.checkCoachAgendaRecurrenceAvailability(
         data.coach_id,
         dayOfWeek,
         startTime,
         endTime,
-        format(data.time, 'yyyy-MM-dd'),
-        format(data.time, 'yyyy-MM-dd')
+        format(data.start_date, 'yyyy-MM-dd'),
+        format(data.start_date, 'yyyy-MM-dd')
       );
 
     if (coachAgendaRecurrenceAvailability !== undefined) {
@@ -818,7 +830,10 @@ export class AgendaServiceImpl implements AgendaService {
         error: coachAgendaRecurrenceAvailability,
       };
     }
-
+    console.log(
+      'coachAgendaRecurrenceAvailability',
+      coachAgendaRecurrenceAvailability
+    );
     const result = await this._agendaRepository.createAgendaRecurrence({
       data,
     });
@@ -1796,6 +1811,8 @@ export class AgendaServiceImpl implements AgendaService {
         error: agendaBooking.error,
       };
     }
+
+    // console.log('agendaBooking', agendaBooking, 'agenda', agenda);
 
     const user = await this._userRepository.findById(
       agendaBooking.result.user_id

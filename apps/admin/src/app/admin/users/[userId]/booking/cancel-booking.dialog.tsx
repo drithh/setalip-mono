@@ -74,7 +74,7 @@ export default function DeleteAgendaDialog({
               variant={'destructive'}
               onClick={() =>
                 onDelete({
-                  id: data.id,
+                  id: data.agenda_booking_id,
                   type: 'refund',
                 })
               }
@@ -87,7 +87,7 @@ export default function DeleteAgendaDialog({
               variant={'destructive'}
               onClick={() =>
                 onDelete({
-                  id: data.id,
+                  id: data.agenda_booking_id,
                   type: 'no_refund',
                 })
               }

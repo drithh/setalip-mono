@@ -46,6 +46,7 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
     const query = await this._db
       .selectFrom('packages')
       .select(({ fn }) => [fn.count<number>('packages.id').as('count')])
+      .where('deleted_at', 'is', null)
       .executeTakeFirst();
 
     return query?.count ?? 0;
@@ -53,9 +54,9 @@ export class KyselyMySqlPackageRepository implements PackageRepository {
 
   base(data?: SelectPackageQuery) {
     let baseQuery = this._db.selectFrom('packages');
-    baseQuery = baseQuery.where(
-      applyFilters(data?.filters, data?.customFilters)
-    );
+    baseQuery = baseQuery
+      .where('deleted_at', 'is', null)
+      .where(applyFilters(data?.filters, data?.customFilters));
     if (data?.withClassType) {
       baseQuery = baseQuery
         .innerJoin('class_types', 'packages.class_type_id', 'class_types.id')

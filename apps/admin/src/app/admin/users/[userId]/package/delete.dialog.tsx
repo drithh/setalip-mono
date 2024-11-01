@@ -10,46 +10,46 @@ import {
   AlertDialogAction,
 } from '@repo/ui/components/ui/alert-dialog';
 import { Button } from '@repo/ui/components/ui/button';
-import { useDeleteMutation } from './_functions/delete-loyalty-shop';
 import { api } from '@/trpc/react';
-import { SelectLoyaltyShop } from '@repo/shared/repository';
+import { SelectPackageTransaction__Package__UserPackage } from '@repo/shared/service';
+import { useDeleteMutation } from './_functions/delete';
+import { CONSTANT } from './constant';
+import { format, parse } from 'date-fns';
 
-interface DeleteLoyaltyShopProps {
-  data: SelectLoyaltyShop;
+interface DeleteProps {
+  data: SelectPackageTransaction__Package__UserPackage;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export default function DeleteLoyaltyShopDialog({
+export default function DeleteDialog({
   data,
   open,
   onOpenChange,
-}: DeleteLoyaltyShopProps) {
+}: DeleteProps) {
   const trpcUtils = api.useUtils();
-  const deleteLoyaltyShop = useDeleteMutation();
+  const deleteMutation = useDeleteMutation();
   const onDelete = () => {
-    deleteLoyaltyShop.mutate(
-      {
-        id: data.id,
-      },
-      {
-        onSuccess: () => {
-          trpcUtils.invalidate();
-        },
-      },
-    );
+    deleteMutation
+      .mutateAsync({
+        userPackageId: data.user_package_id ?? 0,
+      })
+      .then(() => {
+        trpcUtils.invalidate();
+      });
   };
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Apakah kamu yakin menghapus item{' '}
-            <span className="font-semibold">{data.name}</span>?
+            Apakah kamu yakin mengcancle {CONSTANT.Item} {data.package_name}{' '}
+            yang expired pada{' '}
+            {format(data.user_package_expired_at, 'yyyy-MM-dd')}?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Aksi ini tidak dapat dibatalkan. Ini akan menghapus item dari
-            server.
+            Aksi ini tidak dapat dibatalkan. Ini akan mengcancle {CONSTANT.Item}{' '}
+            dari server.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
