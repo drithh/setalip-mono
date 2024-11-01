@@ -1337,7 +1337,9 @@ export class AgendaServiceImpl implements AgendaService {
     }
 
     // check if start_date same from current start_date or end_date same from current end_date
-    if (isDateSame(currentAgendaRecurrence.result?.end_date, data.end_date)) {
+    if (
+      isDateSame(currentAgendaRecurrence.result?.start_date, data.start_date)
+    ) {
       // if there are egenda that after the current agenda recurrence
       if (
         isDateDifferent(
