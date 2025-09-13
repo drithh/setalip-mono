@@ -3,11 +3,11 @@ import { env } from '@repo/shared/env';
 env;
 const images = [
   {
-    src: `${env.WEB_URL}/uploads/static/auth-1.webp`,
+    src: `https://pub-f622985fd92b4796a691361dda9a213a.r2.dev/static/auth-1.webp`,
     alt: 'Auth Background',
   },
   {
-    src: `${env.WEB_URL}/uploads/static/auth-2.webp`,
+    src: `https://pub-f622985fd92b4796a691361dda9a213a.r2.dev/static/auth-2.webp`,
     alt: 'Auth Background',
   },
 ];
