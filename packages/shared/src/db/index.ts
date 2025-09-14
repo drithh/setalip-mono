@@ -15,7 +15,12 @@ import { env } from '#dep/env';
 import { createPool } from 'mysql2/promise';
 export * from '#dep/db/schema';
 
-export const pool = createPool(env.DATABASE_URL);
+export const pool = createPool({
+  uri: env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
 const dialect = new MysqlDialect({
   pool: pool.pool,
