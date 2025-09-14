@@ -8,7 +8,7 @@ export const env = createEnv({
     WHAPIFY_ACCOUNT: z.string(),
     WHAPIFY_SECRET: z.string(),
     ADMIN_URL: z.string().default('http://localhost:3000'),
-    WEB_URL: z.string().default('http://localhost:3001'),
+    WEB_URL: z.string().default('https://web.setalip.adriel.id/'),
     CRON_SECRET: z.string(),
 
     AWS_REGION: z.string(),
