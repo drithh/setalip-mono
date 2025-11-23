@@ -95,7 +95,7 @@ export async function up(): Promise<void> {
         },
         {
           key: 'logo',
-          value: 'http://localhost:3000/uploads/logo.webp',
+          value: 'https://admin-setalip.adriel.id/uploads/logo.webp',
         },
       ];
 

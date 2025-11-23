@@ -7,7 +7,7 @@ export const env = createEnv({
     NODE_ENV: z.string().default('development'),
     WHAPIFY_ACCOUNT: z.string(),
     WHAPIFY_SECRET: z.string(),
-    ADMIN_URL: z.string().default('http://localhost:3000'),
+    ADMIN_URL: z.string().default('https://admin-setalip.adriel.id/'),
     WEB_URL: z.string().default('https://web-setalip.adriel.id/'),
     CRON_SECRET: z.string(),
 
