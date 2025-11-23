@@ -176,7 +176,7 @@ export class WebSettingServiceImpl implements WebSettingService {
       }
     );
     const carousels = await getCachedCarousel();
-
+    console.log(carousels);
     return {
       result: carousels,
       error: undefined,
